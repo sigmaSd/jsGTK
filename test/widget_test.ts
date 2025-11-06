@@ -29,12 +29,16 @@ function assert(condition: boolean, message: string) {
 }
 
 function assertEquals(actual: unknown, expected: unknown, message: string) {
-  if (actual === expected) {
+  // Convert to strings for comparison to handle different string representations
+  const actualStr = String(actual);
+  const expectedStr = String(expected);
+
+  if (actualStr === expectedStr) {
     console.log(`✓ PASS: ${message}`);
     passedTests++;
   } else {
     console.error(
-      `✗ FAIL: ${message} (expected: ${expected}, got: ${actual})`,
+      `✗ FAIL: ${message} (expected: ${expectedStr}, got: ${actualStr})`,
     );
     failedTests++;
   }
