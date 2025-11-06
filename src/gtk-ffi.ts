@@ -176,6 +176,11 @@ export class GObject {
     gobject.symbols.g_signal_handler_disconnect(this.ptr, BigInt(signalId));
   }
 
+  emit(signal: string): void {
+    const signalCStr = cstr(signal);
+    gobject.symbols.g_signal_emit_by_name(this.ptr, signalCStr);
+  }
+
   setProperty(name: string, value: unknown): void {
     const nameCStr = cstr(name);
     const gvalue = createGValue();
@@ -297,6 +302,10 @@ export class Widget extends GObject {
 
   setVisible(visible: boolean): void {
     gtk.symbols.gtk_widget_set_visible(this.ptr, visible);
+  }
+
+  getVisible(): boolean {
+    return gtk.symbols.gtk_widget_get_visible(this.ptr);
   }
 
   setApplication(app: Application): void {
@@ -467,6 +476,11 @@ export class Label extends Widget {
   setText(text: string): void {
     const textCStr = cstr(text);
     gtk.symbols.gtk_label_set_text(this.ptr, textCStr);
+  }
+
+  getText(): string {
+    const ptr = gtk.symbols.gtk_label_get_text(this.ptr);
+    return readCStr(ptr);
   }
 
   setMarkup(markup: string): void {

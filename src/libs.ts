@@ -76,6 +76,10 @@ export const gobject = Deno.dlopen(LIB_PATHS.gobject, {
     parameters: ["pointer", "u64"],
     result: "void",
   },
+  g_signal_emit_by_name: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
   g_type_from_name: { parameters: ["buffer"], result: "u64" },
   g_value_init: { parameters: ["pointer", "u64"], result: "pointer" },
   g_value_set_string: { parameters: ["pointer", "buffer"], result: "void" },

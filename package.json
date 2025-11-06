@@ -5,6 +5,6 @@
     ".": "./src/gtk-ffi.ts"
   },
   "scripts": {
-    "check": "deno fmt . && deno lint && deno check --node-modules-dir=auto"
+    "test": "deno install && deno fmt --check && deno lint && deno check && deno test --allow-ffi"
   }
 }
