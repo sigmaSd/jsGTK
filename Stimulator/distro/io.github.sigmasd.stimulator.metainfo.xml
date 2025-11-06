@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.sigmasd.stimulator</id>
+  <name>Stimulator</name>
+  <summary>
+    Keep your computer awake
+  </summary>
+  <developer_name>Bedis Nbiba</developer_name>
+
+  <metadata_license>CC0</metadata_license>
+  <project_license>MIT</project_license>
+
+  <description>
+    <p>
+      Prevents the desktop environment (DE) from sleeping.
+      It should work regardless of the used DE thanks to the Inhibit portal.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>Overrides system setting and disables automatic suspending</li>
+      <li>Overrides system setting and disables screen blanking and screen locking</li>
+      <li>Option to use system default, light or dark theme</li>
+      <li>AppIndicator support</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">io.github.sigmasd.stimulator.desktop</launchable>
+
+  <screenshots>
+    <screenshot type="default" style="light">
+      <caption>Stimulator light screenshot</caption>
+      <image>https://raw.githubusercontent.com/sigmaSd/Stimulator/master/distro/demo_light_active.png</image>
+    </screenshot>
+    <screenshot style="dark">
+      <caption>Stimulator dark screenshot</caption>
+      <image>https://raw.githubusercontent.com/sigmaSd/Stimulator/master/distro/demo_dark_active.png</image>
+    </screenshot>
+    <screenshot style="light">
+      <caption>Stimulator light screenshot</caption>
+      <image>https://raw.githubusercontent.com/sigmaSd/Stimulator/master/distro/demo_light_inactive.png</image>
+    </screenshot>
+    <screenshot style="dark">
+      <caption>Stimulator dark screenshot</caption>
+      <image>https://raw.githubusercontent.com/sigmaSd/Stimulator/master/distro/demo_dark_inactive.png</image>
+    </screenshot>
+  </screenshots>
+
+  <url type="homepage">https://github.com/sigmaSd/stimulator</url>
+  <url type="bugtracker">https://github.com/sigmaSd/stimulator/issues</url>
+
+  <content_rating type="oars-1.1" />
+
+  <releases>
+    <release version="1.13.2" date="2025-11-03">
+        <description>
+            <ul>
+                <li>HotFix2: fix broken build</li>
+            </ul>
+        </description>
+    </release>
+    <release version="1.13.1" date="2025-11-03">
+        <description>
+            <ul>
+                <li>HotFix: fix broken build</li>
+            </ul>
+        </description>
+    </release>
+    <release version="1.13.0" date="2025-11-03">
+        <description>
+            <ul>
+                <li>Background notification is now automatically withdrawn after 1 second</li>
+                <li>Internal: use @sigma/python fork</li>
+            </ul>
+        </description>
+    </release>
+    <release version="1.12.0" date="2025-10-14">
+        <description>
+            <ul>
+                <li>Add Serbian translation</li>
+                <li>Update Irish translation</li>
+            </ul>
+        </description>
+    </release>
+    <release version="1.11.0" date="2025-10-11">
+        <description>
+            <ul>
+                <li>Notify the user when Suspend/Idle timer runs out (if the app is not visible)</li>
+            </ul>
+        </description>
+    </release>
+    <release version="1.10.0" date="2025-10-06">
+        <description>
+            <ul>
+                <li>New feature: Add suspend and idle timer settings</li>
+            </ul>
+        </description>
+    </release>
+    <release version="1.9.6" date="2025-08-22">
+        <description>
+            <ul>
+                <li>add danish translation</li>
+            </ul>
+        </description>
+    </release>
+    <release version="1.9.5" date="2025-06-20">
+        <description>
+            <ul>
+                <li>Add Chinese translation</li>
+            </ul>
+        </description>
+    </release>
+    <release version="1.9.4" date="2025-05-27">
+      <description>
+          <ul>
+              <li>Add Irish translation</li>
+          </ul>
+      </description>
+    </release>
+    <release version="1.9.2" date="2025-04-18">
+      <description>
+          <ul>
+              <li>Add spanish translation</li>
+              <li>Use Deno v2</li>
+              <li>Update deps</li>
+          </ul>
+      </description>
+    </release>
+    <release version="1.8.1" date="2024-09-27">
+      <description>
+          <ul>
+              <li>Fix broken build</li>
+          </ul>
+      </description>
+    </release>
+    <release version="1.8" date="2024-09-26">
+      <description>
+          <ul>
+              <li>Add german translation</li>
+              <li>Add ukrainian translation</li>
+          </ul>
+      </description>
+    </release>
+     <release version="1.7" date="2024-05-12">
+      <description>
+        <ul>
+          <li>Display tanslator credits in the About dilaog</li>
+          <li>Update runtime version</li>
+          <li>Add hindi translation</li>
+        </ul>
+      </description>
+    </release>
+     <release version="1.6" date="2024-04-15">
+      <description>
+        <ul>
+          <li>Add Japenese + Dutch translations</li>
+          <li>Add branding colors</li>
+          <li>Internal codebase refactor</li>
+        </ul>
+      </description>
+    </release>
+  <release version="1.5" date="2024-03-02">
+      <description>
+        <ul>
+          <li>Update translations</li>
+          <li>Internal codebase refactor</li>
+        </ul>
+      </description>
+    </release>
+     <release version="1.4" date="2024-02-22">
+      <description>
+        <ul>
+          <li>Add tooltip for the main menu button</li>
+        </ul>
+      </description>
+    </release>
+     <release version="1.3" date="2024-02-18">
+      <description>
+        <ul>
+          <li>Update italien translations</li>
+          <li>Update app description</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.2" date="2024-02-16">
+      <description>
+        <ul>
+          <li>Actually fix translations in tray icon</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.1" date="2024-02-15">
+      <description>
+        <ul>
+          <li>Fix translations in tray icon</li>
+          <li>Update more translations</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.0" date="2024-02-13">
+      <description>
+        <ul>
+          <li>Support running in the background</li>
+          <li>AppIndicator support</li>
+          <li>Use org.freedesktop.ScreenSaver portal for stopping screen dimming (needed for KDE)</li>
+          <li>More UI improvements</li>
+          <li>More translations added</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.9.0" date="2024-01-27">
+      <description>
+        <ul>
+          <li>Show error if used on an unsupported system</li>
+          <li>Don't embed translations that are less then 70% complete</li>
+          <li>Add an option to choose the application theme</li>
+          <li>Add an option to show or not exit confirmation menu</li>
+          <li>Many UI improvements</li>
+          <li>Update translations</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.8.1" date="2024-01-21">
+      <description>
+        <ul>
+          <li>Fix crash in alpine os</li>
+          <li>Add confirmation dialog when trying to exit Stimulator is active</li>
+          <li>Add keyboard shortcuts</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.8.0" date="2024-01-18">
+      <description>
+        <ul>
+          <li>Updated icons with new color tones</li>
+          <li>Behavior of alternating icons has been changed in main window</li>
+          <li>"Disable Screen Blanking" now remembers the last state</li>
+          <li>App have now full translation support, including app name</li>
+          <li>Minor bugfixes and tweaks</li>
+          <li>Updated Estonian translation</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.7.6" date="2024-01-17">
+      <description>
+        <ul>
+          <li>Fix flatpak build</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.7.5" date="2024-01-17">
+      <description>
+        <ul>
+          <li>Change ID to stimulator</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.7.4" date="2024-01-15">
+      <description>
+        <ul>
+          <li>Small UI tweak</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.7.3" date="2024-01-15">
+      <description>
+        <ul>
+          <li>Small UI tweak</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.7.2" date="2024-01-14">
+      <description>
+        <ul>
+          <li>Save last UI state at exit</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.7.1" date="2024-01-14">
+      <description>
+        <ul>
+          <li>Minor UI Tweaks</li>
+          <li>Update Translations</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.7.0" date="2024-01-13">
+      <description>
+        <ul>
+          <li>Restore old id until transition is done correctly</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.6.1" date="2024-01-13">
+      <description>
+        <ul>
+          <li>Fix flatpak build</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.6.0" date="2024-01-13">
+      <description>
+        <ul>
+          <li>Change app id to "Stimulator"</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.5.4" date="2024-01-13">
+      <description>
+        <ul>
+          <li>Add italien translations</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.5.3" date="2024-01-12">
+      <description>
+        <ul>
+          <li>Change main logo to an icon instead of a picture</li>
+          <li>Fix Suspend on flatpak</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.5.0" date="2024-01-12">
+      <description>
+        <ul>
+          <li>Rebrand app to "Stimulator"</li>
+          <li>New UI design</li>
+          <li>Option to keep screen on/off</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.4.3" date="2023-12-22">
+      <description>
+        <ul>
+          <li>Fix translations packaging</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.4.2" date="2023-12-21">
+      <description>
+        <ul>
+          <li>Start adding translations (arabic, french)</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.4.1" date="2023-12-21">
+      <description>
+        <ul>
+          <li>Use Adw for about dialog</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.4.0" date="2023-12-20">
+      <description>
+        <ul>
+          <li>Improve Looks</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.3.7" date="2023-12-18">
+      <description>
+        <ul>
+          <li>Replace ON/OFF text with symbolic power button icon</li>
+          <li>Update about info</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.3.6" date="2023-12-11">
+      <description>
+        <ul>
+          <li>Don't require network anymore, by vendoring dependencies</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.3.5" date="2023-12-11">
+      <description>
+        <ul>
+          <li>Update Description</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.3.4" date="2023-12-11">
+      <description>
+        <ul>
+          <li>Update Metadata</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.3.3" date="2023-12-11">
+      <description>
+        <ul>
+          <li>Fix Metadata</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.3.1" date="2023-12-11">
+      <description>
+        <ul>
+          <li>Update deps (fixes a rare crash)</li>
+          <li>Handle Ctrlc</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.3.0" date="2023-12-05">
+      <description>
+        <ul>
+          <li>Switch to Gtk Inhibit api that works across DEs</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.2.0" date="2023-11-29">
+      <description>
+        <ul>
+          <li>Initial Release</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+
+  <keywords>
+    <keyword>caffeine</keyword>
+    <keyword>sleep</keyword>
+    <keyword>no sleep</keyword>
+    <keyword>power</keyword>
+    <keyword>inhibit</keyword>
+  </keywords>
+
+  <categories>
+    <category>Utility</category>
+  </categories>
+
+  <provides>
+    <binary>stimulator</binary>
+  </provides>
+
+  <branding>
+    <color type="primary" scheme_preference="light">#26a269</color>
+    <color type="primary" scheme_preference="dark">#1b744b</color>
+  </branding>
+</component>

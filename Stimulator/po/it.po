@@ -1,0 +1,147 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Stimulator"
+msgstr "Stimolatore"
+
+msgid "Keep your computer awake"
+msgstr "Mantieni il computer attivo"
+
+msgid "caffeine;nosleep;awake;keepawake;keepon;"
+msgstr "caffeina;non dormire;sveglio;mantieniti sveglio;"
+
+msgid "Disable Automatic Suspending"
+msgstr "Disattiva la sospensione automatica"
+
+msgid "Disable Screen Blanking and Locking"
+msgstr "Disattiva l'oscuramento e il blocco dello schermo"
+
+msgid "Current state: System default"
+msgstr "Stato corrente: impostazione predefinita del sistema"
+
+msgid "Current state: Indefinitely"
+msgstr "Stato attuale: a tempo indeterminato"
+
+msgid "Stimulator is active"
+msgstr "Stimulator est active"
+
+msgid "Close Stimulator?"
+msgstr "Chiudere lo stimulator?"
+
+msgid "Stimulator is active, do you want to close it?"
+msgstr "Stimulator è attivo, vuoi chiuderlo?"
+
+msgid "Cancel"
+msgstr "Annulla"
+
+msgid "Close"
+msgstr "Chiudi"
+
+msgid "Preferences"
+msgstr "Preferenze"
+
+msgid "Theme"
+msgstr "Tema"
+
+msgid "System Theme"
+msgstr "Tema del sistema"
+
+msgid "Light"
+msgstr "Chiaro"
+
+msgid "Dark"
+msgstr "Scuro"
+
+msgid "Keyboard Shortcuts"
+msgstr "Scorciatoie da tastiera"
+
+msgid "General"
+msgstr "Generale"
+
+msgid "Open Menu"
+msgstr "Apri il menù"
+
+msgid "Quit"
+msgstr "Esci"
+
+msgid "About Stimulator"
+msgstr "Informazioni su Stimulator"
+
+msgid "Unsupported System"
+msgstr "Sistema non supportato"
+
+msgid "Your desktop environment doesn't support Stimulator, click close to quit"
+msgstr "Il tuo ambiente desktop non supporta Stimulator, fai clic su Chiudi per uscire"
+
+msgid "Run in Background"
+msgstr "Esegui in background"
+
+msgid "Show"
+msgstr "Mostra"
+
+msgid "Stimulator is running in the backround"
+msgstr "Stimulator è in esecuzione in background"
+
+msgid "Ask Confirmation"
+msgstr "Chiedi conferma"
+
+msgid "Behavior on Closing"
+msgstr "Comportamento alla chiusura"
+
+msgid "Applies only while active"
+msgstr "Si applica solo mentre è attivo"
+
+msgid "Main Menu"
+msgstr "Menù principale"
+
+msgid "translator-credits"
+msgstr "Albano Battistella https://github.com/albanobattistella"
+
+msgid "Suspend Timer"
+msgstr "Sospendi timer"
+
+msgid "Idle Timer"
+msgstr "TImer non attivo"
+
+msgid "Auto-disable after selected time"
+msgstr "Disattivazione automatica dopo il tempo selezionato"
+
+msgid "5 minutes"
+msgstr "5 minuti"
+
+msgid "15 minutes"
+msgstr "15 minuti"
+
+msgid "Never"
+msgstr "Mai"
+
+msgid "Current state"
+msgstr "Stato attuale"
+
+msgid "minutes"
+msgstr "minuti"
+
+msgid "30 minutes"
+msgstr "30 minuti"
+
+msgid "1 hour"
+msgstr "1 ora"
+
+msgid "2 hours"
+msgstr "2 ore"
+
+msgid "4 hours"
+msgstr "4 ore"
+
+msgid "hour"
+msgstr "ora"
+
+msgid "hours"
+msgstr "ore"
+
+msgid "Automatic suspending reactivated"
+msgstr ""
+
+msgid "Automatic idling reactivated"
+msgstr ""

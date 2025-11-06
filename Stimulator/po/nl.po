@@ -1,0 +1,147 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Stimulator"
+msgstr "Stimulator"
+
+msgid "Keep your computer awake"
+msgstr "Houd uw computer actief"
+
+msgid "caffeine;nosleep;awake;keepawake;keepon;"
+msgstr "caffeine;nietslapen;actief;ontwaakt;ingeschakeld;aan;"
+
+msgid "Disable Automatic Suspending"
+msgstr "Automatische pauzestand uitschakelen"
+
+msgid "Disable Screen Blanking and Locking"
+msgstr "Scherm uit en vergrendelen uitschakelen"
+
+msgid "Current state: System default"
+msgstr "Huidige status: systeemvoorkeuren volgen"
+
+msgid "Current state: Indefinitely"
+msgstr "Huidige status: onbeperkt"
+
+msgid "Stimulator is active"
+msgstr "Stimulator is actief"
+
+msgid "Close Stimulator?"
+msgstr "Stimulator afsluiten?"
+
+msgid "Stimulator is active, do you want to close it?"
+msgstr "Stimulator is actief. Wilt u de toepassing afsluiten?"
+
+msgid "Cancel"
+msgstr "Annuleren"
+
+msgid "Close"
+msgstr "Sluiten"
+
+msgid "Preferences"
+msgstr "Voorkeuren"
+
+msgid "Theme"
+msgstr "Thema"
+
+msgid "System Theme"
+msgstr "Systeemthema"
+
+msgid "Light"
+msgstr "Licht thema"
+
+msgid "Dark"
+msgstr "Donker thema"
+
+msgid "Keyboard Shortcuts"
+msgstr "Sneltoetsen"
+
+msgid "General"
+msgstr "Algemeen"
+
+msgid "Open Menu"
+msgstr "Menu openen"
+
+msgid "Quit"
+msgstr "Afsluiten"
+
+msgid "About Stimulator"
+msgstr "Over Stimulator"
+
+msgid "Unsupported System"
+msgstr "Niet-ondersteund systeem"
+
+msgid "Your desktop environment doesn't support Stimulator, click close to quit"
+msgstr "Uw werkomgeving wordt niet ondersteund. Klik op sluiten om af te sluiten."
+
+msgid "Run in Background"
+msgstr "Uitvoeren op achtergrond"
+
+msgid "Show"
+msgstr "Tonen"
+
+msgid "Stimulator is running in the backround"
+msgstr "Stimulator wordt uitgevoerd op de achtergrond"
+
+msgid "Ask Confirmation"
+msgstr "Om bevestiging vragen"
+
+msgid "Behavior on Closing"
+msgstr "Actie na afsluiten"
+
+msgid "Applies only while active"
+msgstr "Alleen indien actief"
+
+msgid "Main Menu"
+msgstr "Hoofdmenu"
+
+msgid "translator-credits"
+msgstr "Heimen Stoffels https://github.com/Vistaus"
+
+msgid "Suspend Timer"
+msgstr ""
+
+msgid "Idle Timer"
+msgstr ""
+
+msgid "Auto-disable after selected time"
+msgstr ""
+
+msgid "5 minutes"
+msgstr ""
+
+msgid "15 minutes"
+msgstr ""
+
+msgid "Never"
+msgstr ""
+
+msgid "Current state"
+msgstr ""
+
+msgid "minutes"
+msgstr ""
+
+msgid "30 minutes"
+msgstr ""
+
+msgid "1 hour"
+msgstr ""
+
+msgid "2 hours"
+msgstr ""
+
+msgid "4 hours"
+msgstr ""
+
+msgid "hour"
+msgstr ""
+
+msgid "hours"
+msgstr ""
+
+msgid "Automatic suspending reactivated"
+msgstr ""
+
+msgid "Automatic idling reactivated"
+msgstr ""

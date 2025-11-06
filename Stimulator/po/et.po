@@ -1,0 +1,147 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Stimulator"
+msgstr "Stimulaator"
+
+msgid "Keep your computer awake"
+msgstr "Hoia oma arvuti ärkvel"
+
+msgid "caffeine;nosleep;awake;keepawake;keepon;"
+msgstr "kofeiin;eiuinu;ärkvel;hoiaärkvel;jätka;"
+
+msgid "Disable Automatic Suspending"
+msgstr "Keela automaatne uinumine"
+
+msgid "Disable Screen Blanking and Locking"
+msgstr "Keela ekraani tumenemine ja lukustumine"
+
+msgid "Current state: System default"
+msgstr "Hetkeolek: Süsteemi vaikeseade"
+
+msgid "Current state: Indefinitely"
+msgstr "Hetkeolek: Määramata ajaks"
+
+msgid "Stimulator is active"
+msgstr "Stimulaator on aktiivne"
+
+msgid "Close Stimulator?"
+msgstr "Sulgen Stimulaatori?"
+
+msgid "Stimulator is active, do you want to close it?"
+msgstr "Stimulaator on aktiivne, kas soovid selle sulgeda?"
+
+msgid "Cancel"
+msgstr "Tühista"
+
+msgid "Close"
+msgstr "Sulge"
+
+msgid "Main Menu"
+msgstr "Peamenüü"
+
+msgid "Preferences"
+msgstr "Eelistused"
+
+msgid "Theme"
+msgstr "Teema"
+
+msgid "System Theme"
+msgstr "Süsteemi teema"
+
+msgid "Light"
+msgstr "Hele"
+
+msgid "Dark"
+msgstr "Tume"
+
+msgid "Keyboard Shortcuts"
+msgstr "Klaviatuuri otseteed"
+
+msgid "General"
+msgstr "Üldine"
+
+msgid "Open Menu"
+msgstr "Ava menüü"
+
+msgid "Quit"
+msgstr "Lõpeta"
+
+msgid "About Stimulator"
+msgstr "Stimulaatori teave"
+
+msgid "Unsupported System"
+msgstr "Süsteem ei ole toetatud"
+
+msgid "Your desktop environment doesn't support Stimulator, click close to quit"
+msgstr "Sinu töölaua keskkkond ei toeta Stimulaatorit, väljumiseks klõpsa sulgemise nupul"
+
+msgid "Run in Background"
+msgstr "Töötab taustal"
+
+msgid "Show"
+msgstr "Näita"
+
+msgid "Stimulator is running in the backround"
+msgstr "Stimulaator töötab taustal"
+
+msgid "Ask Confirmation"
+msgstr "Küsi kinnitust"
+
+msgid "Behavior on Closing"
+msgstr "Käitumine sulgemisel"
+
+msgid "Applies only while active"
+msgstr "Rakendub ainult aktiivses olekus"
+
+msgid "translator-credits"
+msgstr "Meybo Nõmme https://github.com/meybonomme"
+
+msgid "Suspend Timer"
+msgstr ""
+
+msgid "Idle Timer"
+msgstr ""
+
+msgid "Auto-disable after selected time"
+msgstr ""
+
+msgid "5 minutes"
+msgstr ""
+
+msgid "15 minutes"
+msgstr ""
+
+msgid "Never"
+msgstr ""
+
+msgid "Current state"
+msgstr ""
+
+msgid "minutes"
+msgstr ""
+
+msgid "30 minutes"
+msgstr ""
+
+msgid "1 hour"
+msgstr ""
+
+msgid "2 hours"
+msgstr ""
+
+msgid "4 hours"
+msgstr ""
+
+msgid "hour"
+msgstr ""
+
+msgid "hours"
+msgstr ""
+
+msgid "Automatic suspending reactivated"
+msgstr ""
+
+msgid "Automatic idling reactivated"
+msgstr ""

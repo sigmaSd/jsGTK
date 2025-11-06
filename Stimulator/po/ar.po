@@ -1,0 +1,147 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Stimulator"
+msgstr "المحفز"
+
+msgid "Keep your computer awake"
+msgstr "أبقِ جهاز الكمبيوتر مستيقظًا"
+
+msgid "caffeine;nosleep;awake;keepawake;keepon;"
+msgstr "كافيين; بدون نوم; مستيقظ;"
+
+msgid "Disable Automatic Suspending"
+msgstr "تعطيل التعليق التلقائي"
+
+msgid "Disable Screen Blanking and Locking"
+msgstr "تعطيل إطفاء الشاشة"
+
+msgid "Current state: System default"
+msgstr "الحالة الحالية: الإعداد الاصلي للنظام"
+
+msgid "Current state: Indefinitely"
+msgstr "الحالة الحالية: إلى أجل غير مسمى"
+
+msgid "Stimulator is active"
+msgstr "المحفز في حالة تشغيل"
+
+msgid "Close Stimulator?"
+msgstr "هل تريد إغلاق المحفز؟"
+
+msgid "Stimulator is active, do you want to close it?"
+msgstr "المحفز في حالة تشغيل، هل ترغب في إغلاقه؟"
+
+msgid "Cancel"
+msgstr "إلغاء"
+
+msgid "Close"
+msgstr "إغلاق"
+
+msgid "Preferences"
+msgstr "الإعدادات"
+
+msgid "Theme"
+msgstr "السمة"
+
+msgid "System Theme"
+msgstr "سمة النظام"
+
+msgid "Light"
+msgstr "فاتح"
+
+msgid "Dark"
+msgstr "داكن"
+
+msgid "Keyboard Shortcuts"
+msgstr "اختصارات لوحة المفاتيح"
+
+msgid "General"
+msgstr "عام"
+
+msgid "Open Menu"
+msgstr "فتح القائمة"
+
+msgid "Quit"
+msgstr "خروج"
+
+msgid "About Stimulator"
+msgstr "حول المحفز"
+
+msgid "Unsupported System"
+msgstr "النظام غير مدعوم"
+
+msgid "Your desktop environment doesn't support Stimulator, click close to quit"
+msgstr "بيئة سطح المكتب الخاصة بك لا تدعم المحفز، انقر فوق إغلاق للخروج"
+
+msgid "Run in Background"
+msgstr "تشغيل في الخلفية"
+
+msgid "Show"
+msgstr "عرض"
+
+msgid "Stimulator is running in the backround"
+msgstr "المحفز يعمل في الخلفية"
+
+msgid "Ask Confirmation"
+msgstr "طلب تأكيد"
+
+msgid "Behavior on Closing"
+msgstr "السلوك عند الإغلاق"
+
+msgid "Applies only while active"
+msgstr "ينطبق فقط أثناء التشغيل"
+
+msgid "Main Menu"
+msgstr "القائمة الرئيسية"
+
+msgid "translator-credits"
+msgstr "Bedis Nbiba https://github.com/sigmaSd"
+
+msgid "Suspend Timer"
+msgstr "مؤقت التعليق"
+
+msgid "Idle Timer"
+msgstr "مؤقت الخمول"
+
+msgid "Auto-disable after selected time"
+msgstr "التعطيل التلقائي بعد الوقت المحدد"
+
+msgid "5 minutes"
+msgstr "٥ دقائق"
+
+msgid "15 minutes"
+msgstr "١٥ دقيقة"
+
+msgid "Never"
+msgstr "أبدًا"
+
+msgid "Current state"
+msgstr "الحالة الحالية"
+
+msgid "minutes"
+msgstr "دقائق"
+
+msgid "30 minutes"
+msgstr "٣٠ دقيقة"
+
+msgid "1 hour"
+msgstr "ساعة واحدة"
+
+msgid "2 hours"
+msgstr "ساعتان"
+
+msgid "4 hours"
+msgstr "٤ ساعات"
+
+msgid "hour"
+msgstr "ساعة"
+
+msgid "hours"
+msgstr "ساعات"
+
+msgid "Automatic suspending reactivated"
+msgstr "تم إعادة تنشيط التعليق التلقائي"
+
+msgid "Automatic idling reactivated"
+msgstr "تم إعادة تنشيط الخمول التلقائي"

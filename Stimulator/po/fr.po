@@ -1,0 +1,147 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Stimulator"
+msgstr "Stimulateur"
+
+msgid "Keep your computer awake"
+msgstr "Gardez votre ordinateur éveillé"
+
+msgid "caffeine;nosleep;awake;keepawake;keepon;"
+msgstr "caféine;pas de sommeil;éveillé;"
+
+msgid "Disable Automatic Suspending"
+msgstr "Désactiver la suspension automatique"
+
+msgid "Disable Screen Blanking and Locking"
+msgstr "Désactiver le verrouillage de l'écran"
+
+msgid "Current state: System default"
+msgstr "État actuel: Paramètre par défaut du système"
+
+msgid "Current state: Indefinitely"
+msgstr "État actuel: Indéfiniment"
+
+msgid "Stimulator is active"
+msgstr "Stimulateur est actif"
+
+msgid "Close Stimulator?"
+msgstr "Fermer Stimulateur ?"
+
+msgid "Stimulator is active, do you want to close it?"
+msgstr "Stimulateur est actif, voulez-vous le fermer ?"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Close"
+msgstr "Fermer"
+
+msgid "Preferences"
+msgstr "Préférences"
+
+msgid "Theme"
+msgstr "Thème"
+
+msgid "System Theme"
+msgstr "Thème du système"
+
+msgid "Light"
+msgstr "Clair"
+
+msgid "Dark"
+msgstr "Sombre"
+
+msgid "Keyboard Shortcuts"
+msgstr "Raccourcis clavier"
+
+msgid "General"
+msgstr "Général"
+
+msgid "Open Menu"
+msgstr "Ouvrir le menu"
+
+msgid "Quit"
+msgstr "Quitter"
+
+msgid "About Stimulator"
+msgstr "À propos de Stimulateur"
+
+msgid "Unsupported System"
+msgstr "Système non pris en charge"
+
+msgid "Your desktop environment doesn't support Stimulator, click close to quit"
+msgstr "Votre environnement de bureau ne prend pas en charge Stimulateur, cliquez sur Fermer pour quitter"
+
+msgid "Run in Background"
+msgstr "Exécuter en arrière-plan"
+
+msgid "Show"
+msgstr "Afficher"
+
+msgid "Stimulator is running in the backround"
+msgstr "Le Stimulateur s'exécute en arrière-plan"
+
+msgid "Ask Confirmation"
+msgstr "Demander confirmation"
+
+msgid "Behavior on Closing"
+msgstr "Comportement à la fermeture"
+
+msgid "Applies only while active"
+msgstr "S'applique uniquement lorsqu'actif"
+
+msgid "Main Menu"
+msgstr "Menu Principal"
+
+msgid "translator-credits"
+msgstr "Bedis Nbiba https://github.com/sigmaSd"
+
+msgid "Suspend Timer"
+msgstr "Minuterie de suspension"
+
+msgid "Idle Timer"
+msgstr "Minuterie d'inactivité"
+
+msgid "Auto-disable after selected time"
+msgstr "Désactivation automatique après le temps sélectionné"
+
+msgid "5 minutes"
+msgstr "5 minutes"
+
+msgid "15 minutes"
+msgstr "15 minutes"
+
+msgid "Never"
+msgstr "Jamais"
+
+msgid "Current state"
+msgstr "État actuel"
+
+msgid "minutes"
+msgstr "minutes"
+
+msgid "30 minutes"
+msgstr "30 minutes"
+
+msgid "1 hour"
+msgstr "1 heure"
+
+msgid "2 hours"
+msgstr "2 heures"
+
+msgid "4 hours"
+msgstr "4 heures"
+
+msgid "hour"
+msgstr "heure"
+
+msgid "hours"
+msgstr "heures"
+
+msgid "Automatic suspending reactivated"
+msgstr "Suspension automatique réactivée"
+
+msgid "Automatic idling reactivated"
+msgstr "Inactivité automatique réactivée"

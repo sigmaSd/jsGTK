@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!DOCTYPE cambalache-project SYSTEM "cambalache-project.dtd">
+<!-- Created with Cambalache 0.96.1 -->
+<cambalache-project version="0.96.0" target_tk="gtk-4.0">
+  <ui filename="stimulator.ui" sha256="e08988815a668ee9647397715dfad676aaab156f05df2d79c1a7639392c5fe45"/>
+  <ui filename="shortcuts.ui" sha256="af2853ee9c8ee59f9e4d3127397320ff04d5dba39dc5e909060a1b8758ce445b"/>
+  <ui filename="preferences.ui" sha256="1ec2331dda0f84fa9748d9bd6795cd2bcadef63d7879b523d1d8beb20317d6c5"/>
+</cambalache-project>

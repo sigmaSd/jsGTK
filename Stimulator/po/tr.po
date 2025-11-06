@@ -1,0 +1,147 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Stimulator"
+msgstr "Stimulator"
+
+msgid "Keep your computer awake"
+msgstr "Bilgisayarınızı uyanık tutun"
+
+msgid "caffeine;nosleep;awake;keepawake;keepon;"
+msgstr "caffeine;uykusuz;uyanık;uyanık kal;devam et;"
+
+msgid "Disable Automatic Suspending"
+msgstr "Kendiliğinden Askıya Almayı Devre Dışı Bırak"
+
+msgid "Disable Screen Blanking and Locking"
+msgstr "Ekran Karartma ve Kilitlemeyi Devre Dışı Bırak"
+
+msgid "Current state: System default"
+msgstr "Geçerli durum: Sistem öntanımlısı"
+
+msgid "Current state: Indefinitely"
+msgstr "Geçerli durum: Süresiz"
+
+msgid "Stimulator is active"
+msgstr "Stimulator etkin"
+
+msgid "Close Stimulator?"
+msgstr "Stimulator Kapatılsın Mı?"
+
+msgid "Stimulator is active, do you want to close it?"
+msgstr "Stimulator etkin, kapatmak istiyor musunuz?"
+
+msgid "Cancel"
+msgstr "İptal"
+
+msgid "Close"
+msgstr "Kapat"
+
+msgid "Preferences"
+msgstr "Tercihler"
+
+msgid "Theme"
+msgstr "Tema"
+
+msgid "System Theme"
+msgstr "Sistem teması"
+
+msgid "Light"
+msgstr "Açık"
+
+msgid "Dark"
+msgstr "Koyu"
+
+msgid "Keyboard Shortcuts"
+msgstr "Klavye Kısayolları"
+
+msgid "General"
+msgstr "Genel"
+
+msgid "Open Menu"
+msgstr "Menüyü Aç"
+
+msgid "Quit"
+msgstr "Çık"
+
+msgid "About Stimulator"
+msgstr "Stimulator Hakkında"
+
+msgid "Unsupported System"
+msgstr "Desteklenmeyen Sistem"
+
+msgid "Your desktop environment doesn't support Stimulator, click close to quit"
+msgstr "Masaüstünüz Stimulator uygulamasını desteklemiyor, çıkmak için kapat'a tıklayın"
+
+msgid "Run in Background"
+msgstr "Arka Planda Çalış"
+
+msgid "Show"
+msgstr "Göster"
+
+msgid "Stimulator is running in the backround"
+msgstr "Stimulator arka planda çalışıyor"
+
+msgid "Ask Confirmation"
+msgstr "Onay İste"
+
+msgid "Behavior on Closing"
+msgstr "Kapatma Davranışı"
+
+msgid "Applies only while active"
+msgstr "Yalnızca etkinken geçerlidir"
+
+msgid "Main Menu"
+msgstr "Ana Menü"
+
+msgid "translator-credits"
+msgstr "Sabri Ünal"
+
+msgid "Suspend Timer"
+msgstr ""
+
+msgid "Idle Timer"
+msgstr ""
+
+msgid "Auto-disable after selected time"
+msgstr ""
+
+msgid "5 minutes"
+msgstr ""
+
+msgid "15 minutes"
+msgstr ""
+
+msgid "Never"
+msgstr ""
+
+msgid "Current state"
+msgstr ""
+
+msgid "minutes"
+msgstr ""
+
+msgid "30 minutes"
+msgstr ""
+
+msgid "1 hour"
+msgstr ""
+
+msgid "2 hours"
+msgstr ""
+
+msgid "4 hours"
+msgstr ""
+
+msgid "hour"
+msgstr ""
+
+msgid "hours"
+msgstr ""
+
+msgid "Automatic suspending reactivated"
+msgstr ""
+
+msgid "Automatic idling reactivated"
+msgstr ""

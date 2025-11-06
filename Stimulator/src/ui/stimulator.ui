@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 0.96.1 -->
+<interface>
+  <!-- interface-name stimulator.ui -->
+  <requires lib="gtk" version="4.18"/>
+  <requires lib="libadwaita" version="1.4"/>
+  <object class="GtkApplicationWindow" id="mainWindow">
+    <property name="default-width">450</property>
+    <property name="resizable">False</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkImage" id="mainIcon">
+            <property name="icon-name">io.github.sigmasd.stimulator_inactive</property>
+            <property name="margin-bottom">5</property>
+            <property name="margin-top">10</property>
+            <property name="pixel-size">96</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwPreferencesPage">
+            <child>
+              <object class="AdwPreferencesGroup">
+                <child>
+                  <object class="AdwSwitchRow" id="suspendRow">
+                    <property name="subtitle">Current state: System default</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwSwitchRow" id="idleRow">
+                    <property name="sensitive">False</property>
+                    <property name="subtitle">Current state: System default</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
