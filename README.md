@@ -1,14 +1,19 @@
 # GTK FFI for Deno
 
-High-level TypeScript bindings for GTK4 and libadwaita using Deno's FFI (Foreign Function Interface).
+High-level TypeScript bindings for GTK4 and libadwaita using Deno's FFI (Foreign
+Function Interface).
 
 **Available on JSR:** `@sigmasd/gtk`
 
 ## Overview
 
-This project provides idiomatic TypeScript wrappers around GTK4, GLib, GIO, GObject, and libadwaita, allowing you to build native desktop applications using Deno. The library abstracts away low-level pointer manipulation and provides a clean, object-oriented API similar to native GTK bindings in other languages.
+This project provides idiomatic TypeScript wrappers around GTK4, GLib, GIO,
+GObject, and libadwaita, allowing you to build native desktop applications using
+Deno. The library abstracts away low-level pointer manipulation and provides a
+clean, object-oriented API similar to native GTK bindings in other languages.
 
-**Cross-platform support:** Works on Linux, macOS, and Windows (via MSYS2/GTK for Windows).
+**Cross-platform support:** Works on Linux, macOS, and Windows (via MSYS2/GTK
+for Windows).
 
 ## Features
 
@@ -152,6 +157,7 @@ deno run --allow-ffi examples/widgets-demo.ts
 ## Available Widgets
 
 ### Containers
+
 - `Box` - Horizontal/vertical container
 - `Frame` - Container with border and optional label
 - `ScrolledWindow` - Scrollable container
@@ -159,6 +165,7 @@ deno run --allow-ffi examples/widgets-demo.ts
 - `ToolbarView` - Adwaita toolbar view
 
 ### Basic Widgets
+
 - `Label` - Text display
 - `Button` - Clickable button
 - `Entry` - Text input field
@@ -166,6 +173,7 @@ deno run --allow-ffi examples/widgets-demo.ts
 - `MenuButton` - Button that opens a menu
 
 ### Windows
+
 - `Window` - Basic window
 - `ApplicationWindow` - Main application window
 - `PreferencesWindow` - Adwaita preferences dialog
@@ -173,6 +181,7 @@ deno run --allow-ffi examples/widgets-demo.ts
 - `AboutDialog` - About dialog
 
 ### Adwaita Widgets
+
 - `HeaderBar` - Modern GNOME header bar
 - `ActionRow` - List row with title/subtitle
 - `ComboRow` - Combo box row for preferences
@@ -180,6 +189,7 @@ deno run --allow-ffi examples/widgets-demo.ts
 - `PreferencesGroup` - Group within preferences page
 
 ### Other
+
 - `Builder` - Load UI from XML files
 - `Menu` - Application menu
 - `SimpleAction` - Application action
@@ -194,22 +204,18 @@ import {
   ApplicationWindow,
   Box,
   Button,
-  Label,
   Entry,
+  Label,
 } from "jsr:@sigmasd/gtk";
 
 // Import constants
 import {
-  GTK_ORIENTATION_VERTICAL,
   GTK_ORIENTATION_HORIZONTAL,
+  GTK_ORIENTATION_VERTICAL,
 } from "jsr:@sigmasd/gtk";
 
 // Import Adwaita widgets
-import {
-  HeaderBar,
-  PreferencesWindow,
-  StyleManager,
-} from "jsr:@sigmasd/gtk";
+import { HeaderBar, PreferencesWindow, StyleManager } from "jsr:@sigmasd/gtk";
 
 // Import event loop utilities (optional)
 import { runMainLoop } from "jsr:@sigmasd/gtk/eventloop";
@@ -275,6 +281,7 @@ Deno.exit(exitCode);
 ### Low-Level FFI (`src/gtk-ffi.ts`)
 
 The core module handles:
+
 - Dynamic library loading (`dlopen`)
 - FFI symbol definitions
 - Raw GTK/GLib C function bindings
@@ -283,6 +290,7 @@ The core module handles:
 ### High-Level Wrappers
 
 Object-oriented classes that:
+
 - Wrap raw pointers in TypeScript classes
 - Provide idiomatic methods
 - Handle C string conversions
@@ -292,6 +300,7 @@ Object-oriented classes that:
 ### No Pointer Exposure
 
 Application code never needs to:
+
 - Call `Deno.UnsafePointer` directly
 - Manage `.ptr` properties manually
 - Handle memory allocation/deallocation
@@ -350,8 +359,10 @@ export class MyWidget extends Widget {
 
 - **Limited widgets**: Not all GTK widgets are wrapped yet
 - **No CSS provider**: Custom styling via CSS not yet supported
-- **Signal lifetime**: Callbacks remain valid for process lifetime (no explicit disconnect/cleanup yet)
-- **Platform testing**: While cross-platform library loading is implemented, primary testing has been on Linux
+- **Signal lifetime**: Callbacks remain valid for process lifetime (no explicit
+  disconnect/cleanup yet)
+- **Platform testing**: While cross-platform library loading is implemented,
+  primary testing has been on Linux
 
 ## Roadmap
 
@@ -373,10 +384,10 @@ Create a new file `my-app.ts`:
 import {
   Application,
   ApplicationWindow,
-  Button,
   Box,
-  Label,
+  Button,
   GTK_ORIENTATION_VERTICAL,
+  Label,
 } from "jsr:@sigmasd/gtk";
 
 const app = new Application("com.example.MyApp", 0);
@@ -437,4 +448,5 @@ MIT License - See LICENSE file for details
 
 ## Acknowledgments
 
-Built with inspiration from GTK bindings in other languages (PyGObject, gtk-rs, etc.) and adapted for Deno's FFI capabilities.
+Built with inspiration from GTK bindings in other languages (PyGObject, gtk-rs,
+etc.) and adapted for Deno's FFI capabilities.
