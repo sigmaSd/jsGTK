@@ -5,6 +5,8 @@ Function Interface).
 
 **Available on JSR:** `@sigmasd/gtk`
 
+<img width="1366" height="736" alt="image" src="https://github.com/user-attachments/assets/cff407a9-360e-40df-adc3-c846902f86d6" />
+
 ## Overview
 
 This project provides idiomatic TypeScript wrappers around GTK4, GLib, GIO,
