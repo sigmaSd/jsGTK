@@ -249,23 +249,27 @@ The EventLoop uses a hybrid approach:
 ### When to Use EventLoop
 
 Use `EventLoop` when you need:
+
 - ✅ `async/await` and Promises in your GTK app
 - ✅ `fetch()` or other async Deno APIs
 - ✅ `setTimeout()`, `setInterval()` to work properly
 - ✅ Integration with async libraries
 
 Use standard `app.run()` when:
+
 - ✅ You only need synchronous GTK event handling
 - ✅ Simple applications without async operations
 
 ### Important: Window Close Handling
 
-When using `EventLoop`, you **must** handle the window `close-request` signal to stop the event loop, otherwise the application will continue running in the terminal after the window closes:
+When using `EventLoop`, you **must** handle the window `close-request` signal to
+stop the event loop, otherwise the application will continue running in the
+terminal after the window closes:
 
 ```typescript
 win.connect("close-request", () => {
-  eventLoop.stop();  // Stop the event loop
-  return false;      // Allow window to close
+  eventLoop.stop(); // Stop the event loop
+  return false; // Allow window to close
 });
 ```
 
