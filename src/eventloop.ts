@@ -1,6 +1,6 @@
 // Event loop integration for GTK FFI to support async/await with GLib MainContext
 
-import { Application } from "./gtk-ffi.ts";
+import type { Application } from "./gtk-ffi.ts";
 
 export interface EventLoopOptions {
   /**

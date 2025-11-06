@@ -17,8 +17,8 @@ import {
   ScrolledWindow,
   StringList,
   ToolbarView,
-  Widget,
-} from "../src/gtk-ffi.ts";
+  type Widget,
+} from "@sigmasd/gtk";
 
 const APP_ID = "com.example.WidgetsDemo";
 const APP_FLAGS = 0;

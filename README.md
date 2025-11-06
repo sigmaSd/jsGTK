@@ -2,6 +2,8 @@
 
 High-level TypeScript bindings for GTK4 and libadwaita using Deno's FFI (Foreign Function Interface).
 
+**Available on JSR:** `@sigmasd/gtk`
+
 ## Overview
 
 This project provides idiomatic TypeScript wrappers around GTK4, GLib, GIO, GObject, and libadwaita, allowing you to build native desktop applications using Deno. The library abstracts away low-level pointer manipulation and provides a clean, object-oriented API similar to native GTK bindings in other languages.
@@ -42,6 +44,35 @@ sudo dnf install gtk4 libadwaita
 sudo pacman -S gtk4 libadwaita
 ```
 
+## Installation
+
+Import directly from JSR in your Deno project:
+
+```typescript
+import {
+  Application,
+  ApplicationWindow,
+  Button,
+  Label,
+} from "jsr:@sigmasd/gtk";
+```
+
+Or add to your `deno.json`:
+
+```json
+{
+  "imports": {
+    "@sigmasd/gtk": "jsr:@sigmasd/gtk@^0.1.0"
+  }
+}
+```
+
+Then import:
+
+```typescript
+import { Application, Button } from "@sigmasd/gtk";
+```
+
 ## Quick Start
 
 ### Simple Example
@@ -54,7 +85,7 @@ import {
   Button,
   GTK_ORIENTATION_VERTICAL,
   Label,
-} from "./src/gtk-ffi.ts";
+} from "jsr:@sigmasd/gtk";
 
 const app = new Application("com.example.HelloWorld", 0);
 
@@ -88,12 +119,16 @@ app.run([]);
 ### Run the Example
 
 ```bash
+# Using JSR
+deno run --allow-ffi your-app.ts
+
+# Or from the repository
 deno run --allow-ffi examples/simple.ts
 ```
 
 ## Examples
 
-The `examples/` directory contains sample applications:
+The repository's `examples/` directory contains sample applications:
 
 - **`simple.ts`**: Minimal hello world example with button
 - **`widgets-demo.ts`**: Comprehensive demo showing various widgets:
@@ -149,6 +184,36 @@ deno run --allow-ffi examples/widgets-demo.ts
 - `Menu` - Application menu
 - `SimpleAction` - Application action
 - `StyleManager` - Theme and appearance management
+
+## Usage
+
+```typescript
+// Import main widgets
+import {
+  Application,
+  ApplicationWindow,
+  Box,
+  Button,
+  Label,
+  Entry,
+} from "jsr:@sigmasd/gtk";
+
+// Import constants
+import {
+  GTK_ORIENTATION_VERTICAL,
+  GTK_ORIENTATION_HORIZONTAL,
+} from "jsr:@sigmasd/gtk";
+
+// Import Adwaita widgets
+import {
+  HeaderBar,
+  PreferencesWindow,
+  StyleManager,
+} from "jsr:@sigmasd/gtk";
+
+// Import event loop utilities (optional)
+import { runMainLoop } from "jsr:@sigmasd/gtk/eventloop";
+```
 
 ## API Highlights
 
@@ -246,6 +311,7 @@ gtk/
 ├── examples/
 │   ├── simple.ts       # Simple hello world
 │   └── widgets-demo.ts # Comprehensive widget demo
+├── deno.json           # Package configuration
 └── README.md
 ```
 
@@ -298,6 +364,55 @@ export class MyWidget extends Widget {
 - [ ] Split into modular files (gtk.ts, gio.ts, adwaita.ts)
 - [ ] DBus bindings for desktop integration
 - [ ] AppIndicator/StatusNotifier for system tray
+
+## Getting Started with Your First App
+
+Create a new file `my-app.ts`:
+
+```typescript
+import {
+  Application,
+  ApplicationWindow,
+  Button,
+  Box,
+  Label,
+  GTK_ORIENTATION_VERTICAL,
+} from "jsr:@sigmasd/gtk";
+
+const app = new Application("com.example.MyApp", 0);
+
+app.connect("activate", () => {
+  const win = new ApplicationWindow(app);
+  win.setTitle("My First GTK App");
+  win.setDefaultSize(400, 300);
+
+  const box = new Box(GTK_ORIENTATION_VERTICAL, 12);
+  box.setMarginTop(24);
+  box.setMarginBottom(24);
+  box.setMarginStart(24);
+  box.setMarginEnd(24);
+
+  const label = new Label("Welcome to GTK with Deno!");
+  const button = new Button("Click Me");
+
+  button.connect("clicked", () => {
+    label.setText("Button clicked!");
+  });
+
+  box.append(label);
+  box.append(button);
+  win.setChild(box);
+  win.setProperty("visible", true);
+});
+
+app.run([]);
+```
+
+Run it:
+
+```bash
+deno run --allow-ffi my-app.ts
+```
 
 ## Contributing
 

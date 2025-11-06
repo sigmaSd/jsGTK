@@ -7,7 +7,7 @@ import {
   Button,
   GTK_ORIENTATION_VERTICAL,
   Label,
-} from "../src/gtk-ffi.ts";
+} from "@sigmasd/gtk";
 
 const APP_ID = "com.example.SimpleDemo";
 const APP_FLAGS = 0;
