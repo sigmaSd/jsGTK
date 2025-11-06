@@ -11,10 +11,6 @@ function getLibPath(libName: string, soversion: string): string {
     // Try to load library - system linker will handle version resolution
     // It searches in standard locations: /usr/lib, /usr/local/lib, LD_LIBRARY_PATH
     return `${libName}.so.${soversion}`;
-  } else if (OS === "windows") {
-    // Windows uses .dll (GTK4 on Windows is uncommon but possible via MSYS2)
-    const baseName = libName.replace("lib", "");
-    return `${baseName}-${soversion}.dll`;
   }
   return `${libName}.so.${soversion}`;
 }
@@ -63,6 +59,30 @@ const LIB_PATHS = OS === "darwin"
       "/opt/homebrew/lib/libgio-2.0.dylib",
       "/usr/local/lib/libgio-2.0.dylib",
       "libgio-2.0.dylib",
+    ]),
+  }
+  : OS === "windows"
+  ? {
+    // Windows: MSYS2/MinGW64 keeps the "lib" prefix
+    gtk: tryOpenLib([
+      "C:\\tools\\msys64\\mingw64\\bin\\libgtk-4-1.dll",
+      "libgtk-4-1.dll",
+    ]),
+    adwaita: tryOpenLib([
+      "C:\\tools\\msys64\\mingw64\\bin\\libadwaita-1-0.dll",
+      "libadwaita-1-0.dll",
+    ]),
+    glib: tryOpenLib([
+      "C:\\tools\\msys64\\mingw64\\bin\\libglib-2.0-0.dll",
+      "libglib-2.0-0.dll",
+    ]),
+    gobject: tryOpenLib([
+      "C:\\tools\\msys64\\mingw64\\bin\\libgobject-2.0-0.dll",
+      "libgobject-2.0-0.dll",
+    ]),
+    gio: tryOpenLib([
+      "C:\\tools\\msys64\\mingw64\\bin\\libgio-2.0-0.dll",
+      "libgio-2.0-0.dll",
     ]),
   }
   : {
