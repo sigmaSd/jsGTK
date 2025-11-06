@@ -382,7 +382,6 @@ The `eventloop.ts` module provides:
 
 - `pollInterval` - Milliseconds to sleep when idle (default: 16)
 
-````
 ### Adding New Widgets
 
 1. Add FFI symbol definitions to the appropriate `dlopen` call
@@ -412,7 +411,7 @@ export class MyWidget extends Widget {
     gtk.symbols.gtk_my_widget_set_text(this.ptr, textCStr);
   }
 }
-````
+```
 
 ## Known Limitations
 
