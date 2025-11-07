@@ -308,6 +308,10 @@ export class Widget extends GObject {
     return gtk.symbols.gtk_widget_get_visible(this.ptr);
   }
 
+  setSizeRequest(width: number, height: number): void {
+    gtk.symbols.gtk_widget_set_size_request(this.ptr, width, height);
+  }
+
   setApplication(app: Application): void {
     this.setProperty("application", app.ptr);
   }
@@ -504,6 +508,26 @@ export class Button extends Widget {
   setLabel(label: string): void {
     const labelCStr = cstr(label);
     gtk.symbols.gtk_button_set_label(this.ptr, labelCStr);
+  }
+}
+
+// GTK Picture
+export class Picture extends Widget {
+  constructor(filename?: string) {
+    const ptr = gtk.symbols.gtk_picture_new();
+    super(ptr);
+    if (filename) {
+      this.setFilename(filename);
+    }
+  }
+
+  setFilename(filename: string): void {
+    const filenameCStr = cstr(filename);
+    gtk.symbols.gtk_picture_set_filename(this.ptr, filenameCStr);
+  }
+
+  setCanShrink(canShrink: boolean): void {
+    gtk.symbols.gtk_picture_set_can_shrink(this.ptr, canShrink);
   }
 }
 

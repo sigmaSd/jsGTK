@@ -232,6 +232,15 @@ export const gtk = Deno.dlopen(LIB_PATHS.gtk, {
   gtk_label_set_use_markup: { parameters: ["pointer", "bool"], result: "void" },
   gtk_button_new_with_label: { parameters: ["buffer"], result: "pointer" },
   gtk_button_set_label: { parameters: ["pointer", "buffer"], result: "void" },
+  gtk_picture_new: { parameters: [], result: "pointer" },
+  gtk_picture_set_filename: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_picture_set_can_shrink: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
   gtk_window_set_title: { parameters: ["pointer", "buffer"], result: "void" },
   gtk_window_set_default_size: {
     parameters: ["pointer", "i32", "i32"],
@@ -278,6 +287,10 @@ export const gtk = Deno.dlopen(LIB_PATHS.gtk, {
   gtk_widget_set_vexpand: { parameters: ["pointer", "bool"], result: "void" },
   gtk_widget_set_visible: { parameters: ["pointer", "bool"], result: "void" },
   gtk_widget_get_visible: { parameters: ["pointer"], result: "bool" },
+  gtk_widget_set_size_request: {
+    parameters: ["pointer", "i32", "i32"],
+    result: "void",
+  },
   gtk_widget_unparent: { parameters: ["pointer"], result: "void" },
   gtk_widget_get_first_child: { parameters: ["pointer"], result: "pointer" },
   gtk_widget_get_next_sibling: { parameters: ["pointer"], result: "pointer" },
