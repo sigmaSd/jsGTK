@@ -1,5 +1,4 @@
 // deno-lint-ignore-file
-// @ts-nocheck Remove this when editing this file to get type checks, its just here to make deno check happy
 /**
  * Deno compatibility layer for Bun
  * This module provides Deno APIs implemented using Bun's FFI equivalents
@@ -132,6 +131,7 @@ if (navigator.userAgent.startsWith("Bun")) {
         return Number(value);
       }
 
+      // @ts-ignore TypedArray exists in Bun ?
       static of(buffer: ArrayBuffer | TypedArray) {
         return ptr(buffer);
       }

@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "types": [
+      "./node_modules/@types/bun/index.d.ts"
+    ]
+  }
+}
