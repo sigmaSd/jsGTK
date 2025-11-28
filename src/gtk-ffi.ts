@@ -57,7 +57,7 @@
  */
 
 // Import library instances from internal libs module
-import { adwaita, gio, glib, gobject, gtk } from "./libs.ts";
+import { adwaita, cairo, gio, glib, gobject, gtk } from "./libs.ts";
 
 // GType fundamental types
 export const G_TYPE_INVALID = 0 << 2;
@@ -334,6 +334,10 @@ export class Widget extends GObject {
   setTransientForWidget(parent: Widget): void {
     this.setProperty("transient-for", parent.ptr);
   }
+
+  queueDraw(): void {
+    gtk.symbols.gtk_widget_queue_draw(this.ptr);
+  }
 }
 
 // AdwApplication extends GtkApplication extends GApplication extends GObject
@@ -564,6 +568,112 @@ export class Picture extends Widget {
 
   setCanShrink(canShrink: boolean): void {
     gtk.symbols.gtk_picture_set_can_shrink(this.ptr, canShrink);
+  }
+}
+
+// Cairo Context Wrapper
+export class CairoContext {
+  private ptr: Deno.PointerValue;
+
+  constructor(ptr: Deno.PointerValue) {
+    this.ptr = ptr;
+  }
+
+  setSourceRgb(r: number, g: number, b: number): void {
+    cairo.symbols.cairo_set_source_rgb(this.ptr, r, g, b);
+  }
+
+  setSourceRgba(r: number, g: number, b: number, a: number): void {
+    cairo.symbols.cairo_set_source_rgba(this.ptr, r, g, b, a);
+  }
+
+  setLineWidth(width: number): void {
+    cairo.symbols.cairo_set_line_width(this.ptr, width);
+  }
+
+  moveTo(x: number, y: number): void {
+    cairo.symbols.cairo_move_to(this.ptr, x, y);
+  }
+
+  lineTo(x: number, y: number): void {
+    cairo.symbols.cairo_line_to(this.ptr, x, y);
+  }
+
+  stroke(): void {
+    cairo.symbols.cairo_stroke(this.ptr);
+  }
+
+  fill(): void {
+    cairo.symbols.cairo_fill(this.ptr);
+  }
+
+  rectangle(x: number, y: number, width: number, height: number): void {
+    cairo.symbols.cairo_rectangle(this.ptr, x, y, width, height);
+  }
+
+  arc(
+    xc: number,
+    yc: number,
+    radius: number,
+    angle1: number,
+    angle2: number,
+  ): void {
+    cairo.symbols.cairo_arc(this.ptr, xc, yc, radius, angle1, angle2);
+  }
+
+  paint(): void {
+    cairo.symbols.cairo_paint(this.ptr);
+  }
+}
+
+// GTK DrawingArea
+export class DrawingArea extends Widget {
+  private drawCallback?: Deno.UnsafeCallback;
+
+  constructor() {
+    const ptr = gtk.symbols.gtk_drawing_area_new();
+    super(ptr);
+  }
+
+  setDrawFunc(
+    callback: (
+      area: DrawingArea,
+      cr: CairoContext,
+      width: number,
+      height: number,
+    ) => void,
+  ): void {
+    this.drawCallback = new Deno.UnsafeCallback(
+      {
+        parameters: ["pointer", "pointer", "i32", "i32", "pointer"],
+        result: "void",
+      } as Deno.UnsafeCallbackDefinition,
+      (
+        _areaPtr: Deno.PointerValue,
+        crPtr: Deno.PointerValue,
+        width: number,
+        height: number,
+        _userData: Deno.PointerValue,
+      ) => {
+        const cr = new CairoContext(crPtr);
+        callback(this, cr, width, height);
+      },
+    );
+
+    gtk.symbols.gtk_drawing_area_set_draw_func(
+      this.ptr,
+      this.drawCallback.pointer as Deno.PointerValue,
+      null,
+      null,
+    );
+  }
+
+  setContentWidth(width: number): void {
+    gtk.symbols.gtk_drawing_area_set_content_width(this.ptr, width);
+  }
+
+  setContentHeight(height: number): void {
+    gtk.symbols.gtk_drawing_area_set_content_height(this.ptr, height);
   }
 }
 

@@ -60,6 +60,11 @@ const LIB_PATHS = OS === "darwin"
       "/usr/local/lib/libgio-2.0.dylib",
       "libgio-2.0.dylib",
     ]),
+    cairo: tryOpenLib([
+      "/opt/homebrew/lib/libcairo.2.dylib",
+      "/usr/local/lib/libcairo.2.dylib",
+      "libcairo.2.dylib",
+    ]),
   }
   : OS === "windows"
   ? {
@@ -84,6 +89,10 @@ const LIB_PATHS = OS === "darwin"
       "C:\\tools\\msys64\\mingw64\\bin\\libgio-2.0-0.dll",
       "libgio-2.0-0.dll",
     ]),
+    cairo: tryOpenLib([
+      "C:\\tools\\msys64\\mingw64\\bin\\libcairo-2.dll",
+      "libcairo-2.dll",
+    ]),
   }
   : {
     gtk: getLibPath("libgtk-4", "1"),
@@ -91,6 +100,7 @@ const LIB_PATHS = OS === "darwin"
     glib: getLibPath("libglib-2.0", "0"),
     gobject: getLibPath("libgobject-2.0", "0"),
     gio: getLibPath("libgio-2.0", "0"),
+    cairo: getLibPath("libcairo", "2"),
   };
 
 // Load GLib - Core utilities and main loop
@@ -112,6 +122,40 @@ export const glib = Deno.dlopen(LIB_PATHS.glib, {
   g_free: { parameters: ["pointer"], result: "void" },
   g_strdup: { parameters: ["pointer"], result: "pointer" },
   g_malloc0: { parameters: ["usize"], result: "pointer" },
+});
+
+// Load Cairo - 2D Graphics Library
+export const cairo = Deno.dlopen(LIB_PATHS.cairo, {
+  cairo_set_source_rgb: {
+    parameters: ["pointer", "f64", "f64", "f64"],
+    result: "void",
+  },
+  cairo_set_source_rgba: {
+    parameters: ["pointer", "f64", "f64", "f64", "f64"],
+    result: "void",
+  },
+  cairo_set_line_width: { parameters: ["pointer", "f64"], result: "void" },
+  cairo_move_to: {
+    parameters: ["pointer", "f64", "f64"],
+    result: "void",
+  },
+  cairo_line_to: {
+    parameters: ["pointer", "f64", "f64"],
+    result: "void",
+  },
+  cairo_stroke: { parameters: ["pointer"], result: "void" },
+  cairo_fill: { parameters: ["pointer"], result: "void" },
+  cairo_rectangle: {
+    parameters: ["pointer", "f64", "f64", "f64", "f64"],
+    result: "void",
+  },
+  cairo_arc: {
+    parameters: ["pointer", "f64", "f64", "f64", "f64", "f64"],
+    result: "void",
+  },
+  cairo_paint: { parameters: ["pointer"], result: "void" },
+  cairo_scale: { parameters: ["pointer", "f64", "f64"], result: "void" },
+  cairo_translate: { parameters: ["pointer", "f64", "f64"], result: "void" },
 });
 
 // Load GObject - Object system and type system
@@ -294,6 +338,20 @@ export const gtk = Deno.dlopen(LIB_PATHS.gtk, {
   gtk_widget_unparent: { parameters: ["pointer"], result: "void" },
   gtk_widget_get_first_child: { parameters: ["pointer"], result: "pointer" },
   gtk_widget_get_next_sibling: { parameters: ["pointer"], result: "pointer" },
+  gtk_widget_queue_draw: { parameters: ["pointer"], result: "void" },
+  gtk_drawing_area_new: { parameters: [], result: "pointer" },
+  gtk_drawing_area_set_draw_func: {
+    parameters: ["pointer", "function", "pointer", "pointer"],
+    result: "void",
+  },
+  gtk_drawing_area_set_content_width: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_drawing_area_set_content_height: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
   gtk_frame_new: { parameters: ["buffer"], result: "pointer" },
   gtk_frame_set_child: { parameters: ["pointer", "pointer"], result: "void" },
   gtk_scrolled_window_new: { parameters: [], result: "pointer" },
