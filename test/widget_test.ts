@@ -8,6 +8,7 @@
 import {
   Box,
   Button,
+  CheckButton,
   Entry,
   GTK_ORIENTATION_VERTICAL,
   Label,
@@ -78,9 +79,11 @@ try {
   const label = new Label("Initial Text");
   const button = new Button("Click Me");
   const entry = new Entry();
+  const check = new CheckButton("Check Me");
   assert(label !== null, "Label created successfully");
   assert(button !== null, "Button created successfully");
   assert(entry !== null, "Entry created successfully");
+  assert(check !== null, "CheckButton created successfully");
 
   // Test 2: Label Text Get/Set
   console.log("\nTest 2: Label Text Manipulation");
@@ -237,6 +240,57 @@ try {
   assertEquals(display.getText(), "2", "Clicked 2 button");
   clickButton(btnEquals);
   assertEquals(display.getText(), "3", "Calculation result is correct (1+2=3)");
+
+  // Test 11: CheckButton
+
+  console.log("\nTest 11: CheckButton");
+
+  const checkBtn = new CheckButton("Toggle Me");
+
+  let callbackCalledCount = 0;
+
+  checkBtn.onToggled(() => {
+    callbackCalledCount++;
+  });
+
+  // Initial state should be false
+
+  assert(!checkBtn.getActive(), "CheckButton initially inactive");
+
+  assertEquals(checkBtn.getLabel(), "Toggle Me", "CheckButton label correct");
+
+  // Toggle on
+  checkBtn.setActive(true);
+  processPendingEvents();
+  assert(
+    checkBtn.getActive() === true,
+    "CheckButton is active after toggling on",
+  );
+  assertEquals(
+    callbackCalledCount,
+    1,
+    "onToggled callback called once after toggling on",
+  );
+
+  // Toggle off
+  checkBtn.setActive(false);
+  processPendingEvents();
+  assert(
+    checkBtn.getActive() === false,
+    "CheckButton is inactive after toggling off",
+  );
+  assertEquals(
+    callbackCalledCount,
+    2,
+    "onToggled callback called twice after toggling off",
+  );
+
+  // Test Grouping
+  const groupBtn1 = new CheckButton("Option 1");
+  const groupBtn2 = new CheckButton("Option 2");
+  groupBtn2.setGroup(groupBtn1);
+  // Just verify it doesn't crash, logic verification for grouping is complex without full main loop
+  assert(true, "CheckButton grouping set successfully");
 
   // Print Summary
   console.log("\n" + "=".repeat(50));

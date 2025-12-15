@@ -276,6 +276,33 @@ export const gtk = Deno.dlopen(LIB_PATHS.gtk, {
   gtk_label_set_use_markup: { parameters: ["pointer", "bool"], result: "void" },
   gtk_button_new_with_label: { parameters: ["buffer"], result: "pointer" },
   gtk_button_set_label: { parameters: ["pointer", "buffer"], result: "void" },
+  gtk_check_button_new: { parameters: [], result: "pointer" },
+  gtk_check_button_new_with_label: {
+    parameters: ["buffer"],
+    result: "pointer",
+  },
+  gtk_check_button_get_active: { parameters: ["pointer"], result: "bool" },
+  gtk_check_button_set_active: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
+  gtk_check_button_get_label: { parameters: ["pointer"], result: "pointer" },
+  gtk_check_button_set_label: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_check_button_set_group: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_check_button_set_inconsistent: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
+  gtk_check_button_get_inconsistent: {
+    parameters: ["pointer"],
+    result: "bool",
+  },
   gtk_picture_new: { parameters: [], result: "pointer" },
   gtk_picture_set_filename: {
     parameters: ["pointer", "buffer"],

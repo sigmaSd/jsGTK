@@ -551,6 +551,55 @@ export class Button extends Widget {
   }
 }
 
+// GTK CheckButton
+export class CheckButton extends Widget {
+  constructor(label?: string) {
+    let ptr: Deno.PointerValue;
+    if (label) {
+      const labelCStr = cstr(label);
+      ptr = gtk.symbols.gtk_check_button_new_with_label(labelCStr);
+    } else {
+      ptr = gtk.symbols.gtk_check_button_new();
+    }
+    super(ptr);
+  }
+
+  setActive(active: boolean): void {
+    gtk.symbols.gtk_check_button_set_active(this.ptr, active);
+  }
+
+  getActive(): boolean {
+    return gtk.symbols.gtk_check_button_get_active(this.ptr);
+  }
+
+  setLabel(label: string): void {
+    const labelCStr = cstr(label);
+    gtk.symbols.gtk_check_button_set_label(this.ptr, labelCStr);
+  }
+
+  getLabel(): string | null {
+    const ptr = gtk.symbols.gtk_check_button_get_label(this.ptr);
+    return ptr ? readCStr(ptr) : null;
+  }
+
+  setGroup(group: CheckButton): void {
+    gtk.symbols.gtk_check_button_set_group(this.ptr, group.ptr);
+  }
+
+  setInconsistent(inconsistent: boolean): void {
+    gtk.symbols.gtk_check_button_set_inconsistent(this.ptr, inconsistent);
+  }
+
+  getInconsistent(): boolean {
+    return gtk.symbols.gtk_check_button_get_inconsistent(this.ptr);
+  }
+
+  // High-level signal connection for toggled
+  onToggled(callback: () => void): number {
+    return this.connect("toggled", callback);
+  }
+}
+
 // GTK Picture
 export class Picture extends Widget {
   constructor(filename?: string) {
