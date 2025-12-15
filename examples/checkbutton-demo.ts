@@ -4,7 +4,7 @@ import {
   Box,
   CheckButton,
   Label,
-} from "../src/gtk-ffi.ts";
+} from "@sigmasd/gtk";
 
 const app = new Application("com.example.CheckButtonDemo", 0);
 
