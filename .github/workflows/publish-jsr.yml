@@ -23,4 +23,4 @@ jobs:
         run: deno install
 
       - name: Publish package
-        run: deno publish --no-check
+        run: deno publish
