@@ -10,7 +10,4 @@
   "devDependencies": {
     "@types/bun": "^1.3.2"
   },
-  "dependencies": {
-    "@sigma/deno-compat": "npm:@jsr/sigma__deno-compat@0.9.0"
-  }
 }
