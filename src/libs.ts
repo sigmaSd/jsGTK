@@ -214,6 +214,7 @@ export const gio = Deno.dlopen(LIB_PATHS.gio, {
     result: "bool",
   },
   g_application_activate: { parameters: ["pointer"], result: "void" },
+  g_application_get_is_remote: { parameters: ["pointer"], result: "bool" },
   g_simple_action_new: {
     parameters: ["buffer", "pointer"],
     result: "pointer",
@@ -362,6 +363,7 @@ export const gtk = Deno.dlopen(LIB_PATHS.gtk, {
     parameters: ["pointer", "i32", "i32"],
     result: "void",
   },
+  gtk_widget_grab_focus: { parameters: ["pointer"], result: "bool" },
   gtk_widget_unparent: { parameters: ["pointer"], result: "void" },
   gtk_widget_get_first_child: { parameters: ["pointer"], result: "pointer" },
   gtk_widget_get_next_sibling: { parameters: ["pointer"], result: "pointer" },
@@ -404,6 +406,16 @@ export const gtk = Deno.dlopen(LIB_PATHS.gtk, {
     result: "void",
   },
   gtk_list_box_row_get_index: { parameters: ["pointer"], result: "i32" },
+  gtk_spinner_new: { parameters: [], result: "pointer" },
+  gtk_spinner_start: { parameters: ["pointer"], result: "void" },
+  gtk_spinner_stop: { parameters: ["pointer"], result: "void" },
+  gtk_image_new_from_icon_name: { parameters: ["buffer"], result: "pointer" },
+  gtk_image_new_from_file: { parameters: ["buffer"], result: "pointer" },
+  gtk_image_set_from_file: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_image_set_pixel_size: { parameters: ["pointer", "i32"], result: "void" },
   gtk_string_list_new: { parameters: ["pointer"], result: "pointer" },
   gtk_string_list_append: { parameters: ["pointer", "buffer"], result: "void" },
   gtk_string_list_get_string: {
@@ -440,6 +452,16 @@ export const gtk = Deno.dlopen(LIB_PATHS.gtk, {
 export const adwaita = Deno.dlopen(LIB_PATHS.adwaita, {
   adw_init: { parameters: [], result: "void" },
   adw_application_new: { parameters: ["buffer", "i32"], result: "pointer" },
+  adw_window_new: { parameters: [], result: "pointer" },
+  adw_window_set_content: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  adw_application_window_new: { parameters: ["pointer"], result: "pointer" },
+  adw_application_window_set_content: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
   adw_header_bar_new: { parameters: [], result: "pointer" },
   adw_header_bar_pack_end: {
     parameters: ["pointer", "pointer"],
@@ -472,6 +494,10 @@ export const adwaita = Deno.dlopen(LIB_PATHS.adwaita, {
     result: "void",
   },
   adw_toolbar_view_add_top_bar: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  adw_toolbar_view_add_bottom_bar: {
     parameters: ["pointer", "pointer"],
     result: "void",
   },

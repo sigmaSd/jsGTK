@@ -338,6 +338,10 @@ export class Widget extends GObject {
   queueDraw(): void {
     gtk.symbols.gtk_widget_queue_draw(this.ptr);
   }
+
+  grabFocus(): boolean {
+    return gtk.symbols.gtk_widget_grab_focus(this.ptr);
+  }
 }
 
 // AdwApplication extends GtkApplication extends GApplication extends GObject
@@ -363,6 +367,10 @@ export class Application extends GObject {
 
   activate(): void {
     gio.symbols.g_application_activate(this.ptr);
+  }
+
+  getIsRemote(): boolean {
+    return gio.symbols.g_application_get_is_remote(this.ptr);
   }
 
   inhibit(window: Widget | null, flags: number, reason: string): number {
@@ -465,6 +473,10 @@ export class Window extends Widget {
     gtk.symbols.gtk_window_set_modal(this.ptr, modal);
   }
 
+  setDecorated(decorated: boolean): void {
+    this.setProperty("decorated", decorated);
+  }
+
   destroy(): void {
     gtk.symbols.gtk_window_destroy(this.ptr);
   }
@@ -477,6 +489,30 @@ export class Window extends Widget {
   // High-level signal connection for destroy
   onDestroy(callback: () => void): number {
     return this.connect("destroy", callback);
+  }
+}
+
+// LibAdwaita Window extends GtkWindow
+export class AdwWindow extends Window {
+  constructor(ptr?: Deno.PointerValue) {
+    const actualPtr = ptr ?? adwaita.symbols.adw_window_new();
+    super(actualPtr);
+  }
+
+  setContent(content: Widget): void {
+    adwaita.symbols.adw_window_set_content(this.ptr, content.ptr);
+  }
+}
+
+// LibAdwaita ApplicationWindow extends AdwWindow
+export class AdwApplicationWindow extends AdwWindow {
+  constructor(app: Application) {
+    const ptr = adwaita.symbols.adw_application_window_new(app.ptr);
+    super(ptr);
+  }
+
+  override setContent(content: Widget): void {
+    adwaita.symbols.adw_application_window_set_content(this.ptr, content.ptr);
   }
 }
 
@@ -548,6 +584,51 @@ export class Button extends Widget {
   // High-level signal connection for clicked
   onClick(callback: () => void): number {
     return this.connect("clicked", callback);
+  }
+}
+
+// GTK Spinner
+export class Spinner extends Widget {
+  constructor() {
+    const ptr = gtk.symbols.gtk_spinner_new();
+    super(ptr);
+  }
+
+  start(): void {
+    gtk.symbols.gtk_spinner_start(this.ptr);
+  }
+
+  stop(): void {
+    gtk.symbols.gtk_spinner_stop(this.ptr);
+  }
+}
+
+// GTK Image
+export class Image extends Widget {
+  constructor(options?: { iconName?: string; file?: string }) {
+    let ptr: Deno.PointerValue;
+    if (options?.iconName) {
+      ptr = gtk.symbols.gtk_image_new_from_icon_name(cstr(options.iconName));
+    } else if (options?.file) {
+      ptr = gtk.symbols.gtk_image_new_from_file(cstr(options.file));
+    } else {
+      // Default to empty image if no option provided, although usually you'd want one
+      ptr = gtk.symbols.gtk_image_new_from_icon_name(cstr("image-missing"));
+    }
+    super(ptr);
+  }
+
+  setPixelSize(size: number): void {
+    gtk.symbols.gtk_image_set_pixel_size(this.ptr, size);
+  }
+
+  setIconName(iconName: string): void {
+    this.setProperty("icon-name", iconName);
+  }
+
+  setFile(file: string): void {
+    const fileCStr = cstr(file);
+    gtk.symbols.gtk_image_set_from_file(this.ptr, fileCStr);
   }
 }
 
@@ -949,6 +1030,10 @@ export class ToolbarView extends Widget {
 
   addTopBar(topBar: Widget): void {
     adwaita.symbols.adw_toolbar_view_add_top_bar(this.ptr, topBar.ptr);
+  }
+
+  addBottomBar(bottomBar: Widget): void {
+    adwaita.symbols.adw_toolbar_view_add_bottom_bar(this.ptr, bottomBar.ptr);
   }
 }
 
