@@ -471,6 +471,10 @@ export const adwaita = Deno.dlopen(LIB_PATHS.adwaita, {
     parameters: ["pointer", "pointer"],
     result: "void",
   },
+  adw_header_bar_set_title_widget: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
   adw_about_dialog_new: { parameters: [], result: "pointer" },
   adw_about_dialog_set_application_name: {
     parameters: ["pointer", "buffer"],

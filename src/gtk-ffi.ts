@@ -974,6 +974,10 @@ export class HeaderBar extends Widget {
   packEnd(child: Widget): void {
     adwaita.symbols.adw_header_bar_pack_end(this.ptr, child.ptr);
   }
+
+  setTitleWidget(widget: Widget): void {
+    adwaita.symbols.adw_header_bar_set_title_widget(this.ptr, widget.ptr);
+  }
 }
 
 // AdwAboutDialog extends AdwDialog extends GtkWidget
