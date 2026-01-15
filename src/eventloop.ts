@@ -78,6 +78,7 @@ export class EventLoop {
     this.#isRunning = true;
 
     // Hybrid event loop: fast when busy, efficient when idle
+    let idleCount = 0;
     while (this.#isRunning) {
       // Check if there are pending events before processing
       const hadEvents = glib.symbols.g_main_context_pending(
@@ -91,14 +92,19 @@ export class EventLoop {
 
       // Adapt sleep strategy based on event activity
       if (hadEvents) {
-        // Events were processed - check again immediately with minimal delay
-        // This gives sub-millisecond response time during active periods
+        idleCount = 0;
         await new Promise((resolve) =>
           queueMicrotask(() => resolve(undefined))
         );
       } else {
-        // No events - sleep for the full interval to save CPU
-        await new Promise((resolve) => setTimeout(resolve, this.#pollInterval));
+        idleCount++;
+        console.log(idleCount);
+        // Exponential backoff: 16ms, 32ms, 64ms, ... up to 250ms
+        const delay = Math.min(
+          this.#pollInterval * Math.pow(2, Math.min(idleCount, 4)),
+          250,
+        );
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
   }
