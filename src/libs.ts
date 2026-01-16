@@ -474,6 +474,13 @@ export const adwaita = Deno.dlopen(LIB_PATHS.adwaita, {
 
 // Initialize Adwaita (and GTK) automatically when the library is loaded
 // Guard against double initialization which can happen when running multiple test files in the same process
-if (!gtk.symbols.gtk_is_initialized()) {
+const isInitialized = gtk.symbols.gtk_is_initialized();
+console.log(`[libs.ts] Checking gtk_is_initialized: ${isInitialized}`);
+
+if (!isInitialized) {
+  console.log("[libs.ts] Initializing Adwaita...");
   adwaita.symbols.adw_init();
+  console.log("[libs.ts] Adwaita initialized.");
+} else {
+  console.log("[libs.ts] Adwaita/GTK already initialized, skipping.");
 }
