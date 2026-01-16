@@ -73,6 +73,12 @@ export class Widget extends GObject {
   grabFocus(): boolean {
     return gtk.symbols.gtk_widget_grab_focus(this.ptr);
   }
+
+  getDisplay(): Display {
+    const ptr = gtk.symbols.gtk_widget_get_display(this.ptr);
+    // deno-lint-ignore no-explicit-any
+    return new (Display as any)(ptr);
+  }
 }
 
 // AdwApplication extends GtkApplication extends GApplication extends GObject
@@ -671,6 +677,24 @@ export class Display extends GObject {
     const ptr = gtk.symbols.gdk_display_get_default();
     if (!ptr) return null;
     return new Display(ptr);
+  }
+
+  getClipboard(): Clipboard {
+    const ptr = gtk.symbols.gdk_display_get_clipboard(this.ptr);
+    // deno-lint-ignore no-explicit-any
+    return new (Clipboard as any)(ptr);
+  }
+}
+
+// GDK Clipboard wrapper
+export class Clipboard extends GObject {
+  private constructor(ptr: Deno.PointerValue) {
+    super(ptr);
+  }
+
+  set(text: string): void {
+    const textCStr = cstr(text);
+    gtk.symbols.gdk_clipboard_set_text(this.ptr, textCStr);
   }
 }
 
