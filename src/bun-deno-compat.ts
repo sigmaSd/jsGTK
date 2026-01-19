@@ -72,22 +72,42 @@ if (navigator.userAgent.startsWith("Bun")) {
 
     static dlopen(path: string, symbols: Record<string, any>) {
       const bunSymbols: Record<string, any> = {};
+      const optionalSymbols: Record<string, any> = {};
 
       for (const name in symbols) {
         const symbol = symbols[name];
         if ("type" in symbol) {
           throw new Error("Symbol type notation not supported");
+        }
+
+        const bunSymbol = {
+          args: symbol.parameters.map((type: string) =>
+            this.transformFFIType(type)
+          ),
+          returns: this.transformFFIType(symbol.result),
+        };
+
+        if (symbol.optional) {
+          optionalSymbols[name] = bunSymbol;
         } else {
-          bunSymbols[name] = {
-            args: symbol.parameters.map((type: string) =>
-              this.transformFFIType(type)
-            ),
-            returns: this.transformFFIType(symbol.result),
-          };
+          bunSymbols[name] = bunSymbol;
         }
       }
 
       const lib = dlopen(path, bunSymbols);
+
+      // Try to load optional symbols
+      for (const name in optionalSymbols) {
+        try {
+          const optLib = dlopen(path, {
+            [name]: optionalSymbols[name],
+          });
+          (lib.symbols as any)[name] = optLib.symbols[name];
+        } catch (_e) {
+          // Symbol not found or failed to load, skip it
+        }
+      }
+
       return lib;
     }
 
