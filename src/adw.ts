@@ -154,6 +154,17 @@ export class PreferencesGroup extends Widget {
   add(widget: Widget | ActionRow | ComboRow): void {
     adwaita.symbols.adw_preferences_group_add(this.ptr, widget.ptr);
   }
+
+  setTitle(title: string): void {
+    adwaita.symbols.adw_preferences_group_set_title(this.ptr, cstr(title));
+  }
+
+  setDescription(description: string): void {
+    adwaita.symbols.adw_preferences_group_set_description(
+      this.ptr,
+      cstr(description),
+    );
+  }
 }
 
 // AdwPreferencesPage extends GtkWidget
@@ -186,6 +197,10 @@ export class ActionRow extends ListBoxRow {
   constructor(ptr?: Deno.PointerValue) {
     const actualPtr = ptr ?? adwaita.symbols.adw_action_row_new();
     super(actualPtr);
+  }
+
+  addSuffix(widget: Widget): void {
+    adwaita.symbols.adw_action_row_add_suffix(this.ptr, widget.ptr);
   }
 }
 

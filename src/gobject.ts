@@ -2,6 +2,7 @@ import { gobject } from "./libs.ts";
 import { createGValue, cstr, readCStr } from "./utils.ts";
 import {
   G_TYPE_BOOLEAN,
+  G_TYPE_DOUBLE,
   G_TYPE_INT,
   G_TYPE_OBJECT,
   G_TYPE_STRING,
@@ -84,8 +85,13 @@ export class GObject {
       gobject.symbols.g_value_init(gvaluePtr, BigInt(G_TYPE_BOOLEAN));
       gobject.symbols.g_value_set_boolean(gvaluePtr, value);
     } else if (typeof value === "number") {
-      gobject.symbols.g_value_init(gvaluePtr, BigInt(G_TYPE_INT));
-      gobject.symbols.g_value_set_int(gvaluePtr, value);
+      if (Number.isInteger(value)) {
+        gobject.symbols.g_value_init(gvaluePtr, BigInt(G_TYPE_INT));
+        gobject.symbols.g_value_set_int(gvaluePtr, value);
+      } else {
+        gobject.symbols.g_value_init(gvaluePtr, BigInt(G_TYPE_DOUBLE));
+        gobject.symbols.g_value_set_double(gvaluePtr, value);
+      }
     } else if (value instanceof GObject) {
       gobject.symbols.g_value_init(gvaluePtr, BigInt(G_TYPE_OBJECT));
       gobject.symbols.g_value_set_object(gvaluePtr, value.ptr);
@@ -143,6 +149,8 @@ export class GObject {
       result = gobject.symbols.g_value_get_boolean(gvaluePtr);
     } else if (type === G_TYPE_INT) {
       result = gobject.symbols.g_value_get_int(gvaluePtr);
+    } else if (type === G_TYPE_DOUBLE) {
+      result = gobject.symbols.g_value_get_double(gvaluePtr);
     } else if (type === G_TYPE_UINT) {
       result = gobject.symbols.g_value_get_uint(gvaluePtr);
     } else if (type === G_TYPE_OBJECT) {

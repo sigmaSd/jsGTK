@@ -98,11 +98,13 @@ export const gobject = Deno.dlopen(LIB_PATHS.gobject, {
   g_value_set_string: { parameters: ["pointer", "buffer"], result: "void" },
   g_value_set_boolean: { parameters: ["pointer", "bool"], result: "void" },
   g_value_set_int: { parameters: ["pointer", "i32"], result: "void" },
+  g_value_set_double: { parameters: ["pointer", "f64"], result: "void" },
   g_value_set_uint: { parameters: ["pointer", "u32"], result: "void" },
   g_value_set_object: { parameters: ["pointer", "pointer"], result: "void" },
   g_value_get_string: { parameters: ["pointer"], result: "pointer" },
   g_value_get_boolean: { parameters: ["pointer"], result: "bool" },
   g_value_get_int: { parameters: ["pointer"], result: "i32" },
+  g_value_get_double: { parameters: ["pointer"], result: "f64" },
   g_value_get_uint: { parameters: ["pointer"], result: "u32" },
   g_value_get_object: { parameters: ["pointer"], result: "pointer" },
   g_value_unset: { parameters: ["pointer"], result: "void" },
@@ -466,6 +468,14 @@ export const gtk = Deno.dlopen(LIB_PATHS.gtk, {
     parameters: ["pointer", "buffer"],
     result: "void",
   },
+  gtk_widget_add_css_class: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_widget_remove_css_class: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
   gtk_button_set_icon_name: {
     parameters: ["pointer", "buffer"],
     result: "void",
@@ -601,7 +611,19 @@ export const adwaita = Deno.dlopen(LIB_PATHS.adwaita, {
     parameters: ["pointer", "pointer"],
     result: "void",
   },
+  adw_preferences_group_set_title: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  adw_preferences_group_set_description: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
   adw_action_row_new: { parameters: [], result: "pointer" },
+  adw_action_row_add_suffix: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
   adw_combo_row_new: { parameters: [], result: "pointer" },
   adw_message_dialog_new: {
     parameters: ["pointer", "buffer", "buffer"],

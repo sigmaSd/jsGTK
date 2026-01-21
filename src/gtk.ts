@@ -97,6 +97,16 @@ export class Widget extends GObject {
   setCursor(cursor: Cursor | null): void {
     gtk.symbols.gtk_widget_set_cursor(this.ptr, cursor ? cursor.ptr : null);
   }
+
+  addCssClass(className: string): void {
+    const classNameCStr = cstr(className);
+    gtk.symbols.gtk_widget_add_css_class(this.ptr, classNameCStr);
+  }
+
+  removeCssClass(className: string): void {
+    const classNameCStr = cstr(className);
+    gtk.symbols.gtk_widget_remove_css_class(this.ptr, classNameCStr);
+  }
 }
 
 // AdwApplication extends GtkApplication extends GApplication extends GObject
