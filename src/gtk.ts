@@ -52,19 +52,19 @@ export class Widget extends GObject {
   }
 
   setApplication(app: Application): void {
-    this.setProperty("application", app.ptr);
+    this.setProperty("application", app);
   }
 
   setTitlebar(titlebar: Widget): void {
-    this.setProperty("titlebar", titlebar.ptr);
+    this.setProperty("titlebar", titlebar);
   }
 
   setModel(model: GObject): void {
-    this.setProperty("model", model.ptr);
+    this.setProperty("model", model);
   }
 
   setTransientForWidget(parent: Widget): void {
-    this.setProperty("transient-for", parent.ptr);
+    this.setProperty("transient-for", parent);
   }
 
   queueDraw(): void {
@@ -679,7 +679,7 @@ export class MenuButton extends Widget {
   }
 
   setMenuModel(menu: Menu): void {
-    this.setProperty("menu-model", menu.ptr);
+    this.setProperty("menu-model", menu);
   }
 
   setPrimary(primary: boolean): void {
