@@ -1,7 +1,48 @@
 import { adw } from "../low/adw.ts";
 import { cstr, readCStr } from "../low/utils.ts";
-import { type Application, ListBoxRow, Widget, Window } from "./gtk4.ts";
+import {
+  type Application,
+  type Builder,
+  ListBoxRow,
+  Widget,
+  Window,
+} from "./gtk4.ts";
 import { gobject } from "../low/gobject.ts";
+import type { GObject } from "./gobject.ts";
+
+// ============================================================================
+// Builder Extensions for Adwaita Widgets
+// ============================================================================
+
+/** Get a SwitchRow from a Builder by name */
+export function getSwitchRow(builder: Builder, name: string): SwitchRow | null {
+  const ptr = builder.getObject(name);
+  if (!ptr) return null;
+  const row = Object.create(SwitchRow.prototype) as SwitchRow;
+  row.ptr = ptr;
+  return row;
+}
+
+/** Get a ComboRow from a Builder by name */
+export function getComboRow(builder: Builder, name: string): ComboRow | null {
+  const ptr = builder.getObject(name);
+  if (!ptr) return null;
+  const row = Object.create(ComboRow.prototype) as ComboRow;
+  row.ptr = ptr;
+  return row;
+}
+
+/** Get a PreferencesWindow from a Builder by name */
+export function getPreferencesWindow(
+  builder: Builder,
+  name: string,
+): PreferencesWindow | null {
+  const ptr = builder.getObject(name);
+  if (!ptr) return null;
+  const win = Object.create(PreferencesWindow.prototype) as PreferencesWindow;
+  win.ptr = ptr;
+  return win;
+}
 
 // ============================================================================
 // Adwaita Enums and Constants
@@ -149,6 +190,75 @@ export class AboutDialog extends Widget {
   }
 }
 
+// AdwAboutWindow - older API but still commonly used
+export class AboutWindow extends Window {
+  constructor() {
+    const ptr = adw.symbols.adw_about_window_new();
+    super(ptr);
+  }
+
+  setApplicationName(name: string): void {
+    adw.symbols.adw_about_window_set_application_name(this.ptr, cstr(name));
+  }
+
+  setVersion(version: string): void {
+    adw.symbols.adw_about_window_set_version(this.ptr, cstr(version));
+  }
+
+  setDeveloperName(name: string): void {
+    adw.symbols.adw_about_window_set_developer_name(this.ptr, cstr(name));
+  }
+
+  setDevelopers(developers: string[]): void {
+    const ptrs = new BigUint64Array(developers.length + 1);
+    developers.forEach((dev, i) => {
+      const c = cstr(dev);
+      ptrs[i] = BigInt(Deno.UnsafePointer.value(Deno.UnsafePointer.of(c)!));
+    });
+    ptrs[developers.length] = 0n;
+    adw.symbols.adw_about_window_set_developers(
+      this.ptr,
+      Deno.UnsafePointer.of(ptrs),
+    );
+  }
+
+  setDesigners(designers: string[]): void {
+    const ptrs = new BigUint64Array(designers.length + 1);
+    designers.forEach((designer, i) => {
+      const c = cstr(designer);
+      ptrs[i] = BigInt(Deno.UnsafePointer.value(Deno.UnsafePointer.of(c)!));
+    });
+    ptrs[designers.length] = 0n;
+    adw.symbols.adw_about_window_set_designers(
+      this.ptr,
+      Deno.UnsafePointer.of(ptrs),
+    );
+  }
+
+  setTranslatorCredits(credits: string): void {
+    adw.symbols.adw_about_window_set_translator_credits(
+      this.ptr,
+      cstr(credits),
+    );
+  }
+
+  setLicenseType(type: number): void {
+    adw.symbols.adw_about_window_set_license_type(this.ptr, type);
+  }
+
+  setWebsite(url: string): void {
+    adw.symbols.adw_about_window_set_website(this.ptr, cstr(url));
+  }
+
+  setIssueUrl(url: string): void {
+    adw.symbols.adw_about_window_set_issue_url(this.ptr, cstr(url));
+  }
+
+  setApplicationIcon(iconName: string): void {
+    adw.symbols.adw_about_window_set_application_icon(this.ptr, cstr(iconName));
+  }
+}
+
 // AdwToolbarView extends GtkWidget
 export class ToolbarView extends Widget {
   constructor() {
@@ -215,6 +325,10 @@ export class PreferencesWindow extends Window {
   add(page: PreferencesPage): void {
     adw.symbols.adw_preferences_window_add(this.ptr, page.ptr);
   }
+
+  setHideOnClose(hide: boolean): void {
+    this.setProperty("hide-on-close", hide);
+  }
 }
 
 // AdwActionRow extends AdwPreferencesRow extends GtkListBoxRow extends GtkWidget
@@ -227,13 +341,76 @@ export class ActionRow extends ListBoxRow {
   addSuffix(widget: Widget): void {
     adw.symbols.adw_action_row_add_suffix(this.ptr, widget.ptr);
   }
+
+  setTitle(title: string): void {
+    adw.symbols.adw_preferences_row_set_title(this.ptr, cstr(title));
+  }
+
+  getTitle(): string | null {
+    const ptr = adw.symbols.adw_preferences_row_get_title(this.ptr);
+    return ptr ? readCStr(ptr) : null;
+  }
+
+  setSubtitle(subtitle: string): void {
+    adw.symbols.adw_action_row_set_subtitle(this.ptr, cstr(subtitle));
+  }
+
+  getSubtitle(): string | null {
+    const ptr = adw.symbols.adw_action_row_get_subtitle(this.ptr);
+    return ptr ? readCStr(ptr) : null;
+  }
+
+  override setSensitive(sensitive: boolean): void {
+    this.setProperty("sensitive", sensitive);
+  }
 }
 
 // AdwComboRow extends AdwActionRow extends AdwPreferencesRow extends GtkListBoxRow extends GtkWidget
 export class ComboRow extends ActionRow {
-  constructor() {
-    const ptr = adw.symbols.adw_combo_row_new();
-    super(ptr);
+  constructor(ptr?: Deno.PointerValue) {
+    const actualPtr = ptr ?? adw.symbols.adw_combo_row_new();
+    super(actualPtr);
+  }
+
+  override setModel(model: GObject): void {
+    adw.symbols.adw_combo_row_set_model(this.ptr, model.ptr);
+  }
+
+  getModel(): Deno.PointerValue | null {
+    return adw.symbols.adw_combo_row_get_model(this.ptr);
+  }
+
+  setSelected(position: number): void {
+    adw.symbols.adw_combo_row_set_selected(this.ptr, position);
+  }
+
+  getSelected(): number {
+    return adw.symbols.adw_combo_row_get_selected(this.ptr);
+  }
+
+  onSelectedChanged(callback: (selectedIndex: number) => void): number {
+    const cb = new Deno.UnsafeCallback(
+      {
+        parameters: ["pointer", "pointer", "pointer"],
+        result: "void",
+      } as const,
+      () => {
+        const selected = this.getSelected();
+        callback(selected);
+      },
+    );
+
+    const signalCStr = cstr("notify::selected");
+    return Number(
+      gobject.symbols.g_signal_connect_data(
+        this.ptr,
+        signalCStr,
+        cb.pointer,
+        null,
+        null,
+        0,
+      ),
+    );
   }
 }
 
@@ -250,6 +427,31 @@ export class SwitchRow extends ActionRow {
 
   getActive(): boolean {
     return adw.symbols.adw_switch_row_get_active(this.ptr);
+  }
+
+  onActiveChanged(callback: (active: boolean) => void): number {
+    const cb = new Deno.UnsafeCallback(
+      {
+        parameters: ["pointer", "pointer", "pointer"],
+        result: "void",
+      } as const,
+      () => {
+        const active = this.getActive();
+        callback(active);
+      },
+    );
+
+    const signalCStr = cstr("notify::active");
+    return Number(
+      gobject.symbols.g_signal_connect_data(
+        this.ptr,
+        signalCStr,
+        cb.pointer,
+        null,
+        null,
+        0,
+      ),
+    );
   }
 }
 
@@ -302,7 +504,7 @@ export class MessageDialog extends Window {
     );
   }
 
-  onResponse(callback: (response: string) => void): void {
+  onResponse(callback: (response: string) => void): number {
     // The "response" signal on AdwMessageDialog passes the response ID as a string parameter
     const cb = new Deno.UnsafeCallback(
       {
@@ -320,13 +522,15 @@ export class MessageDialog extends Window {
     );
 
     const signalCStr = cstr("response");
-    gobject.symbols.g_signal_connect_data(
-      this.ptr,
-      signalCStr,
-      cb.pointer,
-      null,
-      null,
-      0,
+    return Number(
+      gobject.symbols.g_signal_connect_data(
+        this.ptr,
+        signalCStr,
+        cb.pointer,
+        null,
+        null,
+        0,
+      ),
     );
   }
 }

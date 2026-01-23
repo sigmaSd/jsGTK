@@ -217,6 +217,18 @@ export class Widget extends GObject {
     const classNameCStr = cstr(className);
     gtk4.symbols.gtk_widget_remove_css_class(this.ptr, classNameCStr);
   }
+
+  setSensitive(sensitive: boolean): void {
+    gtk4.symbols.gtk_widget_set_sensitive(this.ptr, sensitive);
+  }
+
+  getSensitive(): boolean {
+    return gtk4.symbols.gtk_widget_get_sensitive(this.ptr);
+  }
+
+  isVisible(): boolean {
+    return gtk4.symbols.gtk_widget_is_visible(this.ptr);
+  }
 }
 
 // AdwApplication extends GtkApplication extends GApplication extends GObject
@@ -301,6 +313,25 @@ export class Application extends GObject {
   // High-level signal connection for startup
   onStartup(callback: () => void): number {
     return this.connect("startup", callback);
+  }
+
+  sendNotification(id: string | null, notification: GObject): void {
+    const idCStr = id ? cstr(id) : null;
+    gio.symbols.g_application_send_notification(
+      this.ptr,
+      idCStr,
+      notification.ptr,
+    );
+  }
+
+  withdrawNotification(id: string): void {
+    const idCStr = cstr(id);
+    gio.symbols.g_application_withdraw_notification(this.ptr, idCStr);
+  }
+
+  getActiveWindow(): Window | null {
+    const ptr = gtk4.symbols.gtk_application_get_active_window(this.ptr);
+    return ptr ? new Window(ptr) : null;
   }
 }
 
@@ -496,6 +527,27 @@ export class Image extends Widget {
   setFile(file: string): void {
     const fileCStr = cstr(file);
     gtk4.symbols.gtk_image_set_from_file(this.ptr, fileCStr);
+  }
+
+  setFromIconName(iconName: string): void {
+    const iconNameCStr = cstr(iconName);
+    gtk4.symbols.gtk_image_set_from_icon_name(this.ptr, iconNameCStr);
+  }
+}
+
+// GtkHeaderBar (GTK4 version)
+export class HeaderBar extends Widget {
+  constructor() {
+    const ptr = gtk4.symbols.gtk_header_bar_new();
+    super(ptr);
+  }
+
+  packStart(child: Widget): void {
+    gtk4.symbols.gtk_header_bar_pack_start(this.ptr, child.ptr);
+  }
+
+  packEnd(child: Widget): void {
+    gtk4.symbols.gtk_header_bar_pack_end(this.ptr, child.ptr);
   }
 }
 
@@ -846,6 +898,44 @@ export class Builder extends GObject {
     const ptr = this.getObject(name);
     if (!ptr) return null;
     return new Widget(ptr);
+  }
+
+  getImage(name: string): Image | null {
+    const ptr = this.getObject(name);
+    if (!ptr) return null;
+    const img = Object.create(Image.prototype) as Image;
+    img.ptr = ptr;
+    return img;
+  }
+
+  getWindow(name: string): Window | null {
+    const ptr = this.getObject(name);
+    if (!ptr) return null;
+    return new Window(ptr);
+  }
+
+  getButton(name: string): Button | null {
+    const ptr = this.getObject(name);
+    if (!ptr) return null;
+    const btn = Object.create(Button.prototype) as Button;
+    btn.ptr = ptr;
+    return btn;
+  }
+
+  getLabel(name: string): Label | null {
+    const ptr = this.getObject(name);
+    if (!ptr) return null;
+    const lbl = Object.create(Label.prototype) as Label;
+    lbl.ptr = ptr;
+    return lbl;
+  }
+
+  getBox(name: string): Box | null {
+    const ptr = this.getObject(name);
+    if (!ptr) return null;
+    const box = Object.create(Box.prototype) as Box;
+    box.ptr = ptr;
+    return box;
   }
 }
 

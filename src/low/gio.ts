@@ -53,4 +53,206 @@ export const gio = Deno.dlopen(LIB_PATHS.gio, {
     result: "bool",
   },
   g_file_get_type: { parameters: [], result: "u64" },
+  // Subprocess
+  g_subprocess_new: {
+    parameters: ["i32", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  g_subprocess_newv: {
+    parameters: ["pointer", "i32", "pointer"],
+    result: "pointer",
+  },
+  g_subprocess_get_stdin_pipe: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  g_subprocess_get_stdout_pipe: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  g_subprocess_get_stderr_pipe: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  g_subprocess_wait: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "bool",
+  },
+  g_subprocess_wait_async: {
+    parameters: ["pointer", "pointer", "function", "pointer"],
+    result: "void",
+  },
+  g_subprocess_wait_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "bool",
+  },
+  g_subprocess_get_successful: {
+    parameters: ["pointer"],
+    result: "bool",
+  },
+  g_subprocess_get_exit_status: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  g_subprocess_force_exit: {
+    parameters: ["pointer"],
+    result: "void",
+  },
+  // OutputStream (for stdin pipe)
+  g_output_stream_write_all_async: {
+    parameters: [
+      "pointer",
+      "pointer",
+      "usize",
+      "i32",
+      "pointer",
+      "function",
+      "pointer",
+    ],
+    result: "void",
+  },
+  g_output_stream_write_all_finish: {
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
+    result: "bool",
+  },
+  g_output_stream_write: {
+    parameters: ["pointer", "pointer", "usize", "pointer", "pointer"],
+    result: "isize",
+  },
+  g_output_stream_flush: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "bool",
+  },
+  g_output_stream_close: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "bool",
+  },
+  // InputStream (for stdout/stderr pipe)
+  g_input_stream_read_bytes_async: {
+    parameters: ["pointer", "usize", "i32", "pointer", "function", "pointer"],
+    result: "void",
+  },
+  g_input_stream_read_bytes_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+  },
+  g_input_stream_read: {
+    parameters: ["pointer", "pointer", "usize", "pointer", "pointer"],
+    result: "isize",
+  },
+  g_input_stream_close: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "bool",
+  },
+  // GBytes
+  g_bytes_get_data: {
+    parameters: ["pointer", "pointer"],
+    result: "pointer",
+  },
+  g_bytes_get_size: {
+    parameters: ["pointer"],
+    result: "usize",
+  },
+  g_bytes_unref: {
+    parameters: ["pointer"],
+    result: "void",
+  },
+  // DBus
+  g_bus_get_sync: {
+    parameters: ["i32", "pointer", "pointer"],
+    result: "pointer",
+  },
+  g_dbus_proxy_new_sync: {
+    parameters: [
+      "pointer",
+      "i32",
+      "pointer",
+      "buffer",
+      "buffer",
+      "buffer",
+      "pointer",
+      "pointer",
+    ],
+    result: "pointer",
+  },
+  g_dbus_proxy_new_for_bus_sync: {
+    parameters: [
+      "i32",
+      "i32",
+      "pointer",
+      "buffer",
+      "buffer",
+      "buffer",
+      "pointer",
+      "pointer",
+    ],
+    result: "pointer",
+  },
+  g_dbus_proxy_call_sync: {
+    parameters: [
+      "pointer",
+      "buffer",
+      "pointer",
+      "i32",
+      "i32",
+      "pointer",
+      "pointer",
+    ],
+    result: "pointer",
+  },
+  g_dbus_proxy_call: {
+    parameters: [
+      "pointer",
+      "buffer",
+      "pointer",
+      "i32",
+      "i32",
+      "pointer",
+      "function",
+      "pointer",
+    ],
+    result: "void",
+  },
+  g_dbus_proxy_call_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+  },
+  // GVariant
+  g_variant_new_string: {
+    parameters: ["buffer"],
+    result: "pointer",
+  },
+  g_variant_new_tuple: {
+    parameters: ["pointer", "usize"],
+    result: "pointer",
+  },
+  g_variant_get_child_value: {
+    parameters: ["pointer", "usize"],
+    result: "pointer",
+  },
+  g_variant_get_string: {
+    parameters: ["pointer", "pointer"],
+    result: "pointer",
+  },
+  g_variant_get_uint32: {
+    parameters: ["pointer"],
+    result: "u32",
+  },
+  g_variant_get_int32: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  g_variant_unref: {
+    parameters: ["pointer"],
+    result: "void",
+  },
+  g_variant_ref: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  g_variant_ref_sink: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
 });

@@ -365,4 +365,45 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["buffer", "pointer"],
     result: "pointer",
   },
+  // Additional bindings
+  gtk_application_get_active_window: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_image_set_from_icon_name: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_widget_set_sensitive: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
+  gtk_widget_get_sensitive: {
+    parameters: ["pointer"],
+    result: "bool",
+  },
+  gtk_header_bar_new: {
+    parameters: [],
+    result: "pointer",
+  },
+  gtk_header_bar_pack_start: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_header_bar_pack_end: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_menu_button_set_primary: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
+  gtk_menu_button_set_icon_name: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_widget_is_visible: {
+    parameters: ["pointer"],
+    result: "bool",
+  },
 });

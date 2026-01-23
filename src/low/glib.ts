@@ -16,6 +16,14 @@ export const glib = Deno.dlopen(LIB_PATHS.glib, {
     parameters: ["u32", "function", "pointer"],
     result: "u32",
   },
+  g_timeout_add_seconds: {
+    parameters: ["u32", "function", "pointer"],
+    result: "u32",
+  },
+  g_idle_add: {
+    parameters: ["function", "pointer"],
+    result: "u32",
+  },
   g_source_remove: { parameters: ["u32"], result: "bool" },
   g_free: { parameters: ["pointer"], result: "void" },
   g_strdup: { parameters: ["pointer"], result: "pointer" },

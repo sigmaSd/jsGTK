@@ -41,7 +41,7 @@ export class MainLoop {
   }
 }
 
-// GLib timeout
+// GLib timeout (milliseconds)
 export function timeout(ms: number, callback: () => boolean): number {
   const cb = new Deno.UnsafeCallback(
     {
@@ -56,6 +56,71 @@ export function timeout(ms: number, callback: () => boolean): number {
   return glib.symbols.g_timeout_add(ms, cb.pointer as Deno.PointerValue, null);
 }
 
+// GLib timeout (seconds)
+export function timeoutSeconds(
+  seconds: number,
+  callback: () => boolean,
+): number {
+  const cb = new Deno.UnsafeCallback(
+    {
+      parameters: ["pointer"],
+      result: "bool",
+    } as Deno.UnsafeCallbackDefinition,
+    () => {
+      return callback();
+    },
+  );
+
+  return glib.symbols.g_timeout_add_seconds(
+    seconds,
+    cb.pointer as Deno.PointerValue,
+    null,
+  );
+}
+
+// GLib idle add
+export function idleAdd(callback: () => boolean): number {
+  const cb = new Deno.UnsafeCallback(
+    {
+      parameters: ["pointer"],
+      result: "bool",
+    } as Deno.UnsafeCallbackDefinition,
+    () => {
+      return callback();
+    },
+  );
+
+  return glib.symbols.g_idle_add(cb.pointer as Deno.PointerValue, null);
+}
+
 export function removeTimeout(id: number): void {
   glib.symbols.g_source_remove(id);
+}
+
+// Alias for removeTimeout - works for any source
+export function sourceRemove(id: number): boolean {
+  return glib.symbols.g_source_remove(id);
+}
+
+// Unix signal add (only available on Unix)
+export function unixSignalAdd(signum: number, callback: () => boolean): number {
+  if (!glib.symbols.g_unix_signal_add) {
+    throw new Error("g_unix_signal_add is not available on this platform");
+  }
+
+  const cb = new Deno.UnsafeCallback(
+    {
+      parameters: ["pointer"],
+      result: "bool",
+    } as Deno.UnsafeCallbackDefinition,
+    () => {
+      return callback();
+    },
+  );
+
+  return glib.symbols.g_unix_signal_add(
+    signum,
+    cb.pointer as Deno.PointerValue,
+    null,
+  );
 }
