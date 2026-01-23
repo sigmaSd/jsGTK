@@ -1,4 +1,4 @@
-import { adwaita } from "../low/adw.ts";
+import { adw } from "../low/adw.ts";
 import { cstr, readCStr } from "../low/utils.ts";
 import { type Application, ListBoxRow, Widget, Window } from "./gtk4.ts";
 import { gobject } from "../low/gobject.ts";
@@ -30,81 +30,81 @@ export const ResponseAppearance = {
 // Libadwaita Window extends GtkWindow
 export class AdwWindow extends Window {
   constructor(ptr?: Deno.PointerValue) {
-    const actualPtr = ptr ?? adwaita.symbols.adw_window_new();
+    const actualPtr = ptr ?? adw.symbols.adw_window_new();
     super(actualPtr);
   }
 
   setContent(content: Widget): void {
-    adwaita.symbols.adw_window_set_content(this.ptr, content.ptr);
+    adw.symbols.adw_window_set_content(this.ptr, content.ptr);
   }
 }
 
 // Libadwaita ApplicationWindow extends AdwWindow
 export class AdwApplicationWindow extends AdwWindow {
   constructor(app: Application) {
-    const ptr = adwaita.symbols.adw_application_window_new(app.ptr);
+    const ptr = adw.symbols.adw_application_window_new(app.ptr);
     super(ptr);
   }
 
   override setContent(content: Widget): void {
-    adwaita.symbols.adw_application_window_set_content(this.ptr, content.ptr);
+    adw.symbols.adw_application_window_set_content(this.ptr, content.ptr);
   }
 }
 
 // AdwHeaderBar extends GtkWidget
 export class HeaderBar extends Widget {
   constructor() {
-    const ptr = adwaita.symbols.adw_header_bar_new();
+    const ptr = adw.symbols.adw_header_bar_new();
     super(ptr);
   }
 
   packStart(child: Widget): void {
-    adwaita.symbols.adw_header_bar_pack_start(this.ptr, child.ptr);
+    adw.symbols.adw_header_bar_pack_start(this.ptr, child.ptr);
   }
 
   packEnd(child: Widget): void {
-    adwaita.symbols.adw_header_bar_pack_end(this.ptr, child.ptr);
+    adw.symbols.adw_header_bar_pack_end(this.ptr, child.ptr);
   }
 
   setTitleWidget(widget: Widget): void {
-    adwaita.symbols.adw_header_bar_set_title_widget(this.ptr, widget.ptr);
+    adw.symbols.adw_header_bar_set_title_widget(this.ptr, widget.ptr);
   }
 }
 
 // AdwAboutDialog extends AdwDialog extends GtkWidget
 export class AboutDialog extends Widget {
   constructor() {
-    const ptr = adwaita.symbols.adw_about_dialog_new();
+    const ptr = adw.symbols.adw_about_dialog_new();
     super(ptr);
   }
 
   present(parent?: Widget): void {
-    if (adwaita.symbols.adw_dialog_present) {
-      adwaita.symbols.adw_dialog_present(this.ptr, parent ? parent.ptr : null);
+    if (adw.symbols.adw_dialog_present) {
+      adw.symbols.adw_dialog_present(this.ptr, parent ? parent.ptr : null);
     } else {
-      // Fallback for older libadwaita where it is a Window
+      // Fallback for older libadw where it is a Window
       this.setProperty("visible", true);
     }
   }
 
   setApplicationName(name: string): void {
     const nameCStr = cstr(name);
-    adwaita.symbols.adw_about_dialog_set_application_name(this.ptr, nameCStr);
+    adw.symbols.adw_about_dialog_set_application_name(this.ptr, nameCStr);
   }
 
   setVersion(version: string): void {
     const versionCStr = cstr(version);
-    adwaita.symbols.adw_about_dialog_set_version(this.ptr, versionCStr);
+    adw.symbols.adw_about_dialog_set_version(this.ptr, versionCStr);
   }
 
   setDeveloperName(name: string): void {
     const nameCStr = cstr(name);
-    adwaita.symbols.adw_about_dialog_set_developer_name(this.ptr, nameCStr);
+    adw.symbols.adw_about_dialog_set_developer_name(this.ptr, nameCStr);
   }
 
   setComments(comments: string): void {
     const commentsCStr = cstr(comments);
-    adwaita.symbols.adw_about_dialog_set_comments(this.ptr, commentsCStr);
+    adw.symbols.adw_about_dialog_set_comments(this.ptr, commentsCStr);
   }
 
   setModal(modal: boolean): void {
@@ -116,11 +116,11 @@ export class AboutDialog extends Widget {
   }
 
   setWebsite(url: string): void {
-    adwaita.symbols.adw_about_dialog_set_website(this.ptr, cstr(url));
+    adw.symbols.adw_about_dialog_set_website(this.ptr, cstr(url));
   }
 
   setIssueUrl(url: string): void {
-    adwaita.symbols.adw_about_dialog_set_issue_url(this.ptr, cstr(url));
+    adw.symbols.adw_about_dialog_set_issue_url(this.ptr, cstr(url));
   }
 
   setDevelopers(developers: string[]): void {
@@ -131,18 +131,18 @@ export class AboutDialog extends Widget {
       ptrs[i] = BigInt(Deno.UnsafePointer.value(Deno.UnsafePointer.of(c)!));
     });
     ptrs[developers.length] = 0n;
-    adwaita.symbols.adw_about_dialog_set_developers(
+    adw.symbols.adw_about_dialog_set_developers(
       this.ptr,
       Deno.UnsafePointer.of(ptrs),
     );
   }
 
   setLicenseType(type: number): void {
-    adwaita.symbols.adw_about_dialog_set_license_type(this.ptr, type);
+    adw.symbols.adw_about_dialog_set_license_type(this.ptr, type);
   }
 
   setApplicationIcon(iconName: string): void {
-    adwaita.symbols.adw_about_dialog_set_application_icon(
+    adw.symbols.adw_about_dialog_set_application_icon(
       this.ptr,
       cstr(iconName),
     );
@@ -152,40 +152,40 @@ export class AboutDialog extends Widget {
 // AdwToolbarView extends GtkWidget
 export class ToolbarView extends Widget {
   constructor() {
-    const ptr = adwaita.symbols.adw_toolbar_view_new();
+    const ptr = adw.symbols.adw_toolbar_view_new();
     super(ptr);
   }
 
   setContent(content: Widget): void {
-    adwaita.symbols.adw_toolbar_view_set_content(this.ptr, content.ptr);
+    adw.symbols.adw_toolbar_view_set_content(this.ptr, content.ptr);
   }
 
   addTopBar(topBar: Widget): void {
-    adwaita.symbols.adw_toolbar_view_add_top_bar(this.ptr, topBar.ptr);
+    adw.symbols.adw_toolbar_view_add_top_bar(this.ptr, topBar.ptr);
   }
 
   addBottomBar(bottomBar: Widget): void {
-    adwaita.symbols.adw_toolbar_view_add_bottom_bar(this.ptr, bottomBar.ptr);
+    adw.symbols.adw_toolbar_view_add_bottom_bar(this.ptr, bottomBar.ptr);
   }
 }
 
 // AdwPreferencesGroup extends GtkWidget
 export class PreferencesGroup extends Widget {
   constructor() {
-    const ptr = adwaita.symbols.adw_preferences_group_new();
+    const ptr = adw.symbols.adw_preferences_group_new();
     super(ptr);
   }
 
   add(widget: Widget | ActionRow | ComboRow): void {
-    adwaita.symbols.adw_preferences_group_add(this.ptr, widget.ptr);
+    adw.symbols.adw_preferences_group_add(this.ptr, widget.ptr);
   }
 
   setTitle(title: string): void {
-    adwaita.symbols.adw_preferences_group_set_title(this.ptr, cstr(title));
+    adw.symbols.adw_preferences_group_set_title(this.ptr, cstr(title));
   }
 
   setDescription(description: string): void {
-    adwaita.symbols.adw_preferences_group_set_description(
+    adw.symbols.adw_preferences_group_set_description(
       this.ptr,
       cstr(description),
     );
@@ -195,12 +195,12 @@ export class PreferencesGroup extends Widget {
 // AdwPreferencesPage extends GtkWidget
 export class PreferencesPage extends Widget {
   constructor() {
-    const ptr = adwaita.symbols.adw_preferences_page_new();
+    const ptr = adw.symbols.adw_preferences_page_new();
     super(ptr);
   }
 
   add(group: PreferencesGroup): void {
-    adwaita.symbols.adw_preferences_page_add(this.ptr, group.ptr);
+    adw.symbols.adw_preferences_page_add(this.ptr, group.ptr);
   }
 }
 
@@ -208,31 +208,31 @@ export class PreferencesPage extends Widget {
 // Since we don't have AdwWindow class, extend Window directly
 export class PreferencesWindow extends Window {
   constructor() {
-    const ptr = adwaita.symbols.adw_preferences_window_new();
+    const ptr = adw.symbols.adw_preferences_window_new();
     super(ptr);
   }
 
   add(page: PreferencesPage): void {
-    adwaita.symbols.adw_preferences_window_add(this.ptr, page.ptr);
+    adw.symbols.adw_preferences_window_add(this.ptr, page.ptr);
   }
 }
 
 // AdwActionRow extends AdwPreferencesRow extends GtkListBoxRow extends GtkWidget
 export class ActionRow extends ListBoxRow {
   constructor(ptr?: Deno.PointerValue) {
-    const actualPtr = ptr ?? adwaita.symbols.adw_action_row_new();
+    const actualPtr = ptr ?? adw.symbols.adw_action_row_new();
     super(actualPtr);
   }
 
   addSuffix(widget: Widget): void {
-    adwaita.symbols.adw_action_row_add_suffix(this.ptr, widget.ptr);
+    adw.symbols.adw_action_row_add_suffix(this.ptr, widget.ptr);
   }
 }
 
 // AdwComboRow extends AdwActionRow extends AdwPreferencesRow extends GtkListBoxRow extends GtkWidget
 export class ComboRow extends ActionRow {
   constructor() {
-    const ptr = adwaita.symbols.adw_combo_row_new();
+    const ptr = adw.symbols.adw_combo_row_new();
     super(ptr);
   }
 }
@@ -240,16 +240,16 @@ export class ComboRow extends ActionRow {
 // AdwSwitchRow extends AdwActionRow
 export class SwitchRow extends ActionRow {
   constructor(ptr?: Deno.PointerValue) {
-    const actualPtr = ptr ?? adwaita.symbols.adw_switch_row_new();
+    const actualPtr = ptr ?? adw.symbols.adw_switch_row_new();
     super(actualPtr);
   }
 
   setActive(is_active: boolean): void {
-    adwaita.symbols.adw_switch_row_set_active(this.ptr, is_active);
+    adw.symbols.adw_switch_row_set_active(this.ptr, is_active);
   }
 
   getActive(): boolean {
-    return adwaita.symbols.adw_switch_row_get_active(this.ptr);
+    return adw.symbols.adw_switch_row_get_active(this.ptr);
   }
 }
 
@@ -259,7 +259,7 @@ export class MessageDialog extends Window {
   constructor(parent: Window | null, heading: string, body?: string) {
     const headingCStr = cstr(heading);
     const bodyCStr = body ? cstr(body) : null;
-    const ptr = adwaita.symbols.adw_message_dialog_new(
+    const ptr = adw.symbols.adw_message_dialog_new(
       parent ? parent.ptr : null,
       headingCStr,
       bodyCStr,
@@ -270,7 +270,7 @@ export class MessageDialog extends Window {
   addResponse(id: string, label: string): void {
     const idCStr = cstr(id);
     const labelCStr = cstr(label);
-    adwaita.symbols.adw_message_dialog_add_response(
+    adw.symbols.adw_message_dialog_add_response(
       this.ptr,
       idCStr,
       labelCStr,
@@ -279,7 +279,7 @@ export class MessageDialog extends Window {
 
   setResponseAppearance(response: string, appearance: number): void {
     const responseCStr = cstr(response);
-    adwaita.symbols.adw_message_dialog_set_response_appearance(
+    adw.symbols.adw_message_dialog_set_response_appearance(
       this.ptr,
       responseCStr,
       appearance,
@@ -288,7 +288,7 @@ export class MessageDialog extends Window {
 
   setDefaultResponse(response: string): void {
     const responseCStr = cstr(response);
-    adwaita.symbols.adw_message_dialog_set_default_response(
+    adw.symbols.adw_message_dialog_set_default_response(
       this.ptr,
       responseCStr,
     );
@@ -296,7 +296,7 @@ export class MessageDialog extends Window {
 
   setCloseResponse(response: string): void {
     const responseCStr = cstr(response);
-    adwaita.symbols.adw_message_dialog_set_close_response(
+    adw.symbols.adw_message_dialog_set_close_response(
       this.ptr,
       responseCStr,
     );
@@ -340,16 +340,16 @@ export class StyleManager {
   }
 
   static getDefault(): StyleManager {
-    const ptr = adwaita.symbols.adw_style_manager_get_default();
+    const ptr = adw.symbols.adw_style_manager_get_default();
     return new StyleManager(ptr);
   }
 
   setColorScheme(scheme: number): void {
-    adwaita.symbols.adw_style_manager_set_color_scheme(this.ptr, scheme);
+    adw.symbols.adw_style_manager_set_color_scheme(this.ptr, scheme);
   }
 
   getColorScheme(): number {
-    return adwaita.symbols.adw_style_manager_get_color_scheme(
+    return adw.symbols.adw_style_manager_get_color_scheme(
       this.ptr,
     ) as number;
   }
@@ -357,13 +357,13 @@ export class StyleManager {
 
 export class Clamp extends Widget {
   constructor() {
-    const ptr = adwaita.symbols.adw_clamp_new();
+    const ptr = adw.symbols.adw_clamp_new();
     super(ptr);
   }
   setMaximumSize(size: number): void {
-    adwaita.symbols.adw_clamp_set_maximum_size(this.ptr, size);
+    adw.symbols.adw_clamp_set_maximum_size(this.ptr, size);
   }
   setChild(child: Widget): void {
-    adwaita.symbols.adw_clamp_set_child(this.ptr, child.ptr);
+    adw.symbols.adw_clamp_set_child(this.ptr, child.ptr);
   }
 }

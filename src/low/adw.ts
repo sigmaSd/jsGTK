@@ -2,7 +2,7 @@
 import "@sigma/deno-compat";
 import { LIB_PATHS } from "./paths/mod.ts";
 
-export const adwaita = Deno.dlopen(LIB_PATHS.adwaita, {
+export const adw = Deno.dlopen(LIB_PATHS.adwaita, {
   adw_init: { parameters: [], result: "void" },
   adw_application_new: { parameters: ["buffer", "i32"], result: "pointer" },
   adw_window_new: { parameters: [], result: "pointer" },
@@ -156,8 +156,8 @@ export const adwaita = Deno.dlopen(LIB_PATHS.adwaita, {
   adw_dialog_present: { parameters: ["pointer", "pointer"], result: "void" },
 });
 
-// Initialize Adwaita (and GTK) automatically when the library is loaded
+// Initialize adw (and GTK) automatically when the library is loaded
 // Guard against double initialization which can happen when running multiple test files in the same process
-if (!adwaita.symbols.adw_is_initialized()) {
-  adwaita.symbols.adw_init();
+if (!adw.symbols.adw_is_initialized()) {
+  adw.symbols.adw_init();
 }

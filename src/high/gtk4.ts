@@ -1,13 +1,13 @@
 // deno-lint-ignore-file no-explicit-any
-import { cstr, readCStr } from "../low/utils.ts";
-import { GObject } from "./gobject.ts";
-import type { Menu, SimpleAction } from "./gio.ts";
-import { CairoContext } from "./cairo.ts";
-import { gtk4 } from "../low/gtk4.ts";
-import { adwaita } from "../low/adw.ts";
+import { adw } from "../low/adw.ts";
 import { gio } from "../low/gio.ts";
-import { gobject } from "../low/gobject.ts";
 import { glib } from "../low/glib.ts";
+import { gobject } from "../low/gobject.ts";
+import { gtk4 } from "../low/gtk4.ts";
+import { cstr, readCStr } from "../low/utils.ts";
+import { CairoContext } from "./cairo.ts";
+import type { Menu, SimpleAction } from "./gio.ts";
+import { GObject } from "./gobject.ts";
 
 // ============================================================================
 // GTK Enums and Constants
@@ -224,7 +224,7 @@ export class Widget extends GObject {
 export class Application extends GObject {
   constructor(applicationId: string, flags: number) {
     const idCStr = cstr(applicationId);
-    const ptr = adwaita.symbols.adw_application_new(idCStr, flags);
+    const ptr = adw.symbols.adw_application_new(idCStr, flags);
     super(ptr);
   }
 
