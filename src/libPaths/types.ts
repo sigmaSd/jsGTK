@@ -1,6 +1,6 @@
 /** Paths to GTK and related libraries */
 export type LibPaths = {
-  gtk: string;
+  gtk4: string;
   gtk3: string;
   app_indicator: string;
   adwaita: string;

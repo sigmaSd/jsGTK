@@ -1,18 +1,19 @@
-import { gio, glib } from "./ffi/gtk.ts";
+import { gio2 } from "./ffi/gio2.ts";
+import { glib2 } from "./ffi/glib2.ts";
 import { cstr, readCStr } from "./utils.ts";
 import { GObject } from "./gobject.ts";
 
 // GMenu extends GMenuModel extends GObject
 export class Menu extends GObject {
   constructor() {
-    const ptr = gio.symbols.g_menu_new();
+    const ptr = gio2.symbols.g_menu_new();
     super(ptr);
   }
 
   append(label: string, detailedAction: string): void {
     const labelCStr = cstr(label);
     const actionCStr = cstr(detailedAction);
-    gio.symbols.g_menu_append(this.ptr, labelCStr, actionCStr);
+    gio2.symbols.g_menu_append(this.ptr, labelCStr, actionCStr);
   }
 }
 
@@ -20,18 +21,18 @@ export class Menu extends GObject {
 export class SimpleAction extends GObject {
   constructor(name: string) {
     const nameCStr = cstr(name);
-    const ptr = gio.symbols.g_simple_action_new(nameCStr, null);
+    const ptr = gio2.symbols.g_simple_action_new(nameCStr, null);
     super(ptr);
   }
 }
 
 export class ListStore extends GObject {
   constructor(type: number | bigint) {
-    const ptr = gio.symbols.g_list_store_new(BigInt(type));
+    const ptr = gio2.symbols.g_list_store_new(BigInt(type));
     super(ptr);
   }
   append(item: GObject): void {
-    gio.symbols.g_list_store_append(this.ptr, item.ptr);
+    gio2.symbols.g_list_store_append(this.ptr, item.ptr);
   }
 }
 
@@ -41,16 +42,16 @@ export class File extends GObject {
   }
 
   static newForPath(path: string): File {
-    const ptr = gio.symbols.g_file_new_for_path(cstr(path));
+    const ptr = gio2.symbols.g_file_new_for_path(cstr(path));
     return new File(ptr);
   }
 
   static getType(): bigint {
-    return BigInt(gio.symbols.g_file_get_type());
+    return BigInt(gio2.symbols.g_file_get_type());
   }
 
   getPath(): string | null {
-    const ptr = gio.symbols.g_file_get_path(this.ptr);
+    const ptr = gio2.symbols.g_file_get_path(this.ptr);
     return ptr ? readCStr(ptr) : null;
   }
 
@@ -59,7 +60,7 @@ export class File extends GObject {
     const length = new BigUint64Array(1);
     const etag_out = new BigUint64Array(1);
 
-    const success = gio.symbols.g_file_load_contents(
+    const success = gio2.symbols.g_file_load_contents(
       this.ptr,
       null,
       Deno.UnsafePointer.of(contents),
@@ -74,7 +75,7 @@ export class File extends GObject {
         const view = new Deno.UnsafePointerView(ptr);
         const arr = new Uint8Array(len);
         view.copyInto(arr);
-        glib.symbols.g_free(ptr);
+        glib2.symbols.g_free(ptr);
         return [true, arr];
       }
     }

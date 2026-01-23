@@ -1,8 +1,9 @@
-import { adwaita, gobject } from "./ffi/gtk.ts";
+import { adwaita } from "./ffi/adwaita.ts";
 import { cstr, readCStr } from "./utils.ts";
 import { type Application, ListBoxRow, Widget, Window } from "./gtk4.ts";
+import { gobject2 } from "./ffi/gobject2.ts";
 
-// LibAdwaita Window extends GtkWindow
+// Libadwaita Window extends GtkWindow
 export class AdwWindow extends Window {
   constructor(ptr?: Deno.PointerValue) {
     const actualPtr = ptr ?? adwaita.symbols.adw_window_new();
@@ -14,7 +15,7 @@ export class AdwWindow extends Window {
   }
 }
 
-// LibAdwaita ApplicationWindow extends AdwWindow
+// Libadwaita ApplicationWindow extends AdwWindow
 export class AdwApplicationWindow extends AdwWindow {
   constructor(app: Application) {
     const ptr = adwaita.symbols.adw_application_window_new(app.ptr);
@@ -295,7 +296,7 @@ export class MessageDialog extends Window {
     );
 
     const signalCStr = cstr("response");
-    gobject.symbols.g_signal_connect_data(
+    gobject2.symbols.g_signal_connect_data(
       this.ptr,
       signalCStr,
       cb.pointer,

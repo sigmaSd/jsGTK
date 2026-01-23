@@ -1,4 +1,4 @@
-import { cairo } from "./ffi/gtk.ts";
+import { cairo2 as cairo } from "./ffi/cairo2.ts";
 
 // Cairo Context Wrapper
 export class CairoContext {

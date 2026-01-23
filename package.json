@@ -3,7 +3,7 @@
   "exports": {
     "./eventloop": "./src/eventloop.ts",
     "./gtk4": "./src/gtk4.ts",
-    "./adw1": "./src/adw1.ts",
+    "./adw": "./src/adw.ts",
     "./gio": "./src/gio.ts",
     "./glib": "./src/glib.ts",
     "./gobject": "./src/gobject.ts",

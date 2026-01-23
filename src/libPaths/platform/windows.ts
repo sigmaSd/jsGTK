@@ -6,7 +6,7 @@ const SEARCH_DIRS = [
 ];
 
 export const windowsLibPaths: LibPaths = {
-  gtk: findLib("libgtk-4-1.dll", SEARCH_DIRS),
+  gtk4: findLib("libgtk-4-1.dll", SEARCH_DIRS),
   gtk3: findLib("libgtk-3-0.dll", SEARCH_DIRS),
   app_indicator: findLib("libayatana-appindicator3-1.dll", SEARCH_DIRS),
   adwaita: findLib("libadwaita-1-0.dll", SEARCH_DIRS),
