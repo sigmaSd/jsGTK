@@ -38,7 +38,7 @@ export class Indicator extends GObject {
     app_indicator.symbols.app_indicator_set_title(this.ptr, cstr(title));
   }
 
-  get props() {
+  get props(): { connected: boolean } {
     return {
       connected: this.getProperty("connected", G_TYPE_BOOLEAN) as boolean,
     };

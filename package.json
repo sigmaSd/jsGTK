@@ -3,6 +3,8 @@
   "exports": {
     "./eventloop": "./src/high/eventloop.ts",
     "./gtk4": "./src/high/gtk4.ts",
+    "./gtk3": "./src/high/gtk3.ts",
+    "./appindicator": "./src/high/app_indicator.ts",
     "./adw": "./src/high/adw.ts",
     "./gio": "./src/high/gio.ts",
     "./glib": "./src/high/glib.ts",
