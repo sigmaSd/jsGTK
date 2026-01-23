@@ -20,7 +20,7 @@
     ]
   },
   "imports": {
-    "@sigma/deno-compat": "jsr:@sigma/deno-compat@^0.10.0"
+    "@sigma/deno-compat": "jsr:@sigma/deno-compat@^0.11.0"
   },
   "tasks": {
     "test": "deno install && deno fmt --check && deno lint && deno check && deno test --allow-ffi --allow-env"
