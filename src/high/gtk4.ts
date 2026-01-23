@@ -448,6 +448,10 @@ export class Label extends Widget {
     gtk4.symbols.gtk_label_set_markup(this.ptr, markupCStr);
   }
 
+  setEllipsize(mode: number): void {
+    gtk4.symbols.gtk_label_set_ellipsize(this.ptr, mode);
+  }
+
   setUseMarkup(useMarkup: boolean): void {
     gtk4.symbols.gtk_label_set_use_markup(this.ptr, useMarkup);
   }
@@ -729,6 +733,10 @@ export class ListBox extends Widget {
 
   append(row: Widget): void {
     gtk4.symbols.gtk_list_box_append(this.ptr, row.ptr);
+  }
+
+  prepend(row: Widget): void {
+    gtk4.symbols.gtk_list_box_prepend(this.ptr, row.ptr);
   }
 
   remove(row: Widget): void {

@@ -26,6 +26,7 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
   gtk_label_set_text: { parameters: ["pointer", "buffer"], result: "void" },
   gtk_label_get_text: { parameters: ["pointer"], result: "pointer" },
   gtk_label_set_markup: { parameters: ["pointer", "buffer"], result: "void" },
+  gtk_label_set_ellipsize: { parameters: ["pointer", "i32"], result: "void" },
   gtk_label_set_use_markup: { parameters: ["pointer", "bool"], result: "void" },
   gtk_label_set_wrap: { parameters: ["pointer", "bool"], result: "void" },
   gtk_label_set_xalign: { parameters: ["pointer", "f32"], result: "void" },
@@ -144,6 +145,7 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
   },
   gtk_list_box_new: { parameters: [], result: "pointer" },
   gtk_list_box_append: { parameters: ["pointer", "pointer"], result: "void" },
+  gtk_list_box_prepend: { parameters: ["pointer", "pointer"], result: "void" },
   gtk_list_box_remove: { parameters: ["pointer", "pointer"], result: "void" },
   gtk_list_box_set_selection_mode: {
     parameters: ["pointer", "i32"],
