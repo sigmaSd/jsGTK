@@ -388,6 +388,10 @@ export class DBusProxy extends GObject {
     objectPath: string,
     interfaceName: string,
   ): DBusProxy | null {
+    if (!gio.symbols.g_dbus_proxy_new_for_bus_sync) {
+      throw new Error("D-Bus is not available on this platform");
+    }
+
     const ptr = gio.symbols.g_dbus_proxy_new_for_bus_sync(
       busType,
       flags,
@@ -408,6 +412,10 @@ export class DBusProxy extends GObject {
     flags: number = DBusCallFlags.NONE,
     timeoutMsec: number = -1,
   ): Deno.PointerValue | null {
+    if (!gio.symbols.g_dbus_proxy_call_sync) {
+      throw new Error("D-Bus is not available on this platform");
+    }
+
     return gio.symbols.g_dbus_proxy_call_sync(
       this.ptr,
       cstr(methodName),
@@ -427,11 +435,11 @@ export class DBusProxy extends GObject {
     // Build variant tuple of strings
     const variantPtrs = new BigUint64Array(args.length);
     for (let i = 0; i < args.length; i++) {
-      const strVariant = gio.symbols.g_variant_new_string(cstr(args[i]));
+      const strVariant = glib.symbols.g_variant_new_string(cstr(args[i]));
       variantPtrs[i] = BigInt(Deno.UnsafePointer.value(strVariant!));
     }
 
-    const tupleVariant = gio.symbols.g_variant_new_tuple(
+    const tupleVariant = glib.symbols.g_variant_new_tuple(
       Deno.UnsafePointer.of(variantPtrs),
       BigInt(args.length),
     );
@@ -443,15 +451,15 @@ export class DBusProxy extends GObject {
     }
 
     // Extract uint32 from result tuple (first child)
-    const child = gio.symbols.g_variant_get_child_value(result, 0n);
+    const child = glib.symbols.g_variant_get_child_value(result, 0n);
     if (!child) {
-      gio.symbols.g_variant_unref(result);
+      glib.symbols.g_variant_unref(result);
       return null;
     }
 
-    const value = gio.symbols.g_variant_get_uint32(child);
-    gio.symbols.g_variant_unref(child);
-    gio.symbols.g_variant_unref(result);
+    const value = glib.symbols.g_variant_get_uint32(child);
+    glib.symbols.g_variant_unref(child);
+    glib.symbols.g_variant_unref(result);
 
     return value;
   }
@@ -459,11 +467,11 @@ export class DBusProxy extends GObject {
   // Helper to call methods with uint32 parameter
   callWithUint32(methodName: string, value: number): void {
     // Create a uint32 variant wrapped in a tuple for D-Bus call
-    const uint32Variant = gio.symbols.g_variant_new_uint32(value);
+    const uint32Variant = glib.symbols.g_variant_new_uint32(value);
     const variantPtrs = new BigUint64Array(1);
     variantPtrs[0] = BigInt(Deno.UnsafePointer.value(uint32Variant!));
 
-    const tupleVariant = gio.symbols.g_variant_new_tuple(
+    const tupleVariant = glib.symbols.g_variant_new_tuple(
       Deno.UnsafePointer.of(variantPtrs),
       1n,
     );
@@ -481,12 +489,12 @@ export class Variant {
   }
 
   static newString(value: string): Variant {
-    const ptr = gio.symbols.g_variant_new_string(cstr(value));
+    const ptr = glib.symbols.g_variant_new_string(cstr(value));
     return new Variant(ptr!);
   }
 
   static newUint32(value: number): Variant {
-    const ptr = gio.symbols.g_variant_new_uint32(value);
+    const ptr = glib.symbols.g_variant_new_uint32(value);
     return new Variant(ptr!);
   }
 
@@ -495,7 +503,7 @@ export class Variant {
     for (let i = 0; i < children.length; i++) {
       ptrs[i] = BigInt(Deno.UnsafePointer.value(children[i].ptr!));
     }
-    const ptr = gio.symbols.g_variant_new_tuple(
+    const ptr = glib.symbols.g_variant_new_tuple(
       Deno.UnsafePointer.of(ptrs),
       BigInt(children.length),
     );
@@ -503,24 +511,24 @@ export class Variant {
   }
 
   getChildValue(index: number): Variant | null {
-    const ptr = gio.symbols.g_variant_get_child_value(this.ptr, BigInt(index));
+    const ptr = glib.symbols.g_variant_get_child_value(this.ptr, BigInt(index));
     return ptr ? new Variant(ptr) : null;
   }
 
   getString(): string | null {
-    const ptr = gio.symbols.g_variant_get_string(this.ptr, null);
+    const ptr = glib.symbols.g_variant_get_string(this.ptr, null);
     return ptr ? readCStr(ptr) : null;
   }
 
   getUint32(): number {
-    return gio.symbols.g_variant_get_uint32(this.ptr);
+    return glib.symbols.g_variant_get_uint32(this.ptr);
   }
 
   getInt32(): number {
-    return gio.symbols.g_variant_get_int32(this.ptr);
+    return glib.symbols.g_variant_get_int32(this.ptr);
   }
 
   unref(): void {
-    gio.symbols.g_variant_unref(this.ptr);
+    glib.symbols.g_variant_unref(this.ptr);
   }
 }

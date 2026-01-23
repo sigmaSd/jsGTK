@@ -158,10 +158,11 @@ export const gio = Deno.dlopen(LIB_PATHS.gio, {
     parameters: ["pointer"],
     result: "void",
   },
-  // DBus
+  // DBus (optional - not available on Windows)
   g_bus_get_sync: {
     parameters: ["i32", "pointer", "pointer"],
     result: "pointer",
+    optional: true,
   },
   g_dbus_proxy_new_sync: {
     parameters: [
@@ -175,6 +176,7 @@ export const gio = Deno.dlopen(LIB_PATHS.gio, {
       "pointer",
     ],
     result: "pointer",
+    optional: true,
   },
   g_dbus_proxy_new_for_bus_sync: {
     parameters: [
@@ -188,6 +190,7 @@ export const gio = Deno.dlopen(LIB_PATHS.gio, {
       "pointer",
     ],
     result: "pointer",
+    optional: true,
   },
   g_dbus_proxy_call_sync: {
     parameters: [
@@ -200,6 +203,7 @@ export const gio = Deno.dlopen(LIB_PATHS.gio, {
       "pointer",
     ],
     result: "pointer",
+    optional: true,
   },
   g_dbus_proxy_call: {
     parameters: [
@@ -213,50 +217,11 @@ export const gio = Deno.dlopen(LIB_PATHS.gio, {
       "pointer",
     ],
     result: "void",
+    optional: true,
   },
   g_dbus_proxy_call_finish: {
     parameters: ["pointer", "pointer", "pointer"],
     result: "pointer",
-  },
-  // GVariant
-  g_variant_new_string: {
-    parameters: ["buffer"],
-    result: "pointer",
-  },
-  g_variant_new_uint32: {
-    parameters: ["u32"],
-    result: "pointer",
-  },
-  g_variant_new_tuple: {
-    parameters: ["pointer", "usize"],
-    result: "pointer",
-  },
-  g_variant_get_child_value: {
-    parameters: ["pointer", "usize"],
-    result: "pointer",
-  },
-  g_variant_get_string: {
-    parameters: ["pointer", "pointer"],
-    result: "pointer",
-  },
-  g_variant_get_uint32: {
-    parameters: ["pointer"],
-    result: "u32",
-  },
-  g_variant_get_int32: {
-    parameters: ["pointer"],
-    result: "i32",
-  },
-  g_variant_unref: {
-    parameters: ["pointer"],
-    result: "void",
-  },
-  g_variant_ref: {
-    parameters: ["pointer"],
-    result: "pointer",
-  },
-  g_variant_ref_sink: {
-    parameters: ["pointer"],
-    result: "pointer",
+    optional: true,
   },
 });

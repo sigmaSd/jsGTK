@@ -30,8 +30,10 @@ function assertEquals(actual: unknown, expected: unknown, message: string) {
 
 const testOptions = { sanitizeResources: false, sanitizeOps: false };
 
-// Skip D-Bus tests if no session bus is available
-const hasSessionBus = Deno.env.get("DBUS_SESSION_BUS_ADDRESS") !== undefined;
+// Skip D-Bus proxy tests if no session bus is available or on Windows (D-Bus doesn't exist on Windows)
+const isWindows = Deno.build.os === "windows";
+const hasSessionBus = !isWindows &&
+  Deno.env.get("DBUS_SESSION_BUS_ADDRESS") !== undefined;
 
 Deno.test({
   name: "Variant: Create and read string",
