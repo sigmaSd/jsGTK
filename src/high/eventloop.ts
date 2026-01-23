@@ -31,7 +31,7 @@
  */
 
 import type { Application } from "./gtk4.ts";
-import { glib2 } from "../low/glib.ts";
+import { glib } from "../low/glib.ts";
 
 export interface EventLoopOptions {
   /**
@@ -59,7 +59,7 @@ export class EventLoop {
 
   constructor(options: EventLoopOptions = {}) {
     this.#pollInterval = options.pollInterval ?? 16;
-    this.#mainContextPtr = glib2.symbols.g_main_context_default();
+    this.#mainContextPtr = glib.symbols.g_main_context_default();
   }
 
   /**
@@ -81,13 +81,13 @@ export class EventLoop {
     let idleCount = 0;
     while (this.#isRunning) {
       // Check if there are pending events before processing
-      const hadEvents = glib2.symbols.g_main_context_pending(
+      const hadEvents = glib.symbols.g_main_context_pending(
         this.#mainContextPtr,
       );
 
       // Process all currently pending events
-      while (glib2.symbols.g_main_context_pending(this.#mainContextPtr)) {
-        glib2.symbols.g_main_context_iteration(this.#mainContextPtr, false);
+      while (glib.symbols.g_main_context_pending(this.#mainContextPtr)) {
+        glib.symbols.g_main_context_iteration(this.#mainContextPtr, false);
       }
 
       // Adapt sleep strategy based on event activity

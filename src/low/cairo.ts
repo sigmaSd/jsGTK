@@ -2,7 +2,7 @@
 import "@sigma/deno-compat";
 import { LIB_PATHS } from "./paths/mod.ts";
 
-export const cairo2 = Deno.dlopen(LIB_PATHS.cairo, {
+export const cairo = Deno.dlopen(LIB_PATHS.cairo, {
   cairo_set_source_rgb: {
     parameters: ["pointer", "f64", "f64", "f64"],
     result: "void",

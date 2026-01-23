@@ -1,4 +1,4 @@
-import { gobject2 } from "../low/gobject.ts";
+import { gobject } from "../low/gobject.ts";
 import { createGValue, cstr, readCStr } from "../low/utils.ts";
 
 // GType fundamental types
@@ -37,13 +37,13 @@ export class GObject {
   constructor(ptr: Deno.PointerValue) {
     this.ptr = ptr;
     if (ptr) {
-      gobject2.symbols.g_object_ref(ptr);
+      gobject.symbols.g_object_ref(ptr);
     }
   }
 
   unref(): void {
     if (this.ptr) {
-      gobject2.symbols.g_object_unref(this.ptr);
+      gobject.symbols.g_object_unref(this.ptr);
       this.ptr = null;
     }
   }
@@ -65,7 +65,7 @@ export class GObject {
       },
     );
 
-    const signalId = gobject2.symbols.g_signal_connect_data(
+    const signalId = gobject.symbols.g_signal_connect_data(
       this.ptr,
       signalCStr,
       cb.pointer as Deno.PointerValue,
@@ -78,12 +78,12 @@ export class GObject {
   }
 
   disconnect(signalId: number): void {
-    gobject2.symbols.g_signal_handler_disconnect(this.ptr, BigInt(signalId));
+    gobject.symbols.g_signal_handler_disconnect(this.ptr, BigInt(signalId));
   }
 
   emit(signal: string): void {
     const signalCStr = cstr(signal);
-    gobject2.symbols.g_signal_emit_by_name(this.ptr, signalCStr);
+    gobject.symbols.g_signal_emit_by_name(this.ptr, signalCStr);
   }
 
   setProperty(name: string, value: unknown): void {
@@ -92,40 +92,40 @@ export class GObject {
     const gvaluePtr = Deno.UnsafePointer.of(gvalue)!;
 
     if (typeof value === "string") {
-      gobject2.symbols.g_value_init(gvaluePtr, BigInt(G_TYPE_STRING));
-      gobject2.symbols.g_value_set_string(
+      gobject.symbols.g_value_init(gvaluePtr, BigInt(G_TYPE_STRING));
+      gobject.symbols.g_value_set_string(
         gvaluePtr as Deno.PointerValue,
         cstr(value),
       );
     } else if (typeof value === "boolean") {
-      gobject2.symbols.g_value_init(gvaluePtr, BigInt(G_TYPE_BOOLEAN));
-      gobject2.symbols.g_value_set_boolean(gvaluePtr, value);
+      gobject.symbols.g_value_init(gvaluePtr, BigInt(G_TYPE_BOOLEAN));
+      gobject.symbols.g_value_set_boolean(gvaluePtr, value);
     } else if (typeof value === "number") {
       if (Number.isInteger(value)) {
-        gobject2.symbols.g_value_init(gvaluePtr, BigInt(G_TYPE_INT));
-        gobject2.symbols.g_value_set_int(gvaluePtr, value);
+        gobject.symbols.g_value_init(gvaluePtr, BigInt(G_TYPE_INT));
+        gobject.symbols.g_value_set_int(gvaluePtr, value);
       } else {
-        gobject2.symbols.g_value_init(gvaluePtr, BigInt(G_TYPE_DOUBLE));
-        gobject2.symbols.g_value_set_double(gvaluePtr, value);
+        gobject.symbols.g_value_init(gvaluePtr, BigInt(G_TYPE_DOUBLE));
+        gobject.symbols.g_value_set_double(gvaluePtr, value);
       }
     } else if (value instanceof GObject) {
-      gobject2.symbols.g_value_init(gvaluePtr, BigInt(G_TYPE_OBJECT));
-      gobject2.symbols.g_value_set_object(gvaluePtr, value.ptr);
+      gobject.symbols.g_value_init(gvaluePtr, BigInt(G_TYPE_OBJECT));
+      gobject.symbols.g_value_set_object(gvaluePtr, value.ptr);
     } else if (typeof value === "object" && value !== null) {
       // Handle raw Deno.PointerValue for object properties
-      gobject2.symbols.g_value_init(gvaluePtr, BigInt(G_TYPE_OBJECT));
-      gobject2.symbols.g_value_set_object(
+      gobject.symbols.g_value_init(gvaluePtr, BigInt(G_TYPE_OBJECT));
+      gobject.symbols.g_value_set_object(
         gvaluePtr,
         value as Deno.PointerValue,
       );
     }
 
-    gobject2.symbols.g_object_set_property(
+    gobject.symbols.g_object_set_property(
       this.ptr,
       nameCStr,
       gvaluePtr as Deno.PointerValue,
     );
-    gobject2.symbols.g_value_unset(gvaluePtr);
+    gobject.symbols.g_value_unset(gvaluePtr);
   }
 
   getProperty(name: string, type?: number): unknown {
@@ -153,8 +153,8 @@ export class GObject {
       }
     }
 
-    gobject2.symbols.g_value_init(gvaluePtr, BigInt(type));
-    gobject2.symbols.g_object_get_property(
+    gobject.symbols.g_value_init(gvaluePtr, BigInt(type));
+    gobject.symbols.g_object_get_property(
       this.ptr,
       nameCStr,
       gvaluePtr as Deno.PointerValue,
@@ -162,28 +162,28 @@ export class GObject {
 
     let result: unknown;
     if (type === G_TYPE_STRING) {
-      const strPtr = gobject2.symbols.g_value_get_string(gvaluePtr);
+      const strPtr = gobject.symbols.g_value_get_string(gvaluePtr);
       result = readCStr(strPtr);
     } else if (type === G_TYPE_BOOLEAN) {
-      result = gobject2.symbols.g_value_get_boolean(gvaluePtr);
+      result = gobject.symbols.g_value_get_boolean(gvaluePtr);
     } else if (type === G_TYPE_INT) {
-      result = gobject2.symbols.g_value_get_int(gvaluePtr);
+      result = gobject.symbols.g_value_get_int(gvaluePtr);
     } else if (type === G_TYPE_DOUBLE) {
-      result = gobject2.symbols.g_value_get_double(gvaluePtr);
+      result = gobject.symbols.g_value_get_double(gvaluePtr);
     } else if (type === G_TYPE_UINT) {
-      result = gobject2.symbols.g_value_get_uint(gvaluePtr);
+      result = gobject.symbols.g_value_get_uint(gvaluePtr);
     } else if (type === G_TYPE_OBJECT) {
-      result = gobject2.symbols.g_value_get_object(gvaluePtr);
+      result = gobject.symbols.g_value_get_object(gvaluePtr);
     }
 
-    gobject2.symbols.g_value_unset(gvaluePtr);
+    gobject.symbols.g_value_unset(gvaluePtr);
     return result;
   }
 }
 
 // Helper function to create GObject instances from type name
 export function createGObject(typeName: string): Deno.PointerValue | null {
-  const type = gobject2.symbols.g_type_from_name(cstr(typeName));
+  const type = gobject.symbols.g_type_from_name(cstr(typeName));
   if (!type) return null;
-  return gobject2.symbols.g_object_new(type, null);
+  return gobject.symbols.g_object_new(type, null);
 }

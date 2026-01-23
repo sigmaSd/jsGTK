@@ -5,9 +5,9 @@ import type { Menu, SimpleAction } from "./gio.ts";
 import { CairoContext } from "./cairo.ts";
 import { gtk4 } from "../low/gtk4.ts";
 import { adwaita } from "../low/adw.ts";
-import { gio2 } from "../low/gio.ts";
-import { gobject2 } from "../low/gobject.ts";
-import { glib2 } from "../low/glib.ts";
+import { gio } from "../low/gio.ts";
+import { gobject } from "../low/gobject.ts";
+import { glib } from "../low/glib.ts";
 
 // ============================================================================
 // GTK Enums and Constants
@@ -229,23 +229,23 @@ export class Application extends GObject {
   }
 
   run(args: string[]): number {
-    return gio2.symbols.g_application_run(this.ptr, args.length, null);
+    return gio.symbols.g_application_run(this.ptr, args.length, null);
   }
 
   quit(): void {
-    gio2.symbols.g_application_quit(this.ptr);
+    gio.symbols.g_application_quit(this.ptr);
   }
 
   register(): void {
-    gio2.symbols.g_application_register(this.ptr, null, null);
+    gio.symbols.g_application_register(this.ptr, null, null);
   }
 
   activate(): void {
-    gio2.symbols.g_application_activate(this.ptr);
+    gio.symbols.g_application_activate(this.ptr);
   }
 
   getIsRemote(): boolean {
-    return gio2.symbols.g_application_get_is_remote(this.ptr);
+    return gio.symbols.g_application_get_is_remote(this.ptr);
   }
 
   inhibit(window: Widget | null, flags: number, reason: string): number {
@@ -264,7 +264,7 @@ export class Application extends GObject {
   }
 
   addAction(action: SimpleAction): void {
-    gio2.symbols.g_action_map_add_action(this.ptr, action.ptr);
+    gio.symbols.g_action_map_add_action(this.ptr, action.ptr);
   }
 
   setAccelsForAction(detailedActionName: string, accels: string[]): void {
@@ -1032,7 +1032,7 @@ export class IconTheme extends GObject {
 }
 
 export function addAction(app: Application, action: SimpleAction): void {
-  gio2.symbols.g_action_map_add_action(app.ptr, action.ptr);
+  gio.symbols.g_action_map_add_action(app.ptr, action.ptr);
 }
 
 // New additions
@@ -1120,7 +1120,7 @@ export class EventControllerKey extends EventController {
       },
     );
     const signalCStr = cstr("key-pressed");
-    return Number(gobject2.symbols.g_signal_connect_data(
+    return Number(gobject.symbols.g_signal_connect_data(
       this.ptr,
       signalCStr,
       cb.pointer,
@@ -1152,13 +1152,13 @@ export class DropTarget extends EventController {
         y: number,
         _userData: Deno.PointerValue,
       ) => {
-        const objPtr = gobject2.symbols.g_value_get_object(value);
+        const objPtr = gobject.symbols.g_value_get_object(value);
         return callback(objPtr, x, y);
       },
     );
 
     const signalCStr = cstr("drop");
-    return Number(gobject2.symbols.g_signal_connect_data(
+    return Number(gobject.symbols.g_signal_connect_data(
       this.ptr,
       signalCStr,
       cb.pointer,
@@ -1308,7 +1308,7 @@ export class GestureClick extends EventController {
       },
     );
     const signalCStr = cstr("released");
-    return Number(gobject2.symbols.g_signal_connect_data(
+    return Number(gobject.symbols.g_signal_connect_data(
       this.ptr,
       signalCStr,
       cb.pointer,
@@ -1320,7 +1320,7 @@ export class GestureClick extends EventController {
 }
 
 export function unixSignalAdd(signum: number, callback: () => boolean): number {
-  if (!glib2.symbols.g_unix_signal_add) {
+  if (!glib.symbols.g_unix_signal_add) {
     throw new Error("unixSignalAdd is not supported on this platform");
   }
   const cb = new Deno.UnsafeCallback(
@@ -1334,5 +1334,5 @@ export function unixSignalAdd(signum: number, callback: () => boolean): number {
 }
 
 export function typeFromName(name: string): number | bigint {
-  return gobject2.symbols.g_type_from_name(cstr(name));
+  return gobject.symbols.g_type_from_name(cstr(name));
 }

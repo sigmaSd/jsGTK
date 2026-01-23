@@ -1,7 +1,7 @@
 import { adwaita } from "../low/adw.ts";
 import { cstr, readCStr } from "../low/utils.ts";
 import { type Application, ListBoxRow, Widget, Window } from "./gtk4.ts";
-import { gobject2 } from "../low/gobject.ts";
+import { gobject } from "../low/gobject.ts";
 
 // ============================================================================
 // Adwaita Enums and Constants
@@ -320,7 +320,7 @@ export class MessageDialog extends Window {
     );
 
     const signalCStr = cstr("response");
-    gobject2.symbols.g_signal_connect_data(
+    gobject.symbols.g_signal_connect_data(
       this.ptr,
       signalCStr,
       cb.pointer,

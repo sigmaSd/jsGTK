@@ -2,7 +2,7 @@
 import "@sigma/deno-compat";
 import { LIB_PATHS } from "./paths/mod.ts";
 
-export const glib2 = Deno.dlopen(LIB_PATHS.glib, {
+export const glib = Deno.dlopen(LIB_PATHS.glib, {
   g_main_loop_new: { parameters: ["pointer", "bool"], result: "pointer" },
   g_main_loop_run: { parameters: ["pointer"], result: "void" },
   g_main_loop_quit: { parameters: ["pointer"], result: "void" },

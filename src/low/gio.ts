@@ -2,7 +2,7 @@
 import "@sigma/deno-compat";
 import { LIB_PATHS } from "./paths/mod.ts";
 
-export const gio2 = Deno.dlopen(LIB_PATHS.gio, {
+export const gio = Deno.dlopen(LIB_PATHS.gio, {
   g_application_run: {
     parameters: ["pointer", "i32", "pointer"],
     result: "i32",

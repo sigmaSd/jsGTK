@@ -1,4 +1,4 @@
-import { cairo2 as cairo } from "../low/cairo.ts";
+import { cairo } from "../low/cairo.ts";
 
 // Cairo Context Wrapper
 export class CairoContext {

@@ -2,7 +2,7 @@
 import "@sigma/deno-compat";
 import { LIB_PATHS } from "./paths/mod.ts";
 
-export const gobject2 = Deno.dlopen(LIB_PATHS.gobject, {
+export const gobject = Deno.dlopen(LIB_PATHS.gobject, {
   g_object_new: {
     parameters: ["u64", "buffer"],
     result: "pointer",
