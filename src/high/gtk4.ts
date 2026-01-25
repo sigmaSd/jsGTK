@@ -97,6 +97,13 @@ export const DragAction = {
   ASK: 8,
 } as const;
 
+export const SizeGroupMode = {
+  NONE: 0,
+  HORIZONTAL: 1,
+  VERTICAL: 2,
+  BOTH: 3,
+} as const;
+
 // Modifier type flags (for keyboard shortcuts)
 export const ModifierType = {
   SHIFT_MASK: 1,
@@ -1433,4 +1440,98 @@ export function unixSignalAdd(signum: number, callback: () => boolean): number {
 
 export function typeFromName(name: string): number | bigint {
   return gobject.symbols.g_type_from_name(cstr(name));
+}
+
+// GTK ProgressBar
+export class ProgressBar extends Widget {
+  constructor() {
+    const ptr = gtk4.symbols.gtk_progress_bar_new();
+    super(ptr);
+  }
+
+  setFraction(fraction: number): void {
+    gtk4.symbols.gtk_progress_bar_set_fraction(this.ptr, fraction);
+  }
+
+  getFraction(): number {
+    return gtk4.symbols.gtk_progress_bar_get_fraction(this.ptr);
+  }
+
+  setText(text: string): void {
+    const textCStr = cstr(text);
+    gtk4.symbols.gtk_progress_bar_set_text(this.ptr, textCStr);
+  }
+
+  setShowText(showText: boolean): void {
+    gtk4.symbols.gtk_progress_bar_set_show_text(this.ptr, showText);
+  }
+
+  pulse(): void {
+    gtk4.symbols.gtk_progress_bar_pulse(this.ptr);
+  }
+}
+
+// GTK Grid
+export class Grid extends Widget {
+  constructor() {
+    const ptr = gtk4.symbols.gtk_grid_new();
+    super(ptr);
+  }
+
+  attach(
+    child: Widget,
+    column: number,
+    row: number,
+    width: number,
+    height: number,
+  ): void {
+    gtk4.symbols.gtk_grid_attach(
+      this.ptr,
+      child.ptr,
+      column,
+      row,
+      width,
+      height,
+    );
+  }
+
+  setColumnSpacing(spacing: number): void {
+    gtk4.symbols.gtk_grid_set_column_spacing(this.ptr, spacing);
+  }
+
+  setRowSpacing(spacing: number): void {
+    gtk4.symbols.gtk_grid_set_row_spacing(this.ptr, spacing);
+  }
+}
+
+// GTK SizeGroup
+export class SizeGroup extends GObject {
+  constructor(mode: number) {
+    const ptr = gtk4.symbols.gtk_size_group_new(mode);
+    super(ptr);
+  }
+
+  addWidget(widget: Widget): void {
+    gtk4.symbols.gtk_size_group_add_widget(this.ptr, widget.ptr);
+  }
+}
+
+// GTK Switch
+export class Switch extends Widget {
+  constructor() {
+    const ptr = gtk4.symbols.gtk_switch_new();
+    super(ptr);
+  }
+
+  setActive(active: boolean): void {
+    gtk4.symbols.gtk_switch_set_active(this.ptr, active);
+  }
+
+  getActive(): boolean {
+    return gtk4.symbols.gtk_switch_get_active(this.ptr);
+  }
+
+  onActivate(callback: () => void): number {
+    return this.connect("notify::active", callback);
+  }
 }

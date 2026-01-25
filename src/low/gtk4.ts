@@ -408,4 +408,37 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["pointer"],
     result: "bool",
   },
+  gtk_progress_bar_new: { parameters: [], result: "pointer" },
+  gtk_progress_bar_set_fraction: {
+    parameters: ["pointer", "f64"],
+    result: "void",
+  },
+  gtk_progress_bar_get_fraction: { parameters: ["pointer"], result: "f64" },
+  gtk_progress_bar_set_text: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_progress_bar_set_show_text: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
+  gtk_progress_bar_pulse: { parameters: ["pointer"], result: "void" },
+  gtk_grid_new: { parameters: [], result: "pointer" },
+  gtk_grid_attach: {
+    parameters: ["pointer", "pointer", "i32", "i32", "i32", "i32"],
+    result: "void",
+  },
+  gtk_grid_set_column_spacing: {
+    parameters: ["pointer", "u32"],
+    result: "void",
+  },
+  gtk_grid_set_row_spacing: { parameters: ["pointer", "u32"], result: "void" },
+  gtk_size_group_new: { parameters: ["i32"], result: "pointer" },
+  gtk_size_group_add_widget: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_switch_new: { parameters: [], result: "pointer" },
+  gtk_switch_set_active: { parameters: ["pointer", "bool"], result: "void" },
+  gtk_switch_get_active: { parameters: ["pointer"], result: "bool" },
 });
