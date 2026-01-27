@@ -32,7 +32,8 @@ const testOptions = { sanitizeResources: false, sanitizeOps: false };
 
 // Skip D-Bus proxy tests if no session bus is available or on Windows (D-Bus doesn't exist on Windows)
 const isWindows = Deno.build.os === "windows";
-const hasSessionBus = !isWindows &&
+const isDarwin = Deno.build.os === "darwin";
+const hasSessionBus = !isWindows && !isDarwin &&
   Deno.env.get("DBUS_SESSION_BUS_ADDRESS") !== undefined;
 
 Deno.test({
