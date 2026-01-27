@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "@sigmasd/gtk",
   "exports": {
     "./eventloop": "./src/high/eventloop.ts",
@@ -12,6 +13,6 @@
     "./cairo": "./src/high/cairo.ts"
   },
   "dependencies": {
-    "@sigma/deno-compat": "npm:@jsr/sigma__deno-compat@0.11.0"
+    "@sigma/deno-compat": "npm:@jsr/sigma__deno-compat@^0.20.0"
   }
 }
