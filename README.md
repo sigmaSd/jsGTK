@@ -1,9 +1,9 @@
-# GTK FFI for Deno/Bun
+# jsGTK
 
-High-level TypeScript bindings for GTK4 and libadwaita using Deno/Bun's FFI
-(Foreign Function Interface).
+High-level TypeScript bindings for GTK4 and libadwaita using Deno/Bun/Node.js's
+FFI (Foreign Function Interface).
 
-**Available on JSR:** `@sigmasd/gtk`
+**Available on JSR:** `@sigmasd/jsgtk`
 
 <img width="850" height="750" alt="image" src="https://github.com/user-attachments/assets/30b186c9-6e1e-4c29-978f-50d11afff6c1" />
 
@@ -11,19 +11,30 @@ High-level TypeScript bindings for GTK4 and libadwaita using Deno/Bun's FFI
 
 This project provides idiomatic TypeScript wrappers around GTK4, GLib, GIO,
 GObject, and libadwaita, allowing you to build native desktop applications using
-Deno/Bun. The library abstracts away low-level pointer manipulation and provides
-a clean, object-oriented API similar to native GTK bindings in other languages.
+Deno, Bun or Node.js. The library abstracts away low-level pointer manipulation
+and provides a clean, object-oriented API similar to native GTK bindings in
+other languages.
 
 **Cross-platform support:** Works on Linux, macOS, and Windows (via MSYS2/GTK
 for Windows).
 
 ## Installation
 
-In Deno you can import directly
+### Deno
+
+In Deno you can import directly.
+
+### Bun
 
 For bun you need to install it first using `bunx jsr add @sigmasd/gtk`
 
-Import from JSR in your Deno/Bun project:
+### Node.js
+
+For Node.js you need to install it using `npx jsr add @sigmasd/gtk`.
+Additionally, you must install **koffi** as it is used for FFI in Node.js:
+`npm install koffi`
+
+Import from JSR in your project:
 
 ```typescript
 // GTK4 widgets and enums
@@ -98,10 +109,10 @@ app.run([]);
 
 ```bash
 # Using JSR
-deno run --allow-ffi your-app.ts # or bun your-app.ts
+deno run --allow-ffi your-app.ts # or bun your-app.ts or node your-app.js
 
 # Or from the repository
-deno run --allow-ffi examples/simple.ts # or bun examples/simple.ts
+deno run --allow-ffi examples/simple.ts # or bun examples/simple.ts or node examples/simple.ts
 ```
 
 ## Examples
@@ -121,7 +132,7 @@ The repository's `examples/` directory contains sample applications:
   - Using setTimeout and Promises
   - Running multiple async operations in parallel
 
-Run examples: (can be run with Bun as well)
+Run examples: (can be run with Bun or Node.js as well)
 
 ```bash
 # Simple example
@@ -207,7 +218,7 @@ import { EventLoop } from "@sigmasd/gtk/eventloop";
 
 By default, GTK's `app.run()` blocks JavaScript's event loop, preventing
 `async/await` from working. The `EventLoop` class provides a solution by
-integrating GLib's MainContext with Deno/Bun's event loop.
+integrating GLib's MainContext with Deno/Bun/Node.js's event loop.
 
 ### Using EventLoop
 
@@ -263,7 +274,7 @@ The EventLoop uses a hybrid approach:
 Use `EventLoop` when you need:
 
 - ✅ `async/await` and Promises in your GTK app
-- ✅ `fetch()` or other async Deno/Bun APIs
+- ✅ `fetch()` or other async Deno/Bun/Node.js APIs
 - ✅ `setTimeout()`, `setInterval()` to work properly
 - ✅ Integration with async libraries
 
