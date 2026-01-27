@@ -20,14 +20,10 @@
     ]
   },
   "imports": {
-    "@sigma/deno-compat": "jsr:@sigma/deno-compat@0.20.0"
+    "@sigma/deno-compat": "jsr:@sigma/deno-compat@0.20.4"
   },
   "tasks": {
-    "test": "deno lint && deno check && deno test --allow-ffi --allow-env && bun test && node --test"
+    "test": "deno lint && deno check && deno test --allow-ffi --allow-env && bun test && npm i && node --test"
   },
-  "nodeModulesDir": "auto",
-  "allowScripts": {
-    "allow": ["npm:koffi@2.15.1"],
-    "deny": []
-  }
+  "nodeModulesDir": "auto"
 }

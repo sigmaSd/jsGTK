@@ -13,6 +13,9 @@
     "./cairo": "./src/high/cairo.ts"
   },
   "dependencies": {
-    "@sigma/deno-compat": "npm:@jsr/sigma__deno-compat@^0.20.0"
+    "@sigma/deno-compat": "npm:@jsr/sigma__deno-compat@^0.20.4"
+  },
+  "peerDependencies": {
+    "koffi": "^2.15.1"
   }
 }
