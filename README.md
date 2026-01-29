@@ -3,7 +3,7 @@
 High-level TypeScript bindings for GTK4 and libadwaita using Deno/Bun/Node.js's
 FFI (Foreign Function Interface).
 
-**Available on JSR:** `@sigmasd/jsgtk`
+**Available on JSR:** `@sigmasd/gtk`
 
 <img width="850" height="750" alt="image" src="https://github.com/user-attachments/assets/30b186c9-6e1e-4c29-978f-50d11afff6c1" />
 
