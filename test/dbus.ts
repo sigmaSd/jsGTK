@@ -36,14 +36,6 @@ const isDarwin = Deno.build.os === "darwin";
 const hasSessionBus = !isWindows && !isDarwin &&
   Deno.env.get("DBUS_SESSION_BUS_ADDRESS") !== undefined;
 
-console.log(`Debug DBus Tests:
-  OS: ${Deno.build.os}
-  isWindows: ${isWindows}
-  isDarwin: ${isDarwin}
-  DBUS_SESSION_BUS_ADDRESS: ${Deno.env.get("DBUS_SESSION_BUS_ADDRESS")}
-  hasSessionBus: ${hasSessionBus}
-`);
-
 Deno.test({
   name: "Variant: Create and read string",
   ...testOptions,
