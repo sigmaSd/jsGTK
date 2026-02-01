@@ -758,6 +758,10 @@ export class ListBox extends Widget {
     gtk4.symbols.gtk_list_box_set_selection_mode(this.ptr, mode);
   }
 
+  setShowSeparators(show: boolean): void {
+    gtk4.symbols.gtk_list_box_set_show_separators(this.ptr, show);
+  }
+
   getSelectedRow(): ListBoxRow | null {
     const ptr = gtk4.symbols.gtk_list_box_get_selected_row(this.ptr);
     if (!ptr) return null;

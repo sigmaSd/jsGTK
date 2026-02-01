@@ -152,6 +152,10 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["pointer", "i32"],
     result: "void",
   },
+  gtk_list_box_set_show_separators: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
   gtk_list_box_select_row: {
     parameters: ["pointer", "pointer"],
     result: "void",
