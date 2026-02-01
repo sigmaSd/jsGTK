@@ -786,6 +786,10 @@ export class ListBox extends Widget {
       }
     });
   }
+
+  removeAll(): void {
+    gtk4.symbols.gtk_list_box_remove_all(this.ptr);
+  }
 }
 
 // GtkStringList extends GObject (implements GListModel)

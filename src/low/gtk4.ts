@@ -147,6 +147,7 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
   gtk_list_box_append: { parameters: ["pointer", "pointer"], result: "void" },
   gtk_list_box_prepend: { parameters: ["pointer", "pointer"], result: "void" },
   gtk_list_box_remove: { parameters: ["pointer", "pointer"], result: "void" },
+  gtk_list_box_remove_all: { parameters: ["pointer"], result: "void" },
   gtk_list_box_set_selection_mode: {
     parameters: ["pointer", "i32"],
     result: "void",
