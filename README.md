@@ -145,6 +145,29 @@ deno run --allow-ffi examples/widgets-demo.ts
 deno run --allow-ffi --allow-net examples/async-demo.ts
 ```
 
+## Reusable Components
+
+Since `@sigmasd/gtk` is a standard JSR package, you can build your own reusable
+GTK components on top of it and publish them to JSR as well. These components
+will automatically work across Deno, Bun, and Node.js.
+
+### Example: `@sigmasd/gtk-editor`
+
+A real-world example of a reusable component is the
+[GtkEditor](https://jsr.io/@sigmasd/gtk-editor), which provides a full-featured
+text editor with LSP support.
+
+```typescript
+import { GtkEditor } from "@sigmasd/gtk-editor";
+
+const editor = new GtkEditor({
+  lspEnabled: true,
+  rootUri: "file:///path/to/project",
+  fileUri: "file:///path/to/project/file.ts",
+  initialText: "console.log('Hello GTK!');",
+});
+```
+
 ## Available Widgets
 
 ### Containers

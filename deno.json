@@ -1,6 +1,6 @@
 {
   "name": "@sigmasd/gtk",
-  "version": "0.34.0",
+  "version": "0.34.1",
   "exports": {
     "./eventloop": "./src/high/eventloop.ts",
     "./gtk4": "./src/high/gtk4.ts",
