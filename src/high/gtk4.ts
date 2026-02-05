@@ -1594,6 +1594,23 @@ export class TextBuffer extends GObject {
     return iter;
   }
 
+  getIterAtLine(line: number): Uint8Array {
+    const iter = new Uint8Array(new ArrayBuffer(256));
+    gtk4.symbols.gtk_text_buffer_get_iter_at_line(
+      this.ptr,
+      Deno.UnsafePointer.of(iter as BufferSource),
+      line,
+    );
+    return iter;
+  }
+
+  setIterLineOffset(iter: Uint8Array, offset: number): void {
+    gtk4.symbols.gtk_text_iter_set_line_offset(
+      Deno.UnsafePointer.of(iter as BufferSource),
+      offset,
+    );
+  }
+
   getStartIter(): Uint8Array {
     const iter = new Uint8Array(new ArrayBuffer(256));
     gtk4.symbols.gtk_text_buffer_get_start_iter(
@@ -1626,12 +1643,36 @@ export class TextBuffer extends GObject {
     );
   }
 
+  createTagEmpty(tagName: string): GObject {
+    const ptr = gtk4.symbols.gtk_text_buffer_create_tag(
+      this.ptr,
+      cstr(tagName),
+      null,
+      null,
+      null,
+    );
+    return new GObject(ptr);
+  }
+
   applyTagByName(
     tagName: string,
     start: Uint8Array,
     end: Uint8Array,
   ): void {
     gtk4.symbols.gtk_text_buffer_apply_tag_by_name(
+      this.ptr,
+      cstr(tagName),
+      Deno.UnsafePointer.of(start as BufferSource),
+      Deno.UnsafePointer.of(end as BufferSource),
+    );
+  }
+
+  removeTagByName(
+    tagName: string,
+    start: Uint8Array,
+    end: Uint8Array,
+  ): void {
+    gtk4.symbols.gtk_text_buffer_remove_tag_by_name(
       this.ptr,
       cstr(tagName),
       Deno.UnsafePointer.of(start as BufferSource),

@@ -476,11 +476,23 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["pointer", "pointer", "i32"],
     result: "void",
   },
+  gtk_text_buffer_get_iter_at_line: {
+    parameters: ["pointer", "pointer", "i32"],
+    result: "void",
+  },
+  gtk_text_iter_set_line_offset: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
   gtk_text_buffer_create_tag: {
     parameters: ["pointer", "buffer", "buffer", "buffer", "pointer"],
     result: "pointer",
   },
   gtk_text_buffer_apply_tag_by_name: {
+    parameters: ["pointer", "buffer", "pointer", "pointer"],
+    result: "void",
+  },
+  gtk_text_buffer_remove_tag_by_name: {
     parameters: ["pointer", "buffer", "pointer", "pointer"],
     result: "void",
   },
