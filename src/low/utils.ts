@@ -14,6 +14,5 @@ export function readCStr(ptr: Deno.PointerValue): string {
 // Helper to create GValue
 export function createGValue(): Uint8Array<ArrayBuffer> {
   // GValue is typically 24 bytes on 64-bit systems
-  const buffer = new ArrayBuffer(24);
-  return new Uint8Array(buffer);
+  return new Uint8Array(new ArrayBuffer(24));
 }

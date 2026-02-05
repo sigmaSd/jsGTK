@@ -1547,3 +1547,127 @@ export class Switch extends Widget {
     return this.connect("notify::active", callback);
   }
 }
+
+export class TextBuffer extends GObject {
+  constructor(ptr: Deno.PointerValue) {
+    super(ptr);
+  }
+
+  setText(text: string, len: number): void {
+    gtk4.symbols.gtk_text_buffer_set_text(this.ptr, cstr(text), len);
+  }
+
+  getText(
+    start: Uint8Array,
+    end: Uint8Array,
+    includeHiddenChars: boolean,
+  ): string {
+    const ptr = gtk4.symbols.gtk_text_buffer_get_text(
+      this.ptr,
+      Deno.UnsafePointer.of(start as BufferSource),
+      Deno.UnsafePointer.of(end as BufferSource),
+      includeHiddenChars ? 1 : 0,
+    );
+    const text = readCStr(ptr);
+    if (ptr) glib.symbols.g_free(ptr);
+    return text;
+  }
+
+  getBounds(): { start: Uint8Array; end: Uint8Array } {
+    const start = new Uint8Array(new ArrayBuffer(256));
+    const end = new Uint8Array(new ArrayBuffer(256));
+    gtk4.symbols.gtk_text_buffer_get_bounds(
+      this.ptr,
+      Deno.UnsafePointer.of(start),
+      Deno.UnsafePointer.of(end),
+    );
+    return { start, end };
+  }
+
+  getIterAtOffset(offset: number): Uint8Array {
+    const iter = new Uint8Array(new ArrayBuffer(256));
+    gtk4.symbols.gtk_text_buffer_get_iter_at_offset(
+      this.ptr,
+      Deno.UnsafePointer.of(iter),
+      offset,
+    );
+    return iter;
+  }
+
+  getStartIter(): Uint8Array {
+    const iter = new Uint8Array(new ArrayBuffer(256));
+    gtk4.symbols.gtk_text_buffer_get_start_iter(
+      this.ptr,
+      Deno.UnsafePointer.of(iter),
+    );
+    return iter;
+  }
+
+  getEndIter(): Uint8Array {
+    const iter = new Uint8Array(new ArrayBuffer(256));
+    gtk4.symbols.gtk_text_buffer_get_end_iter(
+      this.ptr,
+      Deno.UnsafePointer.of(iter),
+    );
+    return iter;
+  }
+
+  createTag(
+    tagName: string,
+    propertyName: string,
+    propertyValue: string,
+  ): void {
+    gtk4.symbols.gtk_text_buffer_create_tag(
+      this.ptr,
+      cstr(tagName),
+      cstr(propertyName),
+      cstr(propertyValue),
+      null,
+    );
+  }
+
+  applyTagByName(
+    tagName: string,
+    start: Uint8Array,
+    end: Uint8Array,
+  ): void {
+    gtk4.symbols.gtk_text_buffer_apply_tag_by_name(
+      this.ptr,
+      cstr(tagName),
+      Deno.UnsafePointer.of(start as BufferSource),
+      Deno.UnsafePointer.of(end as BufferSource),
+    );
+  }
+
+  removeAllTags(start: Uint8Array, end: Uint8Array): void {
+    gtk4.symbols.gtk_text_buffer_remove_all_tags(
+      this.ptr,
+      Deno.UnsafePointer.of(start as BufferSource),
+      Deno.UnsafePointer.of(end as BufferSource),
+    );
+  }
+
+  beginUserAction(): void {
+    gtk4.symbols.gtk_text_buffer_begin_user_action(this.ptr);
+  }
+
+  endUserAction(): void {
+    gtk4.symbols.gtk_text_buffer_end_user_action(this.ptr);
+  }
+}
+
+export class TextView extends Widget {
+  constructor() {
+    const ptr = gtk4.symbols.gtk_text_view_new();
+    super(ptr);
+  }
+
+  getBuffer(): TextBuffer {
+    const ptr = gtk4.symbols.gtk_text_view_get_buffer(this.ptr);
+    return new TextBuffer(ptr);
+  }
+
+  setMonospace(monospace: boolean): void {
+    gtk4.symbols.gtk_text_view_set_monospace(this.ptr, monospace);
+  }
+}

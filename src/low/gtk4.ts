@@ -446,4 +446,66 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
   gtk_switch_new: { parameters: [], result: "pointer" },
   gtk_switch_set_active: { parameters: ["pointer", "bool"], result: "void" },
   gtk_switch_get_active: { parameters: ["pointer"], result: "bool" },
+  gtk_text_view_new: { parameters: [], result: "pointer" },
+  gtk_text_view_get_buffer: { parameters: ["pointer"], result: "pointer" },
+  gtk_text_view_set_monospace: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
+  gtk_text_buffer_set_text: {
+    parameters: ["pointer", "buffer", "i32"],
+    result: "void",
+  },
+  gtk_text_buffer_get_text: {
+    parameters: ["pointer", "pointer", "pointer", "i32"],
+    result: "pointer",
+  },
+  gtk_text_buffer_get_start_iter: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_text_buffer_get_end_iter: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_text_buffer_get_bounds: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "void",
+  },
+  gtk_text_buffer_get_iter_at_offset: {
+    parameters: ["pointer", "pointer", "i32"],
+    result: "void",
+  },
+  gtk_text_buffer_create_tag: {
+    parameters: ["pointer", "buffer", "buffer", "buffer", "pointer"],
+    result: "pointer",
+  },
+  gtk_text_buffer_apply_tag_by_name: {
+    parameters: ["pointer", "buffer", "pointer", "pointer"],
+    result: "void",
+  },
+  gtk_text_buffer_remove_all_tags: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "void",
+  },
+  gtk_text_buffer_begin_user_action: {
+    parameters: ["pointer"],
+    result: "void",
+  },
+  gtk_text_buffer_end_user_action: {
+    parameters: ["pointer"],
+    result: "void",
+  },
+  gtk_text_iter_forward_search: {
+    parameters: ["pointer", "buffer", "i32", "pointer", "pointer", "pointer"],
+    result: "bool",
+  },
+  gtk_text_iter_get_offset: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  gtk_text_iter_assign: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
 });
