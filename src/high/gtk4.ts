@@ -870,6 +870,30 @@ export class Entry extends Widget {
   }
 }
 
+// GTK Popover
+export class Popover extends Widget {
+  constructor() {
+    const ptr = gtk4.symbols.gtk_popover_new();
+    super(ptr);
+  }
+
+  setParent(parent: Widget): void {
+    gtk4.symbols.gtk_widget_set_parent(this.ptr, parent.ptr);
+  }
+
+  setChild(child: Widget): void {
+    gtk4.symbols.gtk_popover_set_child(this.ptr, child.ptr);
+  }
+
+  popup(): void {
+    gtk4.symbols.gtk_popover_popup(this.ptr);
+  }
+
+  popdown(): void {
+    gtk4.symbols.gtk_popover_popdown(this.ptr);
+  }
+}
+
 // GtkMenuButton extends GtkWidget
 export class MenuButton extends Widget {
   constructor() {

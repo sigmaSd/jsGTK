@@ -119,6 +119,10 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     result: "void",
   },
   gtk_widget_grab_focus: { parameters: ["pointer"], result: "bool" },
+  gtk_widget_set_parent: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
   gtk_widget_unparent: { parameters: ["pointer"], result: "void" },
   gtk_widget_get_first_child: { parameters: ["pointer"], result: "pointer" },
   gtk_widget_get_next_sibling: { parameters: ["pointer"], result: "pointer" },
@@ -520,4 +524,11 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["pointer", "pointer"],
     result: "void",
   },
+  gtk_popover_new: { parameters: [], result: "pointer" },
+  gtk_popover_set_child: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_popover_popup: { parameters: ["pointer"], result: "void" },
+  gtk_popover_popdown: { parameters: ["pointer"], result: "void" },
 });
