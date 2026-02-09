@@ -32,6 +32,7 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
   gtk_label_set_xalign: { parameters: ["pointer", "f32"], result: "void" },
   gtk_button_new_with_label: { parameters: ["buffer"], result: "pointer" },
   gtk_button_set_label: { parameters: ["pointer", "buffer"], result: "void" },
+  gtk_button_get_label: { parameters: ["pointer"], result: "pointer" },
   gtk_check_button_new: { parameters: [], result: "pointer" },
   gtk_check_button_new_with_label: {
     parameters: ["buffer"],

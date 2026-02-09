@@ -489,6 +489,11 @@ export class Button extends Widget {
     gtk4.symbols.gtk_button_set_label(this.ptr, labelCStr);
   }
 
+  getLabel(): string {
+    const ptr = gtk4.symbols.gtk_button_get_label(this.ptr);
+    return readCStr(ptr);
+  }
+
   setIconName(iconName: string): void {
     const iconNameCStr = cstr(iconName);
     gtk4.symbols.gtk_button_set_icon_name(this.ptr, iconNameCStr);
