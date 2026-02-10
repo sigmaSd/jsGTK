@@ -950,6 +950,18 @@ export class Builder extends GObject {
     return gtk4.symbols.gtk_builder_get_object(this.ptr, nameCStr);
   }
 
+  /**
+   * Retrieves an object from the builder and wraps it in the specified high-level class.
+   * This uses Object.create to bypass the constructor and wrap the existing pointer.
+   */
+  get<T extends GObject>(name: string, cls: { new (...args: any[]): T }): T | null {
+    const ptr = this.getObject(name);
+    if (!ptr) return null;
+    const obj = Object.create(cls.prototype) as T;
+    (obj as any).ptr = ptr;
+    return obj;
+  }
+
   getWidget(name: string): Widget | null {
     const ptr = this.getObject(name);
     if (!ptr) return null;
