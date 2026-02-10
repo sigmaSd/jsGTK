@@ -76,6 +76,9 @@ export class ListStore extends GObject {
   append(item: GObject): void {
     gio.symbols.g_list_store_append(this.ptr, item.ptr);
   }
+  removeAll(): void {
+    gio.symbols.g_list_store_remove_all(this.ptr);
+  }
 }
 
 export class File extends GObject {

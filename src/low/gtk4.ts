@@ -532,4 +532,37 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
   },
   gtk_popover_popup: { parameters: ["pointer"], result: "void" },
   gtk_popover_popdown: { parameters: ["pointer"], result: "void" },
+  gtk_column_view_new: { parameters: [], result: "pointer" },
+  gtk_column_view_append_column: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_column_view_set_model: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_column_view_column_new: {
+    parameters: ["buffer", "pointer"],
+    result: "pointer",
+  },
+  gtk_column_view_column_set_factory: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_column_view_column_set_title: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_column_view_column_set_expand: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
+  gtk_signal_list_item_factory_new: { parameters: [], result: "pointer" },
+  gtk_single_selection_new: { parameters: ["pointer"], result: "pointer" },
+  gtk_list_item_get_item: { parameters: ["pointer"], result: "pointer" },
+  gtk_list_item_get_child: { parameters: ["pointer"], result: "pointer" },
+  gtk_list_item_set_child: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
 });

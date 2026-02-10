@@ -27,6 +27,8 @@ export const G_TYPE_VARIANT = 21 << 2;
 
 // Base class for GObject wrappers
 export class GObject {
+  private static readonly instances = new Map<bigint, WeakRef<GObject>>();
+
   /**
    * @internal
    * Internal pointer to the underlying GTK object.
@@ -34,15 +36,36 @@ export class GObject {
    */
   public ptr: Deno.PointerValue;
 
-  constructor(ptr: Deno.PointerValue) {
+  constructor(ptr?: Deno.PointerValue) {
+    if (ptr === undefined) {
+      ptr = createGObject("GObject")!;
+    }
     this.ptr = ptr;
     if (ptr) {
+      const val = BigInt(Deno.UnsafePointer.value(ptr));
+      GObject.instances.set(val, new WeakRef(this));
       gobject.symbols.g_object_ref(ptr);
     }
   }
 
+  /**
+   * @internal
+   * Gets the TypeScript wrapper for a given pointer, or creates one if it doesn't exist.
+   */
+  static fromPtr<T extends GObject>(ptr: Deno.PointerValue): T {
+    // deno-lint-ignore no-explicit-any
+    if (!ptr) return null as any;
+    const val = BigInt(Deno.UnsafePointer.value(ptr));
+    const ref = GObject.instances.get(val);
+    const existing = ref?.deref();
+    if (existing) return existing as T;
+    return new GObject(ptr) as T;
+  }
+
   unref(): void {
     if (this.ptr) {
+      const val = BigInt(Deno.UnsafePointer.value(this.ptr));
+      GObject.instances.delete(val);
       gobject.symbols.g_object_unref(this.ptr);
       this.ptr = null;
     }

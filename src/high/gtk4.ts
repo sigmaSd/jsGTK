@@ -899,6 +899,134 @@ export class Popover extends Widget {
   }
 }
 
+export class ListItem<I extends GObject = GObject, C extends Widget = Widget>
+  extends GObject {
+  constructor(ptr: Deno.PointerValue) {
+    super(ptr);
+  }
+
+  get item(): I {
+    const ptr = gtk4.symbols.gtk_list_item_get_item(this.ptr);
+    return GObject.fromPtr<I>(ptr);
+  }
+
+  get child(): C | null {
+    const ptr = gtk4.symbols.gtk_list_item_get_child(this.ptr);
+    return GObject.fromPtr<C>(ptr);
+  }
+
+  set child(child: Widget | null) {
+    gtk4.symbols.gtk_list_item_set_child(this.ptr, child?.ptr ?? null);
+  }
+}
+
+export class SignalListItemFactory<
+  I extends GObject = GObject,
+  C extends Widget = Widget,
+> extends GObject {
+  constructor() {
+    const ptr = gtk4.symbols.gtk_signal_list_item_factory_new();
+    super(ptr);
+  }
+
+  onSetup(callback: (listItem: ListItem<I, C>) => void) {
+    this.connect("setup", (ptr) => callback(new ListItem<I, C>(ptr)));
+  }
+
+  onBind(callback: (listItem: ListItem<I, C>) => void) {
+    this.connect("bind", (ptr) => callback(new ListItem<I, C>(ptr)));
+  }
+
+  onUnbind(callback: (listItem: ListItem<I, C>) => void) {
+    this.connect("unbind", (ptr) => callback(new ListItem<I, C>(ptr)));
+  }
+
+  onTeardown(callback: (listItem: ListItem<I, C>) => void) {
+    this.connect("teardown", (ptr) => callback(new ListItem<I, C>(ptr)));
+  }
+}
+
+export class SingleSelection extends GObject {
+  constructor(model: GObject) {
+    const ptr = gtk4.symbols.gtk_single_selection_new(model.ptr);
+    super(ptr);
+  }
+}
+
+export class ColumnViewColumn extends GObject {
+  constructor(title: string, factory: GObject | null) {
+    const ptr = gtk4.symbols.gtk_column_view_column_new(
+      cstr(title),
+      factory?.ptr ?? null,
+    );
+    super(ptr);
+  }
+
+  set expand(expand: boolean) {
+    gtk4.symbols.gtk_column_view_column_set_expand(this.ptr, expand);
+  }
+
+  set title(title: string) {
+    gtk4.symbols.gtk_column_view_column_set_title(this.ptr, cstr(title));
+  }
+}
+
+export class ColumnView extends Widget {
+  constructor() {
+    const ptr = gtk4.symbols.gtk_column_view_new();
+    super(ptr);
+  }
+
+  appendColumn(column: ColumnViewColumn): void {
+    gtk4.symbols.gtk_column_view_append_column(this.ptr, column.ptr);
+  }
+
+  addColumn<I extends GObject, C extends Widget>(params: {
+    title: string;
+    expand?: boolean;
+    setup: () => C;
+    bind: (item: I, child: C) => void;
+    unbind?: (item: I, child: C) => void;
+    teardown?: (child: C) => void;
+  }): ColumnViewColumn {
+    const factory = new SignalListItemFactory<I, C>();
+
+    factory.onSetup((listItem) => {
+      listItem.child = params.setup();
+    });
+
+    factory.onBind((listItem) => {
+      const item = listItem.item;
+      const child = listItem.child;
+      if (item && child) params.bind(item, child);
+    });
+
+    if (params.unbind) {
+      factory.onUnbind((listItem) => {
+        const item = listItem.item;
+        const child = listItem.child;
+        if (item && child) params.unbind!(item, child);
+      });
+    }
+
+    if (params.teardown) {
+      factory.onTeardown((listItem) => {
+        const child = listItem.child;
+        if (child) params.teardown!(child);
+      });
+    }
+
+    const column = new ColumnViewColumn(params.title, factory);
+    if (params.expand) column.expand = true;
+    this.appendColumn(column);
+    return column;
+  }
+
+  set model(model: GObject | null) {
+    gtk4.symbols.gtk_column_view_set_model(this.ptr, model?.ptr ?? null);
+  }
+}
+
 // GtkMenuButton extends GtkWidget
 export class MenuButton extends Widget {
   constructor() {
@@ -954,7 +1082,10 @@ export class Builder extends GObject {
    * Retrieves an object from the builder and wraps it in the specified high-level class.
    * This uses Object.create to bypass the constructor and wrap the existing pointer.
    */
-  get<T extends GObject>(name: string, cls: { new (...args: any[]): T }): T | null {
+  get<T extends GObject>(
+    name: string,
+    cls: { new (...args: any[]): T },
+  ): T | null {
     const ptr = this.getObject(name);
     if (!ptr) return null;
     const obj = Object.create(cls.prototype) as T;
