@@ -238,6 +238,30 @@ export class Widget extends GObject {
   }
 }
 
+export class ExpanderRow extends Widget {
+  constructor() {
+    const ptr = adw.symbols.adw_expander_row_new();
+    super(ptr);
+  }
+
+  setTitle(title: string): void {
+    const titleCStr = cstr(title);
+    adw.symbols.adw_preferences_row_set_title(this.ptr, titleCStr);
+  }
+
+  addRow(child: Widget): void {
+    adw.symbols.adw_expander_row_add_row(this.ptr, child.ptr);
+  }
+
+  setExpanded(expanded: boolean): void {
+    adw.symbols.adw_expander_row_set_expanded(this.ptr, expanded);
+  }
+
+  getExpanded(): boolean {
+    return adw.symbols.adw_expander_row_get_expanded(this.ptr);
+  }
+}
+
 // AdwApplication extends GtkApplication extends GApplication extends GObject
 // We use AdwApplication directly which gives us both GTK and Adwaita features
 export class Application extends GObject {

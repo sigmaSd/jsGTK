@@ -181,6 +181,20 @@ export const adw = Deno.dlopen(LIB_PATHS.adwaita, {
     parameters: ["pointer", "bool"],
     result: "void",
   },
+  // ExpanderRow
+  adw_expander_row_new: { parameters: [], result: "pointer" },
+  adw_expander_row_add_row: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  adw_expander_row_set_expanded: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
+  adw_expander_row_get_expanded: {
+    parameters: ["pointer"],
+    result: "bool",
+  },
   // ActionRow additional methods
   adw_action_row_set_subtitle: {
     parameters: ["pointer", "buffer"],
