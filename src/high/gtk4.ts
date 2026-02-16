@@ -267,8 +267,14 @@ export class ExpanderRow extends Widget {
 export class Application extends GObject {
   constructor(applicationId: string, flags: number) {
     const idCStr = cstr(applicationId);
+    // Set prgname so GNOME can match it with the .desktop file
+    glib.symbols.g_set_prgname(idCStr);
     const ptr = adw.symbols.adw_application_new(idCStr, flags);
     super(ptr);
+  }
+
+  static setName(name: string): void {
+    glib.symbols.g_set_application_name(cstr(name));
   }
 
   run(args: string[]): number {

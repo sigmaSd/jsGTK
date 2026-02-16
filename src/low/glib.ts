@@ -87,4 +87,12 @@ export const glib = Deno.dlopen(LIB_PATHS.glib, {
     parameters: ["pointer"],
     result: "pointer",
   },
+  g_set_prgname: {
+    parameters: ["buffer"],
+    result: "void",
+  },
+  g_set_application_name: {
+    parameters: ["buffer"],
+    result: "void",
+  },
 });
