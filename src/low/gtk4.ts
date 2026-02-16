@@ -161,6 +161,14 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["pointer", "bool"],
     result: "void",
   },
+  gtk_list_box_set_filter_func: {
+    parameters: ["pointer", "function", "pointer", "pointer"],
+    result: "void",
+  },
+  gtk_list_box_invalidate_filter: {
+    parameters: ["pointer"],
+    result: "void",
+  },
   gtk_list_box_select_row: {
     parameters: ["pointer", "pointer"],
     result: "void",
@@ -172,6 +180,31 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     result: "void",
   },
   gtk_list_box_row_get_index: { parameters: ["pointer"], result: "i32" },
+  gtk_search_bar_new: { parameters: [], result: "pointer" },
+  gtk_search_bar_set_child: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_search_bar_set_key_capture_widget: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_search_bar_set_search_mode: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
+  gtk_search_bar_get_search_mode: { parameters: ["pointer"], result: "bool" },
+  gtk_search_bar_connect_entry: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_search_entry_new: { parameters: [], result: "pointer" },
+  gtk_toggle_button_new: { parameters: [], result: "pointer" },
+  gtk_toggle_button_set_active: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
+  gtk_toggle_button_get_active: { parameters: ["pointer"], result: "bool" },
   gtk_spinner_new: { parameters: [], result: "pointer" },
   gtk_spinner_start: { parameters: ["pointer"], result: "void" },
   gtk_spinner_stop: { parameters: ["pointer"], result: "void" },

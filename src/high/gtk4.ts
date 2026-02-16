@@ -478,9 +478,16 @@ export class Label extends Widget {
 
 // GTK Button
 export class Button extends Widget {
-  constructor(label?: string) {
-    const labelCStr = label ? cstr(label) : null;
-    const ptr = gtk4.symbols.gtk_button_new_with_label(labelCStr);
+  constructor(labelOrPtr?: string | Deno.PointerValue) {
+    let ptr: Deno.PointerValue;
+    if (typeof labelOrPtr === "string") {
+      const labelCStr = cstr(labelOrPtr);
+      ptr = gtk4.symbols.gtk_button_new_with_label(labelCStr);
+    } else if (labelOrPtr !== undefined) {
+      ptr = labelOrPtr;
+    } else {
+      ptr = gtk4.symbols.gtk_button_new_with_label(null);
+    }
     super(ptr);
   }
 
@@ -502,6 +509,25 @@ export class Button extends Widget {
   // High-level signal connection for clicked
   onClick(callback: () => void): number {
     return this.connect("clicked", callback);
+  }
+}
+
+export class ToggleButton extends Button {
+  constructor(ptr?: Deno.PointerValue) {
+    const actualPtr = ptr ?? gtk4.symbols.gtk_toggle_button_new();
+    super(actualPtr);
+  }
+
+  setActive(active: boolean): void {
+    gtk4.symbols.gtk_toggle_button_set_active(this.ptr, active);
+  }
+
+  getActive(): boolean {
+    return gtk4.symbols.gtk_toggle_button_get_active(this.ptr);
+  }
+
+  onToggled(callback: () => void): number {
+    return this.connect("toggled", callback);
   }
 }
 
@@ -767,6 +793,29 @@ export class ListBox extends Widget {
     gtk4.symbols.gtk_list_box_set_show_separators(this.ptr, show);
   }
 
+  setFilterFunc(callback: (row: ListBoxRow) => boolean): void {
+    const cb = new Deno.UnsafeCallback(
+      {
+        parameters: ["pointer", "pointer"],
+        result: "bool",
+      },
+      (rowPtr: Deno.PointerValue, _userData: Deno.PointerValue) => {
+        const row = new ListBoxRow(rowPtr);
+        return callback(row);
+      },
+    );
+    gtk4.symbols.gtk_list_box_set_filter_func(
+      this.ptr,
+      cb.pointer,
+      null,
+      null,
+    );
+  }
+
+  invalidateFilter(): void {
+    gtk4.symbols.gtk_list_box_invalidate_filter(this.ptr);
+  }
+
   getSelectedRow(): ListBoxRow | null {
     const ptr = gtk4.symbols.gtk_list_box_get_selected_row(this.ptr);
     if (!ptr) return null;
@@ -844,9 +893,9 @@ export class DropDown extends Widget {
 
 // GTK Entry extends GtkWidget
 export class Entry extends Widget {
-  constructor() {
-    const ptr = gtk4.symbols.gtk_entry_new();
-    super(ptr);
+  constructor(ptr?: Deno.PointerValue) {
+    const actualPtr = ptr ?? gtk4.symbols.gtk_entry_new();
+    super(actualPtr);
   }
 
   getText(): string {
@@ -872,6 +921,40 @@ export class Entry extends Widget {
   // High-level signal connection for changed
   onChanged(callback: () => void): number {
     return this.connect("changed", callback);
+  }
+}
+
+export class SearchBar extends Widget {
+  constructor(ptr?: Deno.PointerValue) {
+    const actualPtr = ptr ?? gtk4.symbols.gtk_search_bar_new();
+    super(actualPtr);
+  }
+
+  setChild(child: Widget): void {
+    gtk4.symbols.gtk_search_bar_set_child(this.ptr, child.ptr);
+  }
+
+  setKeyCaptureWidget(widget: Widget): void {
+    gtk4.symbols.gtk_search_bar_set_key_capture_widget(this.ptr, widget.ptr);
+  }
+
+  setSearchMode(searchMode: boolean): void {
+    gtk4.symbols.gtk_search_bar_set_search_mode(this.ptr, searchMode);
+  }
+
+  getSearchMode(): boolean {
+    return gtk4.symbols.gtk_search_bar_get_search_mode(this.ptr);
+  }
+
+  connectEntry(entry: Entry): void {
+    gtk4.symbols.gtk_search_bar_connect_entry(this.ptr, entry.ptr);
+  }
+}
+
+export class SearchEntry extends Entry {
+  constructor(ptr?: Deno.PointerValue) {
+    const actualPtr = ptr ?? gtk4.symbols.gtk_search_entry_new();
+    super(actualPtr);
   }
 }
 

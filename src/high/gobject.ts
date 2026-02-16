@@ -71,6 +71,11 @@ export class GObject {
     }
   }
 
+  equals(other: GObject): boolean {
+    if (!this.ptr || !other.ptr) return false;
+    return Deno.UnsafePointer.equals(this.ptr, other.ptr);
+  }
+
   connect(
     signal: string,
     callback: (...args: Deno.PointerValue[]) => unknown,
@@ -100,6 +105,33 @@ export class GObject {
     return Number(signalId);
   }
 
+  connectBool(
+    signal: string,
+    callback: (...args: Deno.PointerValue[]) => boolean,
+  ): number {
+    const signalCStr = cstr(signal);
+    const cb = new Deno.UnsafeCallback(
+      {
+        parameters: ["pointer", "pointer"],
+        result: "bool",
+      },
+      (_objectPtr: Deno.PointerValue, ...args: Deno.PointerValue[]) => {
+        return callback(...args);
+      },
+    );
+
+    const signalId = gobject.symbols.g_signal_connect_data(
+      this.ptr,
+      signalCStr,
+      cb.pointer,
+      null,
+      null,
+      0,
+    );
+
+    return Number(signalId);
+  }
+
   disconnect(signalId: number): void {
     gobject.symbols.g_signal_handler_disconnect(this.ptr, BigInt(signalId));
   }
@@ -107,6 +139,30 @@ export class GObject {
   emit(signal: string): void {
     const signalCStr = cstr(signal);
     gobject.symbols.g_signal_emit_by_name(this.ptr, signalCStr);
+  }
+
+  onNotify(property: string, callback: () => void): number {
+    const signalCStr = cstr(`notify::${property}`);
+    const cb = new Deno.UnsafeCallback(
+      {
+        parameters: ["pointer", "pointer", "pointer"],
+        result: "void",
+      },
+      () => {
+        callback();
+      },
+    );
+
+    const signalId = gobject.symbols.g_signal_connect_data(
+      this.ptr,
+      signalCStr,
+      cb.pointer,
+      null,
+      null,
+      0,
+    );
+
+    return Number(signalId);
   }
 
   setProperty(name: string, value: unknown): void {
