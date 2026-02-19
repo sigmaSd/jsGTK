@@ -1,12 +1,14 @@
 name: Publish
 on:
-  push:
-    branches:
-      - master
+  workflow_run:
+    workflows: ["CI"]
+    branches: [master]
+    types: [completed]
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     permissions:
       contents: read
@@ -14,13 +16,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-
-      - name: Install deps
-        run: deno install
 
       - name: Publish package
         run: deno publish
