@@ -1845,7 +1845,7 @@ export class TextBuffer extends GObject {
   insert(iter: Uint8Array, text: string, len: number = -1): void {
     gtk4.symbols.gtk_text_buffer_insert(
       this.ptr,
-      Deno.UnsafePointer.of(iter),
+      Deno.UnsafePointer.of(iter as BufferSource),
       cstr(text),
       len,
     );
@@ -1859,7 +1859,7 @@ export class TextBuffer extends GObject {
     return gtk4.symbols.gtk_text_buffer_create_mark(
       this.ptr,
       markName ? cstr(markName) : null,
-      Deno.UnsafePointer.of(where),
+      Deno.UnsafePointer.of(where as BufferSource),
       leftGravity,
     );
   }
