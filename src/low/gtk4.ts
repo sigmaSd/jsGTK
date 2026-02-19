@@ -490,9 +490,21 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["pointer", "bool"],
     result: "void",
   },
+  gtk_text_view_scroll_to_mark: {
+    parameters: ["pointer", "pointer", "f64", "bool", "f64", "f64"],
+    result: "void",
+  },
   gtk_text_buffer_set_text: {
     parameters: ["pointer", "buffer", "i32"],
     result: "void",
+  },
+  gtk_text_buffer_insert: {
+    parameters: ["pointer", "pointer", "buffer", "i32"],
+    result: "void",
+  },
+  gtk_text_buffer_create_mark: {
+    parameters: ["pointer", "buffer", "pointer", "bool"],
+    result: "pointer",
   },
   gtk_text_buffer_get_text: {
     parameters: ["pointer", "pointer", "pointer", "i32"],
@@ -544,6 +556,14 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
   },
   gtk_text_buffer_end_user_action: {
     parameters: ["pointer"],
+    result: "void",
+  },
+  gtk_text_buffer_get_line_count: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  gtk_text_buffer_delete: {
+    parameters: ["pointer", "pointer", "pointer"],
     result: "void",
   },
   gtk_text_iter_forward_search: {

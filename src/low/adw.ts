@@ -261,6 +261,14 @@ export const adw = Deno.dlopen(LIB_PATHS.adwaita, {
     result: "void",
   },
   adw_clamp_set_child: { parameters: ["pointer", "pointer"], result: "void" },
+  // ViewStack
+  adw_view_stack_new: { parameters: [], result: "pointer" },
+  // ViewSwitcher
+  adw_view_switcher_new: { parameters: [], result: "pointer" },
+  adw_view_switcher_set_stack: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
   adw_is_initialized: { parameters: [], result: "bool" },
   adw_dialog_present: { parameters: ["pointer", "pointer"], result: "void" },
 });

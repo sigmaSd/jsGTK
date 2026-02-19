@@ -1842,6 +1842,28 @@ export class TextBuffer extends GObject {
     gtk4.symbols.gtk_text_buffer_set_text(this.ptr, cstr(text), len);
   }
 
+  insert(iter: Uint8Array, text: string, len: number = -1): void {
+    gtk4.symbols.gtk_text_buffer_insert(
+      this.ptr,
+      Deno.UnsafePointer.of(iter),
+      cstr(text),
+      len,
+    );
+  }
+
+  createMark(
+    markName: string | null,
+    where: Uint8Array,
+    leftGravity: boolean,
+  ): Deno.PointerValue {
+    return gtk4.symbols.gtk_text_buffer_create_mark(
+      this.ptr,
+      markName ? cstr(markName) : null,
+      Deno.UnsafePointer.of(where),
+      leftGravity,
+    );
+  }
+
   getText(
     start: Uint8Array,
     end: Uint8Array,
@@ -1995,5 +2017,40 @@ export class TextView extends Widget {
 
   setMonospace(monospace: boolean): void {
     gtk4.symbols.gtk_text_view_set_monospace(this.ptr, monospace);
+  }
+
+  scrollToMark(
+    mark: Deno.PointerValue,
+    withinMargin: number,
+    useAlign: boolean,
+    xalign: number,
+    yalign: number,
+  ): void {
+    gtk4.symbols.gtk_text_view_scroll_to_mark(
+      this.ptr,
+      mark,
+      withinMargin,
+      useAlign,
+      xalign,
+      yalign,
+    );
+  }
+}
+
+export class ViewStack extends Widget {
+  constructor() {
+    const ptr = adw.symbols.adw_view_stack_new();
+    super(ptr);
+  }
+}
+
+export class ViewSwitcher extends Widget {
+  constructor() {
+    const ptr = adw.symbols.adw_view_switcher_new();
+    super(ptr);
+  }
+
+  setStack(stack: ViewStack): void {
+    adw.symbols.adw_view_switcher_set_stack(this.ptr, stack.ptr);
   }
 }
