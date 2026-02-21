@@ -19,6 +19,22 @@ export const Orientation = {
   VERTICAL: 1,
 } as const;
 
+export const Key = {
+  f: 102,
+  F: 70,
+  l: 108,
+  L: 76,
+  r: 114,
+  R: 82,
+  v: 118,
+  o: 111,
+  t: 116,
+  q: 113,
+  w: 119,
+  F5: 65474,
+  Escape: 65307,
+} as const;
+
 // GTK Align enum
 export const Align = {
   FILL: 0,
@@ -110,16 +126,6 @@ export const ModifierType = {
   LOCK_MASK: 2,
   CONTROL_MASK: 4,
   ALT_MASK: 8,
-} as const;
-
-// Common key values
-export const Key = {
-  v: 118,
-  o: 111,
-  t: 116,
-  r: 114,
-  q: 113,
-  w: 119,
 } as const;
 
 // GTK Widget wrapper
@@ -317,14 +323,12 @@ export class Application extends GObject {
   }
 
   setAccelsForAction(detailedActionName: string, accels: string[]): void {
-    // Create a NULL-terminated array of C strings
+    // Keep strings alive during the call
+    const accelCStrs = accels.map((a) => cstr(a));
     const accelPtrs = new BigUint64Array(accels.length + 1);
-    const accelCStrs: Uint8Array[] = [];
 
-    for (let i = 0; i < accels.length; i++) {
-      const cstr = new TextEncoder().encode(accels[i] + "\0");
-      accelCStrs.push(cstr);
-      const ptr = Deno.UnsafePointer.of(cstr);
+    for (let i = 0; i < accelCStrs.length; i++) {
+      const ptr = Deno.UnsafePointer.of(accelCStrs[i]);
       accelPtrs[i] = ptr ? BigInt(Deno.UnsafePointer.value(ptr)) : 0n;
     }
     accelPtrs[accels.length] = 0n; // NULL terminator
