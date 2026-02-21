@@ -365,6 +365,14 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["pointer", "pointer"],
     result: "void",
   },
+  gtk_menu_button_set_label: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_menu_button_get_label: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
   gtk_gesture_click_new: { parameters: [], result: "pointer" },
   gtk_widget_set_tooltip_text: {
     parameters: ["pointer", "buffer"],

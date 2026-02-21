@@ -1,6 +1,6 @@
 {
   "name": "@sigmasd/gtk",
-  "version": "0.45.0",
+  "version": "0.46.0",
   "exports": {
     "./eventloop": "./src/high/eventloop.ts",
     "./gtk4": "./src/high/gtk4.ts",
@@ -20,7 +20,7 @@
     ]
   },
   "imports": {
-    "@sigma/deno-compat": "jsr:@sigma/deno-compat@0.21.0"
+    "@sigma/deno-compat": "jsr:@sigma/deno-compat@0.22.0"
   },
   "tasks": {
     "test": "deno lint && deno check && deno test --allow-ffi --allow-env && bun test && npm i && node --test"

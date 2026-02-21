@@ -535,7 +535,7 @@ export class Adjustment extends GObject {
 
 // GTK Label
 export class Label extends Widget {
-  constructor(text: string) {
+  constructor(text: string = "") {
     const textCStr = cstr(text);
     const ptr = gtk4.symbols.gtk_label_new(textCStr);
     super(ptr);
@@ -1249,6 +1249,16 @@ export class MenuButton extends Widget {
 
   setPopover(popover: Widget): void {
     gtk4.symbols.gtk_menu_button_set_popover(this.ptr, popover.ptr);
+  }
+
+  setLabel(label: string): void {
+    const labelCStr = cstr(label);
+    gtk4.symbols.gtk_menu_button_set_label(this.ptr, labelCStr);
+  }
+
+  getLabel(): string {
+    const ptr = gtk4.symbols.gtk_menu_button_get_label(this.ptr);
+    return readCStr(ptr);
   }
 }
 

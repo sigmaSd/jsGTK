@@ -26,7 +26,8 @@ export const glib = Deno.dlopen(LIB_PATHS.glib, {
   },
   g_source_remove: { parameters: ["u32"], result: "bool" },
   g_free: { parameters: ["pointer"], result: "void" },
-  g_strdup: { parameters: ["pointer"], result: "pointer" },
+  g_free_ptr: { name: "g_free", type: "pointer" },
+  g_strdup: { parameters: ["buffer"], result: "pointer" },
   g_malloc0: { parameters: ["usize"], result: "pointer" },
   g_unix_signal_add: {
     parameters: ["i32", "function", "pointer"],

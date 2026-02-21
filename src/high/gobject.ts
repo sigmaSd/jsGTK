@@ -1,3 +1,4 @@
+import { glib } from "../low/glib.ts";
 import { gobject } from "../low/gobject.ts";
 import { createGValue, cstr, readCStr } from "../low/utils.ts";
 
@@ -257,6 +258,27 @@ export class GObject {
 
     gobject.symbols.g_value_unset(gvaluePtr);
     return result;
+  }
+
+  setData(key: string, value: string): void {
+    const keyCStr = cstr(key);
+    const valueCStr = cstr(value);
+    // Use g_strdup to ensure the value persists in memory as GTK doesn't copy it for set_data
+    // We don't need to strdup the key because GTK uses a quark for the key which is persistent
+    const persistentValue = glib.symbols.g_strdup(valueCStr);
+    gobject.symbols.g_object_set_data_full(
+      this.ptr,
+      keyCStr,
+      persistentValue,
+      glib.symbols.g_free_ptr,
+    );
+  }
+
+  getData(key: string): string {
+    const keyCStr = cstr(key);
+    const ptr = gobject.symbols.g_object_get_data(this.ptr, keyCStr);
+    if (!ptr) return "";
+    return readCStr(ptr);
   }
 }
 

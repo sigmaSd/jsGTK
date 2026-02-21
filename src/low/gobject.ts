@@ -45,4 +45,16 @@ export const gobject = Deno.dlopen(LIB_PATHS.gobject, {
   g_value_get_uint: { parameters: ["pointer"], result: "u32" },
   g_value_get_object: { parameters: ["pointer"], result: "pointer" },
   g_value_unset: { parameters: ["pointer"], result: "void" },
+  g_object_set_data: {
+    parameters: ["pointer", "buffer", "pointer"],
+    result: "void",
+  },
+  g_object_get_data: {
+    parameters: ["pointer", "buffer"],
+    result: "pointer",
+  },
+  g_object_set_data_full: {
+    parameters: ["pointer", "buffer", "pointer", "pointer"],
+    result: "void",
+  },
 });
