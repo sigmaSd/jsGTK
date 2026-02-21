@@ -399,6 +399,10 @@ export class Window extends Widget {
     gtk4.symbols.gtk_window_present(this.ptr);
   }
 
+  maximize(): void {
+    gtk4.symbols.gtk_window_maximize(this.ptr);
+  }
+
   close(): void {
     gtk4.symbols.gtk_window_close(this.ptr);
   }

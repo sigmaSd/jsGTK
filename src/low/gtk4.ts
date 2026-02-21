@@ -79,6 +79,7 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     result: "void",
   },
   gtk_window_present: { parameters: ["pointer"], result: "void" },
+  gtk_window_maximize: { parameters: ["pointer"], result: "void" },
   gtk_window_close: { parameters: ["pointer"], result: "void" },
   gtk_window_set_child: { parameters: ["pointer", "pointer"], result: "void" },
   gtk_window_get_child: { parameters: ["pointer"], result: "pointer" },
