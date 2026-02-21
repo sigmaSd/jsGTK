@@ -57,6 +57,10 @@ export class Menu extends GObject {
     const actionCStr = cstr(detailedAction);
     gio.symbols.g_menu_append(this.ptr, labelCStr, actionCStr);
   }
+
+  removeAll(): void {
+    gio.symbols.g_menu_remove_all(this.ptr);
+  }
 }
 
 // GSimpleAction extends GObject

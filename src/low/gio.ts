@@ -27,6 +27,10 @@ export const gio = Deno.dlopen(LIB_PATHS.gio, {
     parameters: ["pointer", "buffer", "buffer"],
     result: "void",
   },
+  g_menu_remove_all: {
+    parameters: ["pointer"],
+    result: "void",
+  },
   g_notification_new: { parameters: ["buffer"], result: "pointer" },
   g_notification_set_body: {
     parameters: ["pointer", "buffer"],

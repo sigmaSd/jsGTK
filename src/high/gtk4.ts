@@ -446,6 +446,42 @@ export class ApplicationWindow extends Window {
   }
 }
 
+// AdwAboutWindow
+export class AboutWindow extends Window {
+  constructor() {
+    const ptr = adw.symbols.adw_about_window_new();
+    super(ptr);
+  }
+
+  setApplicationName(name: string): void {
+    adw.symbols.adw_about_window_set_application_name(this.ptr, cstr(name));
+  }
+
+  setVersion(version: string): void {
+    adw.symbols.adw_about_window_set_version(this.ptr, cstr(version));
+  }
+
+  setDeveloperName(name: string): void {
+    adw.symbols.adw_about_window_set_developer_name(this.ptr, cstr(name));
+  }
+
+  setWebsite(website: string): void {
+    adw.symbols.adw_about_window_set_website(this.ptr, cstr(website));
+  }
+
+  setIssueUrl(url: string): void {
+    adw.symbols.adw_about_window_set_issue_url(this.ptr, cstr(url));
+  }
+
+  setApplicationIcon(icon: string): void {
+    adw.symbols.adw_about_window_set_application_icon(this.ptr, cstr(icon));
+  }
+
+  setLicenseType(type: number): void {
+    adw.symbols.adw_about_window_set_license_type(this.ptr, type);
+  }
+}
+
 // GTK Box
 export class Box extends Widget {
   constructor(orientation: number, spacing: number) {
@@ -463,6 +499,29 @@ export class Box extends Widget {
 
   setSpacing(spacing: number): void {
     gtk4.symbols.gtk_box_set_spacing(this.ptr, spacing);
+  }
+}
+
+// GTK Separator
+export class Separator extends Widget {
+  constructor(orientation: number = Orientation.HORIZONTAL) {
+    const ptr = gtk4.symbols.gtk_separator_new(orientation);
+    super(ptr);
+  }
+}
+
+// GTK Adjustment
+export class Adjustment extends GObject {
+  getUpper(): number {
+    return gtk4.symbols.gtk_adjustment_get_upper(this.ptr);
+  }
+
+  getPageSize(): number {
+    return gtk4.symbols.gtk_adjustment_get_page_size(this.ptr);
+  }
+
+  setValue(value: number): void {
+    gtk4.symbols.gtk_adjustment_set_value(this.ptr, value);
   }
 }
 
@@ -608,6 +667,22 @@ export class Image extends Widget {
   setFromIconName(iconName: string): void {
     const iconNameCStr = cstr(iconName);
     gtk4.symbols.gtk_image_set_from_icon_name(this.ptr, iconNameCStr);
+  }
+}
+
+// GTK Overlay
+export class Overlay extends Widget {
+  constructor() {
+    const ptr = gtk4.symbols.gtk_overlay_new();
+    super(ptr);
+  }
+
+  setChild(child: Widget): void {
+    gtk4.symbols.gtk_overlay_set_child(this.ptr, child.ptr);
+  }
+
+  addOverlay(widget: Widget): void {
+    gtk4.symbols.gtk_overlay_add_overlay(this.ptr, widget.ptr);
   }
 }
 
@@ -777,6 +852,11 @@ export class ScrolledWindow extends Widget {
 
   setMinContentHeight(height: number): void {
     gtk4.symbols.gtk_scrolled_window_set_min_content_height(this.ptr, height);
+  }
+
+  getVadjustment(): Adjustment {
+    const ptr = gtk4.symbols.gtk_scrolled_window_get_vadjustment(this.ptr);
+    return new Adjustment(ptr);
   }
 }
 
@@ -1813,6 +1893,48 @@ export class SizeGroup extends GObject {
   }
 }
 
+// GTK TextView
+export class TextView extends Widget {
+  constructor(ptr?: Deno.PointerValue) {
+    const actualPtr = ptr ?? gtk4.symbols.gtk_text_view_new();
+    super(actualPtr);
+  }
+
+  getBuffer(): TextBuffer {
+    const ptr = gtk4.symbols.gtk_text_view_get_buffer(this.ptr);
+    return new TextBuffer(ptr);
+  }
+
+  setMonospace(monospace: boolean): void {
+    gtk4.symbols.gtk_text_view_set_monospace(this.ptr, monospace);
+  }
+
+  setEditable(editable: boolean): void {
+    gtk4.symbols.gtk_text_view_set_editable(this.ptr, editable);
+  }
+
+  setCursorVisible(visible: boolean): void {
+    gtk4.symbols.gtk_text_view_set_cursor_visible(this.ptr, visible);
+  }
+
+  scrollToMark(
+    mark: Deno.PointerValue,
+    withinMargin: number,
+    useAlign: boolean,
+    xalign: number,
+    yalign: number,
+  ): void {
+    gtk4.symbols.gtk_text_view_scroll_to_mark(
+      this.ptr,
+      mark,
+      withinMargin,
+      useAlign,
+      xalign,
+      yalign,
+    );
+  }
+}
+
 // GTK Switch
 export class Switch extends Widget {
   constructor() {
@@ -2004,43 +2126,20 @@ export class TextBuffer extends GObject {
   }
 }
 
-export class TextView extends Widget {
-  constructor() {
-    const ptr = gtk4.symbols.gtk_text_view_new();
-    super(ptr);
-  }
-
-  getBuffer(): TextBuffer {
-    const ptr = gtk4.symbols.gtk_text_view_get_buffer(this.ptr);
-    return new TextBuffer(ptr);
-  }
-
-  setMonospace(monospace: boolean): void {
-    gtk4.symbols.gtk_text_view_set_monospace(this.ptr, monospace);
-  }
-
-  scrollToMark(
-    mark: Deno.PointerValue,
-    withinMargin: number,
-    useAlign: boolean,
-    xalign: number,
-    yalign: number,
-  ): void {
-    gtk4.symbols.gtk_text_view_scroll_to_mark(
-      this.ptr,
-      mark,
-      withinMargin,
-      useAlign,
-      xalign,
-      yalign,
-    );
-  }
-}
-
 export class ViewStack extends Widget {
   constructor() {
     const ptr = adw.symbols.adw_view_stack_new();
     super(ptr);
+  }
+
+  getVisibleChildName(): string {
+    const ptr = adw.symbols.adw_view_stack_get_visible_child_name(this.ptr);
+    return readCStr(ptr);
+  }
+
+  setVisibleChildName(name: string): void {
+    const nameCStr = cstr(name);
+    adw.symbols.adw_view_stack_set_visible_child_name(this.ptr, nameCStr);
   }
 }
 

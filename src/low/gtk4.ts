@@ -86,6 +86,22 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["pointer", "i32"],
     result: "void",
   },
+  gtk_scrolled_window_get_vadjustment: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_adjustment_get_upper: {
+    parameters: ["pointer"],
+    result: "f64",
+  },
+  gtk_adjustment_get_page_size: {
+    parameters: ["pointer"],
+    result: "f64",
+  },
+  gtk_adjustment_set_value: {
+    parameters: ["pointer", "f64"],
+    result: "void",
+  },
   gtk_dialog_new: { parameters: [], result: "pointer" },
   gtk_window_set_transient_for: {
     parameters: ["pointer", "pointer"],
@@ -199,6 +215,15 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     result: "void",
   },
   gtk_search_entry_new: { parameters: [], result: "pointer" },
+  gtk_overlay_new: { parameters: [], result: "pointer" },
+  gtk_overlay_set_child: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_overlay_add_overlay: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
   gtk_toggle_button_new: { parameters: [], result: "pointer" },
   gtk_toggle_button_set_active: {
     parameters: ["pointer", "bool"],
@@ -208,6 +233,7 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
   gtk_spinner_new: { parameters: [], result: "pointer" },
   gtk_spinner_start: { parameters: ["pointer"], result: "void" },
   gtk_spinner_stop: { parameters: ["pointer"], result: "void" },
+  gtk_separator_new: { parameters: ["i32"], result: "pointer" },
   gtk_image_new_from_icon_name: { parameters: ["buffer"], result: "pointer" },
   gtk_image_new_from_file: { parameters: ["buffer"], result: "pointer" },
   gtk_image_set_from_file: {
@@ -490,9 +516,21 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["pointer", "bool"],
     result: "void",
   },
+  gtk_text_view_set_editable: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
+  gtk_text_view_set_cursor_visible: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
   gtk_text_view_scroll_to_mark: {
     parameters: ["pointer", "pointer", "f64", "bool", "f64", "f64"],
     result: "void",
+  },
+  gtk_text_view_scroll_to_iter: {
+    parameters: ["pointer", "pointer", "f64", "bool", "f64", "f64"],
+    result: "bool",
   },
   gtk_text_buffer_set_text: {
     parameters: ["pointer", "buffer", "i32"],
