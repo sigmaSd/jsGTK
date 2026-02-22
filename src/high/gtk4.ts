@@ -166,6 +166,14 @@ export class Widget extends GObject {
     gtk4.symbols.gtk_widget_set_visible(this.ptr, visible);
   }
 
+  show(): void {
+    gtk4.symbols.gtk_widget_show(this.ptr);
+  }
+
+  hide(): void {
+    gtk4.symbols.gtk_widget_hide(this.ptr);
+  }
+
   getVisible(): boolean {
     return gtk4.symbols.gtk_widget_get_visible(this.ptr);
   }
@@ -419,6 +427,14 @@ export class Window extends Widget {
     gtk4.symbols.gtk_window_set_modal(this.ptr, modal);
   }
 
+  setHideOnClose(hideOnClose: boolean): void {
+    gtk4.symbols.gtk_window_set_hide_on_close(this.ptr, hideOnClose);
+  }
+
+  getHideOnClose(): boolean {
+    return gtk4.symbols.gtk_window_get_hide_on_close(this.ptr);
+  }
+
   setDecorated(decorated: boolean): void {
     this.setProperty("decorated", decorated);
   }
@@ -433,7 +449,7 @@ export class Window extends Widget {
 
   // High-level signal connection for close-request
   onCloseRequest(callback: () => boolean): number {
-    return this.connect("close-request", callback);
+    return this.connectBool("close-request", callback);
   }
 
   // High-level signal connection for destroy

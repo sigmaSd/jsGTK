@@ -152,10 +152,6 @@ export class AboutDialog extends Widget {
     this.setProperty("modal", modal);
   }
 
-  show(): void {
-    this.setProperty("visible", true);
-  }
-
   setWebsite(url: string): void {
     adw.symbols.adw_about_dialog_set_website(this.ptr, cstr(url));
   }
@@ -324,10 +320,6 @@ export class PreferencesWindow extends Window {
 
   add(page: PreferencesPage): void {
     adw.symbols.adw_preferences_window_add(this.ptr, page.ptr);
-  }
-
-  setHideOnClose(hide: boolean): void {
-    this.setProperty("hide-on-close", hide);
   }
 }
 

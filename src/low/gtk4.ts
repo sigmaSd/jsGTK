@@ -109,6 +109,11 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     result: "void",
   },
   gtk_window_set_modal: { parameters: ["pointer", "bool"], result: "void" },
+  gtk_window_set_hide_on_close: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
+  gtk_window_get_hide_on_close: { parameters: ["pointer"], result: "bool" },
   gtk_window_destroy: { parameters: ["pointer"], result: "void" },
   gtk_widget_set_margin_top: {
     parameters: ["pointer", "i32"],
@@ -131,6 +136,8 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
   gtk_widget_set_hexpand: { parameters: ["pointer", "bool"], result: "void" },
   gtk_widget_set_vexpand: { parameters: ["pointer", "bool"], result: "void" },
   gtk_widget_set_visible: { parameters: ["pointer", "bool"], result: "void" },
+  gtk_widget_show: { parameters: ["pointer"], result: "void" },
+  gtk_widget_hide: { parameters: ["pointer"], result: "void" },
   gtk_widget_get_visible: { parameters: ["pointer"], result: "bool" },
   gtk_widget_set_size_request: {
     parameters: ["pointer", "i32", "i32"],
