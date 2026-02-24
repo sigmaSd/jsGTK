@@ -254,6 +254,19 @@ export const adw = Deno.dlopen(LIB_PATHS.adwaita, {
     parameters: ["pointer", "pointer", "function", "pointer"],
     result: "void",
   },
+  // AlertDialog
+  adw_alert_dialog_new: {
+    parameters: ["buffer", "buffer"],
+    result: "pointer",
+  },
+  adw_alert_dialog_choose: {
+    parameters: ["pointer", "pointer", "pointer", "function", "pointer"],
+    result: "void",
+  },
+  adw_alert_dialog_choose_finish: {
+    parameters: ["pointer", "pointer"],
+    result: "pointer",
+  },
   // Clamp
   adw_clamp_new: { parameters: [], result: "pointer" },
   adw_clamp_set_maximum_size: {

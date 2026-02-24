@@ -30,6 +30,7 @@ export const Key = {
   o: 111,
   t: 116,
   q: 113,
+  Q: 81,
   w: 119,
   F5: 65474,
   Escape: 65307,
@@ -503,6 +504,50 @@ export class AboutWindow extends Window {
 
   setLicenseType(type: number): void {
     adw.symbols.adw_about_window_set_license_type(this.ptr, type);
+  }
+}
+
+export class AlertDialog extends Widget {
+  constructor(heading: string, body: string) {
+    const ptr = adw.symbols.adw_alert_dialog_new(cstr(heading), cstr(body));
+    super(ptr);
+  }
+
+  choose(
+    parent: Window | null,
+    cancellable: GObject | null,
+    callback: (response: string) => void,
+  ): void {
+    const cb = new Deno.UnsafeCallback(
+      {
+        parameters: ["pointer", "pointer", "pointer"],
+        result: "void",
+      } as const,
+      (
+        _source: Deno.PointerValue,
+        result: Deno.PointerValue,
+        _userData: Deno.PointerValue,
+      ) => {
+        const response = this.chooseFinish(result);
+        callback(response);
+      },
+    );
+
+    // Guard against GC
+    (this as any)._choose_cb = cb;
+
+    adw.symbols.adw_alert_dialog_choose(
+      this.ptr,
+      parent ? parent.ptr : null,
+      cancellable ? cancellable.ptr : null,
+      cb.pointer,
+      null,
+    );
+  }
+
+  chooseFinish(result: Deno.PointerValue): string {
+    const ptr = adw.symbols.adw_alert_dialog_choose_finish(this.ptr, result);
+    return readCStr(ptr);
   }
 }
 
