@@ -24,6 +24,8 @@ export const Key = {
   F: 70,
   l: 108,
   L: 76,
+  p: 112,
+  P: 80,
   r: 114,
   R: 82,
   v: 118,
@@ -33,6 +35,7 @@ export const Key = {
   Q: 81,
   w: 119,
   F5: 65474,
+  F11: 65480,
   Escape: 65307,
 } as const;
 
