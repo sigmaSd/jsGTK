@@ -1095,6 +1095,10 @@ export class Entry extends Widget {
     gtk4.symbols.gtk_entry_set_placeholder_text(this.ptr, textCStr);
   }
 
+  selectRegion(start: number, end: number): void {
+    gtk4.symbols.gtk_editable_select_region(this.ptr, start, end);
+  }
+
   // High-level signal connection for activate (Enter key pressed)
   onActivate(callback: () => void): number {
     return this.connect("activate", callback);

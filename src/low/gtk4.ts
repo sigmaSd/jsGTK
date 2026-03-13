@@ -271,6 +271,10 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
   },
   gtk_editable_get_text: { parameters: ["pointer"], result: "pointer" },
   gtk_editable_set_text: { parameters: ["pointer", "buffer"], result: "void" },
+  gtk_editable_select_region: {
+    parameters: ["pointer", "i32", "i32"],
+    result: "void",
+  },
   gtk_application_inhibit: {
     parameters: ["pointer", "pointer", "i32", "buffer"],
     result: "u32",
