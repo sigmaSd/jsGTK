@@ -563,3 +563,132 @@ export class Clamp extends Widget {
     adw.symbols.adw_clamp_set_child(this.ptr, child.ptr);
   }
 }
+
+export class Carousel extends Widget {
+  constructor() {
+    const ptr = adw.symbols.adw_carousel_new();
+    super(ptr);
+  }
+
+  get nPages(): number {
+    return adw.symbols.adw_carousel_get_n_pages(this.ptr) as number;
+  }
+
+  get position(): number {
+    return adw.symbols.adw_carousel_get_position(this.ptr) as number;
+  }
+
+  get interactive(): boolean {
+    return adw.symbols.adw_carousel_get_interactive(this.ptr) as boolean;
+  }
+
+  set interactive(value: boolean) {
+    adw.symbols.adw_carousel_set_interactive(this.ptr, value);
+  }
+
+  get revealDuration(): number {
+    return adw.symbols.adw_carousel_get_reveal_duration(this.ptr) as number;
+  }
+
+  set revealDuration(value: number) {
+    adw.symbols.adw_carousel_set_reveal_duration(this.ptr, value);
+  }
+
+  get allowMouseDrag(): boolean {
+    return adw.symbols.adw_carousel_get_allow_mouse_drag(this.ptr) as boolean;
+  }
+
+  set allowMouseDrag(value: boolean) {
+    adw.symbols.adw_carousel_set_allow_mouse_drag(this.ptr, value);
+  }
+
+  get allowScrollWheel(): boolean {
+    return adw.symbols.adw_carousel_get_allow_scroll_wheel(this.ptr) as boolean;
+  }
+
+  set allowScrollWheel(value: boolean) {
+    adw.symbols.adw_carousel_set_allow_scroll_wheel(this.ptr, value);
+  }
+
+  get allowLongSwipes(): boolean {
+    return adw.symbols.adw_carousel_get_allow_long_swipes(this.ptr) as boolean;
+  }
+
+  set allowLongSwipes(value: boolean) {
+    adw.symbols.adw_carousel_set_allow_long_swipes(this.ptr, value);
+  }
+
+  append(child: Widget): void {
+    adw.symbols.adw_carousel_append(this.ptr, child.ptr);
+  }
+
+  prepend(child: Widget): void {
+    adw.symbols.adw_carousel_prepend(this.ptr, child.ptr);
+  }
+
+  insert(child: Widget, position: number): void {
+    adw.symbols.adw_carousel_insert(this.ptr, child.ptr, position);
+  }
+
+  reorder(child: Widget, position: number): void {
+    adw.symbols.adw_carousel_reorder(this.ptr, child.ptr, position);
+  }
+
+  remove(child: Widget): void {
+    adw.symbols.adw_carousel_remove(this.ptr, child.ptr);
+  }
+
+  scrollTo(widget: Widget, animate = true): void {
+    adw.symbols.adw_carousel_scroll_to(this.ptr, widget.ptr, animate);
+  }
+
+  getNthPage(n: number): Widget | null {
+    const ptr = adw.symbols.adw_carousel_get_nth_page(this.ptr, n);
+    if (!ptr) return null;
+    return new Widget(ptr);
+  }
+}
+
+export class CarouselIndicatorDots extends Widget {
+  constructor() {
+    const ptr = adw.symbols.adw_carousel_indicator_dots_new();
+    super(ptr);
+  }
+
+  get carousel(): Carousel | null {
+    const ptr = adw.symbols.adw_carousel_indicator_dots_get_carousel(this.ptr);
+    if (!ptr) return null;
+    const carousel = Object.create(Carousel.prototype);
+    carousel.ptr = ptr;
+    return carousel;
+  }
+
+  set carousel(value: Carousel | null) {
+    adw.symbols.adw_carousel_indicator_dots_set_carousel(
+      this.ptr,
+      value?.ptr ?? null,
+    );
+  }
+}
+
+export class CarouselIndicatorLines extends Widget {
+  constructor() {
+    const ptr = adw.symbols.adw_carousel_indicator_lines_new();
+    super(ptr);
+  }
+
+  get carousel(): Carousel | null {
+    const ptr = adw.symbols.adw_carousel_indicator_lines_get_carousel(this.ptr);
+    if (!ptr) return null;
+    const carousel = Object.create(Carousel.prototype);
+    carousel.ptr = ptr;
+    return carousel;
+  }
+
+  set carousel(value: Carousel | null) {
+    adw.symbols.adw_carousel_indicator_lines_set_carousel(
+      this.ptr,
+      value?.ptr ?? null,
+    );
+  }
+}

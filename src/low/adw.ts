@@ -290,6 +290,91 @@ export const adw = Deno.dlopen(LIB_PATHS.adwaita, {
     parameters: ["pointer", "pointer"],
     result: "void",
   },
+  // Carousel
+  adw_carousel_new: { parameters: [], result: "pointer" },
+  adw_carousel_get_n_pages: { parameters: ["pointer"], result: "u32" },
+  adw_carousel_get_position: { parameters: ["pointer"], result: "f64" },
+  adw_carousel_set_interactive: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
+  adw_carousel_get_interactive: { parameters: ["pointer"], result: "bool" },
+  adw_carousel_set_reveal_duration: {
+    parameters: ["pointer", "u32"],
+    result: "void",
+  },
+  adw_carousel_get_reveal_duration: { parameters: ["pointer"], result: "u32" },
+  adw_carousel_set_scroll_params: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  adw_carousel_get_scroll_params: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  adw_carousel_set_allow_mouse_drag: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
+  adw_carousel_get_allow_mouse_drag: {
+    parameters: ["pointer"],
+    result: "bool",
+  },
+  adw_carousel_set_allow_scroll_wheel: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
+  adw_carousel_get_allow_scroll_wheel: {
+    parameters: ["pointer"],
+    result: "bool",
+  },
+  adw_carousel_set_allow_long_swipes: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
+  adw_carousel_get_allow_long_swipes: {
+    parameters: ["pointer"],
+    result: "bool",
+  },
+  adw_carousel_append: { parameters: ["pointer", "pointer"], result: "void" },
+  adw_carousel_prepend: { parameters: ["pointer", "pointer"], result: "void" },
+  adw_carousel_insert: {
+    parameters: ["pointer", "pointer", "i32"],
+    result: "void",
+  },
+  adw_carousel_reorder: {
+    parameters: ["pointer", "pointer", "i32"],
+    result: "void",
+  },
+  adw_carousel_remove: { parameters: ["pointer", "pointer"], result: "void" },
+  adw_carousel_scroll_to: {
+    parameters: ["pointer", "pointer", "bool"],
+    result: "void",
+  },
+  adw_carousel_get_nth_page: {
+    parameters: ["pointer", "u32"],
+    result: "pointer",
+  },
+  // CarouselIndicatorDots
+  adw_carousel_indicator_dots_new: { parameters: [], result: "pointer" },
+  adw_carousel_indicator_dots_set_carousel: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  adw_carousel_indicator_dots_get_carousel: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  // CarouselIndicatorLines
+  adw_carousel_indicator_lines_new: { parameters: [], result: "pointer" },
+  adw_carousel_indicator_lines_set_carousel: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  adw_carousel_indicator_lines_get_carousel: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
   adw_is_initialized: { parameters: [], result: "bool" },
   adw_dialog_present: { parameters: ["pointer", "pointer"], result: "void" },
 });
