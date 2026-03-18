@@ -35,6 +35,10 @@ export const glib = Deno.dlopen(LIB_PATHS.glib, {
     optional: true,
   },
   // GBytes
+  g_bytes_new: {
+    parameters: ["buffer", "usize"],
+    result: "pointer",
+  },
   g_bytes_get_data: {
     parameters: ["pointer", "pointer"],
     result: "pointer",

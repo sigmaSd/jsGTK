@@ -8,6 +8,7 @@ import { cstr, readCStr } from "../low/utils.ts";
 import { CairoContext } from "./cairo.ts";
 import type { Menu, SimpleAction } from "./gio.ts";
 import { GObject } from "./gobject.ts";
+export { G_TYPE_BOOLEAN } from "./gobject.ts";
 
 // ============================================================================
 // GTK Enums and Constants
@@ -1446,6 +1447,10 @@ export class Clipboard extends GObject {
     gtk4.symbols.gdk_clipboard_set_text(this.ptr, textCStr);
   }
 
+  setContent(content: ContentProvider): void {
+    gtk4.symbols.gdk_clipboard_set_content(this.ptr, content.ptr);
+  }
+
   readAsync(
     mimeTypes: string[],
     priority: number,
@@ -1578,6 +1583,45 @@ export class Texture extends GObject {
   }
   saveToPng(filename: string): boolean {
     return gtk4.symbols.gdk_texture_save_to_png(this.ptr, cstr(filename));
+  }
+}
+
+export class ContentProvider extends GObject {
+  constructor(ptr: Deno.PointerValue) {
+    super(ptr);
+  }
+
+  static newForBytes(mimeType: string, bytes: Uint8Array): ContentProvider {
+    const bytesPtr = glib.symbols.g_bytes_new(
+      bytes as any,
+      BigInt(bytes.length),
+    );
+    const ptr = gtk4.symbols.gdk_content_provider_new_for_bytes(
+      cstr(mimeType),
+      bytesPtr,
+    );
+    // bytesPtr is ref counted by content provider?
+    // According to docs, gdk_content_provider_new_for_bytes takes a reference to bytes.
+    // So we should unref our local reference if it's not "take".
+    // Actually, gdk_content_provider_new_for_bytes takes GBytes*
+    // GLib functions usually take ownership or add a ref.
+    // GdkContentProvider * gdk_content_provider_new_for_bytes (const char *mime_type, GBytes *bytes);
+    // It says: "The GBytes are used by the content provider and must not be modified or freed until the content provider is destroyed."
+    // Usually it adds a ref.
+    glib.symbols.g_bytes_unref(bytesPtr);
+    return new ContentProvider(ptr);
+  }
+
+  static newUnion(providers: ContentProvider[]): ContentProvider {
+    const ptrs = new BigUint64Array(providers.length);
+    providers.forEach((p, i) => {
+      ptrs[i] = BigInt(Deno.UnsafePointer.value(p.ptr));
+    });
+    const ptr = gtk4.symbols.gdk_content_provider_new_union(
+      ptrs,
+      BigInt(providers.length),
+    );
+    return new ContentProvider(ptr);
   }
 }
 

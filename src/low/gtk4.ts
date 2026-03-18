@@ -424,6 +424,18 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["pointer", "buffer"],
     result: "void",
   },
+  gdk_clipboard_set_content: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gdk_content_provider_new_for_bytes: {
+    parameters: ["buffer", "pointer"],
+    result: "pointer",
+  },
+  gdk_content_provider_new_union: {
+    parameters: ["buffer", "usize"],
+    result: "pointer",
+  },
   gdk_clipboard_read_async: {
     parameters: ["pointer", "pointer", "i32", "pointer", "function", "pointer"],
     result: "void",
