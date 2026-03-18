@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --allow-ffi --allow-read
+#!/usr/bin/env -S deno run --allow-ffi --allow-read --allow-write --allow-env
 
 import {
   Application,
@@ -17,25 +17,35 @@ import { readAll } from "jsr:@std/io@0.225.3";
 const app = new Application("org.gtk.copyfiles", ApplicationFlags.NONE);
 
 let input: string[] = [];
+let tempFile: { path: string; [Symbol.dispose](): void } | undefined;
+
 if (Deno.args.length > 0) {
   input = Deno.args;
 } else if (!Deno.stdin.isTerminal()) {
-  const decoder = new TextDecoder();
   const buffer = await readAll(Deno.stdin);
-  input = decoder.decode(buffer)
-    .split(/\n/)
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0);
+  if (buffer.length > 0) {
+    const path = await Deno.makeTempFile();
+    await Deno.writeFile(path, buffer);
+    tempFile = {
+      path,
+      [Symbol.dispose]() {
+        try {
+          Deno.removeSync(path);
+        } catch (_) { /* ignore */ }
+      },
+    };
+    input = [path];
+  }
 }
 
 app.onActivate(() => {
   if (input.length === 0) {
     console.error("No files provided.");
     console.log(
-      "Usage: deno run --allow-ffi --allow-read examples/copy-files.ts file1 file2 ...",
+      "Usage: deno run --allow-ffi --allow-read --allow-write --allow-env examples/copy-files.ts file1 file2 ...",
     );
     console.log(
-      "   or: ls | deno run --allow-ffi --allow-read examples/copy-files.ts",
+      "   or: cat image.png | deno run --allow-ffi --allow-read --allow-write --allow-env examples/copy-files.ts",
     );
     app.quit();
     return;
@@ -119,4 +129,7 @@ app.onActivate(() => {
   win.present();
 });
 
-app.run([]);
+{
+  using _ = tempFile;
+  app.run([]);
+}
