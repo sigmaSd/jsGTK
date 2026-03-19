@@ -1978,6 +1978,26 @@ export class ProgressBar extends Widget {
   }
 }
 
+// GTK LevelBar
+export class LevelBar extends Widget {
+  constructor() {
+    const ptr = gtk4.symbols.gtk_level_bar_new();
+    super(ptr);
+  }
+
+  setValue(value: number): void {
+    gtk4.symbols.gtk_level_bar_set_value(this.ptr, value);
+  }
+
+  setMinValue(value: number): void {
+    gtk4.symbols.gtk_level_bar_set_min_value(this.ptr, value);
+  }
+
+  setMaxValue(value: number): void {
+    gtk4.symbols.gtk_level_bar_set_max_value(this.ptr, value);
+  }
+}
+
 // GTK Grid
 export class Grid extends Widget {
   constructor() {

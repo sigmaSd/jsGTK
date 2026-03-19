@@ -688,4 +688,14 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["pointer", "pointer"],
     result: "void",
   },
+  gtk_level_bar_new: { parameters: [], result: "pointer" },
+  gtk_level_bar_set_value: { parameters: ["pointer", "f64"], result: "void" },
+  gtk_level_bar_set_min_value: {
+    parameters: ["pointer", "f64"],
+    result: "void",
+  },
+  gtk_level_bar_set_max_value: {
+    parameters: ["pointer", "f64"],
+    result: "void",
+  },
 });
