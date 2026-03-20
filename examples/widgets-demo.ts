@@ -47,6 +47,15 @@ class WidgetsDemoWindow {
     // Create header bar and set it as the window's titlebar
     const headerBar = new HeaderBar();
 
+    const aboutButton = new Button();
+    aboutButton.setIconName("help-about-symbolic");
+    aboutButton.setTooltipText("About this application");
+    aboutButton.setAccessibleLabel("About");
+    aboutButton.onClick(() => {
+      this.#updateOutput("About button clicked!");
+    });
+    headerBar.packEnd(aboutButton);
+
     this.#win.setTitlebar(headerBar);
 
     // Create toolbar view for content
@@ -143,8 +152,10 @@ class WidgetsDemoWindow {
     const entry = new Entry();
     entry.setPlaceholderText("Type something here...");
     entry.setHexpand(true);
+    entry.setActivatesDefault(true);
 
     const submitButton = new Button("Submit");
+    this.#win.setDefaultWidget(submitButton);
     submitButton.onClick(() => {
       const text = entry.getText();
       if (text) {

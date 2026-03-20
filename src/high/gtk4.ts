@@ -255,6 +255,14 @@ export class Widget extends GObject {
   isVisible(): boolean {
     return gtk4.symbols.gtk_widget_is_visible(this.ptr);
   }
+
+  setAccessibleLabel(label: string): void {
+    this.setProperty("accessible-label", label);
+  }
+
+  setAccessibleDescription(description: string): void {
+    this.setProperty("accessible-description", description);
+  }
 }
 
 export class ExpanderRow extends Widget {
@@ -464,6 +472,13 @@ export class Window extends Widget {
 
   addAction(action: SimpleAction): void {
     gio.symbols.g_action_map_add_action(this.ptr, action.ptr);
+  }
+
+  setDefaultWidget(widget: Widget | null): void {
+    gtk4.symbols.gtk_window_set_default_widget(
+      this.ptr,
+      widget ? widget.ptr : null,
+    );
   }
 }
 
@@ -1108,6 +1123,10 @@ export class Entry extends Widget {
   // High-level signal connection for changed
   onChanged(callback: () => void): number {
     return this.connect("changed", callback);
+  }
+
+  setActivatesDefault(activatesDefault: boolean): void {
+    gtk4.symbols.gtk_entry_set_activates_default(this.ptr, activatesDefault);
   }
 }
 

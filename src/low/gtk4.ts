@@ -698,4 +698,12 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["pointer", "f64"],
     result: "void",
   },
+  gtk_window_set_default_widget: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_entry_set_activates_default: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
 });
