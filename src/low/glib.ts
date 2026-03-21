@@ -80,6 +80,26 @@ export const glib = Deno.dlopen(LIB_PATHS.glib, {
     parameters: ["pointer"],
     result: "i32",
   },
+  g_variant_get_uint16: {
+    parameters: ["pointer"],
+    result: "u16",
+  },
+  g_variant_get_type_string: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  g_variant_n_children: {
+    parameters: ["pointer"],
+    result: "usize",
+  },
+  g_variant_type_hash: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  g_variant_is_of_type: {
+    parameters: ["pointer", "pointer"],
+    result: "bool",
+  },
   g_variant_unref: {
     parameters: ["pointer"],
     result: "void",

@@ -585,6 +585,22 @@ export class Separator extends Widget {
 
 // GTK Adjustment
 export class Adjustment extends GObject {
+  constructor(valueOrPtr?: number | Deno.PointerValue, lower?: number, upper?: number, stepIncrement?: number, pageIncrement?: number, pageSize?: number) {
+    let ptr: Deno.PointerValue;
+    if (typeof valueOrPtr === "number") {
+      ptr = gtk4.symbols.gtk_adjustment_new(valueOrPtr, lower!, upper!, stepIncrement!, pageIncrement!, pageSize!);
+    } else if (valueOrPtr !== undefined) {
+      ptr = valueOrPtr;
+    } else {
+      ptr = gtk4.symbols.gtk_adjustment_new(0, 0, 100, 1, 10, 0);
+    }
+    super(ptr);
+  }
+
+  getValue(): number {
+    return gtk4.symbols.gtk_adjustment_get_value(this.ptr);
+  }
+
   getUpper(): number {
     return gtk4.symbols.gtk_adjustment_get_upper(this.ptr);
   }
@@ -595,6 +611,42 @@ export class Adjustment extends GObject {
 
   setValue(value: number): void {
     gtk4.symbols.gtk_adjustment_set_value(this.ptr, value);
+  }
+}
+
+// GTK Scale
+export class Scale extends Widget {
+  #adjustment: Adjustment;
+
+  constructor(orientation: number, adjustment?: Adjustment) {
+    const adj = adjustment ?? new Adjustment(0, 0, 100, 1, 10, 0);
+    const ptr = gtk4.symbols.gtk_scale_new(orientation, adj.ptr);
+    super(ptr);
+    this.#adjustment = adj;
+  }
+
+  setDigits(digits: number): void {
+    gtk4.symbols.gtk_scale_set_digits(this.ptr, digits);
+  }
+
+  setDrawValue(drawValue: boolean): void {
+    gtk4.symbols.gtk_scale_set_draw_value(this.ptr, drawValue);
+  }
+
+  getValue(): number {
+    return gtk4.symbols.gtk_range_get_value(this.ptr);
+  }
+
+  setValue(value: number): void {
+    gtk4.symbols.gtk_range_set_value(this.ptr, value);
+  }
+
+  getAdjustment(): Adjustment {
+    return this.#adjustment;
+  }
+
+  onValueChanged(callback: () => void): number {
+    return this.connect("value-changed", callback);
   }
 }
 

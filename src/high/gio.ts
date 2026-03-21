@@ -471,6 +471,55 @@ export class DBusProxy extends GObject {
     return value;
   }
 
+  // Call sync with string args, returns Variant result
+  callSyncWithStrings(
+    methodName: string,
+    ...args: string[]
+  ): Variant | null {
+    const variantPtrs = new BigUint64Array(args.length);
+    for (let i = 0; i < args.length; i++) {
+      const strVariant = glib.symbols.g_variant_new_string(cstr(args[i]));
+      variantPtrs[i] = BigInt(Deno.UnsafePointer.value(strVariant!));
+    }
+
+    const tupleVariant = glib.symbols.g_variant_new_tuple(
+      Deno.UnsafePointer.of(variantPtrs),
+      BigInt(args.length),
+    );
+
+    const result = this.callSync(methodName, tupleVariant);
+    return result ? new Variant(result) : null;
+  }
+
+  // Call sync with mixed type args (strings and numbers)
+  callSyncWithMixed(
+    methodName: string,
+    ...args: (string | number)[]
+  ): Variant | null {
+    const variantPtrs = new BigUint64Array(args.length);
+    
+    for (let i = 0; i < args.length; i++) {
+      const arg = args[i];
+      let variant: Deno.PointerValue;
+      
+      if (typeof arg === "string") {
+        variant = glib.symbols.g_variant_new_string(cstr(arg))!;
+      } else {
+        variant = glib.symbols.g_variant_new_uint32(arg)!;
+      }
+      
+      variantPtrs[i] = BigInt(Deno.UnsafePointer.value(variant));
+    }
+
+    const tupleVariant = glib.symbols.g_variant_new_tuple(
+      Deno.UnsafePointer.of(variantPtrs),
+      BigInt(args.length),
+    );
+
+    const result = this.callSync(methodName, tupleVariant);
+    return result ? new Variant(result) : null;
+  }
+
   // Helper to call methods with uint32 parameter
   callWithUint32(methodName: string, value: number): void {
     // Create a uint32 variant wrapped in a tuple for D-Bus call
@@ -485,13 +534,90 @@ export class DBusProxy extends GObject {
 
     this.callSync(methodName, tupleVariant);
   }
+
+  // Async call with callback
+  callAsync(
+    methodName: string,
+    parameters: Deno.PointerValue | null,
+    callback: (result: Deno.PointerValue | null) => void,
+    flags: number = DBusCallFlags.NONE,
+    timeoutMsec: number = -1,
+  ): void {
+    if (!gio.symbols.g_dbus_proxy_call) {
+      throw new Error("D-Bus async is not available");
+    }
+
+    const cb = new Deno.UnsafeCallback(
+      {
+        parameters: ["pointer", "pointer", "pointer"],
+        result: "void",
+      } as const,
+      (_source: Deno.PointerValue, result: Deno.PointerValue, _userData: Deno.PointerValue) => {
+        const finish = gio.symbols.g_dbus_proxy_call_finish;
+        if (finish) {
+          const variant = finish(this.ptr, result, null);
+          callback(variant);
+        } else {
+          callback(null);
+        }
+      },
+    );
+
+    gio.symbols.g_dbus_proxy_call(
+      this.ptr,
+      cstr(methodName),
+      parameters,
+      flags,
+      timeoutMsec,
+      null,
+      cb.pointer,
+      null,
+    );
+  }
+
+  // Call with string args, returns Variant result via async
+  callAsyncWithStrings(
+    methodName: string,
+    ...args: string[]
+  ): Promise<Variant | null> {
+    // Build string array variant
+    const strVariants = new Array(args.length);
+    for (let i = 0; i < args.length; i++) {
+      strVariants[i] = glib.symbols.g_variant_new_string(cstr(args[i]));
+    }
+
+    const variantPtrs = new BigUint64Array(args.length);
+    for (let i = 0; i < args.length; i++) {
+      variantPtrs[i] = BigInt(Deno.UnsafePointer.value(strVariants[i]!));
+    }
+
+    const tupleVariant = glib.symbols.g_variant_new_tuple(
+      Deno.UnsafePointer.of(variantPtrs),
+      BigInt(args.length),
+    );
+
+    return new Promise((resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        reject(new Error("D-Bus call timeout"));
+      }, 5000);
+
+      this.callAsync(methodName, tupleVariant, (result) => {
+        clearTimeout(timeoutId);
+        if (!result) {
+          resolve(null);
+          return;
+        }
+        resolve(new Variant(result));
+      });
+    });
+  }
 }
 
 // Helper class for creating GVariant values
 export class Variant {
   ptr: Deno.PointerValue;
 
-  private constructor(ptr: Deno.PointerValue) {
+  constructor(ptr: Deno.PointerValue) {
     this.ptr = ptr;
   }
 
@@ -533,6 +659,39 @@ export class Variant {
 
   getInt32(): number {
     return glib.symbols.g_variant_get_int32(this.ptr);
+  }
+
+  getUint16(): number {
+    return glib.symbols.g_variant_get_uint16(this.ptr);
+  }
+
+  getTypeString(): string {
+    const ptr = glib.symbols.g_variant_get_type_string(this.ptr);
+    return ptr ? readCStr(ptr) : "";
+  }
+
+  getChildrenCount(): number {
+    const count = glib.symbols.g_variant_n_children(this.ptr);
+    return Number(count);
+  }
+
+  isOfType(typeString: string): boolean {
+    return this.getTypeString() === typeString;
+  }
+
+  getStrv(): string[] {
+    if (!this.isOfType("as")) return [];
+    const count = this.getChildrenCount();
+    const arr: string[] = [];
+    for (let i = 0; i < count; i++) {
+      const child = this.getChildValue(i);
+      arr.push(child?.getString() || "");
+    }
+    return arr;
+  }
+
+  isNull(): boolean {
+    return this.ptr === null;
   }
 
   unref(): void {

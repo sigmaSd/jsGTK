@@ -698,4 +698,32 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["pointer", "f64"],
     result: "void",
   },
+  gtk_adjustment_new: {
+    parameters: ["f64", "f64", "f64", "f64", "f64", "f64"],
+    result: "pointer",
+  },
+  gtk_adjustment_get_value: {
+    parameters: ["pointer"],
+    result: "f64",
+  },
+  gtk_scale_new: {
+    parameters: ["i32", "pointer"],
+    result: "pointer",
+  },
+  gtk_scale_set_digits: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_scale_set_draw_value: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
+  gtk_range_get_value: {
+    parameters: ["pointer"],
+    result: "f64",
+  },
+  gtk_range_set_value: {
+    parameters: ["pointer", "f64"],
+    result: "void",
+  },
 });

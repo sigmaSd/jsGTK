@@ -1,4 +1,5 @@
 import { glib } from "../low/glib.ts";
+export { glib };
 
 // ============================================================================
 // GLib Enums and Constants
