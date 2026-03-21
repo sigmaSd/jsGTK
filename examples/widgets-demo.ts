@@ -108,18 +108,21 @@ class WidgetsDemoWindow {
     box.setMarginEnd(8);
 
     const button1 = new Button("Click Me!");
+    button1.setTooltipText("Increment the counter");
     button1.onClick(() => {
       this.#counter++;
       this.#updateOutput(`Button clicked! Count: ${this.#counter}`);
     });
 
     const button2 = new Button("Reset Counter");
+    button2.setTooltipText("Reset the counter to zero");
     button2.onClick(() => {
       this.#counter = 0;
       this.#updateOutput("Counter reset to 0");
     });
 
     const button3 = new Button("Say Hello");
+    button3.setTooltipText("Display a friendly greeting");
     button3.onClick(() => {
       this.#updateOutput("Hello from GTK! 👋");
     });
@@ -145,16 +148,21 @@ class WidgetsDemoWindow {
     entry.setHexpand(true);
 
     const submitButton = new Button("Submit");
-    submitButton.onClick(() => {
+    submitButton.setSuggested(true);
+    submitButton.setTooltipText("Submit the entered text");
+    const onSubmit = () => {
       const text = entry.getText();
       if (text) {
         this.#updateOutput(`You entered: "${text}"`);
       } else {
         this.#updateOutput("Entry is empty!");
       }
-    });
+    };
+    submitButton.onClick(onSubmit);
+    entry.onActivate(onSubmit);
 
     const clearButton = new Button("Clear");
+    clearButton.setTooltipText("Clear the text entry");
     clearButton.onClick(() => {
       entry.setText("");
       this.#updateOutput("Entry cleared");

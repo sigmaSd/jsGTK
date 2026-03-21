@@ -1,0 +1,30 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      '@sigma/deno-compat':
+        specifier: npm:@jsr/sigma__deno-compat@^0.22.0
+        version: '@jsr/sigma__deno-compat@0.22.0'
+      koffi:
+        specifier: ^2.15.1
+        version: 2.15.2
+
+packages:
+
+  '@jsr/sigma__deno-compat@0.22.0':
+    resolution: {integrity: sha512-mplzn1IjsnhANpofMquCMKXadX5yt00pN1EaLqasAqB3CtLYmdjGGBH0mKhs8u0INba8sxTRDyfvcL1eKw89vw==, tarball: https://npm.jsr.io/~/11/@jsr/sigma__deno-compat/0.22.0.tgz}
+
+  koffi@2.15.2:
+    resolution: {integrity: sha512-r9tjJLVRSOhCRWdVyQlF3/Ugzeg13jlzS4czS82MAgLff4W+BcYOW7g8Y62t9O5JYjYOLAjAovAZDNlDfZNu+g==}
+
+snapshots:
+
+  '@jsr/sigma__deno-compat@0.22.0': {}
+
+  koffi@2.15.2: {}
