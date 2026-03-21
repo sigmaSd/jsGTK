@@ -12,7 +12,7 @@ import {
   Scale,
 } from "@sigmasd/gtk/gtk4";
 import { HeaderBar, ToolbarView } from "@sigmasd/gtk/adw";
-import { DBusProxy, BusType, DBusProxyFlags } from "@sigmasd/gtk/gio";
+import { BusType, DBusProxy, DBusProxyFlags } from "@sigmasd/gtk/gio";
 import { EventLoop } from "@sigmasd/gtk/eventloop";
 
 const APP_ID = "com.example.BrightnessControl";
@@ -25,7 +25,7 @@ interface DDCMonitor {
   name: string;
 }
 
-async function getDBusProxy(): Promise<DBusProxy> {
+function getDBusProxy(): Promise<DBusProxy> {
   const proxy = DBusProxy.newForBusSync(
     BusType.SYSTEM,
     DBusProxyFlags.NONE,
@@ -35,15 +35,15 @@ async function getDBusProxy(): Promise<DBusProxy> {
     DDC_IFACE,
   );
   if (!proxy) throw new Error("Failed to create D-Bus proxy");
-  return proxy;
+  return Promise.resolve(proxy);
 }
 
-async function getMonitors(proxy: DBusProxy): Promise<DDCMonitor[]> {
+function getMonitors(proxy: DBusProxy): Promise<DDCMonitor[]> {
   const result = proxy.callSyncWithStrings("GetMonitors");
-  if (!result) return [];
+  if (!result) return Promise.resolve([]);
 
   const devices = result.getChildValue(0);
-  if (!devices) return [];
+  if (!devices) return Promise.resolve([]);
 
   const devicesList = devices.getStrv();
   const monitors: DDCMonitor[] = [];
@@ -72,25 +72,32 @@ async function getMonitors(proxy: DBusProxy): Promise<DDCMonitor[]> {
     }
   }
 
-  return monitors;
+  return Promise.resolve(monitors);
 }
 
-async function getBrightness(proxy: DBusProxy, device: string): Promise<{ result: number; value: number; max: number }> {
+function getBrightness(
+  proxy: DBusProxy,
+  device: string,
+): Promise<{ result: number; value: number; max: number }> {
   const result = proxy.callSyncWithMixed("GetControl", device, 16);
-  if (!result) return { result: -1, value: 0, max: 100 };
+  if (!result) return Promise.resolve({ result: -1, value: 0, max: 100 });
 
   const resultCode = result.getChildValue(0)?.getInt32() ?? -1;
   const value = result.getChildValue(1)?.getUint16() ?? 0;
   const max = result.getChildValue(2)?.getUint16() ?? 100;
-  return { result: resultCode, value, max };
+  return Promise.resolve({ result: resultCode, value, max });
 }
 
-async function setBrightness(proxy: DBusProxy, device: string, value: number): Promise<boolean> {
+function setBrightness(
+  proxy: DBusProxy,
+  device: string,
+  value: number,
+): Promise<boolean> {
   try {
     proxy.callSyncWithMixed("SetControl", device, 16, value);
-    return true;
+    return Promise.resolve(true);
   } catch {
-    return false;
+    return Promise.resolve(false);
   }
 }
 
@@ -186,7 +193,10 @@ class BrightnessControlWindow {
 
       this.#monitors = [];
       for (const monitor of allMonitors) {
-        const { result, max } = await getBrightness(this.#proxy, monitor.device);
+        const { result, max } = await getBrightness(
+          this.#proxy,
+          monitor.device,
+        );
         if (result >= 0 && max > 0 && max <= 1000) {
           this.#monitors.push(monitor);
         }
@@ -216,7 +226,8 @@ class BrightnessControlWindow {
 
   #selectPrev() {
     if (this.#monitors.length <= 1) return;
-    this.#currentIndex = (this.#currentIndex - 1 + this.#monitors.length) % this.#monitors.length;
+    this.#currentIndex = (this.#currentIndex - 1 + this.#monitors.length) %
+      this.#monitors.length;
     this.#updateUI();
   }
 

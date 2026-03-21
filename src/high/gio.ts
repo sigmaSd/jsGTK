@@ -497,17 +497,17 @@ export class DBusProxy extends GObject {
     ...args: (string | number)[]
   ): Variant | null {
     const variantPtrs = new BigUint64Array(args.length);
-    
+
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
       let variant: Deno.PointerValue;
-      
+
       if (typeof arg === "string") {
         variant = glib.symbols.g_variant_new_string(cstr(arg))!;
       } else {
         variant = glib.symbols.g_variant_new_uint32(arg)!;
       }
-      
+
       variantPtrs[i] = BigInt(Deno.UnsafePointer.value(variant));
     }
 
@@ -552,7 +552,11 @@ export class DBusProxy extends GObject {
         parameters: ["pointer", "pointer", "pointer"],
         result: "void",
       } as const,
-      (_source: Deno.PointerValue, result: Deno.PointerValue, _userData: Deno.PointerValue) => {
+      (
+        _source: Deno.PointerValue,
+        result: Deno.PointerValue,
+        _userData: Deno.PointerValue,
+      ) => {
         const finish = gio.symbols.g_dbus_proxy_call_finish;
         if (finish) {
           const variant = finish(this.ptr, result, null);

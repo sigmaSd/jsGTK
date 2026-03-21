@@ -585,10 +585,24 @@ export class Separator extends Widget {
 
 // GTK Adjustment
 export class Adjustment extends GObject {
-  constructor(valueOrPtr?: number | Deno.PointerValue, lower?: number, upper?: number, stepIncrement?: number, pageIncrement?: number, pageSize?: number) {
+  constructor(
+    valueOrPtr?: number | Deno.PointerValue,
+    lower?: number,
+    upper?: number,
+    stepIncrement?: number,
+    pageIncrement?: number,
+    pageSize?: number,
+  ) {
     let ptr: Deno.PointerValue;
     if (typeof valueOrPtr === "number") {
-      ptr = gtk4.symbols.gtk_adjustment_new(valueOrPtr, lower!, upper!, stepIncrement!, pageIncrement!, pageSize!);
+      ptr = gtk4.symbols.gtk_adjustment_new(
+        valueOrPtr,
+        lower!,
+        upper!,
+        stepIncrement!,
+        pageIncrement!,
+        pageSize!,
+      );
     } else if (valueOrPtr !== undefined) {
       ptr = valueOrPtr;
     } else {
