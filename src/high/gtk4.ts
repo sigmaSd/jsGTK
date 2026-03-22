@@ -585,10 +585,24 @@ export class Separator extends Widget {
 
 // GTK Adjustment
 export class Adjustment extends GObject {
-  constructor(valueOrPtr?: number | Deno.PointerValue | null, lower?: number, upper?: number, stepIncrement?: number, pageIncrement?: number, pageSize?: number) {
+  constructor(
+    valueOrPtr?: number | Deno.PointerValue | null,
+    lower?: number,
+    upper?: number,
+    stepIncrement?: number,
+    pageIncrement?: number,
+    pageSize?: number,
+  ) {
     let ptr: Deno.PointerValue;
     if (typeof valueOrPtr === "number") {
-      ptr = gtk4.symbols.gtk_adjustment_new(valueOrPtr, lower!, upper!, stepIncrement!, pageIncrement!, pageSize!);
+      ptr = gtk4.symbols.gtk_adjustment_new(
+        valueOrPtr,
+        lower!,
+        upper!,
+        stepIncrement!,
+        pageIncrement!,
+        pageSize!,
+      );
     } else if (valueOrPtr != null) {
       ptr = valueOrPtr;
     } else {
@@ -640,7 +654,12 @@ export class Scale extends Widget {
       } as const,
       () => callback(),
     );
-    gtk4.symbols.g_signal_connect(this.ptr, cstr("value_changed"), cb.pointer, null);
+    gtk4.symbols.g_signal_connect(
+      this.ptr,
+      cstr("value_changed"),
+      cb.pointer,
+      null,
+    );
   }
 }
 
