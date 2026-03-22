@@ -636,6 +636,7 @@ export class Scale extends Widget {
     const ptr = gtk4.symbols.gtk_scale_new(orientation, null);
     super(ptr);
     this.#adjustment = adjustment;
+    gtk4.symbols.gtk_range_set_adjustment(this.ptr, adjustment.ptr);
   }
 
   setDrawValue(drawValue: boolean): void {
