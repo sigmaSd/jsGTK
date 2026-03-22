@@ -585,6 +585,40 @@ export class Separator extends Widget {
 
 // GTK Adjustment
 export class Adjustment extends GObject {
+  constructor(
+    valueOrPtr?: number | Deno.PointerValue | null,
+    lower?: number,
+    upper?: number,
+    stepIncrement?: number,
+    pageIncrement?: number,
+    pageSize?: number,
+  ) {
+    let ptr: Deno.PointerValue;
+    if (typeof valueOrPtr === "number") {
+      ptr = gtk4.symbols.gtk_adjustment_new(
+        valueOrPtr,
+        lower!,
+        upper!,
+        stepIncrement!,
+        pageIncrement!,
+        pageSize!,
+      );
+    } else if (valueOrPtr != null) {
+      ptr = valueOrPtr;
+    } else {
+      ptr = gtk4.symbols.gtk_adjustment_new(0, 0, 100, 1, 10, 0);
+    }
+    super(ptr);
+  }
+
+  getValue(): number {
+    return gtk4.symbols.gtk_adjustment_get_value(this.ptr);
+  }
+
+  setValue(value: number): void {
+    gtk4.symbols.gtk_adjustment_set_value(this.ptr, value);
+  }
+
   getUpper(): number {
     return gtk4.symbols.gtk_adjustment_get_upper(this.ptr);
   }
@@ -592,9 +626,47 @@ export class Adjustment extends GObject {
   getPageSize(): number {
     return gtk4.symbols.gtk_adjustment_get_page_size(this.ptr);
   }
+}
 
-  setValue(value: number): void {
-    gtk4.symbols.gtk_adjustment_set_value(this.ptr, value);
+// GTK Scale
+export class Scale extends Widget {
+  #adjustment: Adjustment;
+
+  constructor(orientation: number, adjustment: Adjustment) {
+    const ptr = gtk4.symbols.gtk_scale_new(orientation, null);
+    super(ptr);
+    this.#adjustment = adjustment;
+    gtk4.symbols.gtk_range_set_adjustment(this.ptr, adjustment.ptr);
+  }
+
+  setDrawValue(drawValue: boolean): void {
+    gtk4.symbols.gtk_scale_set_draw_value(this.ptr, drawValue);
+  }
+
+  setDigits(digits: number): void {
+    gtk4.symbols.gtk_scale_set_digits(this.ptr, digits);
+  }
+
+  onValueChanged(callback: () => void): void {
+    const cb = new Deno.UnsafeCallback(
+      {
+        parameters: ["pointer", "pointer", "pointer"],
+        result: "void",
+      } as const,
+      (
+        _self: Deno.PointerValue,
+        _param: Deno.PointerValue,
+        _data: Deno.PointerValue,
+      ) => callback(),
+    );
+    gobject.symbols.g_signal_connect_data(
+      this.ptr,
+      cstr("value_changed"),
+      cb.pointer,
+      null,
+      null,
+      0,
+    );
   }
 }
 
