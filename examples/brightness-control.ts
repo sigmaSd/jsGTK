@@ -114,11 +114,15 @@ class BrightnessControlWindow {
   #mainBox!: Box;
   #proxy!: DBusProxy;
 
-  constructor(app: Application) {
+  constructor(app: Application, onClose: () => void) {
     this.#win = new ApplicationWindow(app);
     this.#win.setTitle("Brightness Control");
     this.#win.setDefaultSize(450, 200);
     this.#win.setResizable(false);
+    this.#win.onCloseRequest(() => {
+      onClose();
+      return true;
+    });
 
     this.#buildUI();
     this.#loadMonitors();
@@ -259,16 +263,19 @@ class BrightnessControlWindow {
 
 class BrightnessControlApp {
   #app = new Application(APP_ID, ApplicationFlags.NONE);
+  #eventLoop = new EventLoop();
 
   constructor() {
     this.#app.onActivate(() => {
-      const win = new BrightnessControlWindow(this.#app);
+      const win = new BrightnessControlWindow(this.#app, () => {
+        this.#eventLoop.stop();
+      });
       win.present();
     });
   }
 
   run() {
-    new EventLoop().start(this.#app);
+    this.#eventLoop.start(this.#app);
   }
 }
 
