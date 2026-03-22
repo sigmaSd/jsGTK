@@ -183,6 +183,22 @@ export class Widget extends GObject {
     return gtk4.symbols.gtk_widget_get_visible(this.ptr);
   }
 
+  getFirstChild(): Widget | null {
+    const ptr = gtk4.symbols.gtk_widget_get_first_child(this.ptr);
+    if (!ptr) return null;
+    return GObject.fromPtr(ptr) as Widget;
+  }
+
+  getNextSibling(sibling: Widget): Widget | null {
+    const ptr = gtk4.symbols.gtk_widget_get_next_sibling(sibling.ptr);
+    if (!ptr) return null;
+    return GObject.fromPtr(ptr) as Widget;
+  }
+
+  unparent(): void {
+    gtk4.symbols.gtk_widget_unparent(this.ptr);
+  }
+
   setSizeRequest(width: number, height: number): void {
     gtk4.symbols.gtk_widget_set_size_request(this.ptr, width, height);
   }
@@ -1079,14 +1095,6 @@ export class ListBox extends Widget {
 
   selectRow(row: ListBoxRow | null): void {
     gtk4.symbols.gtk_list_box_select_row(this.ptr, row ? row.ptr : null);
-  }
-
-  getFirstChild(): Deno.PointerValue | null {
-    return gtk4.symbols.gtk_widget_get_first_child(this.ptr);
-  }
-
-  getNextSibling(child: Deno.PointerValue): Deno.PointerValue | null {
-    return gtk4.symbols.gtk_widget_get_next_sibling(child);
   }
 
   // High-level signal connection for row-activated

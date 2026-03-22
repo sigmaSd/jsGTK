@@ -28,7 +28,7 @@ export const G_TYPE_VARIANT = 21 << 2;
 
 // Base class for GObject wrappers
 export class GObject {
-  private static readonly instances = new Map<bigint, WeakRef<GObject>>();
+  private static readonly instances = new Map<bigint, GObject>();
 
   /**
    * @internal
@@ -44,7 +44,7 @@ export class GObject {
     this.ptr = ptr;
     if (ptr) {
       const val = BigInt(Deno.UnsafePointer.value(ptr));
-      GObject.instances.set(val, new WeakRef(this));
+      GObject.instances.set(val, this);
       gobject.symbols.g_object_ref(ptr);
     }
   }
@@ -57,8 +57,7 @@ export class GObject {
     // deno-lint-ignore no-explicit-any
     if (!ptr) return null as any;
     const val = BigInt(Deno.UnsafePointer.value(ptr));
-    const ref = GObject.instances.get(val);
-    const existing = ref?.deref();
+    const existing = GObject.instances.get(val);
     if (existing) return existing as T;
     return new GObject(ptr) as T;
   }
