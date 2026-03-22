@@ -7,7 +7,10 @@ import {
   ApplicationWindow,
   Box,
   Button,
+  EventControllerKey,
+  Key,
   Label,
+  ModifierType,
   Orientation,
   Scale,
 } from "@sigmasd/gtk/gtk4";
@@ -19,6 +22,8 @@ const APP_ID = "com.example.BrightnessControl";
 const DDC_BUS = "ddccontrol.DDCControl";
 const DDC_PATH = "/ddccontrol/DDCControl";
 const DDC_IFACE = "ddccontrol.DDCControl";
+
+const DDC_BRIGHTNESS = 0x10;
 
 interface DDCMonitor {
   device: string;
@@ -38,12 +43,12 @@ function getDBusProxy(): Promise<DBusProxy> {
   return Promise.resolve(proxy);
 }
 
-function getMonitors(proxy: DBusProxy): Promise<DDCMonitor[]> {
-  const result = proxy.callSyncWithStrings("GetMonitors");
-  if (!result) return Promise.resolve([]);
+async function getMonitors(proxy: DBusProxy): Promise<DDCMonitor[]> {
+  const result = await proxy.callAsyncWithStrings("GetMonitors");
+  if (!result) return [];
 
   const devices = result.getChildValue(0);
-  if (!devices) return Promise.resolve([]);
+  if (!devices) return [];
 
   const devicesList = devices.getStrv();
   const monitors: DDCMonitor[] = [];
@@ -52,7 +57,10 @@ function getMonitors(proxy: DBusProxy): Promise<DDCMonitor[]> {
     if (device.startsWith("dev:")) {
       let name = `Monitor (${device})`;
       try {
-        const openResult = proxy.callSyncWithStrings("OpenMonitor", device);
+        const openResult = await proxy.callAsyncWithStrings(
+          "OpenMonitor",
+          device,
+        );
         if (openResult && openResult.getChildrenCount() >= 1) {
           const pnpid = openResult.getChildValue(0)?.getString();
           if (pnpid && pnpid.trim()) {
@@ -72,33 +80,32 @@ function getMonitors(proxy: DBusProxy): Promise<DDCMonitor[]> {
     }
   }
 
-  return Promise.resolve(monitors);
+  return monitors;
 }
 
-function getBrightness(
+async function getBrightness(
   proxy: DBusProxy,
   device: string,
 ): Promise<{ result: number; value: number; max: number }> {
-  const result = proxy.callSyncWithMixed("GetControl", device, 16);
-  if (!result) return Promise.resolve({ result: -1, value: 0, max: 100 });
+  const result = await proxy.callAsyncWithMixed(
+    "GetControl",
+    device,
+    DDC_BRIGHTNESS,
+  );
+  if (!result) return { result: -1, value: 0, max: 100 };
 
   const resultCode = result.getChildValue(0)?.getInt32() ?? -1;
   const value = result.getChildValue(1)?.getUint16() ?? 0;
   const max = result.getChildValue(2)?.getUint16() ?? 100;
-  return Promise.resolve({ result: resultCode, value, max });
+  return { result: resultCode, value, max };
 }
 
 function setBrightness(
   proxy: DBusProxy,
   device: string,
   value: number,
-): Promise<boolean> {
-  try {
-    proxy.callSyncWithMixed("SetControl", device, 16, value);
-    return Promise.resolve(true);
-  } catch {
-    return Promise.resolve(false);
-  }
+): void {
+  proxy.callSyncWithMixed("SetControl", device, DDC_BRIGHTNESS, value);
 }
 
 class BrightnessControlWindow {
@@ -113,17 +120,41 @@ class BrightnessControlWindow {
   #slider!: Scale;
   #mainBox!: Box;
   #proxy!: DBusProxy;
+  #onClose!: () => void;
+  #closing = false;
   #debounceTimeout: number | null = null;
+  #generation = 0;
+
+  #doClose() {
+    this.#closing = true;
+    this.#generation++;
+    if (this.#debounceTimeout !== null) {
+      clearTimeout(this.#debounceTimeout);
+      this.#debounceTimeout = null;
+    }
+    this.#onClose();
+  }
 
   constructor(app: Application, onClose: () => void) {
+    this.#onClose = onClose;
     this.#win = new ApplicationWindow(app);
     this.#win.setTitle("Brightness Control");
     this.#win.setDefaultSize(450, 200);
     this.#win.setResizable(false);
     this.#win.onCloseRequest(() => {
-      onClose();
+      this.#doClose();
       return true;
     });
+
+    const keyController = new EventControllerKey();
+    keyController.onKeyPressed((keyval, _keycode, state) => {
+      if (keyval === Key.q && (state & ModifierType.CONTROL_MASK) !== 0) {
+        this.#doClose();
+        return true;
+      }
+      return false;
+    });
+    this.#win.addController(keyController);
 
     this.#buildUI();
     this.#loadMonitors();
@@ -249,16 +280,20 @@ class BrightnessControlWindow {
   }
 
   #onBrightnessChanged() {
+    if (this.#closing) return;
     const monitor = this.#monitors[this.#currentIndex];
     const percent = Math.round(this.#adjustment.getValue());
     this.#brightnessLabel.setText(`${percent}%`);
+    const gen = this.#generation;
 
     if (this.#debounceTimeout !== null) {
       clearTimeout(this.#debounceTimeout);
     }
     this.#debounceTimeout = setTimeout(() => {
       this.#debounceTimeout = null;
-      setBrightness(this.#proxy, monitor.device, percent);
+      if (gen === this.#generation && !this.#closing) {
+        setBrightness(this.#proxy, monitor.device, percent);
+      }
     }, 50);
   }
 

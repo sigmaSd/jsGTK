@@ -615,6 +615,46 @@ export class DBusProxy extends GObject {
       });
     });
   }
+
+  callAsyncWithMixed(
+    methodName: string,
+    ...args: (string | number)[]
+  ): Promise<Variant | null> {
+    const variantPtrs = new BigUint64Array(args.length);
+
+    for (let i = 0; i < args.length; i++) {
+      const arg = args[i];
+      let variant: Deno.PointerValue;
+
+      if (typeof arg === "string") {
+        variant = glib.symbols.g_variant_new_string(cstr(arg))!;
+      } else {
+        variant = glib.symbols.g_variant_new_uint32(arg)!;
+      }
+
+      variantPtrs[i] = BigInt(Deno.UnsafePointer.value(variant));
+    }
+
+    const tupleVariant = glib.symbols.g_variant_new_tuple(
+      Deno.UnsafePointer.of(variantPtrs),
+      BigInt(args.length),
+    );
+
+    return new Promise((resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        reject(new Error("D-Bus call timeout"));
+      }, 5000);
+
+      this.callAsync(methodName, tupleVariant, (result) => {
+        clearTimeout(timeoutId);
+        if (!result) {
+          resolve(null);
+          return;
+        }
+        resolve(new Variant(result));
+      });
+    });
+  }
 }
 
 // Helper class for creating GVariant values
