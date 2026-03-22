@@ -113,6 +113,7 @@ class BrightnessControlWindow {
   #slider!: Scale;
   #mainBox!: Box;
   #proxy!: DBusProxy;
+  #debounceTimeout: number | null = null;
 
   constructor(app: Application, onClose: () => void) {
     this.#win = new ApplicationWindow(app);
@@ -247,13 +248,18 @@ class BrightnessControlWindow {
     this.#brightnessLabel.setText(`${percent}%`);
   }
 
-  async #onBrightnessChanged() {
+  #onBrightnessChanged() {
     const monitor = this.#monitors[this.#currentIndex];
     const percent = Math.round(this.#adjustment.getValue());
+    this.#brightnessLabel.setText(`${percent}%`);
 
-    if (await setBrightness(this.#proxy, monitor.device, percent)) {
-      this.#brightnessLabel.setText(`${percent}%`);
+    if (this.#debounceTimeout !== null) {
+      clearTimeout(this.#debounceTimeout);
     }
+    this.#debounceTimeout = setTimeout(() => {
+      this.#debounceTimeout = null;
+      setBrightness(this.#proxy, monitor.device, percent);
+    }, 50);
   }
 
   present() {
