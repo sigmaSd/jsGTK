@@ -148,7 +148,7 @@ class WidgetsDemoWindow {
     entry.setHexpand(true);
 
     const submitButton = new Button("Submit");
-    submitButton.setSuggested(true);
+    submitButton.addCssClass("suggested-action");
     submitButton.setTooltipText("Submit the entered text");
     const onSubmit = () => {
       const text = entry.getText();

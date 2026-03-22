@@ -672,22 +672,6 @@ export class Button extends Widget {
   onClick(callback: () => void): number {
     return this.connect("clicked", callback);
   }
-
-  setSuggested(suggested: boolean): void {
-    if (suggested) {
-      this.addCssClass("suggested-action");
-    } else {
-      this.removeCssClass("suggested-action");
-    }
-  }
-
-  setDestructive(destructive: boolean): void {
-    if (destructive) {
-      this.addCssClass("destructive-action");
-    } else {
-      this.removeCssClass("destructive-action");
-    }
-  }
 }
 
 export class ToggleButton extends Button {
