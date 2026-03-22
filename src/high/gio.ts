@@ -41,6 +41,22 @@ export const DBusCallFlags = {
   ALLOW_INTERACTIVE_AUTHORIZATION: 1 << 1,
 } as const;
 
+export class Cancellable {
+  ptr: Deno.PointerValue;
+
+  constructor() {
+    this.ptr = gio.symbols.g_cancellable_new()!;
+  }
+
+  cancel(): void {
+    gio.symbols.g_cancellable_cancel(this.ptr);
+  }
+
+  isCancelled(): boolean {
+    return gio.symbols.g_cancellable_is_cancelled(this.ptr);
+  }
+}
+
 // ============================================================================
 // GIO Classes
 // ============================================================================
@@ -542,6 +558,7 @@ export class DBusProxy extends GObject {
     callback: (result: Deno.PointerValue | null) => void,
     flags: number = DBusCallFlags.NONE,
     timeoutMsec: number = -1,
+    cancellable?: Cancellable | null,
   ): void {
     if (!gio.symbols.g_dbus_proxy_call) {
       throw new Error("D-Bus async is not available");
@@ -573,7 +590,7 @@ export class DBusProxy extends GObject {
       parameters,
       flags,
       timeoutMsec,
-      null,
+      cancellable?.ptr ?? null,
       cb.pointer,
       null,
     );
@@ -582,48 +599,70 @@ export class DBusProxy extends GObject {
   // Call with string args, returns Variant result via async
   callAsyncWithStrings(
     methodName: string,
-    ...args: string[]
+    ...args: (string | Cancellable | null)[]
   ): Promise<Variant | null> {
-    // Build string array variant
-    const strVariants = new Array(args.length);
-    for (let i = 0; i < args.length; i++) {
-      strVariants[i] = glib.symbols.g_variant_new_string(cstr(args[i]));
+    const lastArg = args[args.length - 1];
+    const cancellable = lastArg instanceof Cancellable
+      ? (args.pop() as Cancellable)
+      : null;
+
+    const strArgs = args as string[];
+    const strVariants = new Array(strArgs.length);
+    for (let i = 0; i < strArgs.length; i++) {
+      strVariants[i] = glib.symbols.g_variant_new_string(cstr(strArgs[i]));
     }
 
-    const variantPtrs = new BigUint64Array(args.length);
-    for (let i = 0; i < args.length; i++) {
+    const variantPtrs = new BigUint64Array(strArgs.length);
+    for (let i = 0; i < strArgs.length; i++) {
       variantPtrs[i] = BigInt(Deno.UnsafePointer.value(strVariants[i]!));
     }
 
     const tupleVariant = glib.symbols.g_variant_new_tuple(
       Deno.UnsafePointer.of(variantPtrs),
-      BigInt(args.length),
+      BigInt(strArgs.length),
     );
 
     return new Promise((resolve, reject) => {
-      const timeoutId = setTimeout(() => {
+      const timeoutId = cancellable ? null : setTimeout(() => {
         reject(new Error("D-Bus call timeout"));
       }, 5000);
 
-      this.callAsync(methodName, tupleVariant, (result) => {
-        clearTimeout(timeoutId);
-        if (!result) {
-          resolve(null);
-          return;
-        }
-        resolve(new Variant(result));
-      });
+      this.callAsync(
+        methodName,
+        tupleVariant,
+        (result) => {
+          if (timeoutId) clearTimeout(timeoutId);
+          if (cancellable?.isCancelled()) {
+            resolve(null);
+            return;
+          }
+          if (!result) {
+            resolve(null);
+            return;
+          }
+          resolve(new Variant(result));
+        },
+        DBusCallFlags.NONE,
+        -1,
+        cancellable,
+      );
     });
   }
 
   callAsyncWithMixed(
     methodName: string,
-    ...args: (string | number)[]
+    ...args: (string | number | Cancellable | null)[]
   ): Promise<Variant | null> {
-    const variantPtrs = new BigUint64Array(args.length);
+    const lastArg = args[args.length - 1];
+    const cancellable = lastArg instanceof Cancellable
+      ? (args.pop() as Cancellable)
+      : null;
 
-    for (let i = 0; i < args.length; i++) {
-      const arg = args[i];
+    const mixedArgs = args as (string | number)[];
+    const variantPtrs = new BigUint64Array(mixedArgs.length);
+
+    for (let i = 0; i < mixedArgs.length; i++) {
+      const arg = mixedArgs[i];
       let variant: Deno.PointerValue;
 
       if (typeof arg === "string") {
@@ -637,22 +676,33 @@ export class DBusProxy extends GObject {
 
     const tupleVariant = glib.symbols.g_variant_new_tuple(
       Deno.UnsafePointer.of(variantPtrs),
-      BigInt(args.length),
+      BigInt(mixedArgs.length),
     );
 
     return new Promise((resolve, reject) => {
-      const timeoutId = setTimeout(() => {
+      const timeoutId = cancellable ? null : setTimeout(() => {
         reject(new Error("D-Bus call timeout"));
       }, 5000);
 
-      this.callAsync(methodName, tupleVariant, (result) => {
-        clearTimeout(timeoutId);
-        if (!result) {
-          resolve(null);
-          return;
-        }
-        resolve(new Variant(result));
-      });
+      this.callAsync(
+        methodName,
+        tupleVariant,
+        (result) => {
+          if (timeoutId) clearTimeout(timeoutId);
+          if (cancellable?.isCancelled()) {
+            resolve(null);
+            return;
+          }
+          if (!result) {
+            resolve(null);
+            return;
+          }
+          resolve(new Variant(result));
+        },
+        DBusCallFlags.NONE,
+        -1,
+        cancellable,
+      );
     });
   }
 }

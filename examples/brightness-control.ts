@@ -15,7 +15,12 @@ import {
   Scale,
 } from "@sigmasd/gtk/gtk4";
 import { HeaderBar, ToolbarView } from "@sigmasd/gtk/adw";
-import { BusType, DBusProxy, DBusProxyFlags } from "@sigmasd/gtk/gio";
+import {
+  BusType,
+  Cancellable,
+  DBusProxy,
+  DBusProxyFlags,
+} from "@sigmasd/gtk/gio";
 import { EventLoop } from "@sigmasd/gtk/eventloop";
 
 const APP_ID = "com.example.BrightnessControl";
@@ -100,12 +105,22 @@ async function getBrightness(
   return { result: resultCode, value, max };
 }
 
-function setBrightness(
+async function setBrightness(
   proxy: DBusProxy,
   device: string,
   value: number,
-): void {
-  proxy.callSyncWithMixed("SetControl", device, DDC_BRIGHTNESS, value);
+  cancellable: Cancellable,
+): Promise<void> {
+  const result = await proxy.callAsyncWithMixed(
+    "SetControl",
+    device,
+    DDC_BRIGHTNESS,
+    value,
+    cancellable,
+  );
+  if (result && !cancellable.isCancelled()) {
+    // Success
+  }
 }
 
 class BrightnessControlWindow {
@@ -120,6 +135,7 @@ class BrightnessControlWindow {
   #slider!: Scale;
   #mainBox!: Box;
   #proxy!: DBusProxy;
+  #cancellable!: Cancellable;
   #onClose!: () => void;
   #closing = false;
   #debounceTimeout: number | null = null;
@@ -128,6 +144,7 @@ class BrightnessControlWindow {
   #doClose() {
     this.#closing = true;
     this.#generation++;
+    this.#cancellable.cancel();
     if (this.#debounceTimeout !== null) {
       clearTimeout(this.#debounceTimeout);
       this.#debounceTimeout = null;
@@ -136,6 +153,7 @@ class BrightnessControlWindow {
   }
 
   constructor(app: Application, onClose: () => void) {
+    this.#cancellable = new Cancellable();
     this.#onClose = onClose;
     this.#win = new ApplicationWindow(app);
     this.#win.setTitle("Brightness Control");
@@ -292,7 +310,7 @@ class BrightnessControlWindow {
     this.#debounceTimeout = setTimeout(() => {
       this.#debounceTimeout = null;
       if (gen === this.#generation && !this.#closing) {
-        setBrightness(this.#proxy, monitor.device, percent);
+        setBrightness(this.#proxy, monitor.device, percent, this.#cancellable);
       }
     }, 50);
   }

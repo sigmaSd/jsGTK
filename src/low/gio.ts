@@ -216,4 +216,7 @@ export const gio = Deno.dlopen(LIB_PATHS.gio, {
     result: "pointer",
     optional: true,
   },
+  g_cancellable_new: { parameters: [], result: "pointer" },
+  g_cancellable_cancel: { parameters: ["pointer"], result: "void" },
+  g_cancellable_is_cancelled: { parameters: ["pointer"], result: "bool" },
 });
