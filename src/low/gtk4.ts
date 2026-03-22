@@ -123,10 +123,6 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["pointer", "i32"],
     result: "void",
   },
-  g_signal_connect: {
-    parameters: ["pointer", "buffer", "pointer", "pointer"],
-    result: "u64",
-  },
   gtk_dialog_new: { parameters: [], result: "pointer" },
   gtk_window_set_transient_for: {
     parameters: ["pointer", "pointer"],

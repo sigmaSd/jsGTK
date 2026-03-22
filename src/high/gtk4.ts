@@ -649,16 +649,22 @@ export class Scale extends Widget {
   onValueChanged(callback: () => void): void {
     const cb = new Deno.UnsafeCallback(
       {
-        parameters: ["pointer", "pointer"],
+        parameters: ["pointer", "pointer", "pointer"],
         result: "void",
       } as const,
-      () => callback(),
+      (
+        _self: Deno.PointerValue,
+        _param: Deno.PointerValue,
+        _data: Deno.PointerValue,
+      ) => callback(),
     );
-    gtk4.symbols.g_signal_connect(
+    gobject.symbols.g_signal_connect_data(
       this.ptr,
       cstr("value_changed"),
       cb.pointer,
       null,
+      null,
+      0,
     );
   }
 }
