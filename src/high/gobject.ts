@@ -45,7 +45,9 @@ export class GObject {
     if (ptr) {
       const val = BigInt(Deno.UnsafePointer.value(ptr));
       GObject.instances.set(val, this);
-      gobject.symbols.g_object_ref(ptr);
+      // NOTE: We used to call g_object_ref here, but that caused leaks for new objects.
+      // New objects (from constructors) already have ref count 1.
+      // Existing objects (from fromPtr) call ref_sink before new GObject(ptr).
     }
   }
 
@@ -59,6 +61,9 @@ export class GObject {
     const val = BigInt(Deno.UnsafePointer.value(ptr));
     const existing = GObject.instances.get(val);
     if (existing) return existing as T;
+
+    // For existing pointers, we MUST sink/ref so the JS wrapper owns one ref
+    gobject.symbols.g_object_ref_sink(ptr);
     return new GObject(ptr) as T;
   }
 

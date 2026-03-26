@@ -9,6 +9,7 @@ export const gobject = Deno.dlopen(LIB_PATHS.gobject, {
     nonblocking: false,
   },
   g_object_ref: { parameters: ["pointer"], result: "pointer" },
+  g_object_ref_sink: { parameters: ["pointer"], result: "pointer" },
   g_object_unref: { parameters: ["pointer"], result: "void" },
   g_object_set_property: {
     parameters: ["pointer", "buffer", "pointer"],
