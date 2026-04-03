@@ -174,6 +174,7 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
   },
   gtk_widget_unparent: { parameters: ["pointer"], result: "void" },
   gtk_widget_get_first_child: { parameters: ["pointer"], result: "pointer" },
+  gtk_widget_get_last_child: { parameters: ["pointer"], result: "pointer" },
   gtk_widget_get_next_sibling: { parameters: ["pointer"], result: "pointer" },
   gtk_widget_queue_draw: { parameters: ["pointer"], result: "void" },
   gtk_drawing_area_new: { parameters: [], result: "pointer" },

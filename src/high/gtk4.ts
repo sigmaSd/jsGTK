@@ -189,6 +189,12 @@ export class Widget extends GObject {
     return GObject.fromPtr(ptr) as Widget;
   }
 
+  getLastChild(): Widget | null {
+    const ptr = gtk4.symbols.gtk_widget_get_last_child(this.ptr);
+    if (!ptr) return null;
+    return GObject.fromPtr(ptr) as Widget;
+  }
+
   getNextSibling(sibling: Widget): Widget | null {
     const ptr = gtk4.symbols.gtk_widget_get_next_sibling(sibling.ptr);
     if (!ptr) return null;
