@@ -6,7 +6,7 @@ import { gobject } from "../low/gobject.ts";
 import { gtk4 } from "../low/gtk4.ts";
 import { cstr, readCStr } from "../low/utils.ts";
 import { CairoContext } from "./cairo.ts";
-import type { Menu, SimpleAction } from "./gio.ts";
+import { File, type Menu, type SimpleAction } from "./gio.ts";
 import { GObject } from "./gobject.ts";
 export { G_TYPE_BOOLEAN } from "./gobject.ts";
 
@@ -1862,9 +1862,9 @@ export class DropTarget extends EventController {
 }
 
 export class FileDialog extends GObject {
-  constructor() {
-    const ptr = gtk4.symbols.gtk_file_dialog_new();
-    super(ptr);
+  constructor(ptr?: Deno.PointerValue) {
+    const actualPtr = ptr ?? gtk4.symbols.gtk_file_dialog_new();
+    super(actualPtr);
   }
   setTitle(title: string): void {
     gtk4.symbols.gtk_file_dialog_set_title(this.ptr, cstr(title));
@@ -1886,11 +1886,11 @@ export class FileDialog extends GObject {
         result: "void",
       } as const,
       (
-        _source: Deno.PointerValue,
+        sourcePtr: Deno.PointerValue,
         result: Deno.PointerValue,
         _userData: Deno.PointerValue,
       ) => {
-        callback(new FileDialog(), result);
+        callback(new FileDialog(sourcePtr), result);
       },
     );
     gtk4.symbols.gtk_file_dialog_open(
@@ -1901,14 +1901,23 @@ export class FileDialog extends GObject {
       null,
     );
   }
-  openFinish(result: Deno.PointerValue): GObject {
+  openFinish(result: Deno.PointerValue): File | null {
     const ptr = gtk4.symbols.gtk_file_dialog_open_finish(
       this.ptr,
       result,
       null,
     );
-    return new GObject(ptr);
+    return ptr ? new File(ptr) : null;
   }
+
+  openFile(parent: Window): Promise<File | null> {
+    return new Promise((resolve) => {
+      this.open(parent, null, (source, result) => {
+        resolve(source.openFinish(result));
+      });
+    });
+  }
+
   selectFolder(
     parent: Window,
     cancellable: GObject | null,
@@ -1920,11 +1929,11 @@ export class FileDialog extends GObject {
         result: "void",
       } as const,
       (
-        _source: Deno.PointerValue,
+        sourcePtr: Deno.PointerValue,
         result: Deno.PointerValue,
         _userData: Deno.PointerValue,
       ) => {
-        callback(new FileDialog(), result);
+        callback(new FileDialog(sourcePtr), result);
       },
     );
     gtk4.symbols.gtk_file_dialog_select_folder(
@@ -1935,13 +1944,21 @@ export class FileDialog extends GObject {
       null,
     );
   }
-  selectFolderFinish(result: Deno.PointerValue): GObject {
+  selectFolderFinish(result: Deno.PointerValue): File | null {
     const ptr = gtk4.symbols.gtk_file_dialog_select_folder_finish(
       this.ptr,
       result,
       null,
     );
-    return new GObject(ptr);
+    return ptr ? new File(ptr) : null;
+  }
+
+  selectFolderAsync(parent: Window): Promise<File | null> {
+    return new Promise((resolve) => {
+      this.selectFolder(parent, null, (source, result) => {
+        resolve(source.selectFolderFinish(result));
+      });
+    });
   }
 }
 
