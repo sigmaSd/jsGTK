@@ -227,6 +227,7 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["pointer", "pointer"],
     result: "void",
   },
+  gtk_list_box_row_get_child: { parameters: ["pointer"], result: "pointer" },
   gtk_list_box_row_get_index: { parameters: ["pointer"], result: "i32" },
   gtk_search_bar_new: { parameters: [], result: "pointer" },
   gtk_search_bar_set_child: {

@@ -1032,6 +1032,12 @@ export class ListBoxRow extends Widget {
     gtk4.symbols.gtk_list_box_row_set_child(this.ptr, child.ptr);
   }
 
+  getChild(): Widget | null {
+    const ptr = gtk4.symbols.gtk_list_box_row_get_child(this.ptr);
+    if (!ptr) return null;
+    return GObject.fromPtr(ptr) as Widget;
+  }
+
   getIndex(): number {
     return gtk4.symbols.gtk_list_box_row_get_index(this.ptr);
   }
