@@ -564,6 +564,13 @@ export class Clamp extends Widget {
   }
 }
 
+export class Spinner extends Widget {
+  constructor() {
+    const ptr = adw.symbols.adw_spinner_new();
+    super(ptr);
+  }
+}
+
 export class Carousel extends Widget {
   constructor() {
     const ptr = adw.symbols.adw_carousel_new();

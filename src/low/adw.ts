@@ -274,6 +274,17 @@ export const adw = Deno.dlopen(LIB_PATHS.adwaita, {
     result: "void",
   },
   adw_clamp_set_child: { parameters: ["pointer", "pointer"], result: "void" },
+  // Spinner
+  adw_spinner_new: { parameters: [], result: "pointer" },
+  adw_spinner_paintable_new: { parameters: [], result: "pointer" },
+  adw_spinner_paintable_set_widget: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  adw_spinner_paintable_get_widget: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
   // ViewStack
   adw_view_stack_new: { parameters: [], result: "pointer" },
   adw_view_stack_get_visible_child_name: {
