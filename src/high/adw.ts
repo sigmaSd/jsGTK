@@ -566,6 +566,11 @@ export class Clamp extends Widget {
 
 export class Spinner extends Widget {
   constructor() {
+    if (!adw.symbols.adw_spinner_new) {
+      throw new Error(
+        "adw_spinner_new not available - requires libadwaita 1.4+",
+      );
+    }
     const ptr = adw.symbols.adw_spinner_new();
     super(ptr);
   }
