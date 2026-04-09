@@ -275,16 +275,22 @@ export const adw = Deno.dlopen(LIB_PATHS.adwaita, {
   },
   adw_clamp_set_child: { parameters: ["pointer", "pointer"], result: "void" },
   // Spinner
-  // GitHub CI (Ubuntu 22.04) has older libadwaita 1.2.x which lacks adw_spinner_new (added in 1.4+)
+  // GitHub CI (Ubuntu 22.04) has older libadwaita 1.2.x which lacks spinner symbols (added in 1.4+)
   adw_spinner_new: { parameters: [], result: "pointer", optional: true },
-  adw_spinner_paintable_new: { parameters: [], result: "pointer" },
+  adw_spinner_paintable_new: {
+    parameters: [],
+    result: "pointer",
+    optional: true,
+  },
   adw_spinner_paintable_set_widget: {
     parameters: ["pointer", "pointer"],
     result: "void",
+    optional: true,
   },
   adw_spinner_paintable_get_widget: {
     parameters: ["pointer"],
     result: "pointer",
+    optional: true,
   },
   // ViewStack
   adw_view_stack_new: { parameters: [], result: "pointer" },
