@@ -197,6 +197,14 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["pointer", "pointer"],
     result: "void",
   },
+  gtk_scrolled_window_set_policy: {
+    parameters: ["pointer", "i32", "i32"],
+    result: "void",
+  },
+  gtk_label_set_selectable: {
+    parameters: ["pointer", "bool"],
+    result: "void",
+  },
   gtk_list_box_new: { parameters: [], result: "pointer" },
   gtk_list_box_append: { parameters: ["pointer", "pointer"], result: "void" },
   gtk_list_box_prepend: { parameters: ["pointer", "pointer"], result: "void" },

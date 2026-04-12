@@ -267,6 +267,20 @@ export const adw = Deno.dlopen(LIB_PATHS.adwaita, {
     parameters: ["pointer", "pointer"],
     result: "pointer",
   },
+  // StatusPage
+  adw_status_page_new: { parameters: [], result: "pointer" },
+  adw_status_page_set_title: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  adw_status_page_set_description: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  adw_status_page_set_icon_name: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
   // Clamp
   adw_clamp_new: { parameters: [], result: "pointer" },
   adw_clamp_set_maximum_size: {

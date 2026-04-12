@@ -57,6 +57,14 @@ export const SelectionMode = {
   MULTIPLE: 3,
 } as const;
 
+// GTK PolicyType enum
+export const PolicyType = {
+  ALWAYS: 0,
+  AUTOMATIC: 1,
+  NEVER: 2,
+  EXTERNAL: 3,
+} as const;
+
 // GApplicationFlags (used by Application)
 export const ApplicationFlags = {
   NONE: 0,
@@ -730,6 +738,10 @@ export class Label extends Widget {
   setXalign(xalign: number): void {
     gtk4.symbols.gtk_label_set_xalign(this.ptr, xalign);
   }
+
+  setSelectable(selectable: boolean): void {
+    gtk4.symbols.gtk_label_set_selectable(this.ptr, selectable);
+  }
 }
 
 // GTK Button
@@ -1024,6 +1036,14 @@ export class ScrolledWindow extends Widget {
   getVadjustment(): Adjustment {
     const ptr = gtk4.symbols.gtk_scrolled_window_get_vadjustment(this.ptr);
     return new Adjustment(ptr);
+  }
+
+  setPolicy(hscrollbarPolicy: number, vscrollbarPolicy: number): void {
+    gtk4.symbols.gtk_scrolled_window_set_policy(
+      this.ptr,
+      hscrollbarPolicy,
+      vscrollbarPolicy,
+    );
   }
 }
 

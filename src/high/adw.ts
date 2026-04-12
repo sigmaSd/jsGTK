@@ -255,6 +255,25 @@ export class AboutWindow extends Window {
   }
 }
 
+export class StatusPage extends Widget {
+  constructor() {
+    const ptr = adw.symbols.adw_status_page_new();
+    super(ptr);
+  }
+
+  setTitle(title: string): void {
+    adw.symbols.adw_status_page_set_title(this.ptr, cstr(title));
+  }
+
+  setDescription(description: string): void {
+    adw.symbols.adw_status_page_set_description(this.ptr, cstr(description));
+  }
+
+  setIconName(iconName: string): void {
+    adw.symbols.adw_status_page_set_icon_name(this.ptr, cstr(iconName));
+  }
+}
+
 // AdwToolbarView extends GtkWidget
 export class ToolbarView extends Widget {
   constructor() {
