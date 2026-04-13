@@ -35,9 +35,13 @@ export const Key = {
   q: 113,
   Q: 81,
   w: 119,
+  s: 115,
+  S: 83,
   F5: 65474,
   F11: 65480,
   Escape: 65307,
+  Return: 65293,
+  KP_Enter: 65421,
 } as const;
 
 // GTK Align enum
