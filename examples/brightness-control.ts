@@ -138,16 +138,16 @@ class BrightnessControlWindow {
   #cancellable!: Cancellable;
   #onClose!: () => void;
   #closing = false;
-  #debounceTimeout?: NodeJS.Timeout;
+  #debounceTimeout: number | null = null;
   #generation = 0;
 
   #doClose() {
     this.#closing = true;
     this.#generation++;
     this.#cancellable.cancel();
-    if (this.#debounceTimeout !== undefined) {
+    if (this.#debounceTimeout !== null) {
       clearTimeout(this.#debounceTimeout);
-      this.#debounceTimeout = undefined;
+      this.#debounceTimeout = null;
     }
     this.#onClose();
   }
@@ -308,7 +308,7 @@ class BrightnessControlWindow {
       clearTimeout(this.#debounceTimeout);
     }
     this.#debounceTimeout = setTimeout(() => {
-      this.#debounceTimeout = undefined;
+      this.#debounceTimeout = null;
       if (gen === this.#generation && !this.#closing) {
         setBrightness(this.#proxy, monitor.device, percent, this.#cancellable);
       }
