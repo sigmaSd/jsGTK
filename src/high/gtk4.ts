@@ -1151,9 +1151,14 @@ export class ListBox extends Widget {
 
 // GtkStringList extends GObject (implements GListModel)
 export class StringList extends GObject {
-  constructor() {
+  constructor(strings?: string[]) {
     const ptr = gtk4.symbols.gtk_string_list_new(null);
     super(ptr);
+    if (strings) {
+      for (const s of strings) {
+        this.append(s);
+      }
+    }
   }
 
   append(text: string): void {
