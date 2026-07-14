@@ -732,4 +732,22 @@ export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
     parameters: ["pointer", "f64"],
     result: "void",
   },
+  gdk_content_formats_builder_new: { parameters: [], result: "pointer" },
+  gdk_content_formats_builder_add_mime_type: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gdk_content_formats_builder_add_gtype: {
+    parameters: ["pointer", "u64"],
+    result: "void",
+  },
+  gdk_content_formats_builder_to_formats: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gdk_content_formats_builder_unref: {
+    parameters: ["pointer"],
+    result: "void",
+  },
+  gdk_content_formats_get_type: { parameters: [], result: "u64" },
 });

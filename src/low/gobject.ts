@@ -39,6 +39,9 @@ export const gobject = Deno.dlopen(LIB_PATHS.gobject, {
   g_value_set_double: { parameters: ["pointer", "f64"], result: "void" },
   g_value_set_uint: { parameters: ["pointer", "u32"], result: "void" },
   g_value_set_object: { parameters: ["pointer", "pointer"], result: "void" },
+  g_value_set_boxed: { parameters: ["pointer", "pointer"], result: "void" },
+  g_value_take_boxed: { parameters: ["pointer", "pointer"], result: "void" },
+  g_value_get_boxed: { parameters: ["pointer"], result: "pointer" },
   g_value_get_string: { parameters: ["pointer"], result: "pointer" },
   g_value_get_boolean: { parameters: ["pointer"], result: "bool" },
   g_value_get_int: { parameters: ["pointer"], result: "i32" },
@@ -46,6 +49,10 @@ export const gobject = Deno.dlopen(LIB_PATHS.gobject, {
   g_value_get_uint: { parameters: ["pointer"], result: "u32" },
   g_value_get_object: { parameters: ["pointer"], result: "pointer" },
   g_value_unset: { parameters: ["pointer"], result: "void" },
+  g_object_new_with_properties: {
+    parameters: ["u64", "u32", "pointer", "pointer"],
+    result: "pointer",
+  },
   g_object_set_data: {
     parameters: ["pointer", "buffer", "pointer"],
     result: "void",

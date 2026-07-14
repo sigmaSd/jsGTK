@@ -138,7 +138,7 @@ class BrightnessControlWindow {
   #cancellable!: Cancellable;
   #onClose!: () => void;
   #closing = false;
-  #debounceTimeout: number | null = null;
+  #debounceTimeout: ReturnType<typeof setTimeout> | null = null;
   #generation = 0;
 
   #doClose() {

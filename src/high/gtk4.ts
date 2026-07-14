@@ -4,11 +4,11 @@ import { gio } from "../low/gio.ts";
 import { glib } from "../low/glib.ts";
 import { gobject } from "../low/gobject.ts";
 import { gtk4 } from "../low/gtk4.ts";
-import { cstr, readCStr } from "../low/utils.ts";
+import { createGValue, cstr, readCStr } from "../low/utils.ts";
 import { CairoContext } from "./cairo.ts";
 import { File, type Menu, type SimpleAction } from "./gio.ts";
-import { GObject } from "./gobject.ts";
-export { G_TYPE_BOOLEAN } from "./gobject.ts";
+import { G_TYPE_STRING, GObject } from "./gobject.ts";
+export { G_TYPE_BOOLEAN, G_TYPE_STRING } from "./gobject.ts";
 
 // ============================================================================
 // GTK Enums and Constants
@@ -1864,10 +1864,87 @@ export class EventControllerKey extends EventController {
   }
 }
 
+export const GDK_ACTION_COPY = 1 << 0;
+
 export class DropTarget extends EventController {
-  constructor(type: number | bigint, actions: number) {
-    const ptr = gtk4.symbols.gtk_drop_target_new(BigInt(type), actions);
-    super(ptr);
+  constructor(type: number | bigint, actions: number, ptr?: Deno.PointerValue) {
+    const actualPtr = ptr ??
+      gtk4.symbols.gtk_drop_target_new(BigInt(type), actions);
+    super(actualPtr);
+  }
+
+  static newForMimeTypes(mimeTypes: string[], actions: number): DropTarget {
+    try {
+      const formats = buildGdkFormats(mimeTypes);
+
+      const gtypeName = cstr("GtkDropTarget");
+      const dropTargetType = gobject.symbols.g_type_from_name(gtypeName);
+      if (!dropTargetType) return new DropTarget(G_TYPE_STRING, actions);
+      const keyGtype = gtk4.symbols.gdk_content_formats_get_type();
+
+      const fmtName = cstr("formats");
+      const nameBuf = new ArrayBuffer(8);
+      new BigUint64Array(nameBuf)[0] = BigInt(
+        Deno.UnsafePointer.value(Deno.UnsafePointer.of(fmtName)),
+      );
+
+      const fmtValue = createGValue();
+      gobject.symbols.g_value_init(Deno.UnsafePointer.of(fmtValue), keyGtype);
+      gobject.symbols.g_value_take_boxed(
+        Deno.UnsafePointer.of(fmtValue),
+        formats,
+      );
+
+      const fmtValuePtr = Deno.UnsafePointer.of(fmtValue)!;
+
+      const ptr = gobject.symbols.g_object_new_with_properties(
+        dropTargetType,
+        1,
+        Deno.UnsafePointer.of(nameBuf),
+        fmtValuePtr,
+      );
+
+      gobject.symbols.g_value_unset(fmtValuePtr);
+
+      if (!ptr) return new DropTarget(G_TYPE_STRING, actions);
+
+      return new DropTarget(0, 0, ptr);
+    } catch (e) {
+      console.warn("newForMimeTypes failed, falling back to G_TYPE_STRING:", e);
+      return new DropTarget(G_TYPE_STRING, actions);
+    }
+  }
+
+  onTextDrop(
+    callback: (text: string, x: number, y: number) => boolean,
+  ): number {
+    const cb = new Deno.UnsafeCallback(
+      {
+        parameters: ["pointer", "pointer", "f64", "f64", "pointer"],
+        result: "bool",
+      } as const,
+      (
+        _self: Deno.PointerValue,
+        value: Deno.PointerValue,
+        x: number,
+        y: number,
+        _userData: Deno.PointerValue,
+      ) => {
+        const strPtr = gobject.symbols.g_value_get_string(value);
+        const text = strPtr ? readCStr(strPtr) : "";
+        return callback(text, x, y);
+      },
+    );
+
+    const signalCStr = cstr("drop");
+    return Number(gobject.symbols.g_signal_connect_data(
+      this.ptr,
+      signalCStr,
+      cb.pointer,
+      null,
+      null,
+      0,
+    ));
   }
 
   onDrop(
@@ -1900,6 +1977,20 @@ export class DropTarget extends EventController {
       0,
     ));
   }
+}
+
+function buildGdkFormats(mimeTypes: string[]): Deno.PointerValue {
+  const builder = gtk4.symbols.gdk_content_formats_builder_new();
+  for (const mime of mimeTypes) {
+    gtk4.symbols.gdk_content_formats_builder_add_mime_type(builder, cstr(mime));
+  }
+  gtk4.symbols.gdk_content_formats_builder_add_gtype(
+    builder,
+    BigInt(G_TYPE_STRING),
+  );
+  const formats = gtk4.symbols.gdk_content_formats_builder_to_formats(builder);
+  gtk4.symbols.gdk_content_formats_builder_unref(builder);
+  return formats;
 }
 
 export class FileDialog extends GObject {
