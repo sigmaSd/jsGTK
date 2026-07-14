@@ -2,39 +2,110 @@
 import "@sigma/deno-compat";
 import { LIB_PATHS } from "../src/low/paths/mod.ts";
 
-const groups: Record<string, Record<string, unknown>> = {
+const groups = {
   about_window: {
-    adw_about_window_new: { parameters: [], result: "pointer" },
-    adw_about_window_set_application_name: { parameters: ["pointer", "buffer"], result: "void" },
-    adw_about_window_set_version: { parameters: ["pointer", "buffer"], result: "void" },
-    adw_about_window_set_developer_name: { parameters: ["pointer", "buffer"], result: "void" },
-    adw_about_window_set_developers: { parameters: ["pointer", "pointer"], result: "void" },
-    adw_about_window_set_designers: { parameters: ["pointer", "pointer"], result: "void" },
-    adw_about_window_set_translator_credits: { parameters: ["pointer", "buffer"], result: "void" },
-    adw_about_window_set_license_type: { parameters: ["pointer", "i32"], result: "void" },
-    adw_about_window_set_website: { parameters: ["pointer", "buffer"], result: "void" },
-    adw_about_window_set_issue_url: { parameters: ["pointer", "buffer"], result: "void" },
-    adw_about_window_set_application_icon: { parameters: ["pointer", "buffer"], result: "void" },
+    adw_about_window_new: {
+      parameters: [] as const,
+      result: "pointer" as const,
+    },
+    adw_about_window_set_application_name: {
+      parameters: ["pointer" as const, "buffer" as const],
+      result: "void" as const,
+    },
+    adw_about_window_set_version: {
+      parameters: ["pointer" as const, "buffer" as const],
+      result: "void" as const,
+    },
+    adw_about_window_set_developer_name: {
+      parameters: ["pointer" as const, "buffer" as const],
+      result: "void" as const,
+    },
+    adw_about_window_set_developers: {
+      parameters: ["pointer" as const, "pointer" as const],
+      result: "void" as const,
+    },
+    adw_about_window_set_designers: {
+      parameters: ["pointer" as const, "pointer" as const],
+      result: "void" as const,
+    },
+    adw_about_window_set_translator_credits: {
+      parameters: ["pointer" as const, "buffer" as const],
+      result: "void" as const,
+    },
+    adw_about_window_set_license_type: {
+      parameters: ["pointer" as const, "i32" as const],
+      result: "void" as const,
+    },
+    adw_about_window_set_website: {
+      parameters: ["pointer" as const, "buffer" as const],
+      result: "void" as const,
+    },
+    adw_about_window_set_issue_url: {
+      parameters: ["pointer" as const, "buffer" as const],
+      result: "void" as const,
+    },
+    adw_about_window_set_application_icon: {
+      parameters: ["pointer" as const, "buffer" as const],
+      result: "void" as const,
+    },
   },
   carousel_extra: {
-    adw_carousel_set_scroll_params: { parameters: ["pointer", "pointer"], result: "void" },
-    adw_carousel_get_scroll_params: { parameters: ["pointer"], result: "pointer" },
-    adw_carousel_set_allow_mouse_drag: { parameters: ["pointer", "bool"], result: "void" },
-    adw_carousel_get_allow_mouse_drag: { parameters: ["pointer"], result: "bool" },
-    adw_carousel_set_allow_scroll_wheel: { parameters: ["pointer", "bool"], result: "void" },
-    adw_carousel_get_allow_scroll_wheel: { parameters: ["pointer"], result: "bool" },
-    adw_carousel_set_allow_long_swipes: { parameters: ["pointer", "bool"], result: "void" },
-    adw_carousel_get_allow_long_swipes: { parameters: ["pointer", "bool"], result: "bool" },
+    adw_carousel_set_scroll_params: {
+      parameters: ["pointer" as const, "pointer" as const],
+      result: "void" as const,
+    },
+    adw_carousel_get_scroll_params: {
+      parameters: ["pointer" as const],
+      result: "pointer" as const,
+    },
+    adw_carousel_set_allow_mouse_drag: {
+      parameters: ["pointer" as const, "bool" as const],
+      result: "void" as const,
+    },
+    adw_carousel_get_allow_mouse_drag: {
+      parameters: ["pointer" as const],
+      result: "bool" as const,
+    },
+    adw_carousel_set_allow_scroll_wheel: {
+      parameters: ["pointer" as const, "bool" as const],
+      result: "void" as const,
+    },
+    adw_carousel_get_allow_scroll_wheel: {
+      parameters: ["pointer" as const],
+      result: "bool" as const,
+    },
+    adw_carousel_set_allow_long_swipes: {
+      parameters: ["pointer" as const, "bool" as const],
+      result: "void" as const,
+    },
+    adw_carousel_get_allow_long_swipes: {
+      parameters: ["pointer" as const],
+      result: "bool" as const,
+    },
   },
   dialog: {
-    adw_dialog_present: { parameters: ["pointer", "pointer"], result: "void" },
-    adw_is_initialized: { parameters: [], result: "bool" },
+    adw_dialog_present: {
+      parameters: ["pointer" as const, "pointer" as const],
+      result: "void" as const,
+    },
+    adw_is_initialized: { parameters: [] as const, result: "bool" as const },
   },
   message_dialog: {
-    adw_message_dialog_choose: { parameters: ["pointer", "pointer", "function", "pointer"], result: "void" },
+    adw_message_dialog_choose: {
+      parameters: [
+        "pointer" as const,
+        "pointer" as const,
+        "function" as const,
+        "pointer" as const,
+      ],
+      result: "void" as const,
+    },
   },
   alert_dialog: {
-    adw_alert_dialog_choose_finish: { parameters: ["pointer", "pointer"], result: "pointer" },
+    adw_alert_dialog_choose_finish: {
+      parameters: ["pointer" as const, "pointer" as const],
+      result: "pointer" as const,
+    },
   },
 };
 
@@ -43,6 +114,6 @@ for (const [groupName, symbols] of Object.entries(groups)) {
     Deno.dlopen(LIB_PATHS.adwaita, symbols);
     console.log(`OK: ${groupName}`);
   } catch (e) {
-    console.log(`FAIL: ${groupName} — ${e.message}`);
+    console.log(`FAIL: ${groupName} — ${(e as Error).message}`);
   }
 }
