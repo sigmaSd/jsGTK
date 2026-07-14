@@ -2,6 +2,27 @@
 import "@sigma/deno-compat";
 import { LIB_PATHS } from "../src/low/paths/mod.ts";
 
+console.log(`LIB_PATHS.adwaita = ${LIB_PATHS.adwaita}`);
+console.log(`LIB_PATHS.gtk4 = ${LIB_PATHS.gtk4}`);
+
+// First test: try with gtk4 (which should work)
+try {
+  const lib = Deno.dlopen(LIB_PATHS.gtk4, {});
+  console.log("GTK4 empty dlopen: OK");
+  lib.close();
+} catch (e) {
+  console.log(`GTK4 empty dlopen: FAIL — ${(e as Error).message}`);
+}
+
+// Test adwaita with empty symbols
+try {
+  const lib = Deno.dlopen(LIB_PATHS.adwaita, {});
+  console.log("Adwaita empty dlopen: OK");
+  lib.close();
+} catch (e) {
+  console.log(`Adwaita empty dlopen: FAIL — ${(e as Error).message}`);
+}
+
 const groups = {
   about_window: {
     adw_about_window_new: {
