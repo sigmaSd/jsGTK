@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: Setup repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install GTK dependencies (Ubuntu)
         if: runner.os == 'Linux'
@@ -35,13 +35,15 @@ jobs:
 
       - name: Install GTK dependencies (macOS)
         if: runner.os == 'macOS'
+        env:
+          HOMEBREW_NO_REQUIRE_TAP_TRUST: 1
         run: |
           brew install gtk4 libadwaita
           echo "DYLD_LIBRARY_PATH=/opt/homebrew/lib:/usr/local/lib:$DYLD_LIBRARY_PATH" >> $GITHUB_ENV
 
       - name: Cache gvsbuild (Windows)
         if: runner.os == 'Windows'
-        uses: actions/cache@v3
+        uses: actions/cache@v6
         with:
           path: C:\gtk4
           key: ${{ runner.os }}-gvsbuild-gtk4-2026.6.0
@@ -72,7 +74,7 @@ jobs:
           bun-version: latest
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
 
