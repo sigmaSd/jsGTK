@@ -2,7 +2,8 @@ import { findLib } from "../findLib.ts";
 import type { LibPaths } from "../types.ts";
 
 const SEARCH_DIRS = [
-  "C:/tools/msys64/mingw64/bin", // MSYS2/MinGW64
+  "C:/tools/msys64/ucrt64/bin", // MSYS2/UCRT64 (newer default)
+  "C:/tools/msys64/mingw64/bin", // MSYS2/MinGW64 (legacy)
 ];
 
 export const windowsLibPaths: LibPaths = {
