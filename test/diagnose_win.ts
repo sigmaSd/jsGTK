@@ -8,56 +8,46 @@ console.log(`LIB_PATHS.gtk4 = ${LIB_PATHS.gtk4}`);
 console.log(`LIB_PATHS.gio = ${LIB_PATHS.gio}`);
 console.log(`LIB_PATHS.glib = ${LIB_PATHS.glib}`);
 
-// Check which MSYS2 directories exist (path changed in newer MSYS2 versions)
+// Check which MSYS2 directories exist (path changed in newer MSYS2)
+const foundDirs: string[] = [];
 const MSYS2_BASE = ["C:/tools/msys64", "C:/msys64"];
-const SUBDIRS = ["mingw64/bin", "ucrt64/bin", "clang64/bin", "clangarm64/bin", "mingw32/bin", "ucrt32/bin"];
+const SUBDIRS = ["mingw64/bin", "ucrt64/bin", "clang64/bin", "clangarm64/bin"];
 for (const base of MSYS2_BASE) {
-  if (Deno.statSync(base).isDirectory) {
-    console.log(`${base}: FOUND`);
-    for (const sub of SUBDIRS) {
-      const full = `${base}/${sub}`;
-      try {
-        const info = Deno.statSync(full);
-        if (info.isDirectory) {
-          let count = 0;
-          for (const _ of Deno.readDirSync(full)) count++;
-          console.log(`  ${full}: EXISTS (${count} entries)`);
+  try {
+    if (Deno.statSync(base).isDirectory) {
+      console.log(`${base}: FOUND`);
+      for (const sub of SUBDIRS) {
+        const full = `${base}/${sub}`;
+        try {
+          if (Deno.statSync(full).isDirectory) {
+            let count = 0;
+            for (const _ of Deno.readDirSync(full)) count++;
+            console.log(`  ${full}: EXISTS (${count} entries)`);
+            foundDirs.push(full);
+          }
+        } catch {
+          // not found
         }
-      } catch {
-        // not found
       }
     }
-  } else {
+  } catch {
     console.log(`${base}: NOT FOUND`);
   }
 }
 
-// Check specific DLL files
-const dlls = ["libadwaita-1-0.dll", "libgtk-4-1.dll", "libgio-2.0-0.dll", "libglib-2.0-0.dll"];
-for (const dll of dlls) {
-  for (const dir of SEARCH_DIRS) {
+// Try loading DLLs from found directories
+for (const dll of ["libadwaita-1-0.dll", "libgtk-4-1.dll", "libgio-2.0-0.dll", "libglib-2.0-0.dll"]) {
+  for (const dir of foundDirs) {
     const fullPath = join(dir, dll);
     try {
       Deno.statSync(fullPath);
       console.log(`${fullPath}: EXISTS`);
-      // Try loading with full path
       try {
         const lib = Deno.dlopen(fullPath, {});
         console.log(`  LOAD OK`);
         lib.close();
       } catch (e) {
         console.log(`  LOAD FAIL: ${(e as Error).message}`);
-        // Try alternative loading with a single simple symbol
-        try {
-          if (dll === "libgio-2.0-0.dll") {
-            // g_free is always available in glib
-            const lib = Deno.dlopen(fullPath, { g_free: { parameters: ["pointer"], result: "void" } });
-            console.log(`  LOAD WITH SYMBOL OK`);
-            lib.close();
-          }
-        } catch {
-          // ignore
-        }
       }
     } catch {
       // doesn't exist at this path
@@ -65,43 +55,47 @@ for (const dll of dlls) {
   }
 }
 
-// Try using ntldd to check dependencies if available
-const ntlddPaths = [
-  "C:/tools/msys64/usr/bin/ntldd.exe",
-  "C:/tools/msys64/mingw64/bin/ntldd.exe",
-];
-for (const ntlddPath of ntlddPaths) {
-  try {
-    Deno.statSync(ntlddPath);
-    const cmd = new Deno.Command(ntlddPath, {
-      args: ["R", join(SEARCH_DIRS[0], "libadwaita-1-0.dll")],
-    });
-    const { stdout } = cmd.outputSync();
-    console.log("ntldd output for libadwaita:");
-    console.log(new TextDecoder().decode(stdout));
-  } catch {
-    // ntldd not found
+// Try ntldd to list DLL dependencies
+for (const base of MSYS2_BASE) {
+  for (const toolPath of [
+    `${base}/usr/bin/ntldd.exe`,
+    `${base}/mingw64/bin/ntldd.exe`,
+    `${base}/ucrt64/bin/ntldd.exe`,
+  ]) {
+    try {
+      Deno.statSync(toolPath);
+      const adwaitaPath = join(foundDirs[0] || "", "libadwaita-1-0.dll");
+      if (!adwaitaPath) continue;
+      const cmd = new Deno.Command(toolPath, { args: ["R", adwaitaPath] });
+      const { stdout } = cmd.outputSync();
+      console.log(`ntldd (${toolPath}):`);
+      for (const line of new TextDecoder().decode(stdout).split("\n")) {
+        if (line.includes("not found")) console.log(`  MISSING: ${line.trim()}`);
+      }
+    } catch {
+      // tool not found
+    }
   }
 }
 
-// Try using objdump from MSYS2
-const objdumpPaths = [
-  "C:/tools/msys64/usr/bin/objdump.exe",
-  "C:/tools/msys64/mingw64/bin/objdump.exe",
-];
-for (const objdumpPath of objdumpPaths) {
-  try {
-    Deno.statSync(objdumpPath);
-    const cmd = new Deno.Command(objdumpPath, {
-      args: ["-p", join(SEARCH_DIRS[0], "libadwaita-1-0.dll")],
-    });
-    const { stdout } = cmd.outputSync();
-    const output = new TextDecoder().decode(stdout);
-    // only print the DLL dependency lines
-    const lines = output.split("\n").filter(l => l.includes("DLL Name"));
-    console.log("objdump DLL dependencies for libadwaita:");
-    for (const line of lines) console.log(`  ${line.trim()}`);
-  } catch {
-    // objdump not found
+// Try objdump to list DLL dependencies
+for (const base of MSYS2_BASE) {
+  for (const toolPath of [
+    `${base}/usr/bin/objdump.exe`,
+    `${base}/mingw64/bin/objdump.exe`,
+    `${base}/ucrt64/bin/objdump.exe`,
+  ]) {
+    try {
+      Deno.statSync(toolPath);
+      const adwaitaPath = join(foundDirs[0] || "", "libadwaita-1-0.dll");
+      if (!adwaitaPath) continue;
+      const cmd = new Deno.Command(toolPath, { args: ["-p", adwaitaPath] });
+      const { stdout } = cmd.outputSync();
+      const deps = new TextDecoder().decode(stdout).split("\n").filter(l => l.includes("DLL Name"));
+      console.log(`objdump DLL deps (${toolPath}):`);
+      for (const d of deps) console.log(`  ${d.trim()}`);
+    } catch {
+      // tool not found
+    }
   }
 }
