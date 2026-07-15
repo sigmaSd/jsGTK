@@ -48,6 +48,9 @@ const DllsToCheck = [
   "libpcre2-8-0.dll", "libffi-8.dll",
   "libharfbuzz-0.dll", "libfribidi-0.dll",
   "libpangoft2-1.0-0.dll",
+  "libgdk-4-1-0.dll", "libgsk-4-1-0.dll",
+  "libcairo-gobject-2.dll", "libpixman-1-0.dll",
+  "libatk-1.0-0.dll", "libintl-8.dll",
 ];
 for (const dll of DllsToCheck) {
   for (const dir of foundDirs) {
@@ -82,32 +85,34 @@ for (const dll of ["libgtk-4-1.dll", "libadwaita-1-0.dll"]) {
   const dllPath = join(foundDirs[0] || "", dll);
   try { Deno.statSync(dllPath); } catch { continue; }
 
-  // Try dumpbin (from MSVC tools)
-  for (const cmdName of ["dumpbin", "ntldd", "objdump"]) {
-    try {
-      const cmd = new Deno.Command("where", { args: [cmdName], stderr: "null" });
-      const { stdout, success } = cmd.outputSync();
-      if (!success) continue;
-      const exe = new TextDecoder().decode(stdout).trim().split("\n")[0];
-      if (cmdName === "dumpbin") {
-        const r = new Deno.Command(exe, { args: ["/dependents", dllPath] }).outputSync();
-        const out = new TextDecoder().decode(r.stdout);
-        for (const line of out.split("\n")) {
-          if (line.includes(".dll")) console.log(`  ${dll} dep: ${line.trim()}`);
-        }
-      } else if (cmdName === "ntldd") {
-        const r = new Deno.Command(exe, { args: ["-R", dllPath] }).outputSync();
-        for (const line of new TextDecoder().decode(r.stdout).split("\n")) {
-          const lower = line.toLowerCase();
-          if (lower.includes("not found")) console.log(`  ${dll} MISSING: ${line.trim()}`);
-        }
-      } else if (cmdName === "objdump") {
-        const r = new Deno.Command(exe, { args: ["-p", dllPath] }).outputSync();
-        const out = new TextDecoder().decode(r.stdout);
-        for (const line of out.split("\n").filter(l => l.includes("DLL Name"))) {
-          console.log(`  ${dll} dep: ${line.trim()}`);
+  // Try ntldd from PATH for detailed deps
+  try {
+    const which = new Deno.Command("where", { args: ["ntldd"], stderr: "null" });
+    const wResult = which.outputSync();
+    if (wResult.success) {
+      const ntlddExe = new TextDecoder().decode(wResult.stdout).trim().split("\n")[0];
+      const r = new Deno.Command(ntlddExe, { args: ["-R", dllPath] }).outputSync();
+      const out = new TextDecoder().decode(r.stdout);
+      console.log(`ntldd ${dll}:`);
+      for (const line of out.split("\n").filter(l => l.trim())) {
+        if (line.toLowerCase().includes("not found")) console.log(`  MISSING: ${line.trim()}`);
+        else console.log(`  ${line.trim()}`);
+      }
+    } else {
+      // Manually find ntldd in MSYS2 dirs
+      for (const base of MSYS2_BASE) {
+        for (const sub of ["ucrt64/bin", "usr/bin"]) {
+          const p = `${base}/${sub}/ntldd.exe`;
+          try {
+            Deno.statSync(p);
+            const r = new Deno.Command(p, { args: ["-R", dllPath] }).outputSync();
+            const out = new TextDecoder().decode(r.stdout);
+            for (const line of out.split("\n")) {
+              if (line.toLowerCase().includes("not found")) console.log(`  MISSING: ${line.trim()}`);
+            }
+          } catch { /* skip */ }
         }
       }
-    } catch { /* not found */ }
-  }
+    }
+  } catch { /* ntldd not available */ }
 }
