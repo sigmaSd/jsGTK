@@ -39,18 +39,27 @@ for (const base of MSYS2_BASE) {
 }
 
 // Try loading DLLs from found directories
-for (const dll of ["libadwaita-1-0.dll", "libgtk-4-1.dll", "libgio-2.0-0.dll", "libglib-2.0-0.dll"]) {
+const DllsToCheck = [
+  "libadwaita-1-0.dll", "libgtk-4-1.dll",
+  "libgio-2.0-0.dll", "libglib-2.0-0.dll",
+  "libgobject-2.0-0.dll", "libpango-1.0-0.dll",
+  "libpangowin32-1.0-0.dll", "libcairo-2.dll",
+  "libepoxy-0.dll", "libgdk-pixbuf-2.0-0.dll",
+  "libpcre2-8-0.dll", "libffi-8.dll",
+  "libharfbuzz-0.dll", "libfribidi-0.dll",
+  "libpangoft2-1.0-0.dll",
+];
+for (const dll of DllsToCheck) {
   for (const dir of foundDirs) {
     const fullPath = join(dir, dll);
     try {
       Deno.statSync(fullPath);
-      console.log(`${fullPath}: EXISTS`);
       try {
         const lib = Deno.dlopen(fullPath, {});
-        console.log(`  LOAD OK`);
+        console.log(`OK ${dll}`);
         lib.close();
       } catch (e) {
-        console.log(`  LOAD FAIL: ${(e as Error).message}`);
+        console.log(`FAIL ${dll}: ${(e as Error).message}`);
       }
     } catch {
       // doesn't exist at this path
@@ -58,47 +67,47 @@ for (const dll of ["libadwaita-1-0.dll", "libgtk-4-1.dll", "libgio-2.0-0.dll", "
   }
 }
 
-// Try ntldd to list DLL dependencies
+// Find and use ntldd/objdump from MSYS2 to check deps
+const toolBases: [string, string[]][] = [];
 for (const base of MSYS2_BASE) {
-  for (const toolPath of [
-    `${base}/usr/bin/ntldd.exe`,
-    `${base}/mingw64/bin/ntldd.exe`,
-    `${base}/ucrt64/bin/ntldd.exe`,
-  ]) {
+  for (const sub of ["ucrt64/bin", "mingw64/bin", "usr/bin"]) {
+    const p = `${base}/${sub}`;
     try {
-      Deno.statSync(toolPath);
-      const adwaitaPath = join(foundDirs[0] || "", "libadwaita-1-0.dll");
-      if (!adwaitaPath) continue;
-      const cmd = new Deno.Command(toolPath, { args: ["R", adwaitaPath] });
-      const { stdout } = cmd.outputSync();
-      console.log(`ntldd (${toolPath}):`);
-      for (const line of new TextDecoder().decode(stdout).split("\n")) {
-        if (line.includes("not found")) console.log(`  MISSING: ${line.trim()}`);
-      }
-    } catch {
-      // tool not found
-    }
+      if (Deno.statSync(p).isDirectory) toolBases.push([base, [sub]]);
+    } catch { /* skip */ }
   }
 }
 
-// Try objdump to list DLL dependencies
-for (const base of MSYS2_BASE) {
-  for (const toolPath of [
-    `${base}/usr/bin/objdump.exe`,
-    `${base}/mingw64/bin/objdump.exe`,
-    `${base}/ucrt64/bin/objdump.exe`,
-  ]) {
+for (const dll of ["libgtk-4-1.dll", "libadwaita-1-0.dll"]) {
+  const dllPath = join(foundDirs[0] || "", dll);
+  try { Deno.statSync(dllPath); } catch { continue; }
+
+  // Try dumpbin (from MSVC tools)
+  for (const cmdName of ["dumpbin", "ntldd", "objdump"]) {
     try {
-      Deno.statSync(toolPath);
-      const adwaitaPath = join(foundDirs[0] || "", "libadwaita-1-0.dll");
-      if (!adwaitaPath) continue;
-      const cmd = new Deno.Command(toolPath, { args: ["-p", adwaitaPath] });
-      const { stdout } = cmd.outputSync();
-      const deps = new TextDecoder().decode(stdout).split("\n").filter(l => l.includes("DLL Name"));
-      console.log(`objdump DLL deps (${toolPath}):`);
-      for (const d of deps) console.log(`  ${d.trim()}`);
-    } catch {
-      // tool not found
-    }
+      const cmd = new Deno.Command("where", { args: [cmdName], stderr: "null" });
+      const { stdout, success } = cmd.outputSync();
+      if (!success) continue;
+      const exe = new TextDecoder().decode(stdout).trim().split("\n")[0];
+      if (cmdName === "dumpbin") {
+        const r = new Deno.Command(exe, { args: ["/dependents", dllPath] }).outputSync();
+        const out = new TextDecoder().decode(r.stdout);
+        for (const line of out.split("\n")) {
+          if (line.includes(".dll")) console.log(`  ${dll} dep: ${line.trim()}`);
+        }
+      } else if (cmdName === "ntldd") {
+        const r = new Deno.Command(exe, { args: ["-R", dllPath] }).outputSync();
+        for (const line of new TextDecoder().decode(r.stdout).split("\n")) {
+          const lower = line.toLowerCase();
+          if (lower.includes("not found")) console.log(`  ${dll} MISSING: ${line.trim()}`);
+        }
+      } else if (cmdName === "objdump") {
+        const r = new Deno.Command(exe, { args: ["-p", dllPath] }).outputSync();
+        const out = new TextDecoder().decode(r.stdout);
+        for (const line of out.split("\n").filter(l => l.includes("DLL Name"))) {
+          console.log(`  ${dll} dep: ${line.trim()}`);
+        }
+      }
+    } catch { /* not found */ }
   }
 }
