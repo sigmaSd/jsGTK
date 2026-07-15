@@ -19,19 +19,22 @@ for (const base of MSYS2_BASE) {
       for (const sub of SUBDIRS) {
         const full = `${base}/${sub}`;
         try {
-          if (Deno.statSync(full).isDirectory) {
+          const s = Deno.statSync(full);
+          if (s.isDirectory) {
             let count = 0;
             for (const _ of Deno.readDirSync(full)) count++;
             console.log(`  ${full}: EXISTS (${count} entries)`);
             foundDirs.push(full);
+          } else {
+            console.log(`  ${full}: EXISTS but not dir`);
           }
-        } catch {
-          // not found
+        } catch (e) {
+          console.log(`  ${full}: STAT FAIL — ${(e as Error).message}`);
         }
       }
     }
-  } catch {
-    console.log(`${base}: NOT FOUND`);
+  } catch (e) {
+    console.log(`${base}: ERROR — ${(e as Error).message}`);
   }
 }
 
