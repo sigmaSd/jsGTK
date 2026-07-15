@@ -38,6 +38,20 @@ for (const base of MSYS2_BASE) {
   }
 }
 
+// List GTK-related DLLs in the directory
+for (const dir of foundDirs) {
+  const gtkFiles: string[] = [];
+  try {
+    for (const entry of Deno.readDirSync(dir)) {
+      const lower = entry.name.toLowerCase();
+      if (lower.startsWith("libgtk") || lower.startsWith("libgdk") || lower.startsWith("libgsk") || lower.startsWith("libatk")) {
+        gtkFiles.push(entry.name);
+      }
+    }
+    if (gtkFiles.length > 0) console.log(`GTK DLLs in ${dir}: [${gtkFiles.join(", ")}]`);
+  } catch { /* skip */ }
+}
+
 // Try loading DLLs from found directories
 const DllsToCheck = [
   "libadwaita-1-0.dll", "libgtk-4-1.dll",
@@ -81,38 +95,28 @@ for (const base of MSYS2_BASE) {
   }
 }
 
-for (const dll of ["libgtk-4-1.dll", "libadwaita-1-0.dll"]) {
-  const dllPath = join(foundDirs[0] || "", dll);
-  try { Deno.statSync(dllPath); } catch { continue; }
-
-  // Try ntldd from PATH for detailed deps
-  try {
-    const which = new Deno.Command("where", { args: ["ntldd"], stderr: "null" });
-    const wResult = which.outputSync();
-    if (wResult.success) {
-      const ntlddExe = new TextDecoder().decode(wResult.stdout).trim().split("\n")[0];
-      const r = new Deno.Command(ntlddExe, { args: ["-R", dllPath] }).outputSync();
-      const out = new TextDecoder().decode(r.stdout);
-      console.log(`ntldd ${dll}:`);
-      for (const line of out.split("\n").filter(l => l.trim())) {
-        if (line.toLowerCase().includes("not found")) console.log(`  MISSING: ${line.trim()}`);
-        else console.log(`  ${line.trim()}`);
-      }
-    } else {
-      // Manually find ntldd in MSYS2 dirs
-      for (const base of MSYS2_BASE) {
-        for (const sub of ["ucrt64/bin", "usr/bin"]) {
-          const p = `${base}/${sub}/ntldd.exe`;
-          try {
-            Deno.statSync(p);
-            const r = new Deno.Command(p, { args: ["-R", dllPath] }).outputSync();
-            const out = new TextDecoder().decode(r.stdout);
-            for (const line of out.split("\n")) {
-              if (line.toLowerCase().includes("not found")) console.log(`  MISSING: ${line.trim()}`);
-            }
-          } catch { /* skip */ }
+// Try ntldd on each failing DLL
+try {
+  const which = new Deno.Command("where", { args: ["ntldd"], stderr: "null" });
+  const wResult = which.outputSync();
+  if (!wResult.success) {
+    console.log("ntldd: not found in PATH");
+  } else {
+    const ntlddExe = new TextDecoder().decode(wResult.stdout).trim().split("\n")[0];
+    for (const dll of ["libgtk-4-1.dll", "libadwaita-1-0.dll"]) {
+      for (const dir of foundDirs) {
+        const dllPath = join(dir, dll);
+        try { Deno.statSync(dllPath); } catch { continue; }
+        const r = new Deno.Command(ntlddExe, { args: ["-R", dllPath] }).outputSync();
+        const out = new TextDecoder().decode(r.stdout);
+        console.log(`ntldd ${dll}:`);
+        for (const line of out.split("\n").filter(l => l.trim())) {
+          if (line.toLowerCase().includes("not found")) console.log(`  MISSING: ${line.trim()}`);
+          else console.log(`  ${line.trim()}`);
         }
       }
     }
-  } catch { /* ntldd not available */ }
+  }
+} catch (e) {
+  console.log(`ntldd error: ${(e as Error).message}`);
 }
