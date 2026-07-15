@@ -196,7 +196,7 @@ Deno.test("Widget Properties", testOptions, () => {
 
   assert(propButton.getVisible(), "Widget visible property set to true");
 
-  propButton.setProperty("visible", false);
+  propButton.hide();
 
   assert(!propButton.getVisible(), "Widget visible property set to false");
 });

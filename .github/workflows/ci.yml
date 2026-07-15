@@ -76,11 +76,6 @@ jobs:
         with:
           node-version: 22
 
-      - name: Diagnose FFI symbols (Windows)
-        if: runner.os == 'Windows'
-        run: deno run --allow-ffi --allow-env --allow-read --allow-run test/diagnose_win.ts
-        shell: bash
-
       - name: Run tests
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
