@@ -8,10 +8,23 @@ console.log(`LIB_PATHS.gtk4 = ${LIB_PATHS.gtk4}`);
 console.log(`LIB_PATHS.gio = ${LIB_PATHS.gio}`);
 console.log(`LIB_PATHS.glib = ${LIB_PATHS.glib}`);
 
-// Check which MSYS2 directories exist (path changed in newer MSYS2)
+// Check which directories exist
 const foundDirs: string[] = [];
+const GVSBUILD_DIRS = ["C:/gtk4/bin", "C:/Users/runneradmin/gtk4/bin"];
 const MSYS2_BASE = ["C:/tools/msys64", "C:/msys64"];
 const SUBDIRS = ["mingw64/bin", "ucrt64/bin", "clang64/bin", "clangarm64/bin"];
+
+for (const dir of GVSBUILD_DIRS) {
+  try {
+    if (Deno.statSync(dir).isDirectory) {
+      let count = 0;
+      for (const _ of Deno.readDirSync(dir)) count++;
+      console.log(`${dir}: EXISTS (${count} entries)`);
+      foundDirs.push(dir);
+    }
+  } catch { /* skip */ }
+}
+
 for (const base of MSYS2_BASE) {
   try {
     if (Deno.statSync(base).isDirectory) {

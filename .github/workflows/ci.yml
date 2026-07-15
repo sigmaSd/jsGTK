@@ -27,15 +27,6 @@ jobs:
       - name: Setup repo
         uses: actions/checkout@v4
 
-      - name: Cache MSYS2 (Windows)
-        if: runner.os == 'Windows'
-        uses: actions/cache@v3
-        with:
-          path: C:\tools\msys64
-          key: ${{ runner.os }}-msys2-gtk4-${{ hashFiles('.github/workflows/ci.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-msys2-gtk4-
-
       - name: Install GTK dependencies (Ubuntu)
         if: runner.os == 'Linux'
         run: |
@@ -48,15 +39,27 @@ jobs:
           brew install gtk4 libadwaita
           echo "DYLD_LIBRARY_PATH=/opt/homebrew/lib:/usr/local/lib:$DYLD_LIBRARY_PATH" >> $GITHUB_ENV
 
+      - name: Cache gvsbuild (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/cache@v3
+        with:
+          path: C:\gtk4
+          key: ${{ runner.os }}-gvsbuild-gtk4-2026.6.0
+
       - name: Install GTK dependencies (Windows)
         if: runner.os == 'Windows'
         run: |
-          if (!(Test-Path "C:\tools\msys64\usr\bin\bash.exe")) {
-            choco install msys2 -y
+          $url = "https://github.com/wingtk/gvsbuild/releases/download/2026.6.0/GTK4_Gvsbuild_2026.6.0_x64.zip"
+          $zip = "$env:TEMP\gtk4.zip"
+          $dest = "C:\gtk4"
+          if (!(Test-Path "$dest\bin\gtk-4-1.dll")) {
+            Write-Host "Downloading gvsbuild GTK4 (285 MB)..."
+            Invoke-WebRequest -Uri $url -OutFile $zip
+            Write-Host "Extracting..."
+            Expand-Archive -Path $zip -DestinationPath $dest -Force
+            Remove-Item $zip
           }
-          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -Syu --noconfirm"
-          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm mingw-w64-ucrt-x86_64-gtk4 mingw-w64-ucrt-x86_64-libadwaita mingw-w64-ucrt-x86_64-ntldd"
-          echo "C:\tools\msys64\ucrt64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "$dest\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2

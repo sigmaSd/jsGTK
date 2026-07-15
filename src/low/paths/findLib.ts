@@ -2,14 +2,17 @@ import { join } from "node:path";
 
 /** Find the library in the given paths */
 export function findLib(
-  lib: string,
+  libs: string | string[],
   paths: Array<string>,
 ): string {
-  const candidates: Array<string> = [lib];
+  const libArray: string[] = typeof libs === "string" ? [libs] : libs;
+  const candidates: Array<string> = [];
 
-  for (const path of paths) {
-    const fullPath = join(path, lib);
-    candidates.push(fullPath);
+  for (const lib of libArray) {
+    candidates.push(lib);
+    for (const path of paths) {
+      candidates.push(join(path, lib));
+    }
   }
 
   const uniqueCandidates = Array.from(new Set(candidates));
