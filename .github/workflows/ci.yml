@@ -75,7 +75,7 @@ jobs:
 
       - name: Diagnose FFI symbols (Windows)
         if: runner.os == 'Windows'
-        run: deno run --allow-ffi --allow-env test/diagnose_win.ts
+        run: deno run --allow-ffi --allow-env --allow-read test/diagnose_win.ts
         shell: bash
 
       - name: Run tests
