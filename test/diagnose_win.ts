@@ -8,16 +8,27 @@ console.log(`LIB_PATHS.gtk4 = ${LIB_PATHS.gtk4}`);
 console.log(`LIB_PATHS.gio = ${LIB_PATHS.gio}`);
 console.log(`LIB_PATHS.glib = ${LIB_PATHS.glib}`);
 
-// Check if DLLs exist in the search path
-const SEARCH_DIRS = ["C:/tools/msys64/mingw64/bin", "C:/msys64/mingw64/bin"];
-for (const dir of SEARCH_DIRS) {
-  try {
-    const entries = Deno.readDirSync(dir);
-    let count = 0;
-    for (const _ of entries) count++;
-    console.log(`${dir}: exists with ${count} entries`);
-  } catch {
-    console.log(`${dir}: NOT FOUND`);
+// Check which MSYS2 directories exist (path changed in newer MSYS2 versions)
+const MSYS2_BASE = ["C:/tools/msys64", "C:/msys64"];
+const SUBDIRS = ["mingw64/bin", "ucrt64/bin", "clang64/bin", "clangarm64/bin", "mingw32/bin", "ucrt32/bin"];
+for (const base of MSYS2_BASE) {
+  if (Deno.statSync(base).isDirectory) {
+    console.log(`${base}: FOUND`);
+    for (const sub of SUBDIRS) {
+      const full = `${base}/${sub}`;
+      try {
+        const info = Deno.statSync(full);
+        if (info.isDirectory) {
+          let count = 0;
+          for (const _ of Deno.readDirSync(full)) count++;
+          console.log(`  ${full}: EXISTS (${count} entries)`);
+        }
+      } catch {
+        // not found
+      }
+    }
+  } else {
+    console.log(`${base}: NOT FOUND`);
   }
 }
 
