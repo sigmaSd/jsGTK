@@ -26,9 +26,44 @@ export const G_TYPE_PARAM = 19 << 2;
 export const G_TYPE_OBJECT = 20 << 2;
 export const G_TYPE_VARIANT = 21 << 2;
 
+// Retains UnsafeCallbacks connected to native objects so V8 cannot
+// garbage-collect them while native code still holds their pointer.
+// Keyed by pointer value (not by wrapper instance) because Builder helpers
+// create wrappers via Object.create, bypassing the constructor.
+const retainedCallbacks = new Map<bigint, unknown[]>();
+
 // Base class for GObject wrappers
 export class GObject {
   private static readonly instances = new Map<bigint, GObject>();
+
+  /**
+   * @internal
+   * Keep a callback (or any object backing a native pointer) alive for the
+   * lifetime of the underlying native object. Used by signal-connection
+   * helpers.
+   */
+  retainCallback(cb: unknown): void {
+    if (!this.ptr) return;
+    const key = BigInt(Deno.UnsafePointer.value(this.ptr));
+    const arr = retainedCallbacks.get(key);
+    if (arr) arr.push(cb);
+    else retainedCallbacks.set(key, [cb]);
+  }
+
+  /**
+   * @internal
+   * Stop retaining a callback previously passed to retainCallback. Used by
+   * one-shot async callbacks once they have fired.
+   */
+  releaseCallback(cb: unknown): void {
+    if (!this.ptr) return;
+    const key = BigInt(Deno.UnsafePointer.value(this.ptr));
+    const arr = retainedCallbacks.get(key);
+    if (!arr) return;
+    const idx = arr.indexOf(cb);
+    if (idx !== -1) arr.splice(idx, 1);
+    if (arr.length === 0) retainedCallbacks.delete(key);
+  }
 
   /**
    * @internal
@@ -71,6 +106,7 @@ export class GObject {
     if (this.ptr) {
       const val = BigInt(Deno.UnsafePointer.value(this.ptr));
       GObject.instances.delete(val);
+      retainedCallbacks.delete(val);
       gobject.symbols.g_object_unref(this.ptr);
       this.ptr = null;
     }
@@ -97,6 +133,7 @@ export class GObject {
         callback(...args);
       },
     );
+    this.retainCallback(cb);
 
     const signalId = gobject.symbols.g_signal_connect_data(
       this.ptr,
@@ -124,6 +161,7 @@ export class GObject {
         return callback(...args);
       },
     );
+    this.retainCallback(cb);
 
     const signalId = gobject.symbols.g_signal_connect_data(
       this.ptr,
@@ -157,6 +195,7 @@ export class GObject {
         callback();
       },
     );
+    this.retainCallback(cb);
 
     const signalId = gobject.symbols.g_signal_connect_data(
       this.ptr,

@@ -410,6 +410,7 @@ export class ComboRow extends ActionRow {
         callback(selected);
       },
     );
+    this.retainCallback(cb);
 
     const signalCStr = cstr("notify::selected");
     return Number(
@@ -451,6 +452,7 @@ export class SwitchRow extends ActionRow {
         callback(active);
       },
     );
+    this.retainCallback(cb);
 
     const signalCStr = cstr("notify::active");
     return Number(
@@ -531,6 +533,7 @@ export class MessageDialog extends Window {
         callback(responseId);
       },
     );
+    this.retainCallback(cb);
 
     const signalCStr = cstr("response");
     return Number(

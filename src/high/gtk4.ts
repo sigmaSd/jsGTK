@@ -7,6 +7,7 @@ import { gtk4 } from "../low/gtk4.ts";
 import { createGValue, cstr, readCStr } from "../low/utils.ts";
 import { CairoContext } from "./cairo.ts";
 import { File, type Menu, type SimpleAction } from "./gio.ts";
+import { unixSignalAdd as glibUnixSignalAdd } from "./glib.ts";
 import { G_TYPE_STRING, GObject } from "./gobject.ts";
 export { G_TYPE_BOOLEAN, G_TYPE_STRING } from "./gobject.ts";
 
@@ -331,7 +332,23 @@ export class Application extends GObject {
   }
 
   run(args: string[]): number {
-    return gio.symbols.g_application_run(this.ptr, args.length, null);
+    if (args.length === 0) {
+      return gio.symbols.g_application_run(this.ptr, 0, null);
+    }
+    // g_application_run expects argv to include the program name at index 0
+    const argv = ["gtk-app", ...args];
+    const cStrings = argv.map((a) => cstr(a));
+    const argvPtrs = new BigUint64Array(argv.length + 1);
+    for (let i = 0; i < cStrings.length; i++) {
+      const ptr = Deno.UnsafePointer.of(cStrings[i]);
+      argvPtrs[i] = ptr ? BigInt(Deno.UnsafePointer.value(ptr)) : 0n;
+    }
+    argvPtrs[argv.length] = 0n; // NULL terminator
+    return gio.symbols.g_application_run(
+      this.ptr,
+      argv.length,
+      Deno.UnsafePointer.of(argvPtrs),
+    );
   }
 
   quit(): void {
@@ -509,6 +526,27 @@ export class ApplicationWindow extends Window {
   }
 }
 
+// GtkShortcutsWindow extends GtkWindow
+// Typically loaded from a Builder UI definition, e.g.
+// builder.get("shortcutsWin", ShortcutsWindow)
+export class ShortcutsWindow extends Window {}
+
+// GtkShortcutsGroup - a titled group inside a GtkShortcutsSection.
+// Builder-only widget; retrieve with builder.get(name, ShortcutsGroup).
+export class ShortcutsGroup extends Widget {
+  setTitle(title: string): void {
+    this.setProperty("title", title);
+  }
+}
+
+// GtkShortcutsShortcut - a single shortcut entry in a GtkShortcutsGroup.
+// Builder-only widget; retrieve with builder.get(name, ShortcutsShortcut).
+export class ShortcutsShortcut extends Widget {
+  setTitle(title: string): void {
+    this.setProperty("title", title);
+  }
+}
+
 // AdwAboutWindow
 export class AboutWindow extends Window {
   constructor() {
@@ -572,7 +610,7 @@ export class AlertDialog extends Widget {
     );
 
     // Guard against GC
-    (this as any)._choose_cb = cb;
+    this.retainCallback(cb);
 
     adw.symbols.adw_alert_dialog_choose(
       this.ptr,
@@ -693,6 +731,7 @@ export class Scale extends Widget {
         _data: Deno.PointerValue,
       ) => callback(),
     );
+    this.retainCallback(cb);
     gobject.symbols.g_signal_connect_data(
       this.ptr,
       cstr("value_changed"),
@@ -1111,6 +1150,7 @@ export class ListBox extends Widget {
         return callback(row);
       },
     );
+    this.retainCallback(cb);
     gtk4.symbols.gtk_list_box_set_filter_func(
       this.ptr,
       cb.pointer,
@@ -1593,9 +1633,11 @@ export class Clipboard extends GObject {
         result: Deno.PointerValue,
         _userData: Deno.PointerValue,
       ) => {
+        this.releaseCallback(cb);
         callback(this, result);
       },
     );
+    this.retainCallback(cb);
 
     // Construct null terminated string array
     const ptrs = new BigUint64Array(mimeTypes.length + 1);
@@ -1643,9 +1685,11 @@ export class Clipboard extends GObject {
         result: Deno.PointerValue,
         _userData: Deno.PointerValue,
       ) => {
+        this.releaseCallback(cb);
         callback(this, result);
       },
     );
+    this.retainCallback(cb);
     gtk4.symbols.gdk_clipboard_read_text_async(
       this.ptr,
       cancellable,
@@ -1677,9 +1721,11 @@ export class Clipboard extends GObject {
         result: Deno.PointerValue,
         _userData: Deno.PointerValue,
       ) => {
+        this.releaseCallback(cb);
         callback(this, result);
       },
     );
+    this.retainCallback(cb);
     gtk4.symbols.gdk_clipboard_read_texture_async(
       this.ptr,
       cancellable,
@@ -1852,6 +1898,7 @@ export class EventControllerKey extends EventController {
         return callback(keyval, keycode, state);
       },
     );
+    this.retainCallback(cb);
     const signalCStr = cstr("key-pressed");
     return Number(gobject.symbols.g_signal_connect_data(
       this.ptr,
@@ -1935,6 +1982,7 @@ export class DropTarget extends EventController {
         return callback(text, x, y);
       },
     );
+    this.retainCallback(cb);
 
     const signalCStr = cstr("drop");
     return Number(gobject.symbols.g_signal_connect_data(
@@ -1966,6 +2014,7 @@ export class DropTarget extends EventController {
         return callback(objPtr, x, y);
       },
     );
+    this.retainCallback(cb);
 
     const signalCStr = cstr("drop");
     return Number(gobject.symbols.g_signal_connect_data(
@@ -2022,9 +2071,11 @@ export class FileDialog extends GObject {
         result: Deno.PointerValue,
         _userData: Deno.PointerValue,
       ) => {
+        this.releaseCallback(cb);
         callback(new FileDialog(sourcePtr), result);
       },
     );
+    this.retainCallback(cb);
     gtk4.symbols.gtk_file_dialog_open(
       this.ptr,
       parent.ptr,
@@ -2065,9 +2116,11 @@ export class FileDialog extends GObject {
         result: Deno.PointerValue,
         _userData: Deno.PointerValue,
       ) => {
+        this.releaseCallback(cb);
         callback(new FileDialog(sourcePtr), result);
       },
     );
+    this.retainCallback(cb);
     gtk4.symbols.gtk_file_dialog_select_folder(
       this.ptr,
       parent.ptr,
@@ -2148,6 +2201,7 @@ export class GestureClick extends EventController {
         callback(n_press, x, y);
       },
     );
+    this.retainCallback(cb);
     const signalCStr = cstr("released");
     return Number(gobject.symbols.g_signal_connect_data(
       this.ptr,
@@ -2161,17 +2215,7 @@ export class GestureClick extends EventController {
 }
 
 export function unixSignalAdd(signum: number, callback: () => boolean): number {
-  if (!glib.symbols.g_unix_signal_add) {
-    throw new Error("unixSignalAdd is not supported on this platform");
-  }
-  const cb = new Deno.UnsafeCallback(
-    { parameters: ["pointer"], result: "bool" } as const,
-    (_userData: Deno.PointerValue) => {
-      return callback();
-    },
-  );
-  // @ts-ignore: glib import
-  return glib.symbols.g_unix_signal_add(signum, cb.pointer, null);
+  return glibUnixSignalAdd(signum, callback);
 }
 
 export function typeFromName(name: string): number | bigint {

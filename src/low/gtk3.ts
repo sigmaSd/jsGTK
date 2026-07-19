@@ -2,7 +2,7 @@ import "@sigma/deno-compat";
 import { LIB_PATHS } from "./paths/mod.ts";
 
 export const gtk3 = Deno.dlopen(LIB_PATHS.gtk3, {
-  gtk_init: { parameters: [], result: "void" },
+  gtk_init: { parameters: ["pointer", "pointer"], result: "void" },
   gtk_main: { parameters: [], result: "void" },
   gtk_main_quit: { parameters: [], result: "void" },
   gtk_menu_new: { parameters: [], result: "pointer" },

@@ -43,6 +43,14 @@ export class MenuItem extends Container {
   }
 }
 
+/**
+ * Initialize GTK3. Must be called before creating any GTK3 widgets
+ * (e.g. when building a tray icon app with the appindicator module).
+ */
+export function init(): void {
+  gtk3.symbols.gtk_init(null, null);
+}
+
 export function main(): void {
   gtk3.symbols.gtk_main();
 }

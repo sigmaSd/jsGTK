@@ -34,6 +34,19 @@ export const glib = Deno.dlopen(LIB_PATHS.glib, {
     result: "u32",
     optional: true,
   },
+  g_io_channel_unix_new: {
+    parameters: ["i32"],
+    result: "pointer",
+    optional: true,
+  },
+  g_io_channel_unref: {
+    parameters: ["pointer"],
+    result: "void",
+  },
+  g_io_add_watch: {
+    parameters: ["pointer", "i32", "function", "pointer"],
+    result: "u32",
+  },
   g_bytes_new: {
     parameters: ["buffer", "usize"],
     result: "pointer",

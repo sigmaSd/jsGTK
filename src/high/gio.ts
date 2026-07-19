@@ -186,28 +186,33 @@ export class OutputStream extends GObject {
     priority: number,
     callback?: (success: boolean, bytesWritten: number) => void,
   ): void {
-    const cb = callback
-      ? new Deno.UnsafeCallback(
-        {
-          parameters: ["pointer", "pointer", "pointer"],
-          result: "void",
-        } as const,
-        (
-          _source: Deno.PointerValue,
-          result: Deno.PointerValue,
-          _userData: Deno.PointerValue,
-        ) => {
-          const bytesWritten = new BigUint64Array(1);
-          const success = gio.symbols.g_output_stream_write_all_finish(
-            this.ptr,
-            result,
-            Deno.UnsafePointer.of(bytesWritten),
-            null,
-          );
-          callback(success, Number(bytesWritten[0]));
-        },
-      )
-      : null;
+    // An internal callback is always used so both it and the data buffer
+    // (which g_output_stream_write_all_async does not copy) stay alive until
+    // the write completes, then get released.
+    const cb = new Deno.UnsafeCallback(
+      {
+        parameters: ["pointer", "pointer", "pointer"],
+        result: "void",
+      } as const,
+      (
+        _source: Deno.PointerValue,
+        result: Deno.PointerValue,
+        _userData: Deno.PointerValue,
+      ) => {
+        const bytesWritten = new BigUint64Array(1);
+        const success = gio.symbols.g_output_stream_write_all_finish(
+          this.ptr,
+          result,
+          Deno.UnsafePointer.of(bytesWritten),
+          null,
+        );
+        callback?.(success, Number(bytesWritten[0]));
+        this.releaseCallback(cb);
+        this.releaseCallback(data);
+      },
+    );
+    this.retainCallback(cb);
+    this.retainCallback(data);
 
     gio.symbols.g_output_stream_write_all_async(
       this.ptr,
@@ -215,7 +220,7 @@ export class OutputStream extends GObject {
       BigInt(data.length),
       priority,
       null,
-      cb?.pointer ?? null,
+      cb.pointer,
       null,
     );
   }
@@ -261,6 +266,7 @@ export class InputStream extends GObject {
         result: Deno.PointerValue,
         _userData: Deno.PointerValue,
       ) => {
+        this.releaseCallback(cb);
         const bytesPtr = gio.symbols.g_input_stream_read_bytes_finish(
           this.ptr,
           result,
@@ -299,6 +305,8 @@ export class InputStream extends GObject {
         callback(data);
       },
     );
+
+    this.retainCallback(cb);
 
     gio.symbols.g_input_stream_read_bytes_async(
       this.ptr,
@@ -372,6 +380,7 @@ export class Subprocess extends GObject {
         result: Deno.PointerValue,
         _userData: Deno.PointerValue,
       ) => {
+        this.releaseCallback(cb);
         const success = gio.symbols.g_subprocess_wait_finish(
           this.ptr,
           result,
@@ -380,6 +389,7 @@ export class Subprocess extends GObject {
         callback(success);
       },
     );
+    this.retainCallback(cb);
 
     gio.symbols.g_subprocess_wait_async(this.ptr, null, cb.pointer, null);
   }
@@ -574,6 +584,7 @@ export class DBusProxy extends GObject {
         result: Deno.PointerValue,
         _userData: Deno.PointerValue,
       ) => {
+        this.releaseCallback(cb);
         const finish = gio.symbols.g_dbus_proxy_call_finish;
         if (finish) {
           const variant = finish(this.ptr, result, null);
@@ -583,6 +594,7 @@ export class DBusProxy extends GObject {
         }
       },
     );
+    this.retainCallback(cb);
 
     gio.symbols.g_dbus_proxy_call(
       this.ptr,
