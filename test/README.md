@@ -36,6 +36,9 @@ deno task test
 On Linux, `xvfb-run -a deno task test` runs the Deno, Bun, and Node tests on an
 isolated X11 display.
 
+On macOS, the Deno suite runs on the process's main thread so GTK can poll
+AppKit events.
+
 The Node command uses `--test-force-exit` because native GTK tests can finish
 their assertions while the runner remains in shutdown.
 
