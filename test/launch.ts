@@ -11,10 +11,12 @@ Deno.test(
     const apps = AppInfo.getAll();
     try {
       for (const app of apps) {
-        if (!app.getName() || !app.getDisplayName()) {
-          throw new Error(
-            "Missing application name",
-          );
+        // Native app databases can include entries without a friendly name.
+        if (
+          typeof app.getName() !== "string" ||
+          typeof app.getDisplayName() !== "string"
+        ) {
+          throw new Error("Expected application names as strings");
         }
         const icon = app.getIcon();
         if (icon?.kind === "file" && !icon.path) {
@@ -42,12 +44,22 @@ Deno.test(
   },
 );
 
-Deno.test("GFile URIs round-trip without exposing native pointers", () => {
-  const uri = "https://example.test/file%20name";
-  const file = File.newForUri(uri);
+Deno.test("Local GFile URI and path inputs identify the same file", () => {
+  const file = File.newForUri(
+    new URL("./file%20name.txt", import.meta.url).href,
+  );
   try {
-    if (file.getUri() !== uri || file.getPath() !== null) {
-      throw new Error("Unexpected URI or path for a remote file");
+    const path = file.getPath();
+    if (!path?.endsWith("file name.txt")) {
+      throw new Error(`Expected a decoded local path, got ${path}`);
+    }
+    const fromPath = File.newForPath(path);
+    try {
+      if (file.getUri() !== fromPath.getUri()) {
+        throw new Error("URI and path did not resolve to the same file");
+      }
+    } finally {
+      fromPath.unref();
     }
   } finally {
     file.unref();
