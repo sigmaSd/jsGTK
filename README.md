@@ -582,6 +582,22 @@ metadata changes.
 deno task gir:refresh /path/to/upstream-gir
 ```
 
+### Release dependency checks
+
+Run these checks from the repository root before publishing. On a fresh
+checkout, run `deno install` to generate the local Deno lockfile.
+
+```sh
+deno outdated --frozen
+deno audit --frozen
+npm outdated
+npm audit --package-lock-only
+```
+
+Review available updates against the supported dependency ranges and investigate
+security advisories. After changing dependencies, rerun `deno task test` and
+commit any changes to `package-lock.json`.
+
 ## Known Limitations
 
 - **Limited widgets**: Not all GTK widgets are wrapped yet
