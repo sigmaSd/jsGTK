@@ -11,12 +11,12 @@ export const gtk4Symbols = {
   // Trailing GError**.
   gtk_builder_add_from_file: {
     parameters: ["pointer", "buffer", "pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   // Trailing GError**.
   gtk_builder_add_from_string: {
     parameters: ["pointer", "buffer", "i64", "pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   gtk_builder_get_object: {
     parameters: ["pointer", "buffer"],
@@ -30,8 +30,11 @@ export const gtk4Symbols = {
   gtk_label_get_text: { parameters: ["pointer"], result: "pointer" },
   gtk_label_set_markup: { parameters: ["pointer", "buffer"], result: "void" },
   gtk_label_set_ellipsize: { parameters: ["pointer", "i32"], result: "void" },
-  gtk_label_set_use_markup: { parameters: ["pointer", "bool"], result: "void" },
-  gtk_label_set_wrap: { parameters: ["pointer", "bool"], result: "void" },
+  gtk_label_set_use_markup: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_label_set_wrap: { parameters: ["pointer", "gboolean"], result: "void" },
   gtk_label_set_xalign: { parameters: ["pointer", "f32"], result: "void" },
   gtk_button_new_with_label: { parameters: ["buffer"], result: "pointer" },
   gtk_button_set_label: { parameters: ["pointer", "buffer"], result: "void" },
@@ -41,9 +44,9 @@ export const gtk4Symbols = {
     parameters: ["buffer"],
     result: "pointer",
   },
-  gtk_check_button_get_active: { parameters: ["pointer"], result: "bool" },
+  gtk_check_button_get_active: { parameters: ["pointer"], result: "gboolean" },
   gtk_check_button_set_active: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
   gtk_check_button_get_label: { parameters: ["pointer"], result: "pointer" },
@@ -56,12 +59,12 @@ export const gtk4Symbols = {
     result: "void",
   },
   gtk_check_button_set_inconsistent: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
   gtk_check_button_get_inconsistent: {
     parameters: ["pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   gtk_picture_new: { parameters: [], result: "pointer" },
   gtk_picture_set_filename: {
@@ -69,7 +72,7 @@ export const gtk4Symbols = {
     result: "void",
   },
   gtk_picture_set_can_shrink: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
   gtk_window_set_title: { parameters: ["pointer", "buffer"], result: "void" },
@@ -86,7 +89,7 @@ export const gtk4Symbols = {
   gtk_window_close: { parameters: ["pointer"], result: "void" },
   gtk_window_set_child: { parameters: ["pointer", "pointer"], result: "void" },
   gtk_window_get_child: { parameters: ["pointer"], result: "pointer" },
-  gtk_window_is_active: { parameters: ["pointer"], result: "bool" },
+  gtk_window_is_active: { parameters: ["pointer"], result: "gboolean" },
   gtk_scrolled_window_set_min_content_height: {
     parameters: ["pointer", "i32"],
     result: "void",
@@ -104,7 +107,10 @@ export const gtk4Symbols = {
   },
   gtk_adjustment_get_value: { parameters: ["pointer"], result: "f64" },
   gtk_scale_new: { parameters: ["i32", "pointer"], result: "pointer" },
-  gtk_scale_set_draw_value: { parameters: ["pointer", "bool"], result: "void" },
+  gtk_scale_set_draw_value: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
   gtk_scale_set_digits: { parameters: ["pointer", "i32"], result: "void" },
   gtk_range_set_adjustment: {
     parameters: ["pointer", "pointer"],
@@ -115,12 +121,12 @@ export const gtk4Symbols = {
     parameters: ["pointer", "pointer"],
     result: "void",
   },
-  gtk_window_set_modal: { parameters: ["pointer", "bool"], result: "void" },
+  gtk_window_set_modal: { parameters: ["pointer", "gboolean"], result: "void" },
   gtk_window_set_hide_on_close: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
-  gtk_window_get_hide_on_close: { parameters: ["pointer"], result: "bool" },
+  gtk_window_get_hide_on_close: { parameters: ["pointer"], result: "gboolean" },
   gtk_window_destroy: { parameters: ["pointer"], result: "void" },
   gtk_widget_set_margin_top: { parameters: ["pointer", "i32"], result: "void" },
   gtk_widget_set_margin_bottom: {
@@ -134,17 +140,26 @@ export const gtk4Symbols = {
   gtk_widget_set_margin_end: { parameters: ["pointer", "i32"], result: "void" },
   gtk_widget_set_halign: { parameters: ["pointer", "i32"], result: "void" },
   gtk_widget_set_valign: { parameters: ["pointer", "i32"], result: "void" },
-  gtk_widget_set_hexpand: { parameters: ["pointer", "bool"], result: "void" },
-  gtk_widget_set_vexpand: { parameters: ["pointer", "bool"], result: "void" },
-  gtk_widget_set_visible: { parameters: ["pointer", "bool"], result: "void" },
+  gtk_widget_set_hexpand: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_widget_set_vexpand: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_widget_set_visible: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
   gtk_widget_show: { parameters: ["pointer"], result: "void" },
   gtk_widget_hide: { parameters: ["pointer"], result: "void" },
-  gtk_widget_get_visible: { parameters: ["pointer"], result: "bool" },
+  gtk_widget_get_visible: { parameters: ["pointer"], result: "gboolean" },
   gtk_widget_set_size_request: {
     parameters: ["pointer", "i32", "i32"],
     result: "void",
   },
-  gtk_widget_grab_focus: { parameters: ["pointer"], result: "bool" },
+  gtk_widget_grab_focus: { parameters: ["pointer"], result: "gboolean" },
   gtk_widget_set_parent: { parameters: ["pointer", "pointer"], result: "void" },
   gtk_widget_unparent: { parameters: ["pointer"], result: "void" },
   gtk_widget_get_first_child: { parameters: ["pointer"], result: "pointer" },
@@ -176,7 +191,10 @@ export const gtk4Symbols = {
     parameters: ["pointer", "i32", "i32"],
     result: "void",
   },
-  gtk_label_set_selectable: { parameters: ["pointer", "bool"], result: "void" },
+  gtk_label_set_selectable: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
   gtk_list_box_new: { parameters: [], result: "pointer" },
   gtk_list_box_append: { parameters: ["pointer", "pointer"], result: "void" },
   gtk_list_box_prepend: { parameters: ["pointer", "pointer"], result: "void" },
@@ -188,7 +206,7 @@ export const gtk4Symbols = {
     result: "void",
   },
   gtk_list_box_set_show_separators: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
   // filter_func has notified scope. destroy has async scope.
@@ -219,10 +237,13 @@ export const gtk4Symbols = {
     result: "void",
   },
   gtk_search_bar_set_search_mode: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
-  gtk_search_bar_get_search_mode: { parameters: ["pointer"], result: "bool" },
+  gtk_search_bar_get_search_mode: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
   gtk_search_bar_connect_entry: {
     parameters: ["pointer", "pointer"],
     result: "void",
@@ -236,10 +257,10 @@ export const gtk4Symbols = {
   },
   gtk_toggle_button_new: { parameters: [], result: "pointer" },
   gtk_toggle_button_set_active: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
-  gtk_toggle_button_get_active: { parameters: ["pointer"], result: "bool" },
+  gtk_toggle_button_get_active: { parameters: ["pointer"], result: "gboolean" },
   gtk_spinner_new: { parameters: [], result: "pointer" },
   gtk_spinner_start: { parameters: ["pointer"], result: "void" },
   gtk_spinner_stop: { parameters: ["pointer"], result: "void" },
@@ -290,10 +311,10 @@ export const gtk4Symbols = {
   },
   gtk_icon_theme_has_icon: {
     parameters: ["pointer", "buffer"],
-    result: "bool",
+    result: "gboolean",
   },
   gtk_menu_button_new: { parameters: [], result: "pointer" },
-  gtk_is_initialized: { parameters: [], result: "bool" },
+  gtk_is_initialized: { parameters: [], result: "gboolean" },
   // Return transfer full.
   gtk_css_provider_new: { parameters: [], result: "pointer" },
   gtk_css_provider_load_from_data: {
@@ -397,7 +418,10 @@ export const gtk4Symbols = {
     result: "void",
   },
   gtk_box_set_spacing: { parameters: ["pointer", "i32"], result: "void" },
-  gtk_window_set_resizable: { parameters: ["pointer", "bool"], result: "void" },
+  gtk_window_set_resizable: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
   gtk_widget_set_cursor: { parameters: ["pointer", "pointer"], result: "void" },
   gtk_widget_set_cursor_from_name: {
     parameters: ["pointer", "buffer"],
@@ -430,7 +454,7 @@ export const gtk4Symbols = {
   gdk_clipboard_set_text: { parameters: ["pointer", "buffer"], result: "void" },
   gdk_clipboard_set_content: {
     parameters: ["pointer", "pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   // Return transfer full.
   gdk_content_provider_new_for_bytes: {
@@ -474,7 +498,7 @@ export const gtk4Symbols = {
   },
   gdk_texture_save_to_png: {
     parameters: ["pointer", "buffer"],
-    result: "bool",
+    result: "gboolean",
   },
   // Return transfer full.
   gdk_cursor_new_from_name: {
@@ -489,13 +513,16 @@ export const gtk4Symbols = {
     parameters: ["pointer", "buffer"],
     result: "void",
   },
-  gtk_widget_set_sensitive: { parameters: ["pointer", "bool"], result: "void" },
-  gtk_widget_get_sensitive: { parameters: ["pointer"], result: "bool" },
-  gtk_widget_is_sensitive: { parameters: ["pointer"], result: "bool" },
-  gtk_widget_activate: { parameters: ["pointer"], result: "bool" },
+  gtk_widget_set_sensitive: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_widget_get_sensitive: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_is_sensitive: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_activate: { parameters: ["pointer"], result: "gboolean" },
   gtk_widget_compute_bounds: {
     parameters: ["pointer", "pointer", "buffer"],
-    result: "bool",
+    result: "gboolean",
   },
   gtk_header_bar_new: { parameters: [], result: "pointer" },
   gtk_header_bar_pack_start: {
@@ -508,14 +535,14 @@ export const gtk4Symbols = {
   },
   // Since 4.4.
   gtk_menu_button_set_primary: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
   gtk_menu_button_set_icon_name: {
     parameters: ["pointer", "buffer"],
     result: "void",
   },
-  gtk_widget_is_visible: { parameters: ["pointer"], result: "bool" },
+  gtk_widget_is_visible: { parameters: ["pointer"], result: "gboolean" },
   gtk_progress_bar_new: { parameters: [], result: "pointer" },
   gtk_progress_bar_set_fraction: {
     parameters: ["pointer", "f64"],
@@ -527,7 +554,7 @@ export const gtk4Symbols = {
     result: "void",
   },
   gtk_progress_bar_set_show_text: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
   gtk_progress_bar_pulse: { parameters: ["pointer"], result: "void" },
@@ -548,29 +575,32 @@ export const gtk4Symbols = {
     result: "void",
   },
   gtk_switch_new: { parameters: [], result: "pointer" },
-  gtk_switch_set_active: { parameters: ["pointer", "bool"], result: "void" },
-  gtk_switch_get_active: { parameters: ["pointer"], result: "bool" },
+  gtk_switch_set_active: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_switch_get_active: { parameters: ["pointer"], result: "gboolean" },
   gtk_text_view_new: { parameters: [], result: "pointer" },
   gtk_text_view_get_buffer: { parameters: ["pointer"], result: "pointer" },
   gtk_text_view_set_monospace: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
   gtk_text_view_set_editable: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
   gtk_text_view_set_cursor_visible: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
   gtk_text_view_scroll_to_mark: {
-    parameters: ["pointer", "pointer", "f64", "bool", "f64", "f64"],
+    parameters: ["pointer", "pointer", "f64", "gboolean", "f64", "f64"],
     result: "void",
   },
   gtk_text_view_scroll_to_iter: {
-    parameters: ["pointer", "pointer", "f64", "bool", "f64", "f64"],
-    result: "bool",
+    parameters: ["pointer", "pointer", "f64", "gboolean", "f64", "f64"],
+    result: "gboolean",
   },
   gtk_text_buffer_set_text: {
     parameters: ["pointer", "buffer", "i32"],
@@ -581,12 +611,12 @@ export const gtk4Symbols = {
     result: "void",
   },
   gtk_text_buffer_create_mark: {
-    parameters: ["pointer", "buffer", "pointer", "bool"],
+    parameters: ["pointer", "buffer", "pointer", "gboolean"],
     result: "pointer",
   },
   // Return transfer full.
   gtk_text_buffer_get_text: {
-    parameters: ["pointer", "pointer", "pointer", "bool"],
+    parameters: ["pointer", "pointer", "pointer", "gboolean"],
     result: "pointer",
   },
   gtk_text_buffer_get_start_iter: {
@@ -607,7 +637,7 @@ export const gtk4Symbols = {
   },
   gtk_text_buffer_get_iter_at_line: {
     parameters: ["pointer", "pointer", "i32"],
-    result: "bool",
+    result: "gboolean",
   },
   gtk_text_iter_set_line_offset: {
     parameters: ["pointer", "i32"],
@@ -641,7 +671,7 @@ export const gtk4Symbols = {
   },
   gtk_text_iter_forward_search: {
     parameters: ["pointer", "buffer", "i32", "pointer", "pointer", "pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   gtk_text_iter_get_offset: { parameters: ["pointer"], result: "i32" },
   gtk_text_iter_assign: { parameters: ["pointer", "pointer"], result: "void" },
@@ -672,7 +702,7 @@ export const gtk4Symbols = {
     result: "void",
   },
   gtk_column_view_column_set_expand: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
   // Return transfer full.
@@ -715,4 +745,69 @@ export const gtk4Symbols = {
     result: "void",
   },
   gdk_content_formats_get_type: { parameters: [], result: "u64" },
+} as const;
+
+export interface ButtonProperties {
+  "label": string;
+  "has-frame": boolean;
+  "icon-name": string;
+  "use-underline": boolean;
+  "can-shrink": boolean;
+  "sensitive": boolean;
+  "visible": boolean;
+  "hexpand": boolean;
+  "vexpand": boolean;
+  "tooltip-text": string;
+  "action-name": string;
+}
+
+export interface ButtonSignals {
+  "clicked": () => void;
+  "activate": () => void;
+}
+
+export const buttonSignals = {
+  "clicked": { parameters: ["pointer", "pointer"], result: "void" },
+  "activate": { parameters: ["pointer", "pointer"], result: "void" },
+} as const;
+
+export interface EntryProperties {
+  "placeholder-text": string;
+  "visibility": boolean;
+  "has-frame": boolean;
+  "max-length": number;
+  "activates-default": boolean;
+  "invisible-char": number;
+  "overwrite-mode": boolean;
+  "primary-icon-name": string;
+  "secondary-icon-name": string;
+  "text": string;
+  "editable": boolean;
+  "width-chars": number;
+  "max-width-chars": number;
+  "enable-undo": boolean;
+  "sensitive": boolean;
+  "visible": boolean;
+  "hexpand": boolean;
+  "vexpand": boolean;
+  "tooltip-text": string;
+}
+
+export interface EntrySignals {
+  "activate": () => void;
+  "icon-press": (iconPos: number) => void;
+  "icon-release": (iconPos: number) => void;
+  "changed": () => void;
+  "delete-text": (startPos: number, endPos: number) => void;
+}
+
+export const entrySignals = {
+  "activate": { parameters: ["pointer", "pointer"], result: "void" },
+  "icon-press": { parameters: ["pointer", "i32", "pointer"], result: "void" },
+  "icon-release": { parameters: ["pointer", "i32", "pointer"], result: "void" },
+  "changed": { parameters: ["pointer", "pointer"], result: "void" },
+  "delete-text": {
+    parameters: ["pointer", "i32", "i32", "pointer"],
+    result: "void",
+  },
 } as const;

@@ -163,7 +163,11 @@ export const adwSymbols = {
     result: "void",
   },
   // Since 1.5.
-  adw_dialog_close: { parameters: ["pointer"], result: "bool", optional: true },
+  adw_dialog_close: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
   // Since 1.5.
   adw_preferences_dialog_new: {
     parameters: [],
@@ -185,7 +189,7 @@ export const adwSymbols = {
   // Since 1.5.
   adw_preferences_dialog_pop_subpage: {
     parameters: ["pointer"],
-    result: "bool",
+    result: "gboolean",
     optional: true,
   },
   // Since 1.4.
@@ -227,7 +231,7 @@ export const adwSymbols = {
   // Since 1.4.
   adw_navigation_view_pop: {
     parameters: ["pointer"],
-    result: "bool",
+    result: "gboolean",
     optional: true,
   },
   // Since 1.7.
@@ -238,7 +242,7 @@ export const adwSymbols = {
   },
   // Since 1.4.
   adw_navigation_view_set_pop_on_escape: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
     optional: true,
   },
@@ -272,7 +276,7 @@ export const adwSymbols = {
   adw_preferences_row_get_title: { parameters: ["pointer"], result: "pointer" },
   // Since 1.2.
   adw_preferences_row_set_use_markup: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
   adw_expander_row_new: { parameters: [], result: "pointer" },
@@ -281,10 +285,13 @@ export const adwSymbols = {
     result: "void",
   },
   adw_expander_row_set_expanded: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
-  adw_expander_row_get_expanded: { parameters: ["pointer"], result: "bool" },
+  adw_expander_row_get_expanded: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
   adw_action_row_set_subtitle: {
     parameters: ["pointer", "buffer"],
     result: "void",
@@ -305,11 +312,11 @@ export const adwSymbols = {
   adw_switch_row_new: { parameters: [], result: "pointer" },
   // Since 1.4.
   adw_switch_row_set_active: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
   // Since 1.4.
-  adw_switch_row_get_active: { parameters: ["pointer"], result: "bool" },
+  adw_switch_row_get_active: { parameters: ["pointer"], result: "gboolean" },
   // Since 1.2.
   adw_message_dialog_new: {
     parameters: ["pointer", "buffer", "buffer"],
@@ -409,10 +416,10 @@ export const adwSymbols = {
   adw_carousel_get_n_pages: { parameters: ["pointer"], result: "u32" },
   adw_carousel_get_position: { parameters: ["pointer"], result: "f64" },
   adw_carousel_set_interactive: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
-  adw_carousel_get_interactive: { parameters: ["pointer"], result: "bool" },
+  adw_carousel_get_interactive: { parameters: ["pointer"], result: "gboolean" },
   adw_carousel_set_reveal_duration: {
     parameters: ["pointer", "u32"],
     result: "void",
@@ -428,28 +435,28 @@ export const adwSymbols = {
     result: "pointer",
   },
   adw_carousel_set_allow_mouse_drag: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
   adw_carousel_get_allow_mouse_drag: {
     parameters: ["pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   adw_carousel_set_allow_scroll_wheel: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
   adw_carousel_get_allow_scroll_wheel: {
     parameters: ["pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   adw_carousel_set_allow_long_swipes: {
-    parameters: ["pointer", "bool"],
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
   adw_carousel_get_allow_long_swipes: {
     parameters: ["pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   adw_carousel_append: { parameters: ["pointer", "pointer"], result: "void" },
   adw_carousel_prepend: { parameters: ["pointer", "pointer"], result: "void" },
@@ -463,7 +470,7 @@ export const adwSymbols = {
   },
   adw_carousel_remove: { parameters: ["pointer", "pointer"], result: "void" },
   adw_carousel_scroll_to: {
-    parameters: ["pointer", "pointer", "bool"],
+    parameters: ["pointer", "pointer", "gboolean"],
     result: "void",
   },
   adw_carousel_get_nth_page: {
@@ -488,7 +495,7 @@ export const adwSymbols = {
     parameters: ["pointer"],
     result: "pointer",
   },
-  adw_is_initialized: { parameters: [], result: "bool" },
+  adw_is_initialized: { parameters: [], result: "gboolean" },
   // Since 1.5.
   adw_dialog_present: { parameters: ["pointer", "pointer"], result: "void" },
 } as const;

@@ -29,7 +29,7 @@ Deno.test("GIR throws adds the trailing native error argument", () => {
   const file = entry("gio", "g_file_load_contents");
   assert.deepEqual(file.binding, {
     parameters: Array(6).fill("pointer"),
-    result: "bool",
+    result: "gboolean",
   });
   assert.ok(file.notes.includes("Trailing GError**"));
 });

@@ -44,12 +44,12 @@ function addSource(
   const cb = new Deno.UnsafeCallback(
     {
       parameters: ["pointer"],
-      result: "bool",
+      result: "i32",
     } as Deno.UnsafeCallbackDefinition,
     () => {
       const keep = callback();
       if (!keep && !persistent) sourceCallbacks.delete(id);
-      return keep;
+      return Number(keep);
     },
   ) as Deno.UnsafeCallback;
   id = register(cb);
@@ -174,7 +174,7 @@ export function ioAddWatch(
   const cb = new Deno.UnsafeCallback(
     {
       parameters: ["pointer", "i32", "pointer"],
-      result: "bool",
+      result: "i32",
     } as const,
     (
       _channel: Deno.PointerValue,
@@ -183,7 +183,7 @@ export function ioAddWatch(
     ) => {
       const keep = callback(cond);
       if (!keep) sourceCallbacks.delete(id);
-      return keep;
+      return Number(keep);
     },
   ) as Deno.UnsafeCallback;
 

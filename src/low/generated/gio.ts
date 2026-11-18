@@ -12,12 +12,12 @@ export const gioSymbols = {
   // Since 2.28. Trailing GError**.
   g_application_register: {
     parameters: ["pointer", "pointer", "pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   // Since 2.28.
   g_application_activate: { parameters: ["pointer"], result: "void" },
   // Since 2.28.
-  g_application_get_is_remote: { parameters: ["pointer"], result: "bool" },
+  g_application_get_is_remote: { parameters: ["pointer"], result: "gboolean" },
   // Since 2.28. Return transfer full.
   g_simple_action_new: { parameters: ["buffer", "pointer"], result: "pointer" },
   // Since 2.32.
@@ -86,7 +86,7 @@ export const gioSymbols = {
   g_app_info_get_all: { parameters: [], result: "pointer" },
   // Return transfer full.
   g_app_info_get_default_for_type: {
-    parameters: ["buffer", "bool"],
+    parameters: ["buffer", "gboolean"],
     result: "pointer",
   },
   // Return transfer full.
@@ -100,16 +100,16 @@ export const gioSymbols = {
   g_app_info_get_display_name: { parameters: ["pointer"], result: "pointer" },
   g_app_info_get_description: { parameters: ["pointer"], result: "pointer" },
   g_app_info_get_icon: { parameters: ["pointer"], result: "pointer" },
-  g_app_info_should_show: { parameters: ["pointer"], result: "bool" },
+  g_app_info_should_show: { parameters: ["pointer"], result: "gboolean" },
   // Trailing GError**.
   g_app_info_launch: {
     parameters: ["pointer", "pointer", "pointer", "pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   // Trailing GError**.
   g_app_info_launch_default_for_uri: {
     parameters: ["buffer", "pointer", "pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   // Since 2.50. callback has async scope.
   g_app_info_launch_default_for_uri_async: {
@@ -119,7 +119,7 @@ export const gioSymbols = {
   // Since 2.50. Trailing GError**.
   g_app_info_launch_default_for_uri_finish: {
     parameters: ["pointer", "pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   // Return transfer full.
   g_desktop_app_info_new: {
@@ -153,7 +153,7 @@ export const gioSymbols = {
       "pointer",
       "pointer",
     ],
-    result: "bool",
+    result: "gboolean",
   },
   g_file_get_type: { parameters: [], result: "u64" },
   // Since 2.40. Return transfer full.
@@ -176,7 +176,7 @@ export const gioSymbols = {
   // Since 2.40. Trailing GError**.
   g_subprocess_wait: {
     parameters: ["pointer", "pointer", "pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   // Since 2.40. callback has async scope.
   g_subprocess_wait_async: {
@@ -186,10 +186,10 @@ export const gioSymbols = {
   // Since 2.40. Trailing GError**.
   g_subprocess_wait_finish: {
     parameters: ["pointer", "pointer", "pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   // Since 2.40.
-  g_subprocess_get_successful: { parameters: ["pointer"], result: "bool" },
+  g_subprocess_get_successful: { parameters: ["pointer"], result: "gboolean" },
   // Since 2.40.
   g_subprocess_get_exit_status: { parameters: ["pointer"], result: "i32" },
   // Since 2.40.
@@ -210,7 +210,7 @@ export const gioSymbols = {
   // Since 2.44. Trailing GError**. bytes_written (out) transfer full.
   g_output_stream_write_all_finish: {
     parameters: ["pointer", "pointer", "pointer", "pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   // Trailing GError**.
   g_output_stream_write: {
@@ -220,12 +220,12 @@ export const gioSymbols = {
   // Trailing GError**.
   g_output_stream_flush: {
     parameters: ["pointer", "pointer", "pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   // Trailing GError**.
   g_output_stream_close: {
     parameters: ["pointer", "pointer", "pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   // Since 2.34. callback has async scope.
   g_input_stream_read_bytes_async: {
@@ -245,7 +245,7 @@ export const gioSymbols = {
   // Trailing GError**.
   g_input_stream_close: {
     parameters: ["pointer", "pointer", "pointer"],
-    result: "bool",
+    result: "gboolean",
   },
   // Since 2.26. Trailing GError**. Return transfer full.
   g_bus_get_sync: {
@@ -321,5 +321,27 @@ export const gioSymbols = {
   // Return transfer full.
   g_cancellable_new: { parameters: [], result: "pointer" },
   g_cancellable_cancel: { parameters: ["pointer"], result: "void" },
-  g_cancellable_is_cancelled: { parameters: ["pointer"], result: "bool" },
+  g_cancellable_is_cancelled: { parameters: ["pointer"], result: "gboolean" },
+  // Since 2.26. Trailing GError**. Return transfer full.
+  g_dbus_connection_new_for_address_sync: {
+    parameters: ["buffer", "i32", "pointer", "pointer", "pointer"],
+    result: "pointer",
+  },
+  // Since 2.26. Trailing GError**. Return transfer full.
+  g_dbus_connection_call_sync: {
+    parameters: [
+      "pointer",
+      "buffer",
+      "buffer",
+      "buffer",
+      "buffer",
+      "pointer",
+      "pointer",
+      "i32",
+      "i32",
+      "pointer",
+      "pointer",
+    ],
+    result: "pointer",
+  },
 } as const;

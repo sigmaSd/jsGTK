@@ -99,7 +99,9 @@
         "g_variant_ref",
         "g_variant_ref_sink",
         "g_set_prgname",
-        "g_set_application_name"
+        "g_set_application_name",
+        "g_variant_parse",
+        "g_variant_print"
       ],
       "optionalGroups": [
         {
@@ -309,7 +311,9 @@
         "g_dbus_proxy_call_finish",
         "g_cancellable_new",
         "g_cancellable_cancel",
-        "g_cancellable_is_cancelled"
+        "g_cancellable_is_cancelled",
+        "g_dbus_connection_new_for_address_sync",
+        "g_dbus_connection_call_sync"
       ],
       "optionalGroups": [
         {
@@ -911,6 +915,75 @@
         "app_indicator_set_title",
         "app_indicator_get_id"
       ]
+    }
+  },
+  "widgetMetadata": {
+    "Button": {
+      "properties": {
+        "Button": [
+          "label",
+          "has-frame",
+          "icon-name",
+          "use-underline",
+          "can-shrink"
+        ],
+        "Widget": [
+          "sensitive",
+          "visible",
+          "hexpand",
+          "vexpand",
+          "tooltip-text"
+        ],
+        "Actionable": [
+          "action-name"
+        ]
+      },
+      "signals": {
+        "Button": [
+          "clicked",
+          "activate"
+        ]
+      }
+    },
+    "Entry": {
+      "properties": {
+        "Entry": [
+          "placeholder-text",
+          "visibility",
+          "has-frame",
+          "max-length",
+          "activates-default",
+          "invisible-char",
+          "overwrite-mode",
+          "primary-icon-name",
+          "secondary-icon-name"
+        ],
+        "Editable": [
+          "text",
+          "editable",
+          "width-chars",
+          "max-width-chars",
+          "enable-undo"
+        ],
+        "Widget": [
+          "sensitive",
+          "visible",
+          "hexpand",
+          "vexpand",
+          "tooltip-text"
+        ]
+      },
+      "signals": {
+        "Entry": [
+          "activate",
+          "icon-press",
+          "icon-release"
+        ],
+        "Editable": [
+          "changed",
+          "delete-text"
+        ]
+      }
     }
   }
 }

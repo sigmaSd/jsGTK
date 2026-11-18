@@ -26,11 +26,14 @@ const signatureTags = new Set([
   "varargs",
 ]);
 
-type FfiParameter = Extract<Deno.ForeignFunction["parameters"][number], string>;
+type FfiParameter =
+  | Extract<Deno.ForeignFunction["parameters"][number], string>
+  | "gboolean";
+type FfiResult = Deno.NativeResultType | "gboolean";
 
 const scalars = new Map<string, FfiParameter | "void">([
   ["void", "void"],
-  ["gboolean", "bool"],
+  ["gboolean", "gboolean"],
   ["gint", "i32"],
   ["int", "i32"],
   ["guint", "u32"],
@@ -55,7 +58,7 @@ const scalars = new Map<string, FfiParameter | "void">([
 
 type Binding = {
   parameters: FfiParameter[];
-  result: Deno.NativeResultType;
+  result: FfiResult;
   optional?: boolean;
   nonblocking?: boolean;
 };
@@ -64,7 +67,7 @@ type Override = {
   reason: string;
   signature?: Binding;
   parameters?: Record<string, FfiParameter>;
-  result?: Deno.NativeResultType;
+  result?: FfiResult;
   optional?: boolean;
 };
 
@@ -328,6 +331,119 @@ function copySignature(node: Element) {
   return copy;
 }
 
+type WidgetSelection = {
+  properties: Record<string, string[]>;
+  signals: Record<string, string[]>;
+};
+
+function widgetDeclarations(input: Input) {
+  const owners = children(input.namespace);
+  const members = (groups: Record<string, string[]>, tag: string, ns: string) =>
+    Object.entries(groups).flatMap(([ownerName, names]) => {
+      const owner = owners.find((node) =>
+        node.getAttribute("name") === ownerName
+      );
+      if (!owner) {
+        throw new Error(`Gtk: missing widget or interface ${ownerName}`);
+      }
+      return names.map((name) => {
+        const node = children(owner).find((entry) =>
+          entry.namespaceURI === ns && entry.localName === tag &&
+          entry.getAttribute("name") === name
+        );
+        if (!node) throw new Error(`Gtk.${ownerName}: missing ${tag} ${name}`);
+        return { name, owner, node };
+      });
+    });
+
+  return Object.entries(
+    config.widgetMetadata as Record<string, WidgetSelection>,
+  ).map(([name, spec]) => ({
+    name,
+    properties: members(spec.properties, "property", CORE),
+    signals: members(spec.signals, "signal", GLIB),
+  }));
+}
+
+function widgetTypes(input: Input): string[] {
+  const enums = new Set(
+    children(input.namespace).filter((entry) =>
+      entry.localName === "enumeration" || entry.localName === "bitfield"
+    ).map((entry) => entry.getAttribute("name")),
+  );
+  return widgetDeclarations(input).flatMap(({ name, properties, signals }) => {
+    const lines = ["", `export interface ${name}Properties {`];
+    for (const { name: property, node } of properties) {
+      const type = child(node, "type")?.getAttribute("name");
+      const tsType = type === "utf8"
+        ? "string"
+        : type === "gboolean"
+        ? "boolean"
+        : type === "gint" || type === "guint"
+        ? "number"
+        : undefined;
+      if (
+        !tsType || node.getAttribute("writable") !== "1" ||
+        node.getAttribute("construct-only") === "1"
+      ) {
+        throw new Error(`${name}.${property}: unsupported writable property`);
+      }
+      lines.push(`  ${JSON.stringify(property)}: ${tsType};`);
+    }
+    lines.push("}", "", `export interface ${name}Signals {`);
+    const definitions = [];
+    for (const { name: signal, node } of signals) {
+      if (
+        child(child(node, "return-value")!, "type")?.getAttribute("name") !==
+          "none"
+      ) {
+        throw new Error(`${name}.${signal}: expected a void signal`);
+      }
+      const args = parameters(node).map((arg) => {
+        const type = child(arg, "type")?.getAttribute("name");
+        if (
+          arg.hasAttribute("direction") ||
+          (!enums.has(type ?? null) && type !== "gint" && type !== "guint")
+        ) {
+          throw new Error(
+            `${name}.${signal}: unsupported signal argument ${type}`,
+          );
+        }
+        return {
+          name: arg.getAttribute("name")!.replace(
+            /_([a-z])/g,
+            (_, letter: string) => letter.toUpperCase(),
+          ),
+          abi: type === "guint" ? "u32" : "i32",
+        };
+      });
+      lines.push(
+        `  ${JSON.stringify(signal)}: (${
+          args.map((arg) => `${arg.name}: number`).join(", ")
+        }) => void;`,
+      );
+      definitions.push(
+        `  ${JSON.stringify(signal)}: { parameters: ${
+          JSON.stringify([
+            "pointer",
+            ...args.map((arg) => arg.abi),
+            "pointer",
+          ])
+        }, result: "void" },`,
+      );
+    }
+    const symbol = name[0].toLowerCase() + name.slice(1) + "Signals";
+    return [
+      ...lines,
+      "}",
+      "",
+      `export const ${symbol} = {`,
+      ...definitions,
+      "} as const;",
+    ];
+  });
+}
+
 async function snapshots(profiles: Profile[], inputs: Map<string, Input>) {
   const selected = new Map<string, Set<string>>();
   for (const profile of profiles) {
@@ -424,6 +540,34 @@ async function snapshots(profiles: Profile[], inputs: Map<string, Input>) {
       }
     }
 
+    if (file === "Gtk-4.0.gir") {
+      const signalTypes = new Set<string>();
+      const copied = new Set<Element>();
+      for (const { properties, signals } of widgetDeclarations(input)) {
+        for (const { owner, node } of [...properties, ...signals]) {
+          if (copied.has(node)) continue;
+          copied.add(node);
+          copyContainer(owner).appendChild(
+            doc.importNode(copySignature(node), true),
+          );
+        }
+        for (const { node } of signals) {
+          for (const arg of parameters(node)) {
+            const type = child(arg, "type")?.getAttribute("name");
+            if (type) signalTypes.add(type);
+          }
+        }
+      }
+      for (const entry of children(namespace)) {
+        if (
+          types.has(entry.localName ?? "") &&
+          signalTypes.has(entry.getAttribute("name") ?? "")
+        ) {
+          copyContainer(entry);
+        }
+      }
+    }
+
     const indent = (node: Element, depth: number): void => {
       const items = Array.from(node.childNodes);
       if (!items.length) return;
@@ -450,6 +594,7 @@ async function snapshots(profiles: Profile[], inputs: Map<string, Input>) {
 async function generate(
   profile: Profile,
   entries: ReturnType<typeof build>,
+  widgets: string[] = [],
 ): Promise<string> {
   const lines = [
     "// Generated by tools/generate_gir.ts from the pinned GIR snapshots.",
@@ -464,7 +609,7 @@ async function generate(
     );
     lines.push(`  ${symbol}: { ${fields.join(", ")} },`);
   }
-  lines.push("} as const;");
+  lines.push("} as const;", ...widgets);
   const formatter = new Deno.Command(Deno.execPath(), {
     args: ["fmt", "--ext", "ts", "-"],
     cwd: ROOT,
@@ -511,6 +656,15 @@ async function main(args: string[]) {
     );
   const generated = await Promise.all(profiles.map(async ([name, profile]) => {
     const entries = build(profile, inputs);
+    const gtk4 = "Gtk-4.0.gir";
+    const widgets = name === "gtk4" ? widgetTypes(inputs.get(gtk4)!) : [];
+    if (
+      name === "gtk4" && pinnedInputs &&
+      JSON.stringify(widgets) !==
+        JSON.stringify(widgetTypes(pinnedInputs.get(gtk4)!))
+    ) {
+      throw new Error("GTK4 snapshot changed the generated widget metadata");
+    }
     if (pinnedInputs) {
       const projected = build(profile, pinnedInputs);
       if (JSON.stringify(entries) !== JSON.stringify(projected)) {
@@ -522,7 +676,7 @@ async function main(args: string[]) {
     return {
       name,
       count: entries.length,
-      text: await generate(profile, entries),
+      text: await generate(profile, entries, widgets),
     };
   }));
   if (pinned) {

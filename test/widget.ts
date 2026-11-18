@@ -70,6 +70,36 @@ async function waitFor(
   }
 }
 
+Deno.test("GIR-typed GTK properties and signal payloads", () => {
+  const button = new Button("Before");
+  const entry = new Entry();
+  gobject.symbols.g_object_ref_sink(button.ptr);
+  gobject.symbols.g_object_ref_sink(entry.ptr);
+  try {
+    button.setProperty("label", "After");
+    assertEquals(button.getLabel(), "After", "Button property is applied");
+    entry.setProperty("text", "Before");
+    const deleted: number[][] = [];
+    const signal = entry.connect("delete-text", (start, end) => {
+      deleted.push([start, end]);
+    });
+    entry.setText("After");
+    entry.disconnect(signal);
+    assertEquals(
+      entry.getText(),
+      "After",
+      "Entry property and setter share the text",
+    );
+    assert(
+      deleted.some(([start, end]) => start === 0 && end === -1),
+      "Editable signal passes native integer positions",
+    );
+  } finally {
+    entry.unref();
+    button.unref();
+  }
+});
+
 Deno.test("ColumnView initializes with no selection model", () => {
   const view = new ColumnView();
   gobject.symbols.g_object_ref_sink(view.ptr);

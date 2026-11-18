@@ -354,6 +354,11 @@ window.onCloseRequest(() => {
 });
 ```
 
+Selected `Button` and `Entry` signals and properties have types generated from
+GIR. For example, `entry.connect("delete-text", (start, end) => ...)` receives
+numeric positions and `button.setProperty("label", "Open")` expects a string.
+Dynamic names continue to work through the generic API.
+
 ### Container Management
 
 ```typescript
@@ -554,10 +559,13 @@ callback lifetimes.
 
 `tools/gir/bindings.json` lists the symbols, library version baselines, and
 exceptions such as the fixed calling signatures used for variadic functions. The
-generator reads the pinned signature snapshots alongside the manifest. Cairo's
-GIR describes cairo-gobject types, so the libcairo drawing calls still live in
-`src/low/cairo.ts`. The GLib loader also declares `g_free_ptr`, a jsGTK alias
-for taking the address of `g_free`.
+generator reads the pinned signature snapshots alongside the manifest. Add a
+symbol when a wrapper or test needs it. The shared loader passes `gboolean` as a
+C integer and presents a boolean to JavaScript.
+
+Cairo's GIR describes cairo-gobject types, so the libcairo drawing calls live in
+`src/low/cairo.ts`. The GLib loader declares `g_free_ptr`, a jsGTK alias for
+taking the address of `g_free`.
 
 ```sh
 deno task gir

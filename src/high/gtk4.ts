@@ -1,5 +1,13 @@
 // deno-lint-ignore-file no-explicit-any
 import { adw } from "../low/adw.ts";
+import {
+  type ButtonProperties,
+  type ButtonSignals,
+  buttonSignals,
+  type EntryProperties,
+  type EntrySignals,
+  entrySignals,
+} from "../low/generated/gtk4.ts";
 import { gio } from "../low/gio.ts";
 import { glib } from "../low/glib.ts";
 import { gobject } from "../low/gobject.ts";
@@ -8,8 +16,17 @@ import { createGValue, cstr, readCStr } from "../low/utils.ts";
 import { CairoContext } from "./cairo.ts";
 import { AppLaunchContext, File, type Menu, type SimpleAction } from "./gio.ts";
 import { unixSignalAdd as glibUnixSignalAdd } from "./glib.ts";
-import { G_TYPE_STRING, GObject } from "./gobject.ts";
+import {
+  G_TYPE_STRING,
+  GObject,
+  type PropertyValue,
+  type SignalHandler,
+} from "./gobject.ts";
 export { G_TYPE_BOOLEAN, G_TYPE_STRING } from "./gobject.ts";
+
+type WidgetMember<Members> =
+  | Extract<keyof Members, string>
+  | (string & Record<never, never>);
 
 // ============================================================================
 // GTK Enums and Constants
@@ -798,6 +815,24 @@ export class Label extends Widget {
 
 // GTK Button
 export class Button extends Widget {
+  override connect<Name extends WidgetMember<ButtonSignals>>(
+    signal: Name,
+    callback: SignalHandler<ButtonSignals, NoInfer<Name>>,
+  ): number {
+    return this.connectDeclared(
+      signal,
+      callback as (...args: never[]) => unknown,
+      buttonSignals,
+    );
+  }
+
+  override setProperty<Name extends WidgetMember<ButtonProperties>>(
+    name: Name,
+    value: PropertyValue<ButtonProperties, NoInfer<Name>>,
+  ): void {
+    super.setProperty(name, value);
+  }
+
   constructor(labelOrPtr?: string | Deno.PointerValue) {
     let ptr: Deno.PointerValue;
     if (typeof labelOrPtr === "string") {
@@ -1152,11 +1187,11 @@ export class ListBox extends Widget {
     const cb = new Deno.UnsafeCallback(
       {
         parameters: ["pointer", "pointer"],
-        result: "bool",
+        result: "i32",
       },
       (rowPtr: Deno.PointerValue, _userData: Deno.PointerValue) => {
         const row = new ListBoxRow(rowPtr);
-        return callback(row);
+        return Number(callback(row));
       },
     );
     this.retainCallback(cb);
@@ -1247,6 +1282,24 @@ export class DropDown extends Widget {
 
 // GTK Entry extends GtkWidget
 export class Entry extends Widget {
+  override connect<Name extends WidgetMember<EntrySignals>>(
+    signal: Name,
+    callback: SignalHandler<EntrySignals, NoInfer<Name>>,
+  ): number {
+    return this.connectDeclared(
+      signal,
+      callback as (...args: never[]) => unknown,
+      entrySignals,
+    );
+  }
+
+  override setProperty<Name extends WidgetMember<EntryProperties>>(
+    name: Name,
+    value: PropertyValue<EntryProperties, NoInfer<Name>>,
+  ): void {
+    super.setProperty(name, value);
+  }
+
   constructor(ptr?: Deno.PointerValue) {
     const actualPtr = ptr ?? gtk4.symbols.gtk_entry_new();
     super(actualPtr);
@@ -1922,7 +1975,7 @@ export class EventControllerKey extends EventController {
     const cb = new Deno.UnsafeCallback(
       {
         parameters: ["pointer", "u32", "u32", "i32", "pointer"],
-        result: "bool",
+        result: "i32",
       } as const,
       (
         _self: Deno.PointerValue,
@@ -1931,7 +1984,7 @@ export class EventControllerKey extends EventController {
         state: number,
         _userData: Deno.PointerValue,
       ) => {
-        return callback(keyval, keycode, state);
+        return Number(callback(keyval, keycode, state));
       },
     );
     return this.connectNative("key-pressed", cb);
@@ -1995,7 +2048,7 @@ export class DropTarget extends EventController {
     const cb = new Deno.UnsafeCallback(
       {
         parameters: ["pointer", "pointer", "f64", "f64", "pointer"],
-        result: "bool",
+        result: "i32",
       } as const,
       (
         _self: Deno.PointerValue,
@@ -2006,7 +2059,7 @@ export class DropTarget extends EventController {
       ) => {
         const strPtr = gobject.symbols.g_value_get_string(value);
         const text = strPtr ? readCStr(strPtr) : "";
-        return callback(text, x, y);
+        return Number(callback(text, x, y));
       },
     );
     return this.connectNative("drop", cb);
@@ -2018,7 +2071,7 @@ export class DropTarget extends EventController {
     const cb = new Deno.UnsafeCallback(
       {
         parameters: ["pointer", "pointer", "f64", "f64", "pointer"],
-        result: "bool",
+        result: "i32",
       } as const,
       (
         _self: Deno.PointerValue,
@@ -2028,7 +2081,7 @@ export class DropTarget extends EventController {
         _userData: Deno.PointerValue,
       ) => {
         const objPtr = gobject.symbols.g_value_get_object(value);
-        return callback(objPtr, x, y);
+        return Number(callback(objPtr, x, y));
       },
     );
     return this.connectNative("drop", cb);

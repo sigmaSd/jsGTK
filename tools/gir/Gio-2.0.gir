@@ -333,6 +333,64 @@
         </parameters>
       </method>
     </class>
+    <class name="DBusConnection" c:symbol-prefix="dbus_connection" c:type="GDBusConnection" version="2.26" parent="GObject.Object" glib:type-name="GDBusConnection" glib:get-type="g_dbus_connection_get_type">
+      <constructor name="new_for_address_sync" c:identifier="g_dbus_connection_new_for_address_sync" version="2.26" throws="1">
+        <return-value transfer-ownership="full">
+          <type name="DBusConnection" c:type="GDBusConnection*"/>
+        </return-value>
+        <parameters>
+          <parameter name="address" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <type name="DBusConnectionFlags" c:type="GDBusConnectionFlags"/>
+          </parameter>
+          <parameter name="observer" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="DBusAuthObserver" c:type="GDBusAuthObserver*"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="call_sync" c:identifier="g_dbus_connection_call_sync" version="2.26" throws="1" glib:async-func="call">
+        <return-value transfer-ownership="full">
+          <type name="GLib.Variant" c:type="GVariant*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="connection" transfer-ownership="none">
+            <type name="DBusConnection" c:type="GDBusConnection*"/>
+          </instance-parameter>
+          <parameter name="bus_name" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="object_path" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="interface_name" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="method_name" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="parameters" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="GLib.Variant" c:type="GVariant*"/>
+          </parameter>
+          <parameter name="reply_type" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="GLib.VariantType" c:type="const GVariantType*"/>
+          </parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <type name="DBusCallFlags" c:type="GDBusCallFlags"/>
+          </parameter>
+          <parameter name="timeout_msec" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
     <class name="DBusProxy" c:symbol-prefix="dbus_proxy" c:type="GDBusProxy" version="2.26" parent="GObject.Object" glib:type-name="GDBusProxy" glib:get-type="g_dbus_proxy_get_type" glib:type-struct="DBusProxyClass">
       <constructor name="new_for_bus_sync" c:identifier="g_dbus_proxy_new_for_bus_sync" version="2.26" throws="1">
         <return-value transfer-ownership="full">
@@ -1014,6 +1072,7 @@
     </callback>
     <enumeration name="BusType" version="2.26" glib:type-name="GBusType" glib:get-type="g_bus_type_get_type" c:type="GBusType"/>
     <bitfield name="DBusCallFlags" version="2.26" glib:type-name="GDBusCallFlags" glib:get-type="g_dbus_call_flags_get_type" c:type="GDBusCallFlags"/>
+    <bitfield name="DBusConnectionFlags" version="2.26" glib:type-name="GDBusConnectionFlags" glib:get-type="g_dbus_connection_flags_get_type" c:type="GDBusConnectionFlags"/>
     <bitfield name="DBusProxyFlags" version="2.26" glib:type-name="GDBusProxyFlags" glib:get-type="g_dbus_proxy_flags_get_type" c:type="GDBusProxyFlags"/>
     <bitfield name="SubprocessFlags" version="2.40" glib:type-name="GSubprocessFlags" glib:get-type="g_subprocess_flags_get_type" c:type="GSubprocessFlags"/>
   </namespace>

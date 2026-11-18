@@ -4,7 +4,7 @@
 export const gobjectSymbols = {
   g_type_check_instance_is_a: {
     parameters: ["pointer", "usize"],
-    result: "bool",
+    result: "gboolean",
   },
   g_object_weak_ref: {
     parameters: ["pointer", "pointer", "pointer"],
@@ -42,7 +42,7 @@ export const gobjectSymbols = {
   g_type_from_name: { parameters: ["buffer"], result: "u64" },
   g_value_init: { parameters: ["pointer", "u64"], result: "pointer" },
   g_value_set_string: { parameters: ["pointer", "buffer"], result: "void" },
-  g_value_set_boolean: { parameters: ["pointer", "bool"], result: "void" },
+  g_value_set_boolean: { parameters: ["pointer", "gboolean"], result: "void" },
   g_value_set_int: { parameters: ["pointer", "i32"], result: "void" },
   g_value_set_double: { parameters: ["pointer", "f64"], result: "void" },
   g_value_set_uint: { parameters: ["pointer", "u32"], result: "void" },
@@ -52,7 +52,7 @@ export const gobjectSymbols = {
   g_value_take_boxed: { parameters: ["pointer", "pointer"], result: "void" },
   g_value_get_boxed: { parameters: ["pointer"], result: "pointer" },
   g_value_get_string: { parameters: ["pointer"], result: "pointer" },
-  g_value_get_boolean: { parameters: ["pointer"], result: "bool" },
+  g_value_get_boolean: { parameters: ["pointer"], result: "gboolean" },
   g_value_get_int: { parameters: ["pointer"], result: "i32" },
   g_value_get_double: { parameters: ["pointer"], result: "f64" },
   g_value_get_uint: { parameters: ["pointer"], result: "u32" },

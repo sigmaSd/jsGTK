@@ -3,12 +3,15 @@
 
 export const glibSymbols = {
   // Return transfer full.
-  g_main_loop_new: { parameters: ["pointer", "bool"], result: "pointer" },
+  g_main_loop_new: { parameters: ["pointer", "gboolean"], result: "pointer" },
   g_main_loop_run: { parameters: ["pointer"], result: "void" },
   g_main_loop_quit: { parameters: ["pointer"], result: "void" },
   g_main_context_default: { parameters: [], result: "pointer" },
-  g_main_context_pending: { parameters: ["pointer"], result: "bool" },
-  g_main_context_iteration: { parameters: ["pointer", "bool"], result: "bool" },
+  g_main_context_pending: { parameters: ["pointer"], result: "gboolean" },
+  g_main_context_iteration: {
+    parameters: ["pointer", "gboolean"],
+    result: "gboolean",
+  },
   g_timeout_add: { parameters: ["u32", "function", "pointer"], result: "u32" },
   // Since 2.14.
   g_timeout_add_seconds: {
@@ -16,7 +19,7 @@ export const glibSymbols = {
     result: "u32",
   },
   g_idle_add: { parameters: ["function", "pointer"], result: "u32" },
-  g_source_remove: { parameters: ["u32"], result: "bool" },
+  g_source_remove: { parameters: ["u32"], result: "gboolean" },
   g_free: { parameters: ["pointer"], result: "void" },
   g_error_free: { parameters: ["pointer"], result: "void" },
   g_list_prepend: { parameters: ["pointer", "pointer"], result: "pointer" },
@@ -82,7 +85,10 @@ export const glibSymbols = {
   // Since 2.24.
   g_variant_type_hash: { parameters: ["pointer"], result: "u32" },
   // Since 2.24.
-  g_variant_is_of_type: { parameters: ["pointer", "pointer"], result: "bool" },
+  g_variant_is_of_type: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+  },
   // Since 2.24.
   g_variant_unref: { parameters: ["pointer"], result: "void" },
   // Since 2.24. Return transfer full.
@@ -92,4 +98,11 @@ export const glibSymbols = {
   g_set_prgname: { parameters: ["buffer"], result: "void" },
   // Since 2.2.
   g_set_application_name: { parameters: ["buffer"], result: "void" },
+  // Since 2.24. Trailing GError**. Return transfer full.
+  g_variant_parse: {
+    parameters: ["pointer", "buffer", "buffer", "pointer", "pointer"],
+    result: "pointer",
+  },
+  // Since 2.24. Return transfer full.
+  g_variant_print: { parameters: ["pointer", "gboolean"], result: "pointer" },
 } as const;

@@ -31,6 +31,19 @@ export const G_TYPE_VARIANT = 21 << 2;
 // Keyed by pointer value (not by wrapper instance) because Builder helpers
 // create wrappers via Object.create, bypassing the constructor.
 const retainedCallbacks = new Map<bigint, unknown[]>();
+type RawSignal = (...args: Deno.PointerValue[]) => unknown;
+export type SignalHandler<Signals, Name extends string> = Name extends
+  keyof Signals ? Signals[Name]
+  : RawSignal;
+export type PropertyValue<Properties, Name extends string> = Name extends
+  keyof Properties ? Properties[Name]
+  : unknown;
+type DeclaredSignals = Readonly<
+  Record<
+    string,
+    Deno.UnsafeCallbackDefinition<readonly Deno.NativeType[], "void">
+  >
+>;
 type NativeCallback = Pick<Deno.UnsafeCallback, "pointer" | "close">;
 const signalCallbacks = new Map<bigint, NativeCallback>();
 
@@ -175,19 +188,28 @@ export class GObject {
     return Deno.UnsafePointer.equals(this.ptr, other.ptr);
   }
 
-  connect(
+  connect(signal: string, callback: RawSignal): number {
+    return this.connectDeclared(signal, callback);
+  }
+
+  protected connectDeclared(
     signal: string,
-    callback: (...args: Deno.PointerValue[]) => unknown,
+    callback: (...args: never[]) => unknown,
+    definitions?: DeclaredSignals,
   ): number {
+    const definition = definitions && Object.hasOwn(definitions, signal)
+      ? definitions[signal]
+      : undefined;
     const cb = new Deno.UnsafeCallback(
-      {
+      definition ?? {
         parameters: ["pointer", "pointer", "pointer", "pointer", "pointer"],
         result: "void",
       },
-      (_objectPtr: Deno.PointerValue, ...args: Deno.PointerValue[]) => {
-        // Pass the raw pointer arguments to the callback
-        // Higher-level wrappers will convert these as needed
-        callback(...args);
+      (_object: unknown, ...args: unknown[]) => {
+        const handler = callback as (...args: unknown[]) => unknown;
+        // Generated declarations include the trailing user data pointer.
+        if (definition) args.pop();
+        handler(...args);
       },
     );
     return this.connectNative(signal, cb);
@@ -200,10 +222,10 @@ export class GObject {
     const cb = new Deno.UnsafeCallback(
       {
         parameters: ["pointer", "pointer"],
-        result: "bool",
+        result: "i32",
       },
       (_objectPtr: Deno.PointerValue, ...args: Deno.PointerValue[]) => {
-        return callback(...args);
+        return Number(callback(...args));
       },
     );
     return this.connectNative(signal, cb);

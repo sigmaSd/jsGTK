@@ -1,9 +1,9 @@
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
+import { gio } from "../src/low/gio.ts";
 import { glib } from "../src/low/glib.ts";
 import { gobject } from "../src/low/gobject.ts";
-import { LIB_PATHS } from "../src/low/paths/mod.ts";
 import { cstr, readCStr } from "../src/low/utils.ts";
 
 const remote = "org.gnome.Mutter.RemoteDesktop";
@@ -135,37 +135,6 @@ async function run(
   }
 
   // Connect explicitly to this test's bus. Every Mutter call must use the same connection.
-  const busApi = Deno.dlopen(LIB_PATHS.gio, {
-    g_dbus_connection_new_for_address_sync: {
-      parameters: ["buffer", "u32", "pointer", "pointer", "pointer"],
-      result: "pointer",
-    },
-    g_dbus_connection_call_sync: {
-      parameters: [
-        "pointer",
-        "buffer",
-        "buffer",
-        "buffer",
-        "buffer",
-        "pointer",
-        "pointer",
-        "u32",
-        "i32",
-        "pointer",
-        "pointer",
-      ],
-      result: "pointer",
-    },
-  });
-  const variantApi = Deno.dlopen(LIB_PATHS.glib, {
-    g_variant_parse: {
-      parameters: ["pointer", "buffer", "pointer", "pointer", "pointer"],
-      result: "pointer",
-    },
-    g_variant_print: { parameters: ["pointer", "bool"], result: "pointer" },
-  });
-  const bus = busApi.symbols;
-  const variant = variantApi.symbols;
   let connection: Deno.PointerValue = null;
 
   function call(
@@ -176,13 +145,13 @@ async function run(
     tuple?: string,
   ): string {
     const args = tuple
-      ? variant.g_variant_parse(null, cstr(tuple), null, null, null)
+      ? glib.symbols.g_variant_parse(null, cstr(tuple), null, null, null)
       : null;
     if (tuple && !args) {
       throw new Error(`Invalid D-Bus argument tuple: ${tuple}`);
     }
     try {
-      const reply = bus.g_dbus_connection_call_sync(
+      const reply = gio.symbols.g_dbus_connection_call_sync(
         connection,
         cstr(destination),
         cstr(path),
@@ -198,7 +167,7 @@ async function run(
       if (!reply) {
         throw new Error(`D-Bus call failed: ${interfaceName}.${member}`);
       }
-      const printed = variant.g_variant_print(reply, true);
+      const printed = glib.symbols.g_variant_print(reply, true);
       try {
         return readCStr(printed);
       } finally {
@@ -244,7 +213,7 @@ async function run(
       "Mutter's Wayland socket",
     );
     // AUTHENTICATION_CLIENT | MESSAGE_BUS_CONNECTION
-    connection = bus.g_dbus_connection_new_for_address_sync(
+    connection = gio.symbols.g_dbus_connection_new_for_address_sync(
       cstr(busAddress),
       9,
       null,
@@ -318,8 +287,6 @@ async function run(
     }
   } finally {
     if (connection) gobject.symbols.g_object_unref(connection);
-    variantApi.close();
-    busApi.close();
     for (const process of processes.reverse()) {
       const { stdout, stderr } = await stop(process);
       if (!passed) {

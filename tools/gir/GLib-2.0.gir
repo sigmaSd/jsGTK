@@ -364,6 +364,19 @@
           </instance-parameter>
         </parameters>
       </method>
+      <method name="print" c:identifier="g_variant_print" version="2.24">
+        <return-value transfer-ownership="full">
+          <type name="utf8" c:type="gchar*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="value" transfer-ownership="none">
+            <type name="Variant" c:type="GVariant*"/>
+          </instance-parameter>
+          <parameter name="type_annotate" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="ref" c:identifier="g_variant_ref" version="2.24">
         <return-value transfer-ownership="full">
           <type name="Variant" c:type="GVariant*"/>
@@ -394,6 +407,25 @@
           </instance-parameter>
         </parameters>
       </method>
+      <function name="parse" c:identifier="g_variant_parse" throws="1">
+        <return-value transfer-ownership="full">
+          <type name="Variant" c:type="GVariant*"/>
+        </return-value>
+        <parameters>
+          <parameter name="type" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="VariantType" c:type="const GVariantType*"/>
+          </parameter>
+          <parameter name="text" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="limit" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="endptr" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar**"/>
+          </parameter>
+        </parameters>
+      </function>
     </record>
     <record name="VariantType" c:type="GVariantType" opaque="1" version="2.24" glib:type-name="GVariantType" glib:get-type="g_variant_type_get_gtype" c:symbol-prefix="variant_type">
       <method name="hash" c:identifier="g_variant_type_hash">

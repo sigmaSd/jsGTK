@@ -310,6 +310,31 @@
           </parameter>
         </parameters>
       </method>
+      <property name="label" writable="1" transfer-ownership="none" setter="set_label" getter="get_label" default-value="NULL">
+        <type name="utf8" c:type="gchar*"/>
+      </property>
+      <property name="has-frame" writable="1" transfer-ownership="none" setter="set_has_frame" getter="get_has_frame" default-value="TRUE">
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="icon-name" writable="1" transfer-ownership="none" setter="set_icon_name" getter="get_icon_name" default-value="NULL">
+        <type name="utf8" c:type="gchar*"/>
+      </property>
+      <property name="use-underline" writable="1" transfer-ownership="none" setter="set_use_underline" getter="get_use_underline" default-value="FALSE">
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="can-shrink" version="4.12" writable="1" transfer-ownership="none" setter="set_can_shrink" getter="get_can_shrink" default-value="FALSE">
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <glib:signal name="clicked" when="first" action="1">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
+      <glib:signal name="activate" when="first" action="1">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
     </class>
     <class name="CheckButton" c:symbol-prefix="check_button" c:type="GtkCheckButton" parent="Widget" glib:type-name="GtkCheckButton" glib:get-type="gtk_check_button_get_type" glib:type-struct="CheckButtonClass">
       <constructor name="new" c:identifier="gtk_check_button_new">
@@ -677,6 +702,39 @@
           </parameter>
         </parameters>
       </method>
+      <property name="text" writable="1" transfer-ownership="none" setter="set_text" getter="get_text">
+        <type name="utf8" c:type="gchar*"/>
+      </property>
+      <property name="editable" writable="1" transfer-ownership="none" setter="set_editable" getter="get_editable" default-value="TRUE">
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="width-chars" writable="1" transfer-ownership="none" setter="set_width_chars" getter="get_width_chars" default-value="-1">
+        <type name="gint" c:type="gint"/>
+      </property>
+      <property name="max-width-chars" writable="1" transfer-ownership="none" setter="set_max_width_chars" getter="get_max_width_chars" default-value="-1">
+        <type name="gint" c:type="gint"/>
+      </property>
+      <property name="enable-undo" writable="1" transfer-ownership="none" setter="set_enable_undo" getter="get_enable_undo" default-value="TRUE">
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <glib:signal name="changed" when="last">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
+      <glib:signal name="delete-text" when="last">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="start_pos" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+          <parameter name="end_pos" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
     </interface>
     <class name="Entry" c:symbol-prefix="entry" c:type="GtkEntry" parent="Widget" glib:type-name="GtkEntry" glib:get-type="gtk_entry_get_type" glib:type-struct="EntryClass">
       <constructor name="new" c:identifier="gtk_entry_new">
@@ -697,6 +755,58 @@
           </parameter>
         </parameters>
       </method>
+      <property name="placeholder-text" writable="1" transfer-ownership="none" setter="set_placeholder_text" getter="get_placeholder_text" default-value="NULL">
+        <type name="utf8" c:type="gchar*"/>
+      </property>
+      <property name="visibility" writable="1" transfer-ownership="none" setter="set_visibility" getter="get_visibility" default-value="TRUE">
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="has-frame" writable="1" transfer-ownership="none" setter="set_has_frame" getter="get_has_frame" default-value="TRUE">
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="max-length" writable="1" transfer-ownership="none" setter="set_max_length" getter="get_max_length" default-value="0">
+        <type name="gint" c:type="gint"/>
+      </property>
+      <property name="activates-default" writable="1" transfer-ownership="none" setter="set_activates_default" getter="get_activates_default" default-value="FALSE">
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="invisible-char" writable="1" transfer-ownership="none" setter="set_invisible_char" getter="get_invisible_char" default-value="42">
+        <type name="guint" c:type="guint"/>
+      </property>
+      <property name="overwrite-mode" writable="1" transfer-ownership="none" setter="set_overwrite_mode" getter="get_overwrite_mode" default-value="FALSE">
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="primary-icon-name" writable="1" transfer-ownership="none" default-value="NULL">
+        <type name="utf8" c:type="gchar*"/>
+      </property>
+      <property name="secondary-icon-name" writable="1" transfer-ownership="none" default-value="NULL">
+        <type name="utf8" c:type="gchar*"/>
+      </property>
+      <glib:signal name="activate" when="last" action="1">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
+      <glib:signal name="icon-press" when="last">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="icon_pos" transfer-ownership="none">
+            <type name="EntryIconPosition"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
+      <glib:signal name="icon-release" when="last">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="icon_pos" transfer-ownership="none">
+            <type name="EntryIconPosition"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
     </class>
     <class name="EventControllerKey" c:symbol-prefix="event_controller_key" c:type="GtkEventControllerKey" parent="EventController" glib:type-name="GtkEventControllerKey" glib:get-type="gtk_event_controller_key_get_type" glib:type-struct="EventControllerKeyClass">
       <constructor name="new" c:identifier="gtk_event_controller_key_new">
@@ -2969,6 +3079,21 @@
           </instance-parameter>
         </parameters>
       </method>
+      <property name="sensitive" writable="1" transfer-ownership="none" setter="set_sensitive" getter="get_sensitive" default-value="TRUE">
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="visible" writable="1" transfer-ownership="none" setter="set_visible" getter="get_visible" default-value="TRUE">
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="hexpand" writable="1" transfer-ownership="none" setter="set_hexpand" getter="get_hexpand" default-value="FALSE">
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="vexpand" writable="1" transfer-ownership="none" setter="set_vexpand" getter="get_vexpand" default-value="FALSE">
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="tooltip-text" writable="1" transfer-ownership="none" setter="set_tooltip_text" getter="get_tooltip_text" default-value="NULL">
+        <type name="utf8" c:type="gchar*"/>
+      </property>
     </class>
     <class name="Window" c:symbol-prefix="window" c:type="GtkWindow" parent="Widget" glib:type-name="GtkWindow" glib:get-type="gtk_window_get_type" glib:type-struct="WindowClass">
       <method name="close" c:identifier="gtk_window_close">
@@ -3202,5 +3327,11 @@
     <enumeration name="SelectionMode" glib:type-name="GtkSelectionMode" glib:get-type="gtk_selection_mode_get_type" c:type="GtkSelectionMode"/>
     <enumeration name="SizeGroupMode" glib:type-name="GtkSizeGroupMode" glib:get-type="gtk_size_group_mode_get_type" c:type="GtkSizeGroupMode"/>
     <bitfield name="TextSearchFlags" glib:type-name="GtkTextSearchFlags" glib:get-type="gtk_text_search_flags_get_type" c:type="GtkTextSearchFlags"/>
+    <interface name="Actionable" c:symbol-prefix="actionable" c:type="GtkActionable" glib:type-name="GtkActionable" glib:get-type="gtk_actionable_get_type" glib:type-struct="ActionableInterface">
+      <property name="action-name" writable="1" transfer-ownership="none" setter="set_action_name" getter="get_action_name" default-value="NULL">
+        <type name="utf8" c:type="gchar*"/>
+      </property>
+    </interface>
+    <enumeration name="EntryIconPosition" glib:type-name="GtkEntryIconPosition" glib:get-type="gtk_entry_icon_position_get_type" c:type="GtkEntryIconPosition"/>
   </namespace>
 </repository>
