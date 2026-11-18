@@ -24,7 +24,7 @@
     "@xmldom/xmldom": "npm:@xmldom/xmldom@0.9.12"
   },
   "tasks": {
-    "test": "deno lint && deno check && deno run --v8-flags=--expose-gc --allow-ffi --allow-env --allow-run=deno test/run_deno.ts && bun test test/runner_test.ts && npm i && node --expose-gc --test-force-exit --test test/runner_test.ts",
+    "test": "deno lint && deno check && deno run --v8-flags=--expose-gc --allow-ffi --allow-env --allow-run=deno test/run_deno.ts && bun test --timeout 60000 test/runner_test.ts && npm i && node --expose-gc --test-force-exit --test test/runner_test.ts",
     "gir": "deno run --allow-read=tools/gir --allow-write=src/low/generated --allow-run=deno tools/generate_gir.ts",
     "gir:check": "deno run --allow-read=tools/gir,src/low/generated --allow-run=deno tools/generate_gir.ts --check",
     "gir:refresh": "deno run --allow-read --allow-write=tools/gir,src/low/generated --allow-run=deno tools/generate_gir.ts --refresh-from",

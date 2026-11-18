@@ -89,6 +89,8 @@ jobs:
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
             xvfb-run -a deno task test
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            GSK_RENDERER=cairo deno task test
           else
             deno task test
           fi
