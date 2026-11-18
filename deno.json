@@ -28,7 +28,8 @@
     "gir": "deno run --allow-read=tools/gir --allow-write=src/low/generated --allow-run=deno tools/generate_gir.ts",
     "gir:check": "deno run --allow-read=tools/gir,src/low/generated --allow-run=deno tools/generate_gir.ts --check",
     "gir:refresh": "deno run --allow-read --allow-write=tools/gir,src/low/generated --allow-run=deno tools/generate_gir.ts --refresh-from",
-    "gir:test": "deno test --allow-read=tools/gir tools/generate_gir_test.ts"
+    "gir:test": "deno test --allow-read=tools/gir tools/generate_gir_test.ts",
+    "test:wayland": "deno run --allow-env --allow-sys=homedir --allow-read --allow-write --allow-ffi --allow-run=deno,bun,node,dbus-daemon,mutter test/wayland_focus_driver.ts"
   },
   "nodeModulesDir": "auto"
 }

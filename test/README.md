@@ -44,11 +44,12 @@ their assertions while the runner remains in shutdown.
 The optional smoke test starts a private D-Bus session and headless Mutter
 compositor. It sends Enter to a focused launcher window and checks that an
 already-running target window becomes active without opening a second window. It
-requires Mutter, D-Bus, and Python with PyGObject. Use `deno`, `node`, or `bun`
-as the runtime argument.
+requires Linux, Mutter, and D-Bus. Deno runs the TypeScript driver. Pass `deno`,
+`node`, or `bun` to choose the runtime for the two GTK test apps. The driver
+uses `TMPDIR` when set.
 
 ```bash
-python3 test/wayland_focus.py deno
+deno task test:wayland deno
 ```
 
 ## Test Structure
