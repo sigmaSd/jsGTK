@@ -13,3 +13,4 @@
 import "./modular.ts";
 import "./widget.ts";
 import "./dbus.ts";
+import "./launch.ts";

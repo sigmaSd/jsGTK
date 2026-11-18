@@ -9,10 +9,21 @@ import {
   Box,
   Button,
   CheckButton,
+  ColumnView,
   Entry,
   Label,
   Orientation,
 } from "../src/high/gtk4.ts";
+import {
+  AdwWindow,
+  NavigationPage,
+  NavigationView,
+  PreferencesDialog,
+  PreferencesPage,
+} from "../src/high/adw.ts";
+import { GObject } from "../src/high/gobject.ts";
+import { EventLoop } from "../src/high/eventloop.ts";
+import { gobject } from "../src/low/gobject.ts";
 
 function assert(condition: boolean, message: string) {
   if (!condition) {
@@ -38,6 +49,189 @@ function clickButton(button: Button) {
 }
 
 const testOptions = { sanitizeResources: false, sanitizeOps: false };
+
+function collectGarbage(): void {
+  const runtime = globalThis as typeof globalThis & {
+    gc?: () => void;
+    Bun?: { gc(force?: boolean): void };
+  };
+  if (runtime.gc) runtime.gc();
+  else runtime.Bun?.gc(true);
+}
+
+async function waitFor(
+  predicate: () => boolean,
+  message: string,
+): Promise<void> {
+  const deadline = performance.now() + 2000;
+  while (!predicate()) {
+    assert(performance.now() < deadline, message);
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  }
+}
+
+Deno.test("ColumnView initializes with no selection model", () => {
+  const view = new ColumnView();
+  gobject.symbols.g_object_ref_sink(view.ptr);
+  try {
+    assert(!!view.ptr, "GTK created the column view with no model");
+  } finally {
+    view.unref();
+  }
+});
+
+Deno.test(
+  "A native signal survives releasing the JS wrapper's reference",
+  testOptions,
+  async () => {
+    const box = new Box(Orientation.VERTICAL, 0);
+    gobject.symbols.g_object_ref_sink(box.ptr);
+    const button = new Button("Still owned by GTK");
+    const ptr = button.ptr;
+    box.append(button);
+    // The box sinks the floating reference. Give the wrapper a separate reference to release.
+    gobject.symbols.g_object_ref(ptr);
+    let clicks = 0;
+    const signal = button.onClick(() => clicks++);
+    button.unref();
+    collectGarbage();
+
+    const owned = GObject.fromPtr(ptr) as Button;
+    try {
+      owned.emit("clicked");
+      assertEquals(clicks, 1, "GTK's live button still has its callback");
+      owned.disconnect(signal);
+      await Promise.resolve();
+      collectGarbage();
+      owned.emit("clicked");
+      assertEquals(clicks, 1, "Disconnection releases the callback");
+    } finally {
+      box.remove(owned);
+      owned.unref();
+      box.unref();
+    }
+  },
+);
+
+Deno.test("A signal handler can disconnect itself", testOptions, async () => {
+  const button = new Button("Disconnect");
+  gobject.symbols.g_object_ref_sink(button.ptr);
+  let calls = 0;
+  const handler = button.onClick(() => {
+    calls++;
+    button.disconnect(handler);
+  });
+  button.emit("clicked");
+  await Promise.resolve();
+  button.emit("clicked");
+  assertEquals(calls, 1, "Disconnected handler ran only once");
+  button.unref();
+});
+
+Deno.test(
+  "Widget activation, effective sensitivity, and bounds",
+  testOptions,
+  async () => {
+    const window = new AdwWindow();
+    window.setDefaultSize(320, 160);
+    const box = new Box(Orientation.VERTICAL, 0);
+    const button = new Button("Activate");
+    box.append(button);
+    window.setContent(box);
+    const unrelated = new Label("Unrelated");
+    gobject.symbols.g_object_ref_sink(unrelated.ptr);
+    const loop = new EventLoop({ pollInterval: 1 });
+    const running = loop.start();
+    try {
+      assert(
+        button.getSensitive() && button.isSensitive(),
+        "Button starts sensitive",
+      );
+      box.setSensitive(false);
+      assert(
+        button.getSensitive() && !button.isSensitive(),
+        "Parent affects effective sensitivity",
+      );
+      box.setSensitive(true);
+      window.present();
+      await waitFor(
+        () => (button.computeBounds(box)?.width ?? 0) > 0,
+        "GTK allocates nonempty bounds",
+      );
+      let activations = 0;
+      button.onClick(() => activations++);
+      assert(button.activate(), "GtkButton can be activated");
+      await waitFor(
+        () => activations === 1,
+        "Activation emits the click signal",
+      );
+      assert(
+        button.computeBounds(unrelated) === null,
+        "Unrelated widgets have no shared bounds",
+      );
+      const bounds = button.computeBounds(box)!;
+      assert(
+        bounds.width > 0 && bounds.height > 0,
+        "Bounds contain the layout size",
+      );
+    } finally {
+      window.destroy();
+      unrelated.unref();
+      loop.stop();
+      await running;
+    }
+  },
+);
+
+Deno.test(
+  "Adwaita navigation pushes and pops tagged pages",
+  testOptions,
+  () => {
+    if (!NavigationView.isSupported()) return;
+    const view = new NavigationView();
+    gobject.symbols.g_object_ref_sink(view.ptr);
+    const overview = new NavigationPage(new Label("Plugins"), "Preferences");
+    overview.setTag("plugins");
+    view.add(overview);
+    const settings = new NavigationPage(new Label("Settings"), "Paths");
+    settings.setTag("paths");
+    view.setPopOnEscape(false);
+    assertEquals(view.getVisiblePageTag(), "plugins", "First page is visible");
+    view.push(settings);
+    assertEquals(view.getVisiblePageTag(), "paths", "Subpage is visible");
+    assert(view.pop(), "Subpage can be popped");
+    assertEquals(view.getVisiblePageTag(), "plugins", "First page is restored");
+    view.unref();
+  },
+);
+
+Deno.test(
+  "Adwaita preferences dialog presents and closes",
+  testOptions,
+  async () => {
+    if (!PreferencesDialog.isSupported()) return;
+    const window = new AdwWindow();
+    window.setContent(new Label("Preferences host"));
+    window.present();
+    const loop = new EventLoop({ pollInterval: 1 });
+    const running = loop.start();
+    try {
+      const dialog = new PreferencesDialog();
+      dialog.add(new PreferencesPage());
+      let closed = false;
+      dialog.onClosed(() => closed = true);
+      dialog.present(window);
+      dialog.pushSubpage(new NavigationPage(new Label("Options"), "Plugin"));
+      dialog.popSubpage();
+      assert(dialog.close(), "Dialog accepted the close");
+      await waitFor(() => closed, "Closed signal fired");
+    } finally {
+      window.destroy();
+      loop.stop();
+      await running;
+    }
+  },
+);
 
 Deno.test("Widget Creation", testOptions, () => {
   const label = new Label("Initial Text");

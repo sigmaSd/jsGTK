@@ -31,10 +31,44 @@ export const G_TYPE_VARIANT = 21 << 2;
 // Keyed by pointer value (not by wrapper instance) because Builder helpers
 // create wrappers via Object.create, bypassing the constructor.
 const retainedCallbacks = new Map<bigint, unknown[]>();
+type NativeCallback = Pick<Deno.UnsafeCallback, "pointer" | "close">;
+const signalCallbacks = new Map<bigint, NativeCallback>();
+
+const signalDestroyed = new Deno.UnsafeCallback(
+  { parameters: ["pointer", "pointer"], result: "void" },
+  (data) => {
+    if (!data) return;
+    const key = BigInt(Deno.UnsafePointer.value(data));
+    const callback = signalCallbacks.get(key);
+    signalCallbacks.delete(key);
+    // A handler may disconnect itself while its callback is still on the stack.
+    if (callback) queueMicrotask(() => callback.close());
+  },
+);
 
 // Base class for GObject wrappers
 export class GObject {
   private static readonly instances = new Map<bigint, GObject>();
+  static readonly #observedObjects = new Set<bigint>();
+  static readonly #objectDestroyed = new Deno.UnsafeCallback(
+    { parameters: ["pointer", "pointer"], result: "void" },
+    (_data, ptr) => {
+      if (!ptr) return;
+      const key = BigInt(Deno.UnsafePointer.value(ptr));
+      GObject.#observedObjects.delete(key);
+      retainedCallbacks.delete(key);
+    },
+  );
+
+  static #observe(ptr: NonNullable<Deno.PointerValue>, key: bigint): void {
+    if (GObject.#observedObjects.has(key)) return;
+    GObject.#observedObjects.add(key);
+    gobject.symbols.g_object_weak_ref(
+      ptr,
+      GObject.#objectDestroyed.pointer,
+      null,
+    );
+  }
 
   /**
    * @internal
@@ -45,6 +79,7 @@ export class GObject {
   retainCallback(cb: unknown): void {
     if (!this.ptr) return;
     const key = BigInt(Deno.UnsafePointer.value(this.ptr));
+    GObject.#observe(this.ptr, key);
     const arr = retainedCallbacks.get(key);
     if (arr) arr.push(cb);
     else retainedCallbacks.set(key, [cb]);
@@ -105,11 +140,34 @@ export class GObject {
   unref(): void {
     if (this.ptr) {
       const val = BigInt(Deno.UnsafePointer.value(this.ptr));
-      GObject.instances.delete(val);
-      retainedCallbacks.delete(val);
+      if (GObject.instances.get(val) === this) GObject.instances.delete(val);
       gobject.symbols.g_object_unref(this.ptr);
       this.ptr = null;
     }
+  }
+
+  /** Connect a native signal and release its callback when GTK destroys the closure. */
+  protected connectNative(
+    signal: string,
+    callback: NativeCallback,
+  ): number {
+    if (!this.ptr) {
+      callback.close();
+      throw new Error("Cannot connect a signal on a released GObject");
+    }
+    const pointer = callback.pointer;
+    const key = BigInt(Deno.UnsafePointer.value(pointer));
+    signalCallbacks.set(key, callback);
+    const id = gobject.symbols.g_signal_connect_data(
+      this.ptr,
+      cstr(signal),
+      pointer,
+      pointer,
+      signalDestroyed.pointer,
+      0,
+    );
+    if (Number(id) === 0 && signalCallbacks.delete(key)) callback.close();
+    return Number(id);
   }
 
   equals(other: GObject): boolean {
@@ -121,7 +179,6 @@ export class GObject {
     signal: string,
     callback: (...args: Deno.PointerValue[]) => unknown,
   ): number {
-    const signalCStr = cstr(signal);
     const cb = new Deno.UnsafeCallback(
       {
         parameters: ["pointer", "pointer", "pointer", "pointer", "pointer"],
@@ -133,25 +190,13 @@ export class GObject {
         callback(...args);
       },
     );
-    this.retainCallback(cb);
-
-    const signalId = gobject.symbols.g_signal_connect_data(
-      this.ptr,
-      signalCStr,
-      cb.pointer as Deno.PointerValue,
-      null,
-      null,
-      0,
-    );
-
-    return Number(signalId);
+    return this.connectNative(signal, cb);
   }
 
   connectBool(
     signal: string,
     callback: (...args: Deno.PointerValue[]) => boolean,
   ): number {
-    const signalCStr = cstr(signal);
     const cb = new Deno.UnsafeCallback(
       {
         parameters: ["pointer", "pointer"],
@@ -161,18 +206,7 @@ export class GObject {
         return callback(...args);
       },
     );
-    this.retainCallback(cb);
-
-    const signalId = gobject.symbols.g_signal_connect_data(
-      this.ptr,
-      signalCStr,
-      cb.pointer,
-      null,
-      null,
-      0,
-    );
-
-    return Number(signalId);
+    return this.connectNative(signal, cb);
   }
 
   disconnect(signalId: number): void {
@@ -185,28 +219,21 @@ export class GObject {
   }
 
   onNotify(property: string, callback: () => void): number {
-    const signalCStr = cstr(`notify::${property}`);
+    return this.connectNotify(property, callback);
+  }
+
+  protected connectNotify(
+    property: string,
+    callback: (object: Deno.PointerValue) => void,
+  ): number {
     const cb = new Deno.UnsafeCallback(
       {
         parameters: ["pointer", "pointer", "pointer"],
         result: "void",
       },
-      () => {
-        callback();
-      },
+      (object) => callback(object),
     );
-    this.retainCallback(cb);
-
-    const signalId = gobject.symbols.g_signal_connect_data(
-      this.ptr,
-      signalCStr,
-      cb.pointer,
-      null,
-      null,
-      0,
-    );
-
-    return Number(signalId);
+    return this.connectNative(`notify::${property}`, cb);
   }
 
   setProperty(name: string, value: unknown): void {

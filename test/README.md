@@ -17,9 +17,9 @@ actually **simulate user interactions** with the GTK UI:
 
 ## How It Works
 
-GTK provides a signal emission system that allows us to trigger UI events
-programmatically without needing a display server or actual mouse/keyboard
-input. This is done using:
+GTK lets the suite trigger actions and signals programmatically. Run the suite
+with a GTK display available. The layout and dialog tests briefly present
+windows, so use Xvfb if you want to run the suite in the background on Linux.
 
 1. **`emit()` method** - Programmatically fires GTK signals (like "clicked")
 2. **`g_signal_emit_by_name()`** - The underlying GObject function that makes it
@@ -30,15 +30,26 @@ input. This is done using:
 ## Running Tests
 
 ```bash
-# Run all tests
-deno run --allow-ffi test/widget_test.ts
-
-# Or with Bun
-bun test/widget_test.ts
+deno task test
 ```
 
-**Note:** These tests run **headless** - no GUI window appears! They test the
-widget logic and signal handling without requiring a display.
+On Linux, `xvfb-run -a deno task test` runs the Deno, Bun, and Node tests on an
+isolated X11 display.
+
+The Node command uses `--test-force-exit` because native GTK tests can finish
+their assertions while the runner remains in shutdown.
+
+## Wayland foreground focus
+
+The optional smoke test starts a private D-Bus session and headless Mutter
+compositor. It sends Enter to a focused launcher window and checks that an
+already-running target window becomes active without opening a second window. It
+requires Mutter, D-Bus, and Python with PyGObject. Use `deno`, `node`, or `bun`
+as the runtime argument.
+
+```bash
+python3 test/wayland_focus.py deno
+```
 
 ## Test Structure
 

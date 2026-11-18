@@ -1,4 +1,5 @@
 // Cairo 2 - 2D Graphics Library FFI bindings
+// Cairo GIR describes cairo-gobject types. These drawing calls come from libcairo.
 import "@sigma/deno-compat";
 import { LIB_PATHS } from "./paths/mod.ts";
 

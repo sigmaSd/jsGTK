@@ -1,0 +1,916 @@
+{
+  "sources": {
+    "GLib-2.0.gir": {
+      "namespace": "GLib",
+      "package": "GLib 2.90.1"
+    },
+    "GLibUnix-2.0.gir": {
+      "namespace": "GLibUnix",
+      "package": "GLib 2.90.1",
+      "optional": true
+    },
+    "GObject-2.0.gir": {
+      "namespace": "GObject",
+      "package": "GLib 2.90.1"
+    },
+    "Gio-2.0.gir": {
+      "namespace": "Gio",
+      "package": "GLib 2.90.1"
+    },
+    "GioUnix-2.0.gir": {
+      "namespace": "GioUnix",
+      "package": "GLib 2.90.1",
+      "optional": true
+    },
+    "Gtk-3.0.gir": {
+      "namespace": "Gtk",
+      "package": "GTK 3.24.52"
+    },
+    "Gtk-4.0.gir": {
+      "namespace": "Gtk",
+      "package": "GTK 4.24.1"
+    },
+    "Gdk-4.0.gir": {
+      "namespace": "Gdk",
+      "package": "GTK 4.24.1"
+    },
+    "Pango-1.0.gir": {
+      "namespace": "Pango",
+      "package": "Pango 1.58.2"
+    },
+    "Adw-1.gir": {
+      "namespace": "Adw",
+      "package": "Fedora libadwaita-devel 1.10.0-2.fc45"
+    },
+    "AyatanaAppIndicator3-0.1.gir": {
+      "namespace": "AyatanaAppIndicator3",
+      "package": "Debian libayatana-appindicator3-dev 0.5.94-1"
+    }
+  },
+  "libraries": {
+    "glib": {
+      "exportName": "glibSymbols",
+      "minimumVersion": "2.32",
+      "inputs": [
+        "GLib-2.0.gir",
+        "GLibUnix-2.0.gir"
+      ],
+      "symbols": [
+        "g_main_loop_new",
+        "g_main_loop_run",
+        "g_main_loop_quit",
+        "g_main_context_default",
+        "g_main_context_pending",
+        "g_main_context_iteration",
+        "g_timeout_add",
+        "g_timeout_add_seconds",
+        "g_idle_add",
+        "g_source_remove",
+        "g_free",
+        "g_error_free",
+        "g_list_prepend",
+        "g_list_free",
+        "g_list_length",
+        "g_list_nth_data",
+        "g_strdup",
+        "g_malloc0",
+        "g_unix_signal_add",
+        "g_io_channel_unix_new",
+        "g_io_channel_unref",
+        "g_io_add_watch",
+        "g_bytes_new",
+        "g_bytes_get_data",
+        "g_bytes_get_size",
+        "g_bytes_unref",
+        "g_variant_new_string",
+        "g_variant_new_strv",
+        "g_variant_new_uint32",
+        "g_variant_new_tuple",
+        "g_variant_get_child_value",
+        "g_variant_get_string",
+        "g_variant_get_uint32",
+        "g_variant_get_int32",
+        "g_variant_get_uint16",
+        "g_variant_get_type_string",
+        "g_variant_n_children",
+        "g_variant_type_hash",
+        "g_variant_is_of_type",
+        "g_variant_unref",
+        "g_variant_ref",
+        "g_variant_ref_sink",
+        "g_set_prgname",
+        "g_set_application_name"
+      ],
+      "optionalGroups": [
+        {
+          "symbols": [
+            "g_unix_signal_add",
+            "g_io_channel_unix_new"
+          ],
+          "reason": "These Unix entry points are unavailable on other platforms."
+        }
+      ],
+      "overrides": {
+        "g_bytes_new": {
+          "parameters": {
+            "0": "buffer"
+          },
+          "reason": "The wrapper passes a JavaScript typed array directly to this parameter."
+        }
+      }
+    },
+    "gobject": {
+      "exportName": "gobjectSymbols",
+      "minimumVersion": "2.54",
+      "inputs": [
+        "GObject-2.0.gir"
+      ],
+      "symbols": [
+        "g_type_check_instance_is_a",
+        "g_object_weak_ref",
+        "g_object_new",
+        "g_object_ref",
+        "g_object_ref_sink",
+        "g_object_unref",
+        "g_object_set_property",
+        "g_object_get_property",
+        "g_signal_connect_data",
+        "g_signal_handler_disconnect",
+        "g_signal_emit_by_name",
+        "g_type_from_name",
+        "g_value_init",
+        "g_value_set_string",
+        "g_value_set_boolean",
+        "g_value_set_int",
+        "g_value_set_double",
+        "g_value_set_uint",
+        "g_value_set_object",
+        "g_value_set_boxed",
+        "g_value_take_boxed",
+        "g_value_get_boxed",
+        "g_value_get_string",
+        "g_value_get_boolean",
+        "g_value_get_int",
+        "g_value_get_double",
+        "g_value_get_uint",
+        "g_value_get_object",
+        "g_value_unset",
+        "g_object_new_with_properties",
+        "g_object_set_data",
+        "g_object_get_data",
+        "g_object_set_data_full"
+      ],
+      "overrides": {
+        "g_object_weak_ref": {
+          "parameters": {
+            "1": "pointer"
+          },
+          "reason": "The wrapper passes an opaque native callback address."
+        },
+        "g_object_new": {
+          "signature": {
+            "parameters": [
+              "u64",
+              "buffer"
+            ],
+            "result": "pointer",
+            "nonblocking": false
+          },
+          "reason": "The wrapper passes a null property name to terminate the variadic list."
+        },
+        "g_signal_connect_data": {
+          "parameters": {
+            "4": "pointer",
+            "5": "u32"
+          },
+          "result": "u64",
+          "reason": "Preserve the native destroy address, unsigned flags and legacy gulong signal ID representation."
+        },
+        "g_signal_handler_disconnect": {
+          "parameters": {
+            "1": "u64"
+          },
+          "reason": "Match the legacy gulong signal ID representation of g_signal_connect_data."
+        },
+        "g_signal_emit_by_name": {
+          "signature": {
+            "parameters": [
+              "pointer",
+              "buffer"
+            ],
+            "result": "void"
+          },
+          "reason": "The wrapper uses the fixed prefix to emit signals with no extra arguments."
+        },
+        "g_type_from_name": {
+          "result": "u64",
+          "reason": "Preserve the existing u64 representation of GType used by the wrapper."
+        },
+        "g_value_init": {
+          "parameters": {
+            "1": "u64"
+          },
+          "reason": "Preserve the existing u64 representation of GType used by the wrapper."
+        },
+        "g_object_new_with_properties": {
+          "parameters": {
+            "0": "u64"
+          },
+          "reason": "Preserve the existing u64 representation of GType used by the wrapper."
+        },
+        "g_object_set_data_full": {
+          "parameters": {
+            "3": "pointer"
+          },
+          "reason": "The wrapper passes the raw native address of g_free as the destroy callback."
+        }
+      }
+    },
+    "gio": {
+      "exportName": "gioSymbols",
+      "minimumVersion": "2.50",
+      "inputs": [
+        "Gio-2.0.gir",
+        "GioUnix-2.0.gir"
+      ],
+      "symbols": [
+        "g_application_run",
+        "g_application_quit",
+        "g_application_register",
+        "g_application_activate",
+        "g_application_get_is_remote",
+        "g_simple_action_new",
+        "g_action_map_add_action",
+        "g_menu_new",
+        "g_menu_append",
+        "g_menu_remove_all",
+        "g_notification_new",
+        "g_notification_set_body",
+        "g_application_send_notification",
+        "g_application_withdraw_notification",
+        "g_list_store_new",
+        "g_list_store_append",
+        "g_list_store_remove_all",
+        "g_task_propagate_pointer",
+        "g_file_new_for_path",
+        "g_file_new_for_uri",
+        "g_file_get_path",
+        "g_file_get_uri",
+        "g_app_launch_context_new",
+        "g_app_launch_context_get_startup_notify_id",
+        "g_app_launch_context_setenv",
+        "g_app_info_get_all",
+        "g_app_info_get_default_for_type",
+        "g_app_info_get_default_for_uri_scheme",
+        "g_app_info_get_id",
+        "g_app_info_get_name",
+        "g_app_info_get_display_name",
+        "g_app_info_get_description",
+        "g_app_info_get_icon",
+        "g_app_info_should_show",
+        "g_app_info_launch",
+        "g_app_info_launch_default_for_uri",
+        "g_app_info_launch_default_for_uri_async",
+        "g_app_info_launch_default_for_uri_finish",
+        "g_desktop_app_info_new",
+        "g_desktop_app_info_new_from_filename",
+        "g_desktop_app_info_get_filename",
+        "g_file_icon_get_type",
+        "g_file_icon_get_file",
+        "g_themed_icon_get_type",
+        "g_themed_icon_get_names",
+        "g_file_load_contents",
+        "g_file_get_type",
+        "g_subprocess_new",
+        "g_subprocess_newv",
+        "g_subprocess_get_stdin_pipe",
+        "g_subprocess_get_stdout_pipe",
+        "g_subprocess_get_stderr_pipe",
+        "g_subprocess_wait",
+        "g_subprocess_wait_async",
+        "g_subprocess_wait_finish",
+        "g_subprocess_get_successful",
+        "g_subprocess_get_exit_status",
+        "g_subprocess_force_exit",
+        "g_output_stream_write_all_async",
+        "g_output_stream_write_all_finish",
+        "g_output_stream_write",
+        "g_output_stream_flush",
+        "g_output_stream_close",
+        "g_input_stream_read_bytes_async",
+        "g_input_stream_read_bytes_finish",
+        "g_input_stream_read",
+        "g_input_stream_close",
+        "g_bus_get_sync",
+        "g_dbus_proxy_new_sync",
+        "g_dbus_proxy_new_for_bus_sync",
+        "g_dbus_proxy_call_sync",
+        "g_dbus_proxy_call",
+        "g_dbus_proxy_call_finish",
+        "g_cancellable_new",
+        "g_cancellable_cancel",
+        "g_cancellable_is_cancelled"
+      ],
+      "optionalGroups": [
+        {
+          "reason": "The existing D-Bus wrappers check symbol availability before calling.",
+          "symbols": [
+            "g_bus_get_sync",
+            "g_dbus_proxy_new_sync",
+            "g_dbus_proxy_new_for_bus_sync",
+            "g_dbus_proxy_call_sync",
+            "g_dbus_proxy_call",
+            "g_dbus_proxy_call_finish"
+          ]
+        }
+      ],
+      "overrides": {
+        "g_list_store_new": {
+          "reason": "Keep the legacy u64 GType representation used by the ListStore wrapper.",
+          "parameters": {
+            "0": "u64"
+          }
+        },
+        "g_file_get_type": {
+          "reason": "Keep the legacy u64 GType representation used by the File wrapper.",
+          "result": "u64"
+        },
+        "g_subprocess_new": {
+          "reason": "Keep the existing optional fixed prefix of the variadic API. The Subprocess wrapper uses g_subprocess_newv.",
+          "signature": {
+            "parameters": [
+              "i32",
+              "pointer",
+              "pointer"
+            ],
+            "result": "pointer"
+          },
+          "optional": true
+        }
+      }
+    },
+    "gtk3": {
+      "exportName": "gtk3Symbols",
+      "minimumVersion": "3.0",
+      "inputs": [
+        "Gtk-3.0.gir"
+      ],
+      "symbols": [
+        "gtk_init",
+        "gtk_main",
+        "gtk_main_quit",
+        "gtk_menu_new",
+        "gtk_menu_item_new_with_label",
+        "gtk_menu_shell_append",
+        "gtk_menu_shell_prepend",
+        "gtk_container_remove",
+        "gtk_container_get_children",
+        "gtk_widget_show_all",
+        "gtk_widget_show",
+        "gtk_widget_hide"
+      ]
+    },
+    "gtk4": {
+      "exportName": "gtk4Symbols",
+      "minimumVersion": "4.12",
+      "inputs": [
+        "Gtk-4.0.gir",
+        "Gdk-4.0.gir"
+      ],
+      "symbols": [
+        "gtk_init",
+        "gtk_application_new",
+        "gtk_application_window_new",
+        "gtk_builder_new",
+        "gtk_builder_add_from_file",
+        "gtk_builder_add_from_string",
+        "gtk_builder_get_object",
+        "gtk_box_new",
+        "gtk_box_append",
+        "gtk_box_remove",
+        "gtk_label_new",
+        "gtk_label_set_text",
+        "gtk_label_get_text",
+        "gtk_label_set_markup",
+        "gtk_label_set_ellipsize",
+        "gtk_label_set_use_markup",
+        "gtk_label_set_wrap",
+        "gtk_label_set_xalign",
+        "gtk_button_new_with_label",
+        "gtk_button_set_label",
+        "gtk_button_get_label",
+        "gtk_check_button_new",
+        "gtk_check_button_new_with_label",
+        "gtk_check_button_get_active",
+        "gtk_check_button_set_active",
+        "gtk_check_button_get_label",
+        "gtk_check_button_set_label",
+        "gtk_check_button_set_group",
+        "gtk_check_button_set_inconsistent",
+        "gtk_check_button_get_inconsistent",
+        "gtk_picture_new",
+        "gtk_picture_set_filename",
+        "gtk_picture_set_can_shrink",
+        "gtk_window_set_title",
+        "gtk_window_set_default_size",
+        "gtk_window_set_titlebar",
+        "gtk_window_present",
+        "gtk_window_maximize",
+        "gtk_window_close",
+        "gtk_window_set_child",
+        "gtk_window_get_child",
+        "gtk_window_is_active",
+        "gtk_scrolled_window_set_min_content_height",
+        "gtk_scrolled_window_get_vadjustment",
+        "gtk_adjustment_get_upper",
+        "gtk_adjustment_get_page_size",
+        "gtk_adjustment_set_value",
+        "gtk_adjustment_new",
+        "gtk_adjustment_get_value",
+        "gtk_scale_new",
+        "gtk_scale_set_draw_value",
+        "gtk_scale_set_digits",
+        "gtk_range_set_adjustment",
+        "gtk_dialog_new",
+        "gtk_window_set_transient_for",
+        "gtk_window_set_modal",
+        "gtk_window_set_hide_on_close",
+        "gtk_window_get_hide_on_close",
+        "gtk_window_destroy",
+        "gtk_widget_set_margin_top",
+        "gtk_widget_set_margin_bottom",
+        "gtk_widget_set_margin_start",
+        "gtk_widget_set_margin_end",
+        "gtk_widget_set_halign",
+        "gtk_widget_set_valign",
+        "gtk_widget_set_hexpand",
+        "gtk_widget_set_vexpand",
+        "gtk_widget_set_visible",
+        "gtk_widget_show",
+        "gtk_widget_hide",
+        "gtk_widget_get_visible",
+        "gtk_widget_set_size_request",
+        "gtk_widget_grab_focus",
+        "gtk_widget_set_parent",
+        "gtk_widget_unparent",
+        "gtk_widget_get_first_child",
+        "gtk_widget_get_last_child",
+        "gtk_widget_get_next_sibling",
+        "gtk_widget_queue_draw",
+        "gtk_drawing_area_new",
+        "gtk_drawing_area_set_draw_func",
+        "gtk_drawing_area_set_content_width",
+        "gtk_drawing_area_set_content_height",
+        "gtk_frame_new",
+        "gtk_frame_set_child",
+        "gtk_scrolled_window_new",
+        "gtk_scrolled_window_set_child",
+        "gtk_scrolled_window_set_policy",
+        "gtk_label_set_selectable",
+        "gtk_list_box_new",
+        "gtk_list_box_append",
+        "gtk_list_box_prepend",
+        "gtk_list_box_remove",
+        "gtk_list_box_remove_all",
+        "gtk_list_box_set_selection_mode",
+        "gtk_list_box_set_show_separators",
+        "gtk_list_box_set_filter_func",
+        "gtk_list_box_invalidate_filter",
+        "gtk_list_box_select_row",
+        "gtk_list_box_get_selected_row",
+        "gtk_list_box_row_new",
+        "gtk_list_box_row_set_child",
+        "gtk_list_box_row_get_child",
+        "gtk_list_box_row_get_index",
+        "gtk_search_bar_new",
+        "gtk_search_bar_set_child",
+        "gtk_search_bar_set_key_capture_widget",
+        "gtk_search_bar_set_search_mode",
+        "gtk_search_bar_get_search_mode",
+        "gtk_search_bar_connect_entry",
+        "gtk_search_entry_new",
+        "gtk_overlay_new",
+        "gtk_overlay_set_child",
+        "gtk_overlay_add_overlay",
+        "gtk_toggle_button_new",
+        "gtk_toggle_button_set_active",
+        "gtk_toggle_button_get_active",
+        "gtk_spinner_new",
+        "gtk_spinner_start",
+        "gtk_spinner_stop",
+        "gtk_separator_new",
+        "gtk_image_new_from_icon_name",
+        "gtk_image_new_from_file",
+        "gtk_image_set_from_file",
+        "gtk_image_set_pixel_size",
+        "gtk_string_list_new",
+        "gtk_string_list_append",
+        "gtk_string_list_get_string",
+        "gtk_drop_down_new",
+        "gtk_drop_down_get_selected",
+        "gtk_drop_down_set_selected",
+        "gtk_entry_new",
+        "gtk_entry_set_placeholder_text",
+        "gtk_editable_get_text",
+        "gtk_editable_set_text",
+        "gtk_editable_select_region",
+        "gtk_application_inhibit",
+        "gtk_application_uninhibit",
+        "gtk_application_set_accels_for_action",
+        "gtk_icon_theme_get_for_display",
+        "gtk_icon_theme_has_icon",
+        "gtk_menu_button_new",
+        "gtk_is_initialized",
+        "gtk_css_provider_new",
+        "gtk_css_provider_load_from_data",
+        "gtk_style_context_add_provider_for_display",
+        "gtk_widget_get_style_context",
+        "gtk_style_context_add_class",
+        "gtk_style_context_remove_class",
+        "gtk_drop_target_new",
+        "gtk_event_controller_key_new",
+        "gtk_widget_add_controller",
+        "gtk_file_dialog_new",
+        "gtk_file_dialog_set_title",
+        "gtk_file_dialog_set_filters",
+        "gtk_file_dialog_set_default_filter",
+        "gtk_file_dialog_open",
+        "gtk_file_dialog_open_finish",
+        "gtk_file_dialog_select_folder",
+        "gtk_file_dialog_select_folder_finish",
+        "gtk_file_filter_new",
+        "gtk_file_filter_get_type",
+        "gtk_file_filter_set_name",
+        "gtk_file_filter_add_pattern",
+        "gtk_file_filter_add_mime_type",
+        "gtk_popover_menu_new_from_model",
+        "gtk_popover_menu_set_menu_model",
+        "gtk_menu_button_set_popover",
+        "gtk_menu_button_set_label",
+        "gtk_menu_button_get_label",
+        "gtk_gesture_click_new",
+        "gtk_widget_set_tooltip_text",
+        "gtk_box_set_spacing",
+        "gtk_window_set_resizable",
+        "gtk_widget_set_cursor",
+        "gtk_widget_set_cursor_from_name",
+        "gtk_widget_add_css_class",
+        "gtk_widget_remove_css_class",
+        "gtk_button_set_icon_name",
+        "gdk_display_get_default",
+        "gdk_display_get_app_launch_context",
+        "gdk_app_launch_context_set_timestamp",
+        "gtk_widget_get_display",
+        "gdk_display_get_clipboard",
+        "gdk_clipboard_set_text",
+        "gdk_clipboard_set_content",
+        "gdk_content_provider_new_for_bytes",
+        "gdk_content_provider_new_union",
+        "gdk_clipboard_read_async",
+        "gdk_clipboard_read_finish",
+        "gdk_clipboard_read_text_async",
+        "gdk_clipboard_read_text_finish",
+        "gdk_clipboard_read_texture_async",
+        "gdk_clipboard_read_texture_finish",
+        "gdk_texture_save_to_png",
+        "gdk_cursor_new_from_name",
+        "gtk_application_get_active_window",
+        "gtk_image_set_from_icon_name",
+        "gtk_widget_set_sensitive",
+        "gtk_widget_get_sensitive",
+        "gtk_widget_is_sensitive",
+        "gtk_widget_activate",
+        "gtk_widget_compute_bounds",
+        "gtk_header_bar_new",
+        "gtk_header_bar_pack_start",
+        "gtk_header_bar_pack_end",
+        "gtk_menu_button_set_primary",
+        "gtk_menu_button_set_icon_name",
+        "gtk_widget_is_visible",
+        "gtk_progress_bar_new",
+        "gtk_progress_bar_set_fraction",
+        "gtk_progress_bar_get_fraction",
+        "gtk_progress_bar_set_text",
+        "gtk_progress_bar_set_show_text",
+        "gtk_progress_bar_pulse",
+        "gtk_grid_new",
+        "gtk_grid_attach",
+        "gtk_grid_set_column_spacing",
+        "gtk_grid_set_row_spacing",
+        "gtk_size_group_new",
+        "gtk_size_group_add_widget",
+        "gtk_switch_new",
+        "gtk_switch_set_active",
+        "gtk_switch_get_active",
+        "gtk_text_view_new",
+        "gtk_text_view_get_buffer",
+        "gtk_text_view_set_monospace",
+        "gtk_text_view_set_editable",
+        "gtk_text_view_set_cursor_visible",
+        "gtk_text_view_scroll_to_mark",
+        "gtk_text_view_scroll_to_iter",
+        "gtk_text_buffer_set_text",
+        "gtk_text_buffer_insert",
+        "gtk_text_buffer_create_mark",
+        "gtk_text_buffer_get_text",
+        "gtk_text_buffer_get_start_iter",
+        "gtk_text_buffer_get_end_iter",
+        "gtk_text_buffer_get_bounds",
+        "gtk_text_buffer_get_iter_at_offset",
+        "gtk_text_buffer_get_iter_at_line",
+        "gtk_text_iter_set_line_offset",
+        "gtk_text_buffer_create_tag",
+        "gtk_text_buffer_apply_tag_by_name",
+        "gtk_text_buffer_remove_tag_by_name",
+        "gtk_text_buffer_remove_all_tags",
+        "gtk_text_buffer_begin_user_action",
+        "gtk_text_buffer_end_user_action",
+        "gtk_text_buffer_get_line_count",
+        "gtk_text_buffer_delete",
+        "gtk_text_iter_forward_search",
+        "gtk_text_iter_get_offset",
+        "gtk_text_iter_assign",
+        "gtk_popover_new",
+        "gtk_popover_set_child",
+        "gtk_popover_popup",
+        "gtk_popover_popdown",
+        "gtk_column_view_new",
+        "gtk_column_view_append_column",
+        "gtk_column_view_set_model",
+        "gtk_column_view_column_new",
+        "gtk_column_view_column_set_factory",
+        "gtk_column_view_column_set_title",
+        "gtk_column_view_column_set_expand",
+        "gtk_signal_list_item_factory_new",
+        "gtk_single_selection_new",
+        "gtk_list_item_get_item",
+        "gtk_list_item_get_child",
+        "gtk_list_item_set_child",
+        "gtk_level_bar_new",
+        "gtk_level_bar_set_value",
+        "gtk_level_bar_set_min_value",
+        "gtk_level_bar_set_max_value",
+        "gdk_content_formats_builder_new",
+        "gdk_content_formats_builder_add_mime_type",
+        "gdk_content_formats_builder_add_gtype",
+        "gdk_content_formats_builder_to_formats",
+        "gdk_content_formats_builder_unref",
+        "gdk_content_formats_get_type"
+      ],
+      "overrides": {
+        "gtk_builder_add_from_string": {
+          "parameters": {
+            "2": "i64"
+          },
+          "reason": "Preserve the existing i64 representation of gssize used by the wrapper."
+        },
+        "gtk_drawing_area_set_draw_func": {
+          "parameters": {
+            "3": "pointer"
+          },
+          "reason": "The wrapper passes an opaque native callback address."
+        },
+        "gtk_list_box_set_filter_func": {
+          "parameters": {
+            "3": "pointer"
+          },
+          "reason": "The wrapper passes an opaque native callback address."
+        },
+        "gtk_css_provider_load_from_data": {
+          "parameters": {
+            "2": "i64"
+          },
+          "reason": "Preserve the existing i64 representation of gssize used by the wrapper."
+        },
+        "gtk_drop_target_new": {
+          "parameters": {
+            "0": "u64"
+          },
+          "reason": "Preserve the existing u64 representation of GType used by the wrapper."
+        },
+        "gtk_file_filter_get_type": {
+          "result": "u64",
+          "reason": "Preserve the existing u64 representation of GType used by the wrapper."
+        },
+        "gdk_content_provider_new_union": {
+          "parameters": {
+            "0": "buffer"
+          },
+          "reason": "The wrapper passes a JavaScript typed array directly to this parameter."
+        },
+        "gtk_widget_compute_bounds": {
+          "parameters": {
+            "2": "buffer"
+          },
+          "reason": "The wrapper passes a JavaScript typed array directly to this parameter."
+        },
+        "gtk_text_buffer_create_tag": {
+          "signature": {
+            "parameters": [
+              "pointer",
+              "buffer",
+              "buffer",
+              "buffer",
+              "pointer"
+            ],
+            "result": "pointer"
+          },
+          "reason": "The wrapper passes a null property name to terminate the variadic list."
+        },
+        "gdk_content_formats_builder_add_gtype": {
+          "parameters": {
+            "1": "u64"
+          },
+          "reason": "Preserve the existing u64 representation of GType used by the wrapper."
+        },
+        "gdk_content_formats_get_type": {
+          "result": "u64",
+          "reason": "Preserve the existing u64 representation of GType used by the wrapper."
+        }
+      }
+    },
+    "adw": {
+      "exportName": "adwSymbols",
+      "minimumVersion": "1.5",
+      "inputs": [
+        "Adw-1.gir"
+      ],
+      "symbols": [
+        "adw_init",
+        "adw_application_new",
+        "adw_window_new",
+        "adw_window_set_content",
+        "adw_application_window_new",
+        "adw_application_window_set_content",
+        "adw_header_bar_new",
+        "adw_header_bar_pack_end",
+        "adw_header_bar_pack_start",
+        "adw_header_bar_set_title_widget",
+        "adw_about_dialog_new",
+        "adw_about_dialog_set_application_name",
+        "adw_about_dialog_set_version",
+        "adw_about_dialog_set_developer_name",
+        "adw_about_dialog_set_comments",
+        "adw_about_dialog_set_website",
+        "adw_about_dialog_set_issue_url",
+        "adw_about_dialog_set_developers",
+        "adw_about_dialog_set_license_type",
+        "adw_about_dialog_set_application_icon",
+        "adw_about_window_new",
+        "adw_about_window_set_application_name",
+        "adw_about_window_set_version",
+        "adw_about_window_set_developer_name",
+        "adw_about_window_set_developers",
+        "adw_about_window_set_designers",
+        "adw_about_window_set_translator_credits",
+        "adw_about_window_set_license_type",
+        "adw_about_window_set_website",
+        "adw_about_window_set_issue_url",
+        "adw_about_window_set_application_icon",
+        "adw_toolbar_view_new",
+        "adw_toolbar_view_set_content",
+        "adw_toolbar_view_add_top_bar",
+        "adw_toolbar_view_add_bottom_bar",
+        "adw_style_manager_get_default",
+        "adw_style_manager_set_color_scheme",
+        "adw_style_manager_get_color_scheme",
+        "adw_preferences_window_new",
+        "adw_preferences_window_add",
+        "adw_preferences_window_set_visible_page",
+        "adw_dialog_close",
+        "adw_preferences_dialog_new",
+        "adw_preferences_dialog_add",
+        "adw_preferences_dialog_push_subpage",
+        "adw_preferences_dialog_pop_subpage",
+        "adw_navigation_page_new",
+        "adw_navigation_page_set_tag",
+        "adw_navigation_page_get_tag",
+        "adw_navigation_view_new",
+        "adw_navigation_view_add",
+        "adw_navigation_view_push",
+        "adw_navigation_view_pop",
+        "adw_navigation_view_get_visible_page_tag",
+        "adw_navigation_view_set_pop_on_escape",
+        "adw_preferences_page_new",
+        "adw_preferences_page_add",
+        "adw_preferences_group_new",
+        "adw_preferences_group_add",
+        "adw_preferences_group_set_title",
+        "adw_preferences_group_set_description",
+        "adw_action_row_new",
+        "adw_action_row_add_suffix",
+        "adw_preferences_row_set_title",
+        "adw_preferences_row_get_title",
+        "adw_preferences_row_set_use_markup",
+        "adw_expander_row_new",
+        "adw_expander_row_add_row",
+        "adw_expander_row_set_expanded",
+        "adw_expander_row_get_expanded",
+        "adw_action_row_set_subtitle",
+        "adw_action_row_get_subtitle",
+        "adw_combo_row_new",
+        "adw_combo_row_set_model",
+        "adw_combo_row_get_model",
+        "adw_combo_row_set_selected",
+        "adw_combo_row_get_selected",
+        "adw_switch_row_new",
+        "adw_switch_row_set_active",
+        "adw_switch_row_get_active",
+        "adw_message_dialog_new",
+        "adw_message_dialog_add_response",
+        "adw_message_dialog_set_response_appearance",
+        "adw_message_dialog_set_default_response",
+        "adw_message_dialog_set_close_response",
+        "adw_message_dialog_choose",
+        "adw_alert_dialog_new",
+        "adw_alert_dialog_choose",
+        "adw_alert_dialog_choose_finish",
+        "adw_status_page_new",
+        "adw_status_page_set_title",
+        "adw_status_page_set_description",
+        "adw_status_page_set_icon_name",
+        "adw_clamp_new",
+        "adw_clamp_set_maximum_size",
+        "adw_clamp_set_child",
+        "adw_spinner_new",
+        "adw_spinner_paintable_new",
+        "adw_spinner_paintable_set_widget",
+        "adw_spinner_paintable_get_widget",
+        "adw_view_stack_new",
+        "adw_view_stack_get_visible_child_name",
+        "adw_view_stack_set_visible_child_name",
+        "adw_view_switcher_new",
+        "adw_view_switcher_set_stack",
+        "adw_carousel_new",
+        "adw_carousel_get_n_pages",
+        "adw_carousel_get_position",
+        "adw_carousel_set_interactive",
+        "adw_carousel_get_interactive",
+        "adw_carousel_set_reveal_duration",
+        "adw_carousel_get_reveal_duration",
+        "adw_carousel_set_scroll_params",
+        "adw_carousel_get_scroll_params",
+        "adw_carousel_set_allow_mouse_drag",
+        "adw_carousel_get_allow_mouse_drag",
+        "adw_carousel_set_allow_scroll_wheel",
+        "adw_carousel_get_allow_scroll_wheel",
+        "adw_carousel_set_allow_long_swipes",
+        "adw_carousel_get_allow_long_swipes",
+        "adw_carousel_append",
+        "adw_carousel_prepend",
+        "adw_carousel_insert",
+        "adw_carousel_reorder",
+        "adw_carousel_remove",
+        "adw_carousel_scroll_to",
+        "adw_carousel_get_nth_page",
+        "adw_carousel_indicator_dots_new",
+        "adw_carousel_indicator_dots_set_carousel",
+        "adw_carousel_indicator_dots_get_carousel",
+        "adw_carousel_indicator_lines_new",
+        "adw_carousel_indicator_lines_set_carousel",
+        "adw_carousel_indicator_lines_get_carousel",
+        "adw_is_initialized",
+        "adw_dialog_present"
+      ],
+      "optionalGroups": [
+        {
+          "symbols": [
+            "adw_dialog_close",
+            "adw_preferences_dialog_new",
+            "adw_preferences_dialog_add",
+            "adw_preferences_dialog_push_subpage",
+            "adw_preferences_dialog_pop_subpage",
+            "adw_navigation_page_new",
+            "adw_navigation_page_set_tag",
+            "adw_navigation_page_get_tag",
+            "adw_navigation_view_new",
+            "adw_navigation_view_add",
+            "adw_navigation_view_push",
+            "adw_navigation_view_pop",
+            "adw_navigation_view_get_visible_page_tag",
+            "adw_navigation_view_set_pop_on_escape",
+            "adw_spinner_new",
+            "adw_spinner_paintable_new",
+            "adw_spinner_paintable_set_widget",
+            "adw_spinner_paintable_get_widget"
+          ],
+          "reason": "Preserve availability checks in existing Adwaita wrappers."
+        }
+      ]
+    },
+    "app_indicator": {
+      "exportName": "appIndicatorSymbols",
+      "minimumVersion": "0.5",
+      "inputs": [
+        "AyatanaAppIndicator3-0.1.gir"
+      ],
+      "symbols": [
+        "app_indicator_new",
+        "app_indicator_set_status",
+        "app_indicator_set_menu",
+        "app_indicator_set_title",
+        "app_indicator_get_id"
+      ]
+    }
+  }
+}

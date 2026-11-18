@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repository version="1.2" xmlns:c="http://www.gtk.org/introspection/c/1.0" xmlns:glib="http://www.gtk.org/introspection/glib/1.0" xmlns="http://www.gtk.org/introspection/core/1.0">
+  <!-- Signature-only snapshot of GLib-2.0.gir from GLib 2.90.1. -->
+  <!-- Upstream SHA-256 a22e69786201f071d5d40666c6cac06ca60b48fa3e6f13c90c44ad8f3999e7c7 -->
+  <namespace name="GLib" version="2.0">
+    <record name="Bytes" c:type="GBytes" opaque="1" copy-function="g_bytes_ref" free-function="g_bytes_unref" version="2.32" glib:type-name="GBytes" glib:get-type="g_bytes_get_type" c:symbol-prefix="bytes">
+      <constructor name="new" c:identifier="g_bytes_new" version="2.32">
+        <return-value transfer-ownership="full">
+          <type name="Bytes" c:type="GBytes*"/>
+        </return-value>
+        <parameters>
+          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+            <array length="1" zero-terminated="0" c:type="gconstpointer">
+              <type name="guint8"/>
+            </array>
+          </parameter>
+          <parameter name="size" transfer-ownership="none">
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_data" c:identifier="g_bytes_get_data" version="2.32">
+        <return-value transfer-ownership="none" nullable="1">
+          <array length="0" zero-terminated="0" c:type="gconstpointer">
+            <type name="guint8"/>
+          </array>
+        </return-value>
+        <parameters>
+          <instance-parameter name="bytes" transfer-ownership="none">
+            <type name="Bytes" c:type="GBytes*"/>
+          </instance-parameter>
+          <parameter name="size" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <type name="gsize" c:type="gsize*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_size" c:identifier="g_bytes_get_size" version="2.32">
+        <return-value transfer-ownership="none">
+          <type name="gsize" c:type="gsize"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="bytes" transfer-ownership="none">
+            <type name="Bytes" c:type="GBytes*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="unref" c:identifier="g_bytes_unref" version="2.32">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="bytes" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Bytes" c:type="GBytes*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </record>
+    <record name="Error" c:type="GError" glib:type-name="GError" glib:get-type="g_error_get_type" c:symbol-prefix="error">
+      <method name="free" c:identifier="g_error_free">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="error" transfer-ownership="none">
+            <type name="Error" c:type="GError*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </record>
+    <record name="IOChannel" c:type="GIOChannel" glib:type-name="GIOChannel" glib:get-type="g_io_channel_get_type" c:symbol-prefix="io_channel">
+      <constructor name="unix_new" c:identifier="g_io_channel_unix_new">
+        <return-value transfer-ownership="full">
+          <type name="IOChannel" c:type="GIOChannel*"/>
+        </return-value>
+        <parameters>
+          <parameter name="fd" transfer-ownership="none">
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="unref" c:identifier="g_io_channel_unref">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="channel" transfer-ownership="none">
+            <type name="IOChannel" c:type="GIOChannel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </record>
+    <record name="List" c:type="GList">
+      <function name="free" c:identifier="g_list_free" introspectable="0">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="list" transfer-ownership="none">
+            <type name="GLib.List" c:type="GList*">
+              <type name="gpointer" c:type="gpointer"/>
+            </type>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="length" c:identifier="g_list_length" introspectable="0">
+        <return-value transfer-ownership="none">
+          <type name="guint" c:type="guint"/>
+        </return-value>
+        <parameters>
+          <parameter name="list" transfer-ownership="none">
+            <type name="GLib.List" c:type="GList*">
+              <type name="gpointer" c:type="gpointer"/>
+            </type>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="nth_data" c:identifier="g_list_nth_data" introspectable="0">
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </return-value>
+        <parameters>
+          <parameter name="list" transfer-ownership="none">
+            <type name="GLib.List" c:type="GList*">
+              <type name="gpointer" c:type="gpointer"/>
+            </type>
+          </parameter>
+          <parameter name="n" transfer-ownership="none">
+            <type name="guint" c:type="guint"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="prepend" c:identifier="g_list_prepend" introspectable="0">
+        <return-value>
+          <type name="GLib.List" c:type="GList*">
+            <type name="gpointer" c:type="gpointer"/>
+          </type>
+        </return-value>
+        <parameters>
+          <parameter name="list" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="GLib.List" c:type="GList*">
+              <type name="gpointer" c:type="gpointer"/>
+            </type>
+          </parameter>
+          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </function>
+    </record>
+    <record name="MainContext" c:type="GMainContext" opaque="1" glib:type-name="GMainContext" glib:get-type="g_main_context_get_type" c:symbol-prefix="main_context">
+      <method name="iteration" c:identifier="g_main_context_iteration">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="MainContext" c:type="GMainContext*"/>
+          </instance-parameter>
+          <parameter name="may_block" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="pending" c:identifier="g_main_context_pending">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="MainContext" c:type="GMainContext*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <function name="default" c:identifier="g_main_context_default">
+        <return-value transfer-ownership="none">
+          <type name="MainContext" c:type="GMainContext*"/>
+        </return-value>
+      </function>
+    </record>
+    <record name="MainLoop" c:type="GMainLoop" opaque="1" glib:type-name="GMainLoop" glib:get-type="g_main_loop_get_type" c:symbol-prefix="main_loop">
+      <constructor name="new" c:identifier="g_main_loop_new">
+        <return-value transfer-ownership="full">
+          <type name="MainLoop" c:type="GMainLoop*"/>
+        </return-value>
+        <parameters>
+          <parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="MainContext" c:type="GMainContext*"/>
+          </parameter>
+          <parameter name="is_running" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="quit" c:identifier="g_main_loop_quit">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="loop" transfer-ownership="none">
+            <type name="MainLoop" c:type="GMainLoop*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="run" c:identifier="g_main_loop_run">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="loop" transfer-ownership="none">
+            <type name="MainLoop" c:type="GMainLoop*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </record>
+    <record name="Source" c:type="GSource" glib:type-name="GSource" glib:get-type="g_source_get_type" c:symbol-prefix="source">
+      <function name="remove" c:identifier="g_source_remove">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="tag" transfer-ownership="none">
+            <type name="guint" c:type="guint"/>
+          </parameter>
+        </parameters>
+      </function>
+    </record>
+    <record name="Variant" c:type="GVariant" opaque="1" copy-function="g_variant_ref_sink" free-function="g_variant_unref" version="2.24" glib:type-name="GVariant" glib:get-type="intern" c:symbol-prefix="variant">
+      <constructor name="new_string" c:identifier="g_variant_new_string" version="2.24">
+        <return-value transfer-ownership="none">
+          <type name="Variant" c:type="GVariant*"/>
+        </return-value>
+        <parameters>
+          <parameter name="string" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_strv" c:identifier="g_variant_new_strv" version="2.24">
+        <return-value transfer-ownership="none">
+          <type name="Variant" c:type="GVariant*"/>
+        </return-value>
+        <parameters>
+          <parameter name="strv" transfer-ownership="none">
+            <array length="1" zero-terminated="0" c:type="const gchar* const*">
+              <type name="utf8"/>
+            </array>
+          </parameter>
+          <parameter name="length" transfer-ownership="none">
+            <type name="gssize" c:type="gssize"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_tuple" c:identifier="g_variant_new_tuple" version="2.24">
+        <return-value transfer-ownership="none">
+          <type name="Variant" c:type="GVariant*"/>
+        </return-value>
+        <parameters>
+          <parameter name="children" transfer-ownership="none">
+            <array length="1" zero-terminated="0" c:type="GVariant* const*">
+              <type name="Variant" c:type="GVariant*"/>
+            </array>
+          </parameter>
+          <parameter name="n_children" transfer-ownership="none">
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_uint32" c:identifier="g_variant_new_uint32" version="2.24">
+        <return-value transfer-ownership="none">
+          <type name="Variant" c:type="GVariant*"/>
+        </return-value>
+        <parameters>
+          <parameter name="value" transfer-ownership="none">
+            <type name="guint32" c:type="guint32"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_child_value" c:identifier="g_variant_get_child_value" version="2.24">
+        <return-value transfer-ownership="full">
+          <type name="Variant" c:type="GVariant*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="value" transfer-ownership="none">
+            <type name="Variant" c:type="GVariant*"/>
+          </instance-parameter>
+          <parameter name="index_" transfer-ownership="none">
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_int32" c:identifier="g_variant_get_int32" version="2.24">
+        <return-value transfer-ownership="none">
+          <type name="gint32" c:type="gint32"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="value" transfer-ownership="none">
+            <type name="Variant" c:type="GVariant*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_string" c:identifier="g_variant_get_string" version="2.24">
+        <return-value transfer-ownership="none">
+          <type name="utf8" c:type="const gchar*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="value" transfer-ownership="none">
+            <type name="Variant" c:type="GVariant*"/>
+          </instance-parameter>
+          <parameter name="length" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <type name="gsize" c:type="gsize*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_type_string" c:identifier="g_variant_get_type_string" version="2.24">
+        <return-value transfer-ownership="none">
+          <type name="utf8" c:type="const gchar*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="value" transfer-ownership="none">
+            <type name="Variant" c:type="GVariant*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_uint16" c:identifier="g_variant_get_uint16" version="2.24">
+        <return-value transfer-ownership="none">
+          <type name="guint16" c:type="guint16"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="value" transfer-ownership="none">
+            <type name="Variant" c:type="GVariant*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_uint32" c:identifier="g_variant_get_uint32" version="2.24">
+        <return-value transfer-ownership="none">
+          <type name="guint32" c:type="guint32"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="value" transfer-ownership="none">
+            <type name="Variant" c:type="GVariant*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="is_of_type" c:identifier="g_variant_is_of_type" version="2.24">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="value" transfer-ownership="none">
+            <type name="Variant" c:type="GVariant*"/>
+          </instance-parameter>
+          <parameter name="type" transfer-ownership="none">
+            <type name="VariantType" c:type="const GVariantType*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="n_children" c:identifier="g_variant_n_children" version="2.24">
+        <return-value transfer-ownership="none">
+          <type name="gsize" c:type="gsize"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="value" transfer-ownership="none">
+            <type name="Variant" c:type="GVariant*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="ref" c:identifier="g_variant_ref" version="2.24">
+        <return-value transfer-ownership="full">
+          <type name="Variant" c:type="GVariant*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="value" transfer-ownership="none">
+            <type name="Variant" c:type="GVariant*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="ref_sink" c:identifier="g_variant_ref_sink" version="2.24">
+        <return-value transfer-ownership="full">
+          <type name="Variant" c:type="GVariant*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="value" transfer-ownership="none">
+            <type name="Variant" c:type="GVariant*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="unref" c:identifier="g_variant_unref" version="2.24">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="value" transfer-ownership="none">
+            <type name="Variant" c:type="GVariant*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </record>
+    <record name="VariantType" c:type="GVariantType" opaque="1" version="2.24" glib:type-name="GVariantType" glib:get-type="g_variant_type_get_gtype" c:symbol-prefix="variant_type">
+      <method name="hash" c:identifier="g_variant_type_hash">
+        <return-value transfer-ownership="none">
+          <type name="guint" c:type="guint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="type" transfer-ownership="none">
+            <type name="VariantType" c:type="gconstpointer"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </record>
+    <function name="free" c:identifier="g_free">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="mem" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="idle_add" c:identifier="g_idle_add" shadowed-by="idle_add_full" introspectable="0">
+      <return-value transfer-ownership="none">
+        <type name="guint" c:type="guint"/>
+      </return-value>
+      <parameters>
+        <parameter name="function" transfer-ownership="none" closure="1">
+          <type name="SourceFunc" c:type="GSourceFunc"/>
+        </parameter>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="io_add_watch" c:identifier="g_io_add_watch" shadowed-by="io_add_watch_full" introspectable="0">
+      <return-value transfer-ownership="none">
+        <type name="guint" c:type="guint"/>
+      </return-value>
+      <parameters>
+        <parameter name="channel" transfer-ownership="none">
+          <type name="IOChannel" c:type="GIOChannel*"/>
+        </parameter>
+        <parameter name="condition" transfer-ownership="none">
+          <type name="IOCondition" c:type="GIOCondition"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" closure="3">
+          <type name="IOFunc" c:type="GIOFunc"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="malloc0" c:identifier="g_malloc0">
+      <return-value transfer-ownership="none" nullable="1">
+        <type name="gpointer" c:type="gpointer"/>
+      </return-value>
+      <parameters>
+        <parameter name="n_bytes" transfer-ownership="none">
+          <type name="gsize" c:type="gsize"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="set_application_name" c:identifier="g_set_application_name" version="2.2">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="application_name" transfer-ownership="none">
+          <type name="utf8" c:type="const gchar*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="set_prgname" c:identifier="g_set_prgname">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="prgname" transfer-ownership="none">
+          <type name="utf8" c:type="const gchar*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="strdup" c:identifier="g_strdup">
+      <return-value transfer-ownership="full">
+        <type name="utf8" c:type="gchar*"/>
+      </return-value>
+      <parameters>
+        <parameter name="str" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="utf8" c:type="const gchar*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="timeout_add" c:identifier="g_timeout_add" shadowed-by="timeout_add_full" introspectable="0">
+      <return-value transfer-ownership="none">
+        <type name="guint" c:type="guint"/>
+      </return-value>
+      <parameters>
+        <parameter name="interval" transfer-ownership="none">
+          <type name="guint" c:type="guint"/>
+        </parameter>
+        <parameter name="function" transfer-ownership="none" closure="2">
+          <type name="SourceFunc" c:type="GSourceFunc"/>
+        </parameter>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="timeout_add_seconds" c:identifier="g_timeout_add_seconds" shadowed-by="timeout_add_seconds_full" version="2.14" introspectable="0">
+      <return-value transfer-ownership="none">
+        <type name="guint" c:type="guint"/>
+      </return-value>
+      <parameters>
+        <parameter name="interval" transfer-ownership="none">
+          <type name="guint" c:type="guint"/>
+        </parameter>
+        <parameter name="function" transfer-ownership="none" closure="2">
+          <type name="SourceFunc" c:type="GSourceFunc"/>
+        </parameter>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="DestroyNotify" c:type="GDestroyNotify">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <bitfield name="IOCondition" glib:type-name="GIOCondition" glib:get-type="g_io_condition_get_type" c:type="GIOCondition"/>
+    <callback name="IOFunc" c:type="GIOFunc">
+      <return-value transfer-ownership="none">
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="source" transfer-ownership="none">
+          <type name="IOChannel" c:type="GIOChannel*"/>
+        </parameter>
+        <parameter name="condition" transfer-ownership="none">
+          <type name="IOCondition" c:type="GIOCondition"/>
+        </parameter>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="SourceFunc" c:type="GSourceFunc">
+      <return-value transfer-ownership="none">
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="0">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+  </namespace>
+</repository>

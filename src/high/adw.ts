@@ -7,7 +7,6 @@ import {
   Widget,
   Window,
 } from "./gtk4.ts";
-import { gobject } from "../low/gobject.ts";
 import type { GObject } from "./gobject.ts";
 
 // ============================================================================
@@ -342,6 +341,163 @@ export class PreferencesWindow extends Window {
   }
 }
 
+function requireAdwaita<T>(
+  binding: T | null | undefined,
+  name: string,
+  minimum: string,
+): T {
+  if (binding == null) {
+    throw new Error(`${name} requires libadwaita ${minimum} or later`);
+  }
+  return binding;
+}
+
+/** An Adwaita dialog hosted inside another widget instead of a separate GtkWindow. */
+export abstract class Dialog extends Widget {
+  present(parent: Widget): void {
+    adw.symbols.adw_dialog_present(this.ptr, parent.ptr);
+  }
+
+  close(): boolean {
+    return requireAdwaita(adw.symbols.adw_dialog_close, "Dialog", "1.5")(
+      this.ptr,
+    );
+  }
+
+  onClosed(callback: () => void): number {
+    return this.connect("closed", callback);
+  }
+}
+
+/** Preferences pages and subpage navigation, available with libadwaita 1.5 or later. */
+export class PreferencesDialog extends Dialog {
+  constructor() {
+    super(
+      requireAdwaita(
+        adw.symbols.adw_preferences_dialog_new,
+        "PreferencesDialog",
+        "1.5",
+      )(),
+    );
+  }
+
+  static isSupported(): boolean {
+    return Boolean(adw.symbols.adw_preferences_dialog_new);
+  }
+
+  add(page: PreferencesPage): void {
+    requireAdwaita(
+      adw.symbols.adw_preferences_dialog_add,
+      "PreferencesDialog",
+      "1.5",
+    )(this.ptr, page.ptr);
+  }
+
+  pushSubpage(page: NavigationPage): void {
+    requireAdwaita(
+      adw.symbols.adw_preferences_dialog_push_subpage,
+      "PreferencesDialog",
+      "1.5",
+    )(this.ptr, page.ptr);
+  }
+
+  popSubpage(): void {
+    requireAdwaita(
+      adw.symbols.adw_preferences_dialog_pop_subpage,
+      "PreferencesDialog",
+      "1.5",
+    )(this.ptr);
+  }
+}
+
+/** A titled page that can be pushed onto an Adwaita navigation stack. */
+export class NavigationPage extends Widget {
+  constructor(child: Widget, title: string) {
+    super(
+      requireAdwaita(
+        adw.symbols.adw_navigation_page_new,
+        "NavigationPage",
+        "1.4",
+      )(child.ptr, cstr(title)),
+    );
+  }
+
+  setTag(tag: string): void {
+    requireAdwaita(
+      adw.symbols.adw_navigation_page_set_tag,
+      "NavigationPage",
+      "1.4",
+    )(this.ptr, cstr(tag));
+  }
+
+  getTag(): string | null {
+    const tag = requireAdwaita(
+      adw.symbols.adw_navigation_page_get_tag,
+      "NavigationPage",
+      "1.4",
+    )(this.ptr);
+    return tag ? readCStr(tag) : null;
+  }
+}
+
+/** A stack of navigation pages, available with libadwaita 1.4 or later. */
+export class NavigationView extends Widget {
+  constructor() {
+    super(
+      requireAdwaita(
+        adw.symbols.adw_navigation_view_new,
+        "NavigationView",
+        "1.4",
+      )(),
+    );
+  }
+
+  static isSupported(): boolean {
+    return Boolean(adw.symbols.adw_navigation_view_new);
+  }
+
+  add(page: NavigationPage): void {
+    requireAdwaita(
+      adw.symbols.adw_navigation_view_add,
+      "NavigationView",
+      "1.4",
+    )(this.ptr, page.ptr);
+  }
+
+  push(page: NavigationPage): void {
+    requireAdwaita(
+      adw.symbols.adw_navigation_view_push,
+      "NavigationView",
+      "1.4",
+    )(this.ptr, page.ptr);
+  }
+
+  pop(): boolean {
+    return requireAdwaita(
+      adw.symbols.adw_navigation_view_pop,
+      "NavigationView",
+      "1.4",
+    )(this.ptr);
+  }
+
+  getVisiblePageTag(): string | null {
+    const tag = requireAdwaita(
+      adw.symbols.adw_navigation_view_get_visible_page_tag,
+      "NavigationView",
+      "1.4",
+    )(this.ptr);
+    return tag ? readCStr(tag) : null;
+  }
+
+  setPopOnEscape(enabled: boolean): void {
+    requireAdwaita(
+      adw.symbols.adw_navigation_view_set_pop_on_escape,
+      "NavigationView",
+      "1.4",
+    )(this.ptr, enabled);
+  }
+}
+
 // AdwActionRow extends AdwPreferencesRow extends GtkListBoxRow extends GtkWidget
 export class ActionRow extends ListBoxRow {
   constructor(ptr?: Deno.PointerValue) {
@@ -400,28 +556,9 @@ export class ComboRow extends ActionRow {
   }
 
   onSelectedChanged(callback: (selectedIndex: number) => void): number {
-    const cb = new Deno.UnsafeCallback(
-      {
-        parameters: ["pointer", "pointer", "pointer"],
-        result: "void",
-      } as const,
-      () => {
-        const selected = this.getSelected();
-        callback(selected);
-      },
-    );
-    this.retainCallback(cb);
-
-    const signalCStr = cstr("notify::selected");
-    return Number(
-      gobject.symbols.g_signal_connect_data(
-        this.ptr,
-        signalCStr,
-        cb.pointer,
-        null,
-        null,
-        0,
-      ),
+    return this.connectNotify(
+      "selected",
+      (object) => callback(adw.symbols.adw_combo_row_get_selected(object)),
     );
   }
 }
@@ -442,28 +579,9 @@ export class SwitchRow extends ActionRow {
   }
 
   onActiveChanged(callback: (active: boolean) => void): number {
-    const cb = new Deno.UnsafeCallback(
-      {
-        parameters: ["pointer", "pointer", "pointer"],
-        result: "void",
-      } as const,
-      () => {
-        const active = this.getActive();
-        callback(active);
-      },
-    );
-    this.retainCallback(cb);
-
-    const signalCStr = cstr("notify::active");
-    return Number(
-      gobject.symbols.g_signal_connect_data(
-        this.ptr,
-        signalCStr,
-        cb.pointer,
-        null,
-        null,
-        0,
-      ),
+    return this.connectNotify(
+      "active",
+      (object) => callback(adw.symbols.adw_switch_row_get_active(object)),
     );
   }
 }
@@ -533,19 +651,7 @@ export class MessageDialog extends Window {
         callback(responseId);
       },
     );
-    this.retainCallback(cb);
-
-    const signalCStr = cstr("response");
-    return Number(
-      gobject.symbols.g_signal_connect_data(
-        this.ptr,
-        signalCStr,
-        cb.pointer,
-        null,
-        null,
-        0,
-      ),
-    );
+    return this.connectNative("response", cb);
   }
 }
 

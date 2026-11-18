@@ -1,5 +1,6 @@
 import { gio } from "../low/gio.ts";
 import { glib } from "../low/glib.ts";
+import { gobject } from "../low/gobject.ts";
 import { cstr, readCStr } from "../low/utils.ts";
 import { GObject } from "./gobject.ts";
 
@@ -41,11 +42,9 @@ export const DBusCallFlags = {
   ALLOW_INTERACTIVE_AUTHORIZATION: 1 << 1,
 } as const;
 
-export class Cancellable {
-  ptr: Deno.PointerValue;
-
+export class Cancellable extends GObject {
   constructor() {
-    this.ptr = gio.symbols.g_cancellable_new()!;
+    super(gio.symbols.g_cancellable_new());
   }
 
   cancel(): void {
@@ -101,6 +100,295 @@ export class ListStore extends GObject {
   }
 }
 
+function ownedString(ptr: Deno.PointerValue): string | null {
+  if (!ptr) return null;
+  try {
+    return readCStr(ptr);
+  } finally {
+    glib.symbols.g_free(ptr);
+  }
+}
+
+function withFileList<T>(
+  files: readonly File[],
+  call: (list: Deno.PointerValue) => T,
+): T {
+  let list: Deno.PointerValue = null;
+  try {
+    for (let index = files.length - 1; index >= 0; index--) {
+      const file = files[index].ptr;
+      if (!file) {
+        throw new Error("Cannot launch an application with a released File");
+      }
+      list = glib.symbols.g_list_prepend(list, file);
+    }
+    return call(list);
+  } finally {
+    glib.symbols.g_list_free(list);
+  }
+}
+
+function checkLaunch(
+  call: (error: Deno.PointerValue) => boolean,
+  fallback: string,
+): void {
+  const error = new BigUint64Array(1);
+  if (call(Deno.UnsafePointer.of(error))) return;
+  const ptr = Deno.UnsafePointer.create(error[0]);
+  if (!ptr) throw new Error(fallback);
+  try {
+    // GError starts with a GQuark and an int, followed by its message pointer.
+    const view = new Deno.UnsafePointerView(ptr);
+    const message = view.getPointer?.(8) ?? null;
+    throw new Error(readCStr(message) || fallback);
+  } finally {
+    glib.symbols.g_error_free(ptr);
+  }
+}
+
+/** Launch parameters, including the startup notification supplied by a display. */
+export class AppLaunchContext extends GObject {
+  constructor(ptr: Deno.PointerValue = gio.symbols.g_app_launch_context_new()) {
+    super(ptr);
+  }
+
+  /** Set an environment variable in the launched application. */
+  setEnv(name: string, value: string): void {
+    gio.symbols.g_app_launch_context_setenv(this.ptr, cstr(name), cstr(value));
+  }
+
+  /** Request a startup notification ID or Wayland activation token if supported. */
+  getStartupNotifyId(app: AppInfo, files: readonly File[] = []): string | null {
+    return withFileList(
+      files,
+      (list) =>
+        ownedString(
+          gio.symbols.g_app_launch_context_get_startup_notify_id(
+            this.ptr,
+            app.ptr,
+            list,
+          ),
+        ),
+    );
+  }
+}
+
+/** Common desktop application icon representations. */
+export type AppIcon =
+  | { kind: "file"; path: string }
+  | { kind: "themed"; names: string[] };
+
+const pendingLaunchCallbacks = new Set<Pick<Deno.UnsafeCallback, "close">>();
+
+/** An installed application and its launch options. Instances own a native reference. */
+export class AppInfo extends GObject {
+  protected constructor(ptr: NonNullable<Deno.PointerValue>) {
+    super(ptr);
+  }
+
+  /** List registered applications. Use shouldShow() to exclude hidden entries. */
+  static getAll(): AppInfo[] {
+    const list = gio.symbols.g_app_info_get_all();
+    try {
+      const apps: AppInfo[] = [];
+      const length = glib.symbols.g_list_length(list);
+      for (let index = 0; index < length; index++) {
+        const ptr = glib.symbols.g_list_nth_data(list, index);
+        if (ptr) apps.push(new AppInfo(ptr));
+      }
+      return apps;
+    } finally {
+      glib.symbols.g_list_free(list);
+    }
+  }
+
+  static getDefaultForType(
+    contentType: string,
+    mustSupportUris = false,
+  ): AppInfo | null {
+    const ptr = gio.symbols.g_app_info_get_default_for_type(
+      cstr(contentType),
+      mustSupportUris,
+    );
+    return ptr ? new AppInfo(ptr) : null;
+  }
+
+  static getDefaultForUriScheme(scheme: string): AppInfo | null {
+    const ptr = gio.symbols.g_app_info_get_default_for_uri_scheme(cstr(scheme));
+    return ptr ? new AppInfo(ptr) : null;
+  }
+
+  getId(): string | null {
+    const ptr = gio.symbols.g_app_info_get_id(this.ptr);
+    return ptr ? readCStr(ptr) : null;
+  }
+
+  getName(): string {
+    return readCStr(gio.symbols.g_app_info_get_name(this.ptr));
+  }
+
+  getDisplayName(): string {
+    return readCStr(gio.symbols.g_app_info_get_display_name(this.ptr));
+  }
+
+  getDescription(): string | null {
+    const ptr = gio.symbols.g_app_info_get_description(this.ptr);
+    return ptr ? readCStr(ptr) : null;
+  }
+
+  shouldShow(): boolean {
+    return gio.symbols.g_app_info_should_show(this.ptr);
+  }
+
+  /** Return a file icon or icon-theme candidates, if the application provides one. */
+  getIcon(): AppIcon | null {
+    const icon = gio.symbols.g_app_info_get_icon(this.ptr);
+    if (!icon) return null;
+    if (
+      gobject.symbols.g_type_check_instance_is_a(
+        icon,
+        gio.symbols.g_file_icon_get_type(),
+      )
+    ) {
+      const file = gio.symbols.g_file_icon_get_file(icon);
+      const path = ownedString(gio.symbols.g_file_get_path(file));
+      return path ? { kind: "file", path } : null;
+    }
+    if (
+      gobject.symbols.g_type_check_instance_is_a(
+        icon,
+        gio.symbols.g_themed_icon_get_type(),
+      )
+    ) {
+      const list = gio.symbols.g_themed_icon_get_names(icon);
+      if (!list) return null;
+      const value = glib.symbols.g_variant_new_strv(list, -1n);
+      try {
+        const names: string[] = [];
+        const length = Number(glib.symbols.g_variant_n_children(value));
+        for (let index = 0; index < length; index++) {
+          const child = glib.symbols.g_variant_get_child_value(
+            value,
+            BigInt(index),
+          );
+          try {
+            names.push(
+              readCStr(glib.symbols.g_variant_get_string(child, null)),
+            );
+          } finally {
+            glib.symbols.g_variant_unref(child);
+          }
+        }
+        return { kind: "themed", names };
+      } finally {
+        glib.symbols.g_variant_unref(value);
+      }
+    }
+    return null;
+  }
+
+  /** Launch the application with optional files. Throws if GIO rejects the launch. */
+  launch(files: readonly File[] = [], context?: AppLaunchContext): void {
+    withFileList(files, (list) =>
+      checkLaunch(
+        (error) =>
+          gio.symbols.g_app_info_launch(
+            this.ptr,
+            list,
+            context?.ptr ?? null,
+            error,
+          ),
+        "Could not launch application",
+      ));
+  }
+
+  /** Open a URI with its default handler. */
+  static launchDefaultForUri(uri: string, context?: AppLaunchContext): void {
+    checkLaunch(
+      (error) =>
+        gio.symbols.g_app_info_launch_default_for_uri(
+          cstr(uri),
+          context?.ptr ?? null,
+          error,
+        ),
+      "Could not open URI",
+    );
+  }
+
+  /** Open a URI and wait for GIO's asynchronous result while the GLib main loop is running. */
+  static launchDefaultForUriAsync(
+    uri: string,
+    context?: AppLaunchContext,
+    cancellable?: Cancellable,
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const callback = new Deno.UnsafeCallback(
+        { parameters: ["pointer", "pointer", "pointer"], result: "void" },
+        (_source, result) => {
+          try {
+            checkLaunch(
+              (error) =>
+                gio.symbols.g_app_info_launch_default_for_uri_finish(
+                  result,
+                  error,
+                ),
+              "Could not open URI",
+            );
+            resolve();
+          } catch (error) {
+            reject(error);
+          } finally {
+            pendingLaunchCallbacks.delete(callback);
+            queueMicrotask(() => callback.close());
+          }
+        },
+      );
+      pendingLaunchCallbacks.add(callback);
+      try {
+        gio.symbols.g_app_info_launch_default_for_uri_async(
+          cstr(uri),
+          context?.ptr ?? null,
+          cancellable?.ptr ?? null,
+          callback.pointer,
+          null,
+        );
+      } catch (error) {
+        pendingLaunchCallbacks.delete(callback);
+        callback.close();
+        reject(error);
+      }
+    });
+  }
+}
+
+/** Application backed by a Freedesktop .desktop entry on a supported GIO build. */
+export class DesktopAppInfo extends AppInfo {
+  static isSupported(): boolean {
+    return Boolean(
+      gio.symbols.g_desktop_app_info_new &&
+        gio.symbols.g_desktop_app_info_new_from_filename &&
+        gio.symbols.g_desktop_app_info_get_filename,
+    );
+  }
+
+  static fromId(id: string): DesktopAppInfo | null {
+    const ptr = gio.symbols.g_desktop_app_info_new?.(cstr(id));
+    return ptr ? new DesktopAppInfo(ptr) : null;
+  }
+
+  static fromFilename(filename: string): DesktopAppInfo | null {
+    const ptr = gio.symbols.g_desktop_app_info_new_from_filename?.(
+      cstr(filename),
+    );
+    return ptr ? new DesktopAppInfo(ptr) : null;
+  }
+
+  getFilename(): string | null {
+    const ptr = gio.symbols.g_desktop_app_info_get_filename?.(this.ptr);
+    return ptr ? readCStr(ptr) : null;
+  }
+}
+
 export class File extends GObject {
   constructor(ptr?: Deno.PointerValue) {
     super(ptr ?? null!); // Allow wrapping existing pointer
@@ -111,26 +399,33 @@ export class File extends GObject {
     return new File(ptr);
   }
 
+  static newForUri(uri: string): File {
+    return new File(gio.symbols.g_file_new_for_uri(cstr(uri)));
+  }
+
   static getType(): bigint {
     return BigInt(gio.symbols.g_file_get_type());
   }
 
   getPath(): string | null {
-    const ptr = gio.symbols.g_file_get_path(this.ptr);
-    return ptr ? readCStr(ptr) : null;
+    return ownedString(gio.symbols.g_file_get_path(this.ptr));
+  }
+
+  getUri(): string {
+    return ownedString(gio.symbols.g_file_get_uri(this.ptr)) ?? "";
   }
 
   loadContents(): [boolean, Uint8Array] {
     const contents = new BigUint64Array(1);
     const length = new BigUint64Array(1);
-    const etag_out = new BigUint64Array(1);
 
     const success = gio.symbols.g_file_load_contents(
       this.ptr,
       null,
       Deno.UnsafePointer.of(contents),
       Deno.UnsafePointer.of(length),
-      Deno.UnsafePointer.of(etag_out),
+      null, // No ETag requested.
+      null, // The wrapper reports failure through the boolean return value.
     );
 
     if (success) {

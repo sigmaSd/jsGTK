@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repository version="1.2" xmlns:c="http://www.gtk.org/introspection/c/1.0" xmlns:glib="http://www.gtk.org/introspection/glib/1.0" xmlns="http://www.gtk.org/introspection/core/1.0">
+  <!-- Signature-only snapshot of AyatanaAppIndicator3-0.1.gir from Debian libayatana-appindicator3-dev 0.5.94-1. -->
+  <!-- Upstream SHA-256 a3b316855c723c5e91e8c2aeeac51312f13fce67af6d6ff3bb443b8ae1ee697d -->
+  <namespace name="AyatanaAppIndicator3" version="0.1">
+    <class name="Indicator" c:symbol-prefix="indicator" c:type="AppIndicator" parent="GObject.Object" glib:type-name="AppIndicator" glib:get-type="app_indicator_get_type" glib:type-struct="IndicatorClass">
+      <constructor name="new" c:identifier="app_indicator_new">
+        <return-value transfer-ownership="full">
+          <type name="Indicator" c:type="AppIndicator*"/>
+        </return-value>
+        <parameters>
+          <parameter name="id" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="icon_name" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="category" transfer-ownership="none">
+            <type name="IndicatorCategory" c:type="AppIndicatorCategory"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_id" c:identifier="app_indicator_get_id" glib:get-property="id">
+        <return-value transfer-ownership="none">
+          <type name="utf8" c:type="const gchar*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Indicator" c:type="AppIndicator*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_menu" c:identifier="app_indicator_set_menu" glib:set-property="menu">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Indicator" c:type="AppIndicator*"/>
+          </instance-parameter>
+          <parameter name="menu" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Gtk.Menu" c:type="GtkMenu*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_status" c:identifier="app_indicator_set_status" glib:set-property="status">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Indicator" c:type="AppIndicator*"/>
+          </instance-parameter>
+          <parameter name="status" transfer-ownership="none">
+            <type name="IndicatorStatus" c:type="AppIndicatorStatus"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_title" c:identifier="app_indicator_set_title" glib:set-property="title" version="0.5">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Indicator" c:type="AppIndicator*"/>
+          </instance-parameter>
+          <parameter name="title" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
+    <enumeration name="IndicatorCategory" c:type="AppIndicatorCategory"/>
+    <enumeration name="IndicatorStatus" c:type="AppIndicatorStatus"/>
+  </namespace>
+</repository>

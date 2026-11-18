@@ -6,7 +6,7 @@ import { gobject } from "../low/gobject.ts";
 import { gtk4 } from "../low/gtk4.ts";
 import { createGValue, cstr, readCStr } from "../low/utils.ts";
 import { CairoContext } from "./cairo.ts";
-import { File, type Menu, type SimpleAction } from "./gio.ts";
+import { AppLaunchContext, File, type Menu, type SimpleAction } from "./gio.ts";
 import { unixSignalAdd as glibUnixSignalAdd } from "./glib.ts";
 import { G_TYPE_STRING, GObject } from "./gobject.ts";
 export { G_TYPE_BOOLEAN, G_TYPE_STRING } from "./gobject.ts";
@@ -287,6 +287,29 @@ export class Widget extends GObject {
     return gtk4.symbols.gtk_widget_get_sensitive(this.ptr);
   }
 
+  /** Whether this widget and all of its parents are sensitive. */
+  isSensitive(): boolean {
+    return gtk4.symbols.gtk_widget_is_sensitive(this.ptr);
+  }
+
+  /** Perform the widget's activation action, if it has one. */
+  activate(): boolean {
+    return gtk4.symbols.gtk_widget_activate(this.ptr);
+  }
+
+  /** Bounds in the coordinate space of a related widget, or null if unavailable. */
+  computeBounds(
+    relativeTo: Widget,
+  ): { x: number; y: number; width: number; height: number } | null {
+    // graphene_rect_t is two floats for the origin followed by two for the size.
+    const bounds = new Float32Array(4);
+    if (
+      !gtk4.symbols.gtk_widget_compute_bounds(this.ptr, relativeTo.ptr, bounds)
+    ) return null;
+    const [x, y, width, height] = bounds;
+    return { x, y, width, height };
+  }
+
   isVisible(): boolean {
     return gtk4.symbols.gtk_widget_is_visible(this.ptr);
   }
@@ -444,6 +467,11 @@ export class Application extends GObject {
 export class Window extends Widget {
   constructor(ptr: Deno.PointerValue) {
     super(ptr);
+  }
+
+  /** Whether this window currently receives input. */
+  isActive(): boolean {
+    return gtk4.symbols.gtk_window_is_active(this.ptr);
   }
 
   setTitle(title: string): void {
@@ -720,26 +748,7 @@ export class Scale extends Widget {
   }
 
   onValueChanged(callback: () => void): void {
-    const cb = new Deno.UnsafeCallback(
-      {
-        parameters: ["pointer", "pointer", "pointer"],
-        result: "void",
-      } as const,
-      (
-        _self: Deno.PointerValue,
-        _param: Deno.PointerValue,
-        _data: Deno.PointerValue,
-      ) => callback(),
-    );
-    this.retainCallback(cb);
-    gobject.symbols.g_signal_connect_data(
-      this.ptr,
-      cstr("value_changed"),
-      cb.pointer,
-      null,
-      null,
-      0,
-    );
+    this.connect("value-changed", callback);
   }
 }
 
@@ -1229,9 +1238,10 @@ export class DropDown extends Widget {
 
   // High-level signal connection for selection change
   onSelectedChanged(callback: (selectedIndex: number) => void): number {
-    return this.connect("notify::selected", () => {
-      callback(this.getSelected());
-    });
+    return this.connectNotify(
+      "selected",
+      (object) => callback(gtk4.symbols.gtk_drop_down_get_selected(object)),
+    );
   }
 }
 
@@ -1404,7 +1414,7 @@ export class ColumnViewColumn extends GObject {
 
 export class ColumnView extends Widget {
   constructor() {
-    const ptr = gtk4.symbols.gtk_column_view_new();
+    const ptr = gtk4.symbols.gtk_column_view_new(null);
     super(ptr);
   }
 
@@ -1579,6 +1589,18 @@ export class Builder extends GObject {
   }
 }
 
+/** Launch context that propagates the originating display's focus notification. */
+export class GdkAppLaunchContext extends AppLaunchContext {
+  constructor(ptr: NonNullable<Deno.PointerValue>) {
+    super(ptr);
+  }
+
+  /** Use the GDK event timestamp associated with this launch, if available. */
+  setTimestamp(timestamp: number): void {
+    gtk4.symbols.gdk_app_launch_context_set_timestamp(this.ptr, timestamp);
+  }
+}
+
 // GDK Display wrapper
 export class Display extends GObject {
   private constructor(ptr: Deno.PointerValue) {
@@ -1589,6 +1611,15 @@ export class Display extends GObject {
     const ptr = gtk4.symbols.gdk_display_get_default();
     if (!ptr) return null;
     return new Display(ptr);
+  }
+
+  /** Create an owned context to pass to GIO when launching from this display. */
+  getAppLaunchContext(): GdkAppLaunchContext {
+    const ptr = gtk4.symbols.gdk_display_get_app_launch_context(this.ptr);
+    if (!ptr) {
+      throw new Error("Could not create a launch context for the display");
+    }
+    return new GdkAppLaunchContext(ptr);
   }
 
   getClipboard(): Clipboard {
@@ -1704,7 +1735,12 @@ export class Clipboard extends GObject {
       result,
       null,
     );
-    return ptr ? readCStr(ptr) : "";
+    if (!ptr) return "";
+    try {
+      return readCStr(ptr);
+    } finally {
+      glib.symbols.g_free(ptr);
+    }
   }
 
   readTextureAsync(
@@ -1898,16 +1934,7 @@ export class EventControllerKey extends EventController {
         return callback(keyval, keycode, state);
       },
     );
-    this.retainCallback(cb);
-    const signalCStr = cstr("key-pressed");
-    return Number(gobject.symbols.g_signal_connect_data(
-      this.ptr,
-      signalCStr,
-      cb.pointer,
-      null,
-      null,
-      0,
-    ));
+    return this.connectNative("key-pressed", cb);
   }
 }
 
@@ -1982,17 +2009,7 @@ export class DropTarget extends EventController {
         return callback(text, x, y);
       },
     );
-    this.retainCallback(cb);
-
-    const signalCStr = cstr("drop");
-    return Number(gobject.symbols.g_signal_connect_data(
-      this.ptr,
-      signalCStr,
-      cb.pointer,
-      null,
-      null,
-      0,
-    ));
+    return this.connectNative("drop", cb);
   }
 
   onDrop(
@@ -2014,17 +2031,7 @@ export class DropTarget extends EventController {
         return callback(objPtr, x, y);
       },
     );
-    this.retainCallback(cb);
-
-    const signalCStr = cstr("drop");
-    return Number(gobject.symbols.g_signal_connect_data(
-      this.ptr,
-      signalCStr,
-      cb.pointer,
-      null,
-      null,
-      0,
-    ));
+    return this.connectNative("drop", cb);
   }
 }
 
@@ -2201,16 +2208,7 @@ export class GestureClick extends EventController {
         callback(n_press, x, y);
       },
     );
-    this.retainCallback(cb);
-    const signalCStr = cstr("released");
-    return Number(gobject.symbols.g_signal_connect_data(
-      this.ptr,
-      signalCStr,
-      cb.pointer,
-      null,
-      null,
-      0,
-    ));
+    return this.connectNative("released", cb);
   }
 }
 
@@ -2418,7 +2416,7 @@ export class TextBuffer extends GObject {
       this.ptr,
       Deno.UnsafePointer.of(start as BufferSource),
       Deno.UnsafePointer.of(end as BufferSource),
-      includeHiddenChars ? 1 : 0,
+      includeHiddenChars,
     );
     const text = readCStr(ptr);
     if (ptr) glib.symbols.g_free(ptr);

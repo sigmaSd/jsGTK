@@ -1,0 +1,1020 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repository version="1.2" xmlns:c="http://www.gtk.org/introspection/c/1.0" xmlns:glib="http://www.gtk.org/introspection/glib/1.0" xmlns="http://www.gtk.org/introspection/core/1.0">
+  <!-- Signature-only snapshot of Gio-2.0.gir from GLib 2.90.1. -->
+  <!-- Upstream SHA-256 5551a35199e709c1361fec288e4cc904b82a126a3e2192c7dd7b91a1bfe2506c -->
+  <namespace name="Gio" version="2.0">
+    <interface name="ActionMap" c:symbol-prefix="action_map" c:type="GActionMap" version="2.32" glib:type-name="GActionMap" glib:get-type="g_action_map_get_type" glib:type-struct="ActionMapInterface">
+      <method name="add_action" c:identifier="g_action_map_add_action" version="2.32">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="action_map" transfer-ownership="none">
+            <type name="ActionMap" c:type="GActionMap*"/>
+          </instance-parameter>
+          <parameter name="action" transfer-ownership="none">
+            <type name="Action" c:type="GAction*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </interface>
+    <interface name="AppInfo" c:symbol-prefix="app_info" c:type="GAppInfo" glib:type-name="GAppInfo" glib:get-type="g_app_info_get_type" glib:type-struct="AppInfoIface">
+      <function name="get_all" c:identifier="g_app_info_get_all">
+        <return-value transfer-ownership="full">
+          <type name="GLib.List" c:type="GList*">
+            <type name="AppInfo"/>
+          </type>
+        </return-value>
+      </function>
+      <function name="get_default_for_type" c:identifier="g_app_info_get_default_for_type" glib:async-func="get_default_for_type_async">
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="AppInfo" c:type="GAppInfo*"/>
+        </return-value>
+        <parameters>
+          <parameter name="content_type" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="must_support_uris" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="get_default_for_uri_scheme" c:identifier="g_app_info_get_default_for_uri_scheme" glib:async-func="get_default_for_uri_scheme_async">
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="AppInfo" c:type="GAppInfo*"/>
+        </return-value>
+        <parameters>
+          <parameter name="uri_scheme" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="launch_default_for_uri" c:identifier="g_app_info_launch_default_for_uri" throws="1" glib:async-func="launch_default_for_uri_async">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="uri" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="AppLaunchContext" c:type="GAppLaunchContext*"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="launch_default_for_uri_async" c:identifier="g_app_info_launch_default_for_uri_async" version="2.50" glib:finish-func="launch_default_for_uri_finish" glib:sync-func="launch_default_for_uri">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="uri" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="AppLaunchContext" c:type="GAppLaunchContext*"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="4">
+            <type name="AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="launch_default_for_uri_finish" c:identifier="g_app_info_launch_default_for_uri_finish" version="2.50" throws="1">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="result" transfer-ownership="none">
+            <type name="AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+        </parameters>
+      </function>
+      <method name="get_description" c:identifier="g_app_info_get_description">
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="appinfo" transfer-ownership="none">
+            <type name="AppInfo" c:type="GAppInfo*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_display_name" c:identifier="g_app_info_get_display_name" version="2.24">
+        <return-value transfer-ownership="none">
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="appinfo" transfer-ownership="none">
+            <type name="AppInfo" c:type="GAppInfo*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_icon" c:identifier="g_app_info_get_icon">
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="Icon" c:type="GIcon*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="appinfo" transfer-ownership="none">
+            <type name="AppInfo" c:type="GAppInfo*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_id" c:identifier="g_app_info_get_id">
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="appinfo" transfer-ownership="none">
+            <type name="AppInfo" c:type="GAppInfo*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_name" c:identifier="g_app_info_get_name">
+        <return-value transfer-ownership="none">
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="appinfo" transfer-ownership="none">
+            <type name="AppInfo" c:type="GAppInfo*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="launch" c:identifier="g_app_info_launch" throws="1">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="appinfo" transfer-ownership="none">
+            <type name="AppInfo" c:type="GAppInfo*"/>
+          </instance-parameter>
+          <parameter name="files" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="GLib.List" c:type="GList*">
+              <type name="File"/>
+            </type>
+          </parameter>
+          <parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="AppLaunchContext" c:type="GAppLaunchContext*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="should_show" c:identifier="g_app_info_should_show">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="appinfo" transfer-ownership="none">
+            <type name="AppInfo" c:type="GAppInfo*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </interface>
+    <class name="AppLaunchContext" c:symbol-prefix="app_launch_context" c:type="GAppLaunchContext" parent="GObject.Object" glib:type-name="GAppLaunchContext" glib:get-type="g_app_launch_context_get_type" glib:type-struct="AppLaunchContextClass">
+      <constructor name="new" c:identifier="g_app_launch_context_new">
+        <return-value transfer-ownership="full">
+          <type name="AppLaunchContext" c:type="GAppLaunchContext*"/>
+        </return-value>
+      </constructor>
+      <method name="get_startup_notify_id" c:identifier="g_app_launch_context_get_startup_notify_id">
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="utf8" c:type="char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <type name="AppLaunchContext" c:type="GAppLaunchContext*"/>
+          </instance-parameter>
+          <parameter name="info" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="AppInfo" c:type="GAppInfo*"/>
+          </parameter>
+          <parameter name="files" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="GLib.List" c:type="GList*">
+              <type name="File"/>
+            </type>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="setenv" c:identifier="g_app_launch_context_setenv" version="2.32">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <type name="AppLaunchContext" c:type="GAppLaunchContext*"/>
+          </instance-parameter>
+          <parameter name="variable" transfer-ownership="none">
+            <type name="filename" c:type="const char*"/>
+          </parameter>
+          <parameter name="value" transfer-ownership="none">
+            <type name="filename" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="Application" c:symbol-prefix="application" c:type="GApplication" version="2.28" parent="GObject.Object" glib:type-name="GApplication" glib:get-type="g_application_get_type" glib:type-struct="ApplicationClass">
+      <method name="activate" c:identifier="g_application_activate" version="2.28">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="application" transfer-ownership="none">
+            <type name="Application" c:type="GApplication*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_is_remote" c:identifier="g_application_get_is_remote" glib:get-property="is-remote" version="2.28">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="application" transfer-ownership="none">
+            <type name="Application" c:type="GApplication*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="quit" c:identifier="g_application_quit" version="2.32">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="application" transfer-ownership="none">
+            <type name="Application" c:type="GApplication*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="register" c:identifier="g_application_register" version="2.28" throws="1">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="application" transfer-ownership="none">
+            <type name="Application" c:type="GApplication*"/>
+          </instance-parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="run" c:identifier="g_application_run" version="2.28">
+        <return-value transfer-ownership="none">
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="application" transfer-ownership="none">
+            <type name="Application" c:type="GApplication*"/>
+          </instance-parameter>
+          <parameter name="argc" transfer-ownership="none">
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="argv" transfer-ownership="none" nullable="1" allow-none="1">
+            <array length="0" zero-terminated="0" c:type="char**">
+              <type name="filename"/>
+            </array>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="send_notification" c:identifier="g_application_send_notification" version="2.40">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="application" transfer-ownership="none">
+            <type name="Application" c:type="GApplication*"/>
+          </instance-parameter>
+          <parameter name="id" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="notification" transfer-ownership="none">
+            <type name="Notification" c:type="GNotification*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="withdraw_notification" c:identifier="g_application_withdraw_notification" version="2.40">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="application" transfer-ownership="none">
+            <type name="Application" c:type="GApplication*"/>
+          </instance-parameter>
+          <parameter name="id" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="Cancellable" c:symbol-prefix="cancellable" c:type="GCancellable" parent="GObject.Object" glib:type-name="GCancellable" glib:get-type="g_cancellable_get_type" glib:type-struct="CancellableClass">
+      <constructor name="new" c:identifier="g_cancellable_new">
+        <return-value transfer-ownership="full">
+          <type name="Cancellable" c:type="GCancellable*"/>
+        </return-value>
+      </constructor>
+      <method name="cancel" c:identifier="g_cancellable_cancel">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="is_cancelled" c:identifier="g_cancellable_is_cancelled">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="DBusProxy" c:symbol-prefix="dbus_proxy" c:type="GDBusProxy" version="2.26" parent="GObject.Object" glib:type-name="GDBusProxy" glib:get-type="g_dbus_proxy_get_type" glib:type-struct="DBusProxyClass">
+      <constructor name="new_for_bus_sync" c:identifier="g_dbus_proxy_new_for_bus_sync" version="2.26" throws="1">
+        <return-value transfer-ownership="full">
+          <type name="DBusProxy" c:type="GDBusProxy*"/>
+        </return-value>
+        <parameters>
+          <parameter name="bus_type" transfer-ownership="none">
+            <type name="BusType" c:type="GBusType"/>
+          </parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <type name="DBusProxyFlags" c:type="GDBusProxyFlags"/>
+          </parameter>
+          <parameter name="info" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="DBusInterfaceInfo" c:type="GDBusInterfaceInfo*"/>
+          </parameter>
+          <parameter name="name" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="object_path" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="interface_name" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_sync" c:identifier="g_dbus_proxy_new_sync" version="2.26" throws="1">
+        <return-value transfer-ownership="full">
+          <type name="DBusProxy" c:type="GDBusProxy*"/>
+        </return-value>
+        <parameters>
+          <parameter name="connection" transfer-ownership="none">
+            <type name="DBusConnection" c:type="GDBusConnection*"/>
+          </parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <type name="DBusProxyFlags" c:type="GDBusProxyFlags"/>
+          </parameter>
+          <parameter name="info" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="DBusInterfaceInfo" c:type="GDBusInterfaceInfo*"/>
+          </parameter>
+          <parameter name="name" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="object_path" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="interface_name" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="call" c:identifier="g_dbus_proxy_call" version="2.26" glib:finish-func="call_finish" glib:sync-func="call_sync">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="proxy" transfer-ownership="none">
+            <type name="DBusProxy" c:type="GDBusProxy*"/>
+          </instance-parameter>
+          <parameter name="method_name" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="parameters" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="GLib.Variant" c:type="GVariant*"/>
+          </parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <type name="DBusCallFlags" c:type="GDBusCallFlags"/>
+          </parameter>
+          <parameter name="timeout_msec" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="6">
+            <type name="AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="call_finish" c:identifier="g_dbus_proxy_call_finish" version="2.26" throws="1">
+        <return-value transfer-ownership="full">
+          <type name="GLib.Variant" c:type="GVariant*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="proxy" transfer-ownership="none">
+            <type name="DBusProxy" c:type="GDBusProxy*"/>
+          </instance-parameter>
+          <parameter name="res" transfer-ownership="none">
+            <type name="AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="call_sync" c:identifier="g_dbus_proxy_call_sync" version="2.26" throws="1" glib:async-func="call">
+        <return-value transfer-ownership="full">
+          <type name="GLib.Variant" c:type="GVariant*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="proxy" transfer-ownership="none">
+            <type name="DBusProxy" c:type="GDBusProxy*"/>
+          </instance-parameter>
+          <parameter name="method_name" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="parameters" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="GLib.Variant" c:type="GVariant*"/>
+          </parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <type name="DBusCallFlags" c:type="GDBusCallFlags"/>
+          </parameter>
+          <parameter name="timeout_msec" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
+    <interface name="File" c:symbol-prefix="file" c:type="GFile" glib:type-name="GFile" glib:get-type="g_file_get_type" glib:type-struct="FileIface">
+      <function name="new_for_path" c:identifier="g_file_new_for_path">
+        <return-value transfer-ownership="full">
+          <type name="File" c:type="GFile*"/>
+        </return-value>
+        <parameters>
+          <parameter name="path" transfer-ownership="none">
+            <type name="filename" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="new_for_uri" c:identifier="g_file_new_for_uri">
+        <return-value transfer-ownership="full">
+          <type name="File" c:type="GFile*"/>
+        </return-value>
+        <parameters>
+          <parameter name="uri" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </function>
+      <method name="get_path" c:identifier="g_file_get_path">
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="filename" c:type="char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="file" transfer-ownership="none">
+            <type name="File" c:type="GFile*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_uri" c:identifier="g_file_get_uri">
+        <return-value transfer-ownership="full">
+          <type name="utf8" c:type="char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="file" transfer-ownership="none">
+            <type name="File" c:type="GFile*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="load_contents" c:identifier="g_file_load_contents" throws="1" glib:async-func="load_contents_async">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="file" transfer-ownership="none">
+            <type name="File" c:type="GFile*"/>
+          </instance-parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="contents" direction="out" caller-allocates="0" transfer-ownership="full">
+            <array length="2" zero-terminated="0" c:type="char**">
+              <type name="guint8"/>
+            </array>
+          </parameter>
+          <parameter name="length" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <type name="gsize" c:type="gsize*"/>
+          </parameter>
+          <parameter name="etag_out" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1" optional="1" allow-none="1">
+            <type name="utf8" c:type="char**"/>
+          </parameter>
+        </parameters>
+      </method>
+    </interface>
+    <class name="FileIcon" c:symbol-prefix="file_icon" c:type="GFileIcon" parent="GObject.Object" glib:type-name="GFileIcon" glib:get-type="g_file_icon_get_type" glib:type-struct="FileIconClass">
+      <method name="get_file" c:identifier="g_file_icon_get_file" glib:get-property="file">
+        <return-value transfer-ownership="none">
+          <type name="File" c:type="GFile*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="icon" transfer-ownership="none">
+            <type name="FileIcon" c:type="GFileIcon*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="InputStream" c:symbol-prefix="input_stream" c:type="GInputStream" parent="GObject.Object" abstract="1" glib:type-name="GInputStream" glib:get-type="g_input_stream_get_type" glib:type-struct="InputStreamClass">
+      <method name="close" c:identifier="g_input_stream_close" throws="1" glib:async-func="close_async">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="stream" transfer-ownership="none">
+            <type name="InputStream" c:type="GInputStream*"/>
+          </instance-parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="read" c:identifier="g_input_stream_read" throws="1">
+        <return-value transfer-ownership="none">
+          <type name="gssize" c:type="gssize"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="stream" transfer-ownership="none">
+            <type name="InputStream" c:type="GInputStream*"/>
+          </instance-parameter>
+          <parameter name="buffer" direction="out" caller-allocates="1" transfer-ownership="none">
+            <array length="1" zero-terminated="0" c:type="void*">
+              <type name="guint8"/>
+            </array>
+          </parameter>
+          <parameter name="count" transfer-ownership="none">
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="read_bytes_async" c:identifier="g_input_stream_read_bytes_async" version="2.34" glib:finish-func="read_bytes_finish" glib:sync-func="read_bytes">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="stream" transfer-ownership="none">
+            <type name="InputStream" c:type="GInputStream*"/>
+          </instance-parameter>
+          <parameter name="count" transfer-ownership="none">
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+          <parameter name="io_priority" transfer-ownership="none">
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="4">
+            <type name="AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="read_bytes_finish" c:identifier="g_input_stream_read_bytes_finish" version="2.34" throws="1">
+        <return-value transfer-ownership="full">
+          <type name="GLib.Bytes" c:type="GBytes*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="stream" transfer-ownership="none">
+            <type name="InputStream" c:type="GInputStream*"/>
+          </instance-parameter>
+          <parameter name="result" transfer-ownership="none">
+            <type name="AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="ListStore" c:symbol-prefix="list_store" c:type="GListStore" parent="GObject.Object" glib:type-name="GListStore" glib:get-type="g_list_store_get_type" glib:type-struct="ListStoreClass">
+      <constructor name="new" c:identifier="g_list_store_new" version="2.44">
+        <return-value transfer-ownership="full">
+          <type name="ListStore" c:type="GListStore*"/>
+        </return-value>
+        <parameters>
+          <parameter name="item_type" transfer-ownership="none">
+            <type name="GType" c:type="GType"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="append" c:identifier="g_list_store_append" version="2.44">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="store" transfer-ownership="none">
+            <type name="ListStore" c:type="GListStore*"/>
+          </instance-parameter>
+          <parameter name="item" transfer-ownership="none">
+            <type name="GObject.Object" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="remove_all" c:identifier="g_list_store_remove_all" version="2.44">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="store" transfer-ownership="none">
+            <type name="ListStore" c:type="GListStore*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="Menu" c:symbol-prefix="menu" c:type="GMenu" version="2.32" parent="MenuModel" glib:type-name="GMenu" glib:get-type="g_menu_get_type">
+      <constructor name="new" c:identifier="g_menu_new" version="2.32">
+        <return-value transfer-ownership="full">
+          <type name="Menu" c:type="GMenu*"/>
+        </return-value>
+      </constructor>
+      <method name="append" c:identifier="g_menu_append" version="2.32">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu" transfer-ownership="none">
+            <type name="Menu" c:type="GMenu*"/>
+          </instance-parameter>
+          <parameter name="label" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="detailed_action" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="remove_all" c:identifier="g_menu_remove_all" version="2.38">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu" transfer-ownership="none">
+            <type name="Menu" c:type="GMenu*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="Notification" c:symbol-prefix="notification" c:type="GNotification" version="2.40" parent="GObject.Object" glib:type-name="GNotification" glib:get-type="g_notification_get_type">
+      <constructor name="new" c:identifier="g_notification_new" version="2.40">
+        <return-value transfer-ownership="full">
+          <type name="Notification" c:type="GNotification*"/>
+        </return-value>
+        <parameters>
+          <parameter name="title" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="set_body" c:identifier="g_notification_set_body" version="2.40">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="notification" transfer-ownership="none">
+            <type name="Notification" c:type="GNotification*"/>
+          </instance-parameter>
+          <parameter name="body" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="OutputStream" c:symbol-prefix="output_stream" c:type="GOutputStream" parent="GObject.Object" abstract="1" glib:type-name="GOutputStream" glib:get-type="g_output_stream_get_type" glib:type-struct="OutputStreamClass">
+      <method name="close" c:identifier="g_output_stream_close" throws="1" glib:async-func="close_async">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="stream" transfer-ownership="none">
+            <type name="OutputStream" c:type="GOutputStream*"/>
+          </instance-parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="flush" c:identifier="g_output_stream_flush" throws="1" glib:async-func="flush_async">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="stream" transfer-ownership="none">
+            <type name="OutputStream" c:type="GOutputStream*"/>
+          </instance-parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="write" c:identifier="g_output_stream_write" throws="1" glib:async-func="write_async">
+        <return-value transfer-ownership="none">
+          <type name="gssize" c:type="gssize"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="stream" transfer-ownership="none">
+            <type name="OutputStream" c:type="GOutputStream*"/>
+          </instance-parameter>
+          <parameter name="buffer" transfer-ownership="none">
+            <array length="1" zero-terminated="0" c:type="void*">
+              <type name="guint8"/>
+            </array>
+          </parameter>
+          <parameter name="count" transfer-ownership="none">
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="write_all_async" c:identifier="g_output_stream_write_all_async" version="2.44" glib:finish-func="write_all_finish" glib:sync-func="write_all">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="stream" transfer-ownership="none">
+            <type name="OutputStream" c:type="GOutputStream*"/>
+          </instance-parameter>
+          <parameter name="buffer" transfer-ownership="none">
+            <array length="1" zero-terminated="0" c:type="void*">
+              <type name="guint8"/>
+            </array>
+          </parameter>
+          <parameter name="count" transfer-ownership="none">
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+          <parameter name="io_priority" transfer-ownership="none">
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="5">
+            <type name="AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="write_all_finish" c:identifier="g_output_stream_write_all_finish" version="2.44" throws="1">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="stream" transfer-ownership="none">
+            <type name="OutputStream" c:type="GOutputStream*"/>
+          </instance-parameter>
+          <parameter name="result" transfer-ownership="none">
+            <type name="AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+          <parameter name="bytes_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <type name="gsize" c:type="gsize*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="SimpleAction" c:symbol-prefix="simple_action" c:type="GSimpleAction" parent="GObject.Object" glib:type-name="GSimpleAction" glib:get-type="g_simple_action_get_type">
+      <constructor name="new" c:identifier="g_simple_action_new" version="2.28">
+        <return-value transfer-ownership="full">
+          <type name="SimpleAction" c:type="GSimpleAction*"/>
+        </return-value>
+        <parameters>
+          <parameter name="name" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="parameter_type" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="GLib.VariantType" c:type="const GVariantType*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+    </class>
+    <class name="Subprocess" c:symbol-prefix="subprocess" c:type="GSubprocess" version="2.40" parent="GObject.Object" glib:type-name="GSubprocess" glib:get-type="g_subprocess_get_type">
+      <constructor name="new" c:identifier="g_subprocess_new" shadowed-by="newv" version="2.40" introspectable="0">
+        <return-value transfer-ownership="full">
+          <type name="Subprocess" c:type="GSubprocess*"/>
+        </return-value>
+        <parameters>
+          <parameter name="flags" transfer-ownership="none">
+            <type name="SubprocessFlags" c:type="GSubprocessFlags"/>
+          </parameter>
+          <parameter name="error" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="GLib.Error" c:type="GError**"/>
+          </parameter>
+          <parameter name="argv0" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="..." transfer-ownership="none">
+            <varargs/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="newv" c:identifier="g_subprocess_newv" shadows="new" version="2.40" throws="1">
+        <return-value transfer-ownership="full">
+          <type name="Subprocess" c:type="GSubprocess*"/>
+        </return-value>
+        <parameters>
+          <parameter name="argv" transfer-ownership="none">
+            <array c:type="const gchar* const*">
+              <type name="filename"/>
+            </array>
+          </parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <type name="SubprocessFlags" c:type="GSubprocessFlags"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="force_exit" c:identifier="g_subprocess_force_exit" version="2.40">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="subprocess" transfer-ownership="none">
+            <type name="Subprocess" c:type="GSubprocess*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_exit_status" c:identifier="g_subprocess_get_exit_status" version="2.40">
+        <return-value transfer-ownership="none">
+          <type name="gint" c:type="gint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="subprocess" transfer-ownership="none">
+            <type name="Subprocess" c:type="GSubprocess*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_stderr_pipe" c:identifier="g_subprocess_get_stderr_pipe" version="2.40">
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="InputStream" c:type="GInputStream*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="subprocess" transfer-ownership="none">
+            <type name="Subprocess" c:type="GSubprocess*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_stdin_pipe" c:identifier="g_subprocess_get_stdin_pipe" version="2.40">
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="OutputStream" c:type="GOutputStream*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="subprocess" transfer-ownership="none">
+            <type name="Subprocess" c:type="GSubprocess*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_stdout_pipe" c:identifier="g_subprocess_get_stdout_pipe" version="2.40">
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="InputStream" c:type="GInputStream*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="subprocess" transfer-ownership="none">
+            <type name="Subprocess" c:type="GSubprocess*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_successful" c:identifier="g_subprocess_get_successful" version="2.40">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="subprocess" transfer-ownership="none">
+            <type name="Subprocess" c:type="GSubprocess*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="wait" c:identifier="g_subprocess_wait" version="2.40" throws="1" glib:async-func="wait_async">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="subprocess" transfer-ownership="none">
+            <type name="Subprocess" c:type="GSubprocess*"/>
+          </instance-parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="wait_async" c:identifier="g_subprocess_wait_async" version="2.40" glib:finish-func="wait_finish" glib:sync-func="wait">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="subprocess" transfer-ownership="none">
+            <type name="Subprocess" c:type="GSubprocess*"/>
+          </instance-parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="2">
+            <type name="AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="wait_finish" c:identifier="g_subprocess_wait_finish" version="2.40" throws="1">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="subprocess" transfer-ownership="none">
+            <type name="Subprocess" c:type="GSubprocess*"/>
+          </instance-parameter>
+          <parameter name="result" transfer-ownership="none">
+            <type name="AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="Task" c:symbol-prefix="task" c:type="GTask" parent="GObject.Object" glib:type-name="GTask" glib:get-type="g_task_get_type" glib:type-struct="TaskClass">
+      <method name="propagate_pointer" c:identifier="g_task_propagate_pointer" version="2.36" throws="1">
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="task" transfer-ownership="none">
+            <type name="Task" c:type="GTask*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="ThemedIcon" c:symbol-prefix="themed_icon" c:type="GThemedIcon" parent="GObject.Object" glib:type-name="GThemedIcon" glib:get-type="g_themed_icon_get_type" glib:type-struct="ThemedIconClass">
+      <method name="get_names" c:identifier="g_themed_icon_get_names" glib:get-property="names">
+        <return-value transfer-ownership="none">
+          <array c:type="const gchar* const*">
+            <type name="utf8"/>
+          </array>
+        </return-value>
+        <parameters>
+          <instance-parameter name="icon" transfer-ownership="none">
+            <type name="ThemedIcon" c:type="GThemedIcon*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
+    <function name="bus_get_sync" c:identifier="g_bus_get_sync" version="2.26" throws="1" glib:async-func="bus_get">
+      <return-value transfer-ownership="full">
+        <type name="DBusConnection" c:type="GDBusConnection*"/>
+      </return-value>
+      <parameters>
+        <parameter name="bus_type" transfer-ownership="none">
+          <type name="BusType" c:type="GBusType"/>
+        </parameter>
+        <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="Cancellable" c:type="GCancellable*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <bitfield name="ApplicationFlags" version="2.28" glib:type-name="GApplicationFlags" glib:get-type="g_application_flags_get_type" c:type="GApplicationFlags"/>
+    <callback name="AsyncReadyCallback" c:type="GAsyncReadyCallback">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="source_object" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="GObject.Object" c:type="GObject*"/>
+        </parameter>
+        <parameter name="res" transfer-ownership="none">
+          <type name="AsyncResult" c:type="GAsyncResult*"/>
+        </parameter>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <enumeration name="BusType" version="2.26" glib:type-name="GBusType" glib:get-type="g_bus_type_get_type" c:type="GBusType"/>
+    <bitfield name="DBusCallFlags" version="2.26" glib:type-name="GDBusCallFlags" glib:get-type="g_dbus_call_flags_get_type" c:type="GDBusCallFlags"/>
+    <bitfield name="DBusProxyFlags" version="2.26" glib:type-name="GDBusProxyFlags" glib:get-type="g_dbus_proxy_flags_get_type" c:type="GDBusProxyFlags"/>
+    <bitfield name="SubprocessFlags" version="2.40" glib:type-name="GSubprocessFlags" glib:get-type="g_subprocess_flags_get_type" c:type="GSubprocessFlags"/>
+  </namespace>
+</repository>

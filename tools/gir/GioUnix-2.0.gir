@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repository version="1.2" xmlns:c="http://www.gtk.org/introspection/c/1.0" xmlns:glib="http://www.gtk.org/introspection/glib/1.0" xmlns="http://www.gtk.org/introspection/core/1.0">
+  <!-- Signature-only snapshot of GioUnix-2.0.gir from GLib 2.90.1. -->
+  <!-- Upstream SHA-256 d9793a9c9f4048c5194f91f13d14635119b7450b47e2e24032b21f8966dc9402 -->
+  <namespace name="GioUnix" version="2.0">
+    <class name="DesktopAppInfo" c:symbol-prefix="desktop_app_info" c:type="GDesktopAppInfo" parent="GObject.Object" glib:type-name="GDesktopAppInfo" glib:get-type="g_desktop_app_info_get_type" glib:type-struct="DesktopAppInfoClass">
+      <constructor name="new" c:identifier="g_desktop_app_info_new">
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="DesktopAppInfo" c:type="GDesktopAppInfo*"/>
+        </return-value>
+        <parameters>
+          <parameter name="desktop_id" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_from_filename" c:identifier="g_desktop_app_info_new_from_filename">
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="DesktopAppInfo" c:type="GDesktopAppInfo*"/>
+        </return-value>
+        <parameters>
+          <parameter name="filename" transfer-ownership="none">
+            <type name="filename" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_filename" c:identifier="g_desktop_app_info_get_filename" glib:get-property="filename" version="2.24">
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="filename" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="info" transfer-ownership="none">
+            <type name="DesktopAppInfo" c:type="GDesktopAppInfo*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
+  </namespace>
+</repository>

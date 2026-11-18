@@ -376,6 +376,57 @@ const exitCode = app.run([]);
 Deno.exit(exitCode);
 ```
 
+### Desktop application launches
+
+Use `AppInfo.getAll()` to list installed applications and `getIcon()` to read
+their file icons or icon-theme names. `DesktopAppInfo.fromId()` opens a specific
+Freedesktop desktop entry when the platform supports it. These lookups return
+owned objects. Call `unref()` when you finish using them.
+
+Create a display launch context from the user action that opens the app or URL.
+GTK uses it to send the startup notification to the desktop.
+
+```typescript
+import { AppInfo } from "@sigmasd/gtk/gio";
+
+openButton.onClick(() => {
+  const context = window.getDisplay().getAppLaunchContext();
+  try {
+    AppInfo.launchDefaultForUri("https://example.org", context);
+  } finally {
+    context.unref();
+  }
+});
+```
+
+`AppInfo.launchDefaultForUriAsync()` reports GIO's result through a promise
+while `EventLoop` runs. For an explicit application, pass `File` objects and the
+context to `app.launch(files, context)`.
+
+### Native preferences
+
+`PreferencesDialog` presents `PreferencesPage` groups inside a parent window.
+Use `NavigationPage` for a subpage and `NavigationView` for a navigation stack
+outside a preferences dialog. The `isSupported()` methods check availability
+before constructing these widgets.
+
+```typescript
+import {
+  NavigationPage,
+  PreferencesDialog,
+  PreferencesGroup,
+  PreferencesPage,
+} from "@sigmasd/gtk/adw";
+import { Label } from "@sigmasd/gtk/gtk4";
+
+const dialog = new PreferencesDialog();
+const page = new PreferencesPage();
+page.add(new PreferencesGroup());
+dialog.add(page);
+dialog.present(window);
+dialog.pushSubpage(new NavigationPage(new Label("Path actions"), "Paths"));
+```
+
 ## Architecture
 
 ### Low-Level FFI (`src/low/`)
@@ -491,6 +542,36 @@ export class MyWidget extends Widget {
     gtk4.symbols.gtk_my_widget_set_text(this.ptr, textCStr);
   }
 }
+```
+
+### Regenerating the native bindings
+
+The TypeScript GIR generator produces the low-level FFI tables for GLib,
+GObject, GIO, GTK 3, GTK 4 with GDK, libadwaita, and Ayatana AppIndicator. The
+checked-in tables in `src/low/generated` load directly at runtime. The wrappers
+in `src/high` implement the TypeScript API and handle native ownership and
+callback lifetimes.
+
+`tools/gir/bindings.json` lists the symbols, library version baselines, and
+exceptions such as the fixed calling signatures used for variadic functions. The
+generator reads the pinned signature snapshots alongside the manifest. Cairo's
+GIR describes cairo-gobject types, so the libcairo drawing calls still live in
+`src/low/cairo.ts`. The GLib loader also declares `g_free_ptr`, a jsGTK alias
+for taking the address of `g_free`.
+
+```sh
+deno task gir
+deno task gir:check
+deno task gir:test
+```
+
+When adding a symbol or updating a library, collect the upstream GIR files
+listed under `sources` in one directory and update the package versions in the
+manifest. Refresh the snapshots and review the generated signatures with the
+metadata changes.
+
+```sh
+deno task gir:refresh /path/to/upstream-gir
 ```
 
 ## Known Limitations

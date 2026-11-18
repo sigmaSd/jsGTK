@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repository version="1.2" xmlns:c="http://www.gtk.org/introspection/c/1.0" xmlns:glib="http://www.gtk.org/introspection/glib/1.0" xmlns="http://www.gtk.org/introspection/core/1.0">
+  <!-- Signature-only snapshot of GLibUnix-2.0.gir from GLib 2.90.1. -->
+  <!-- Upstream SHA-256 35a7b2faf3b15fe280b625341ed8f5ab99ea1ff29044d72fa8504f9b682e3367 -->
+  <namespace name="GLibUnix" version="2.0">
+    <function name="signal_add" c:identifier="g_unix_signal_add" shadowed-by="signal_add_full" version="2.30" introspectable="0">
+      <return-value transfer-ownership="none">
+        <type name="guint" c:type="guint"/>
+      </return-value>
+      <parameters>
+        <parameter name="signum" transfer-ownership="none">
+          <type name="gint" c:type="gint"/>
+        </parameter>
+        <parameter name="handler" transfer-ownership="none" closure="2">
+          <type name="GLib.SourceFunc" c:type="GSourceFunc"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </function>
+  </namespace>
+</repository>

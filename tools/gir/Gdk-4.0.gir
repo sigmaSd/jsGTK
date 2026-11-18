@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repository version="1.2" xmlns:c="http://www.gtk.org/introspection/c/1.0" xmlns:glib="http://www.gtk.org/introspection/glib/1.0" xmlns="http://www.gtk.org/introspection/core/1.0">
+  <!-- Signature-only snapshot of Gdk-4.0.gir from GTK 4.24.1. -->
+  <!-- Upstream SHA-256 df58f7b73f67f58d9f180b422c9dfa5b8062b5131ccc3486f83a046dbd332de7 -->
+  <namespace name="Gdk" version="4.0">
+    <class name="AppLaunchContext" c:symbol-prefix="app_launch_context" c:type="GdkAppLaunchContext" parent="Gio.AppLaunchContext" glib:type-name="GdkAppLaunchContext" glib:get-type="gdk_app_launch_context_get_type" glib:type-struct="AppLaunchContextClass">
+      <method name="set_timestamp" c:identifier="gdk_app_launch_context_set_timestamp">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <type name="AppLaunchContext" c:type="GdkAppLaunchContext*"/>
+          </instance-parameter>
+          <parameter name="timestamp" transfer-ownership="none">
+            <type name="guint32" c:type="guint32"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="Clipboard" c:symbol-prefix="clipboard" c:type="GdkClipboard" parent="GObject.Object" glib:type-name="GdkClipboard" glib:get-type="gdk_clipboard_get_type" glib:type-struct="ClipboardClass">
+      <method name="read_async" c:identifier="gdk_clipboard_read_async" glib:finish-func="read_finish">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="clipboard" transfer-ownership="none">
+            <type name="Clipboard" c:type="GdkClipboard*"/>
+          </instance-parameter>
+          <parameter name="mime_types" transfer-ownership="none">
+            <array c:type="const char**">
+              <type name="utf8" c:type="char*"/>
+            </array>
+          </parameter>
+          <parameter name="io_priority" transfer-ownership="none">
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="4">
+            <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="read_finish" c:identifier="gdk_clipboard_read_finish" throws="1">
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="Gio.InputStream" c:type="GInputStream*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="clipboard" transfer-ownership="none">
+            <type name="Clipboard" c:type="GdkClipboard*"/>
+          </instance-parameter>
+          <parameter name="result" transfer-ownership="none">
+            <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+          <parameter name="out_mime_type" direction="out" caller-allocates="0" transfer-ownership="none" optional="1" allow-none="1">
+            <type name="utf8" c:type="const char**"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="read_text_async" c:identifier="gdk_clipboard_read_text_async" glib:finish-func="read_text_finish">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="clipboard" transfer-ownership="none">
+            <type name="Clipboard" c:type="GdkClipboard*"/>
+          </instance-parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="2">
+            <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="read_text_finish" c:identifier="gdk_clipboard_read_text_finish" throws="1">
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="utf8" c:type="char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="clipboard" transfer-ownership="none">
+            <type name="Clipboard" c:type="GdkClipboard*"/>
+          </instance-parameter>
+          <parameter name="result" transfer-ownership="none">
+            <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="read_texture_async" c:identifier="gdk_clipboard_read_texture_async" glib:finish-func="read_texture_finish">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="clipboard" transfer-ownership="none">
+            <type name="Clipboard" c:type="GdkClipboard*"/>
+          </instance-parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="2">
+            <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="read_texture_finish" c:identifier="gdk_clipboard_read_texture_finish" throws="1">
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="Texture" c:type="GdkTexture*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="clipboard" transfer-ownership="none">
+            <type name="Clipboard" c:type="GdkClipboard*"/>
+          </instance-parameter>
+          <parameter name="result" transfer-ownership="none">
+            <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_content" c:identifier="gdk_clipboard_set_content">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="clipboard" transfer-ownership="none">
+            <type name="Clipboard" c:type="GdkClipboard*"/>
+          </instance-parameter>
+          <parameter name="provider" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="ContentProvider" c:type="GdkContentProvider*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_text" c:identifier="gdk_clipboard_set_text" introspectable="0">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="clipboard" transfer-ownership="none">
+            <type name="Clipboard" c:type="GdkClipboard*"/>
+          </instance-parameter>
+          <parameter name="text" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
+    <record name="ContentFormats" c:type="GdkContentFormats" opaque="1" glib:type-name="GdkContentFormats" glib:get-type="gdk_content_formats_get_type" c:symbol-prefix="content_formats"/>
+    <record name="ContentFormatsBuilder" c:type="GdkContentFormatsBuilder" opaque="1" glib:type-name="GdkContentFormatsBuilder" glib:get-type="gdk_content_formats_builder_get_type" c:symbol-prefix="content_formats_builder">
+      <constructor name="new" c:identifier="gdk_content_formats_builder_new">
+        <return-value transfer-ownership="full">
+          <type name="ContentFormatsBuilder" c:type="GdkContentFormatsBuilder*"/>
+        </return-value>
+      </constructor>
+      <method name="add_gtype" c:identifier="gdk_content_formats_builder_add_gtype">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="builder" transfer-ownership="none">
+            <type name="ContentFormatsBuilder" c:type="GdkContentFormatsBuilder*"/>
+          </instance-parameter>
+          <parameter name="type" transfer-ownership="none">
+            <type name="GType" c:type="GType"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="add_mime_type" c:identifier="gdk_content_formats_builder_add_mime_type">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="builder" transfer-ownership="none">
+            <type name="ContentFormatsBuilder" c:type="GdkContentFormatsBuilder*"/>
+          </instance-parameter>
+          <parameter name="mime_type" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="to_formats" c:identifier="gdk_content_formats_builder_to_formats">
+        <return-value transfer-ownership="full">
+          <type name="ContentFormats" c:type="GdkContentFormats*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="builder" transfer-ownership="none">
+            <type name="ContentFormatsBuilder" c:type="GdkContentFormatsBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="unref" c:identifier="gdk_content_formats_builder_unref">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="builder" transfer-ownership="none">
+            <type name="ContentFormatsBuilder" c:type="GdkContentFormatsBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </record>
+    <class name="ContentProvider" c:symbol-prefix="content_provider" c:type="GdkContentProvider" parent="GObject.Object" glib:type-name="GdkContentProvider" glib:get-type="gdk_content_provider_get_type" glib:type-struct="ContentProviderClass">
+      <constructor name="new_for_bytes" c:identifier="gdk_content_provider_new_for_bytes">
+        <return-value transfer-ownership="full">
+          <type name="ContentProvider" c:type="GdkContentProvider*"/>
+        </return-value>
+        <parameters>
+          <parameter name="mime_type" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="bytes" transfer-ownership="none">
+            <type name="GLib.Bytes" c:type="GBytes*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_union" c:identifier="gdk_content_provider_new_union">
+        <return-value transfer-ownership="full">
+          <type name="ContentProvider" c:type="GdkContentProvider*"/>
+        </return-value>
+        <parameters>
+          <parameter name="providers" transfer-ownership="full" nullable="1" allow-none="1">
+            <array length="1" zero-terminated="0" c:type="GdkContentProvider**">
+              <type name="ContentProvider" c:type="GdkContentProvider*"/>
+            </array>
+          </parameter>
+          <parameter name="n_providers" transfer-ownership="none">
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+        </parameters>
+      </constructor>
+    </class>
+    <class name="Cursor" c:symbol-prefix="cursor" c:type="GdkCursor" parent="GObject.Object" glib:type-name="GdkCursor" glib:get-type="gdk_cursor_get_type" glib:type-struct="CursorClass">
+      <constructor name="new_from_name" c:identifier="gdk_cursor_new_from_name">
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="Cursor" c:type="GdkCursor*"/>
+        </return-value>
+        <parameters>
+          <parameter name="name" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="fallback" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cursor" c:type="GdkCursor*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+    </class>
+    <class name="Display" c:symbol-prefix="display" c:type="GdkDisplay" parent="GObject.Object" glib:type-name="GdkDisplay" glib:get-type="gdk_display_get_type" glib:type-struct="DisplayClass">
+      <function name="get_default" c:identifier="gdk_display_get_default">
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="Display" c:type="GdkDisplay*"/>
+        </return-value>
+      </function>
+      <method name="get_app_launch_context" c:identifier="gdk_display_get_app_launch_context">
+        <return-value transfer-ownership="full">
+          <type name="AppLaunchContext" c:type="GdkAppLaunchContext*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="display" transfer-ownership="none">
+            <type name="Display" c:type="GdkDisplay*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_clipboard" c:identifier="gdk_display_get_clipboard">
+        <return-value transfer-ownership="none">
+          <type name="Clipboard" c:type="GdkClipboard*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="display" transfer-ownership="none">
+            <type name="Display" c:type="GdkDisplay*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="Texture" c:symbol-prefix="texture" c:type="GdkTexture" parent="GObject.Object" abstract="1" glib:type-name="GdkTexture" glib:get-type="gdk_texture_get_type" glib:type-struct="TextureClass">
+      <method name="save_to_png" c:identifier="gdk_texture_save_to_png">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="texture" transfer-ownership="none">
+            <type name="Texture" c:type="GdkTexture*"/>
+          </instance-parameter>
+          <parameter name="filename" transfer-ownership="none">
+            <type name="filename" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
+    <bitfield name="DragAction" glib:type-name="GdkDragAction" glib:get-type="gdk_drag_action_get_type" c:type="GdkDragAction"/>
+  </namespace>
+</repository>

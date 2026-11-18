@@ -1,6 +1,6 @@
 {
   "name": "@sigmasd/gtk",
-  "version": "0.67.0",
+  "version": "0.68.0",
   "exports": {
     "./eventloop": "./src/high/eventloop.ts",
     "./gtk4": "./src/high/gtk4.ts",
@@ -20,10 +20,15 @@
     ]
   },
   "imports": {
-    "@sigma/deno-compat": "jsr:@sigma/deno-compat@0.23.0"
+    "@sigma/deno-compat": "jsr:@sigma/deno-compat@0.23.0",
+    "@xmldom/xmldom": "npm:@xmldom/xmldom@0.9.12"
   },
   "tasks": {
-    "test": "deno lint && deno check && deno test --allow-ffi --allow-env && bun test && npm i && node --test"
+    "test": "deno lint && deno check && deno test --v8-flags=--expose-gc --allow-ffi --allow-env test/runner_test.ts && bun test test/runner_test.ts && npm i && node --expose-gc --test-force-exit --test test/runner_test.ts",
+    "gir": "deno run --allow-read=tools/gir --allow-write=src/low/generated --allow-run=deno tools/generate_gir.ts",
+    "gir:check": "deno run --allow-read=tools/gir,src/low/generated --allow-run=deno tools/generate_gir.ts --check",
+    "gir:refresh": "deno run --allow-read --allow-write=tools/gir,src/low/generated --allow-run=deno tools/generate_gir.ts --refresh-from",
+    "gir:test": "deno test --allow-read=tools/gir tools/generate_gir_test.ts"
   },
   "nodeModulesDir": "auto"
 }

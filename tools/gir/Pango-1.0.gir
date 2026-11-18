@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repository version="1.2" xmlns:c="http://www.gtk.org/introspection/c/1.0" xmlns:glib="http://www.gtk.org/introspection/glib/1.0" xmlns="http://www.gtk.org/introspection/core/1.0">
+  <!-- Signature-only snapshot of Pango-1.0.gir from Pango 1.58.2. -->
+  <!-- Upstream SHA-256 8366e5e18e81b0d8660bc5c9d7036b9d00608597e22f20c922e5d8dddfc08cc4 -->
+  <namespace name="Pango" version="1.0">
+    <enumeration name="EllipsizeMode" glib:type-name="PangoEllipsizeMode" glib:get-type="pango_ellipsize_mode_get_type" c:type="PangoEllipsizeMode"/>
+  </namespace>
+</repository>

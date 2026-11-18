@@ -78,6 +78,12 @@ jobs:
         with:
           node-version: 22
 
+      - name: Check generated GIR bindings
+        if: runner.os == 'Linux'
+        run: |
+          deno task gir:check
+          deno task gir:test
+
       - name: Run tests
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
