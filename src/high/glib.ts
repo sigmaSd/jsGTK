@@ -198,3 +198,6 @@ export function ioAddWatch(
   glib.symbols.g_io_channel_unref(channel);
   return id;
 }
+
+/** An error GLib reported; generated methods that can fail throw it. */
+export { GError } from "./wrappers.ts";

@@ -17,7 +17,7 @@ import {
 import { Toast, ToastPriority } from "../src/high/adw.ts";
 import { File } from "../src/high/gio.ts";
 import { EventLoop } from "../src/high/eventloop.ts";
-import { GError } from "../src/high/wrappers.ts";
+import { GError } from "../src/high/glib.ts";
 
 function assert(condition: boolean, message: string) {
   if (!condition) throw new Error(message);

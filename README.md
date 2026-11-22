@@ -565,8 +565,8 @@ Generated code lives in `src/high/generated/`:
 - objects GTK lends come back as the wrapper already in use, or one of the
   object's real class; objects it hands over (`transfer full`) are owned by the
   returned wrapper, and `unref()` releases them;
-- methods that can fail throw a `GError` (from `./src/high/wrappers.ts`) with
-  GLib's message, domain and code;
+- methods that can fail throw a `GError` (from `@sigmasd/gtk/glib`) with GLib's
+  message, domain and code;
 - async methods with a finish function return promises, e.g.
   `await file.queryInfoAsync("standard::type", 0, 0, null)`;
 - signals get typed `on…` helpers, and a handler can return a boolean or number
