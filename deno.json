@@ -13,6 +13,10 @@
     "./cairo": "./src/high/cairo.ts"
   },
   "license": "MIT",
+  "minimumDependencyAge": {
+    "age": "P1D",
+    "exclude": ["jsr:@sigma/deno-compat", "npm:@jsr/sigma__deno-compat"]
+  },
   "publish": {
     "include": [
       "src",
