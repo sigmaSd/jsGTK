@@ -231,6 +231,11 @@ export class AppInfo extends GObject {
     return readCStr(gio.symbols.g_app_info_get_display_name(this.ptr));
   }
 
+  /** The program the application runs, as written in its launcher. */
+  getExecutable(): string {
+    return readCStr(gio.symbols.g_app_info_get_executable(this.ptr));
+  }
+
   getDescription(): string | null {
     const ptr = gio.symbols.g_app_info_get_description(this.ptr);
     return ptr ? readCStr(ptr) : null;
@@ -385,6 +390,14 @@ export class DesktopAppInfo extends AppInfo {
 
   getFilename(): string | null {
     const ptr = gio.symbols.g_desktop_app_info_get_filename?.(this.ptr);
+    return ptr ? readCStr(ptr) : null;
+  }
+
+  /** The window class the application sets, from `StartupWMClass`. */
+  getStartupWmClass(): string | null {
+    const ptr = gio.symbols.g_desktop_app_info_get_startup_wm_class?.(
+      this.ptr,
+    );
     return ptr ? readCStr(ptr) : null;
   }
 }

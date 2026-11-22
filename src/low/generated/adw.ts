@@ -498,4 +498,122 @@ export const adwSymbols = {
   adw_is_initialized: { parameters: [], result: "gboolean" },
   // Since 1.5.
   adw_dialog_present: { parameters: ["pointer", "pointer"], result: "void" },
+  adw_window_title_new: { parameters: ["buffer", "buffer"], result: "pointer" },
+  adw_window_title_set_title: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  adw_window_title_set_subtitle: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  adw_button_content_new: { parameters: [], result: "pointer" },
+  adw_button_content_set_icon_name: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  adw_button_content_set_label: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  adw_toast_overlay_new: { parameters: [], result: "pointer" },
+  adw_toast_overlay_set_child: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  adw_toast_overlay_add_toast: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  // Return transfer full.
+  adw_toast_new: { parameters: ["buffer"], result: "pointer" },
+  adw_toast_set_title: { parameters: ["pointer", "buffer"], result: "void" },
+  adw_toast_set_button_label: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  adw_toast_set_timeout: { parameters: ["pointer", "u32"], result: "void" },
+  adw_toast_set_priority: { parameters: ["pointer", "i32"], result: "void" },
+  adw_toast_dismiss: { parameters: ["pointer"], result: "void" },
+  // Since 1.4.
+  adw_overlay_split_view_new: { parameters: [], result: "pointer" },
+  // Since 1.4.
+  adw_overlay_split_view_set_content: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  // Since 1.4.
+  adw_overlay_split_view_set_sidebar: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  // Since 1.4.
+  adw_overlay_split_view_set_show_sidebar: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Since 1.4.
+  adw_overlay_split_view_get_show_sidebar: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  // Since 1.4.
+  adw_overlay_split_view_set_collapsed: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Since 1.4.
+  adw_overlay_split_view_set_sidebar_position: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  // Since 1.4.
+  adw_overlay_split_view_set_max_sidebar_width: {
+    parameters: ["pointer", "f64"],
+    result: "void",
+  },
+  // Since 1.4.
+  adw_overlay_split_view_set_min_sidebar_width: {
+    parameters: ["pointer", "f64"],
+    result: "void",
+  },
+  // Since 1.4.
+  adw_overlay_split_view_set_sidebar_width_fraction: {
+    parameters: ["pointer", "f64"],
+    result: "void",
+  },
+  // Since 1.4.
+  adw_spin_row_new_with_range: {
+    parameters: ["f64", "f64", "f64"],
+    result: "pointer",
+  },
+  // Since 1.4.
+  adw_spin_row_set_value: { parameters: ["pointer", "f64"], result: "void" },
+  // Since 1.4.
+  adw_spin_row_get_value: { parameters: ["pointer"], result: "f64" },
+  // Since 1.4.
+  adw_spin_row_set_digits: { parameters: ["pointer", "u32"], result: "void" },
+  // Since 1.4.
+  adw_spin_row_set_range: {
+    parameters: ["pointer", "f64", "f64"],
+    result: "void",
+  },
+  adw_action_row_add_prefix: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  adw_action_row_set_activatable_widget: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  adw_status_page_set_child: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  adw_style_manager_get_dark: { parameters: ["pointer"], result: "gboolean" },
+  // Since 1.1.
+  adw_preferences_group_set_header_suffix: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
 } as const;

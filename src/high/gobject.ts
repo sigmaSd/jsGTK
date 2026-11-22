@@ -150,6 +150,19 @@ export class GObject {
     return new GObject(ptr) as T;
   }
 
+  /**
+   * @internal
+   * Return the wrapper already registered for a pointer, without creating one
+   * or taking a reference. Used by callbacks that receive borrowed pointers.
+   */
+  static lookup<T extends GObject>(ptr: Deno.PointerValue): T | null {
+    if (!ptr) return null;
+    const existing = GObject.instances.get(
+      BigInt(Deno.UnsafePointer.value(ptr)),
+    );
+    return (existing as T | undefined) ?? null;
+  }
+
   unref(): void {
     if (this.ptr) {
       const val = BigInt(Deno.UnsafePointer.value(this.ptr));

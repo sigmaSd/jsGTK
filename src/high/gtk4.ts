@@ -148,6 +148,26 @@ export const DragAction = {
   ASK: 8,
 } as const;
 
+// GtkPackType (which end of a container a child sits at)
+export const PackType = {
+  START: 0,
+  END: 1,
+} as const;
+
+// GtkRevealerTransitionType
+export const RevealerTransitionType = {
+  NONE: 0,
+  CROSSFADE: 1,
+  SLIDE_RIGHT: 2,
+  SLIDE_LEFT: 3,
+  SLIDE_UP: 4,
+  SLIDE_DOWN: 5,
+  SWING_RIGHT: 6,
+  SWING_LEFT: 7,
+  SWING_UP: 8,
+  SWING_DOWN: 9,
+} as const;
+
 export const SizeGroupMode = {
   NONE: 0,
   HORIZONTAL: 1,
@@ -329,6 +349,21 @@ export class Widget extends GObject {
 
   isVisible(): boolean {
     return gtk4.symbols.gtk_widget_is_visible(this.ptr);
+  }
+
+  /** Set the widget's opacity, from 0 (invisible) to 1 (opaque). */
+  setOpacity(opacity: number): void {
+    gtk4.symbols.gtk_widget_set_opacity(this.ptr, opacity);
+  }
+
+  /** Whether the widget can receive pointer events. */
+  setCanTarget(canTarget: boolean): void {
+    gtk4.symbols.gtk_widget_set_can_target(this.ptr, canTarget);
+  }
+
+  /** Whether the widget can receive keyboard focus. */
+  setFocusable(focusable: boolean): void {
+    gtk4.symbols.gtk_widget_set_focusable(this.ptr, focusable);
   }
 }
 
@@ -811,6 +846,11 @@ export class Label extends Widget {
   setSelectable(selectable: boolean): void {
     gtk4.symbols.gtk_label_set_selectable(this.ptr, selectable);
   }
+
+  /** Reserve room for at least this many characters. */
+  setWidthChars(nChars: number): void {
+    gtk4.symbols.gtk_label_set_width_chars(this.ptr, nChars);
+  }
 }
 
 // GTK Button
@@ -861,6 +901,11 @@ export class Button extends Widget {
     gtk4.symbols.gtk_button_set_icon_name(this.ptr, iconNameCStr);
   }
 
+  /** Use a custom widget, such as a box of icons and labels, as the content. */
+  setChild(child: Widget | null): void {
+    gtk4.symbols.gtk_button_set_child(this.ptr, child?.ptr ?? null);
+  }
+
   // High-level signal connection for clicked
   onClick(callback: () => void): number {
     return this.connect("clicked", callback);
@@ -883,6 +928,11 @@ export class ToggleButton extends Button {
 
   onToggled(callback: () => void): number {
     return this.connect("toggled", callback);
+  }
+
+  /** Join a group of toggle buttons where only one can be active at a time. */
+  setGroup(group: ToggleButton | null): void {
+    gtk4.symbols.gtk_toggle_button_set_group(this.ptr, group?.ptr ?? null);
   }
 }
 
@@ -949,6 +999,35 @@ export class Overlay extends Widget {
 
   addOverlay(widget: Widget): void {
     gtk4.symbols.gtk_overlay_add_overlay(this.ptr, widget.ptr);
+  }
+}
+
+// GTK Revealer: shows or hides its child with an animation
+export class Revealer extends Widget {
+  constructor() {
+    super(gtk4.symbols.gtk_revealer_new());
+  }
+
+  setChild(child: Widget | null): void {
+    gtk4.symbols.gtk_revealer_set_child(this.ptr, child?.ptr ?? null);
+  }
+
+  setRevealChild(reveal: boolean): void {
+    gtk4.symbols.gtk_revealer_set_reveal_child(this.ptr, reveal);
+  }
+
+  getRevealChild(): boolean {
+    return gtk4.symbols.gtk_revealer_get_reveal_child(this.ptr);
+  }
+
+  /** One of {@link RevealerTransitionType}. */
+  setTransitionType(type: number): void {
+    gtk4.symbols.gtk_revealer_set_transition_type(this.ptr, type);
+  }
+
+  /** Animation length in milliseconds. */
+  setTransitionDuration(duration: number): void {
+    gtk4.symbols.gtk_revealer_set_transition_duration(this.ptr, duration);
   }
 }
 
@@ -1154,6 +1233,24 @@ export class ListBoxRow extends Widget {
   getIndex(): number {
     return gtk4.symbols.gtk_list_box_row_get_index(this.ptr);
   }
+
+  /** Tell the list box to re-run its sort and filter functions for this row. */
+  changed(): void {
+    gtk4.symbols.gtk_list_box_row_changed(this.ptr);
+  }
+
+  setActivatable(activatable: boolean): void {
+    gtk4.symbols.gtk_list_box_row_set_activatable(this.ptr, activatable);
+  }
+}
+
+/** The registered wrapper for a borrowed row pointer, or a plain row wrapper. */
+function borrowedRow(ptr: Deno.PointerValue): ListBoxRow {
+  const existing = GObject.lookup(ptr);
+  if (existing instanceof ListBoxRow) return existing;
+  const row = Object.create(ListBoxRow.prototype) as ListBoxRow;
+  row.ptr = ptr;
+  return row;
 }
 
 // GTK ListBox extends GtkWidget
@@ -1189,10 +1286,8 @@ export class ListBox extends Widget {
         parameters: ["pointer", "pointer"],
         result: "i32",
       },
-      (rowPtr: Deno.PointerValue, _userData: Deno.PointerValue) => {
-        const row = new ListBoxRow(rowPtr);
-        return Number(callback(row));
-      },
+      (rowPtr: Deno.PointerValue, _userData: Deno.PointerValue) =>
+        Number(callback(borrowedRow(rowPtr))),
     );
     this.retainCallback(cb);
     gtk4.symbols.gtk_list_box_set_filter_func(
@@ -1207,10 +1302,41 @@ export class ListBox extends Widget {
     gtk4.symbols.gtk_list_box_invalidate_filter(this.ptr);
   }
 
+  /**
+   * Order rows with a comparison function. Return a negative number when `a`
+   * comes first, a positive number when `b` comes first, or 0 to keep them.
+   * Rows receive the wrapper they were appended with when one exists.
+   */
+  setSortFunc(callback: (a: ListBoxRow, b: ListBoxRow) => number): void {
+    const cb = new Deno.UnsafeCallback(
+      {
+        parameters: ["pointer", "pointer", "pointer"],
+        result: "i32",
+      },
+      (aPtr, bPtr) => {
+        const result = callback(borrowedRow(aPtr), borrowedRow(bPtr));
+        return Number.isFinite(result) ? Math.sign(result) : 0;
+      },
+    );
+    this.retainCallback(cb);
+    gtk4.symbols.gtk_list_box_set_sort_func(this.ptr, cb.pointer, null, null);
+  }
+
+  invalidateSort(): void {
+    gtk4.symbols.gtk_list_box_invalidate_sort(this.ptr);
+  }
+
+  /** Widget shown when the list has no visible rows. */
+  setPlaceholder(placeholder: Widget | null): void {
+    gtk4.symbols.gtk_list_box_set_placeholder(
+      this.ptr,
+      placeholder?.ptr ?? null,
+    );
+  }
+
   getSelectedRow(): ListBoxRow | null {
     const ptr = gtk4.symbols.gtk_list_box_get_selected_row(this.ptr);
-    if (!ptr) return null;
-    return new ListBoxRow(ptr);
+    return ptr ? borrowedRow(ptr) : null;
   }
 
   selectRow(row: ListBoxRow | null): void {
@@ -1221,9 +1347,8 @@ export class ListBox extends Widget {
   onRowActivated(callback: (row: ListBoxRow, index: number) => void): number {
     return this.connect("row-activated", (rowPtr: Deno.PointerValue) => {
       if (rowPtr) {
-        const row = new ListBoxRow(rowPtr);
-        const index = row.getIndex();
-        callback(row, index);
+        const row = borrowedRow(rowPtr);
+        callback(row, row.getIndex());
       }
     });
   }
@@ -1366,6 +1491,20 @@ export class SearchEntry extends Entry {
   constructor(ptr?: Deno.PointerValue) {
     const actualPtr = ptr ?? gtk4.symbols.gtk_search_entry_new();
     super(actualPtr);
+  }
+
+  /** GtkSearchEntry is not a GtkEntry, so set the property directly. */
+  override setPlaceholderText(text: string): void {
+    this.setProperty("placeholder-text", text);
+  }
+
+  /** Runs shortly after the user stops typing. */
+  onSearchChanged(callback: () => void): number {
+    return GObject.prototype.connect.call(
+      this,
+      "search-changed",
+      () => callback(),
+    );
   }
 }
 
@@ -1552,6 +1691,22 @@ export class MenuButton extends Widget {
   getLabel(): string {
     const ptr = gtk4.symbols.gtk_menu_button_get_label(this.ptr);
     return readCStr(ptr);
+  }
+
+  /** Use a custom widget as the button's content. */
+  setChild(child: Widget | null): void {
+    gtk4.symbols.gtk_menu_button_set_child(this.ptr, child?.ptr ?? null);
+  }
+
+  setAlwaysShowArrow(alwaysShowArrow: boolean): void {
+    gtk4.symbols.gtk_menu_button_set_always_show_arrow(
+      this.ptr,
+      alwaysShowArrow,
+    );
+  }
+
+  popdown(): void {
+    gtk4.symbols.gtk_menu_button_popdown(this.ptr);
   }
 }
 
@@ -1988,6 +2143,34 @@ export class EventControllerKey extends EventController {
       },
     );
     return this.connectNative("key-pressed", cb);
+  }
+}
+
+/** Tracks the pointer entering, leaving and moving over a widget. */
+export class EventControllerMotion extends EventController {
+  constructor() {
+    super(gtk4.symbols.gtk_event_controller_motion_new());
+  }
+
+  onEnter(callback: (x: number, y: number) => void): number {
+    const cb = new Deno.UnsafeCallback(
+      { parameters: ["pointer", "f64", "f64", "pointer"], result: "void" },
+      (_self, x, y) => callback(x, y),
+    );
+    return this.connectNative("enter", cb);
+  }
+
+  onLeave(callback: () => void): number {
+    const cb = new Deno.UnsafeCallback(
+      { parameters: ["pointer", "pointer"], result: "void" },
+      () => callback(),
+    );
+    return this.connectNative("leave", cb);
+  }
+
+  /** Whether the pointer is over the widget or one of its children. */
+  containsPointer(): boolean {
+    return gtk4.symbols.gtk_event_controller_motion_contains_pointer(this.ptr);
   }
 }
 

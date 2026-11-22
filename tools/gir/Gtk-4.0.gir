@@ -284,6 +284,19 @@
           </instance-parameter>
         </parameters>
       </method>
+      <method name="set_child" c:identifier="gtk_button_set_child" glib:set-property="child">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="button" transfer-ownership="none">
+            <type name="Button" c:type="GtkButton*"/>
+          </instance-parameter>
+          <parameter name="child" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Widget" c:type="GtkWidget*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_icon_name" c:identifier="gtk_button_set_icon_name" glib:set-property="icon-name">
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -815,6 +828,23 @@
         </return-value>
       </constructor>
     </class>
+    <class name="EventControllerMotion" c:symbol-prefix="event_controller_motion" c:type="GtkEventControllerMotion" parent="EventController" glib:type-name="GtkEventControllerMotion" glib:get-type="gtk_event_controller_motion_get_type" glib:type-struct="EventControllerMotionClass">
+      <constructor name="new" c:identifier="gtk_event_controller_motion_new">
+        <return-value transfer-ownership="full">
+          <type name="EventController" c:type="GtkEventController*"/>
+        </return-value>
+      </constructor>
+      <method name="contains_pointer" c:identifier="gtk_event_controller_motion_contains_pointer" glib:get-property="contains-pointer">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="EventControllerMotion" c:type="GtkEventControllerMotion*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
     <class name="FileDialog" c:symbol-prefix="file_dialog" c:type="GtkFileDialog" version="4.10" parent="GObject.Object" glib:type-name="GtkFileDialog" glib:get-type="gtk_file_dialog_get_type" glib:type-struct="FileDialogClass">
       <constructor name="new" c:identifier="gtk_file_dialog_new" version="4.10">
         <return-value transfer-ownership="full">
@@ -1272,6 +1302,19 @@
           </parameter>
         </parameters>
       </method>
+      <method name="set_width_chars" c:identifier="gtk_label_set_width_chars" glib:set-property="width-chars">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+          <parameter name="n_chars" transfer-ownership="none">
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_wrap" c:identifier="gtk_label_set_wrap" glib:set-property="wrap">
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -1384,6 +1427,16 @@
           </instance-parameter>
         </parameters>
       </method>
+      <method name="invalidate_sort" c:identifier="gtk_list_box_invalidate_sort">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="prepend" c:identifier="gtk_list_box_prepend">
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -1452,6 +1505,19 @@
           </parameter>
         </parameters>
       </method>
+      <method name="set_placeholder" c:identifier="gtk_list_box_set_placeholder">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+          <parameter name="placeholder" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Widget" c:type="GtkWidget*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_selection_mode" c:identifier="gtk_list_box_set_selection_mode" glib:set-property="selection-mode">
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -1478,6 +1544,25 @@
           </parameter>
         </parameters>
       </method>
+      <method name="set_sort_func" c:identifier="gtk_list_box_set_sort_func">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+          <parameter name="sort_func" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="1" destroy="2">
+            <type name="ListBoxSortFunc" c:type="GtkListBoxSortFunc"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="destroy" transfer-ownership="none" scope="async">
+            <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+        </parameters>
+      </method>
     </class>
     <class name="ListBoxRow" c:symbol-prefix="list_box_row" c:type="GtkListBoxRow" parent="Widget" glib:type-name="GtkListBoxRow" glib:get-type="gtk_list_box_row_get_type" glib:type-struct="ListBoxRowClass">
       <constructor name="new" c:identifier="gtk_list_box_row_new">
@@ -1485,6 +1570,16 @@
           <type name="Widget" c:type="GtkWidget*"/>
         </return-value>
       </constructor>
+      <method name="changed" c:identifier="gtk_list_box_row_changed">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="row" transfer-ownership="none">
+            <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_child" c:identifier="gtk_list_box_row_get_child" glib:get-property="child">
         <return-value transfer-ownership="none" nullable="1">
           <type name="Widget" c:type="GtkWidget*"/>
@@ -1503,6 +1598,19 @@
           <instance-parameter name="row" transfer-ownership="none">
             <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_activatable" c:identifier="gtk_list_box_row_set_activatable" glib:set-property="activatable">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="row" transfer-ownership="none">
+            <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
+          </instance-parameter>
+          <parameter name="activatable" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
         </parameters>
       </method>
       <method name="set_child" c:identifier="gtk_list_box_row_set_child" glib:set-property="child">
@@ -1568,6 +1676,42 @@
           <instance-parameter name="menu_button" transfer-ownership="none">
             <type name="MenuButton" c:type="GtkMenuButton*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="popdown" c:identifier="gtk_menu_button_popdown">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu_button" transfer-ownership="none">
+            <type name="MenuButton" c:type="GtkMenuButton*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_always_show_arrow" c:identifier="gtk_menu_button_set_always_show_arrow" glib:set-property="always-show-arrow" version="4.4">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu_button" transfer-ownership="none">
+            <type name="MenuButton" c:type="GtkMenuButton*"/>
+          </instance-parameter>
+          <parameter name="always_show_arrow" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_child" c:identifier="gtk_menu_button_set_child" glib:set-property="child" version="4.6">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu_button" transfer-ownership="none">
+            <type name="MenuButton" c:type="GtkMenuButton*"/>
+          </instance-parameter>
+          <parameter name="child" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Widget" c:type="GtkWidget*"/>
+          </parameter>
         </parameters>
       </method>
       <method name="set_icon_name" c:identifier="gtk_menu_button_set_icon_name" glib:set-property="icon-name">
@@ -1831,6 +1975,75 @@
           </instance-parameter>
           <parameter name="adjustment" transfer-ownership="none">
             <type name="Adjustment" c:type="GtkAdjustment*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="Revealer" c:symbol-prefix="revealer" c:type="GtkRevealer" parent="Widget" glib:type-name="GtkRevealer" glib:get-type="gtk_revealer_get_type">
+      <constructor name="new" c:identifier="gtk_revealer_new">
+        <return-value transfer-ownership="none">
+          <type name="Widget" c:type="GtkWidget*"/>
+        </return-value>
+      </constructor>
+      <method name="get_reveal_child" c:identifier="gtk_revealer_get_reveal_child" glib:get-property="reveal-child">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="revealer" transfer-ownership="none">
+            <type name="Revealer" c:type="GtkRevealer*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_child" c:identifier="gtk_revealer_set_child" glib:set-property="child">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="revealer" transfer-ownership="none">
+            <type name="Revealer" c:type="GtkRevealer*"/>
+          </instance-parameter>
+          <parameter name="child" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Widget" c:type="GtkWidget*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_reveal_child" c:identifier="gtk_revealer_set_reveal_child" glib:set-property="reveal-child">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="revealer" transfer-ownership="none">
+            <type name="Revealer" c:type="GtkRevealer*"/>
+          </instance-parameter>
+          <parameter name="reveal_child" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_transition_duration" c:identifier="gtk_revealer_set_transition_duration" glib:set-property="transition-duration">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="revealer" transfer-ownership="none">
+            <type name="Revealer" c:type="GtkRevealer*"/>
+          </instance-parameter>
+          <parameter name="duration" transfer-ownership="none">
+            <type name="guint" c:type="guint"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_transition_type" c:identifier="gtk_revealer_set_transition_type" glib:set-property="transition-type">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="revealer" transfer-ownership="none">
+            <type name="Revealer" c:type="GtkRevealer*"/>
+          </instance-parameter>
+          <parameter name="transition" transfer-ownership="none">
+            <type name="RevealerTransitionType" c:type="GtkRevealerTransitionType"/>
           </parameter>
         </parameters>
       </method>
@@ -2674,6 +2887,19 @@
           </parameter>
         </parameters>
       </method>
+      <method name="set_group" c:identifier="gtk_toggle_button_set_group" glib:set-property="group">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="toggle_button" transfer-ownership="none">
+            <type name="ToggleButton" c:type="GtkToggleButton*"/>
+          </instance-parameter>
+          <parameter name="group" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="ToggleButton" c:type="GtkToggleButton*"/>
+          </parameter>
+        </parameters>
+      </method>
     </class>
     <class name="Widget" c:symbol-prefix="widget" c:type="GtkWidget" parent="GObject.InitiallyUnowned" abstract="1" glib:type-name="GtkWidget" glib:get-type="gtk_widget_get_type" glib:type-struct="WidgetClass">
       <method name="activate" c:identifier="gtk_widget_activate">
@@ -2861,6 +3087,19 @@
           </parameter>
         </parameters>
       </method>
+      <method name="set_can_target" c:identifier="gtk_widget_set_can_target" glib:set-property="can-target">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="widget" transfer-ownership="none">
+            <type name="Widget" c:type="GtkWidget*"/>
+          </instance-parameter>
+          <parameter name="can_target" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_cursor" c:identifier="gtk_widget_set_cursor" glib:set-property="cursor">
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -2884,6 +3123,19 @@
           </instance-parameter>
           <parameter name="name" transfer-ownership="none" nullable="1" allow-none="1">
             <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_focusable" c:identifier="gtk_widget_set_focusable" glib:set-property="focusable">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="widget" transfer-ownership="none">
+            <type name="Widget" c:type="GtkWidget*"/>
+          </instance-parameter>
+          <parameter name="focusable" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
           </parameter>
         </parameters>
       </method>
@@ -2962,6 +3214,19 @@
           </instance-parameter>
           <parameter name="margin" transfer-ownership="none">
             <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_opacity" c:identifier="gtk_widget_set_opacity" glib:set-property="opacity">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="widget" transfer-ownership="none">
+            <type name="Widget" c:type="GtkWidget*"/>
+          </instance-parameter>
+          <parameter name="opacity" transfer-ownership="none">
+            <type name="gdouble" c:type="double"/>
           </parameter>
         </parameters>
       </method>
@@ -3322,8 +3587,26 @@
         </parameter>
       </parameters>
     </callback>
+    <callback name="ListBoxSortFunc" c:type="GtkListBoxSortFunc">
+      <return-value transfer-ownership="none">
+        <type name="gint" c:type="int"/>
+      </return-value>
+      <parameters>
+        <parameter name="row1" transfer-ownership="none">
+          <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
+        </parameter>
+        <parameter name="row2" transfer-ownership="none">
+          <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
     <enumeration name="Orientation" glib:type-name="GtkOrientation" glib:get-type="gtk_orientation_get_type" c:type="GtkOrientation"/>
+    <enumeration name="PackType" glib:type-name="GtkPackType" glib:get-type="gtk_pack_type_get_type" c:type="GtkPackType"/>
     <enumeration name="PolicyType" glib:type-name="GtkPolicyType" glib:get-type="gtk_policy_type_get_type" c:type="GtkPolicyType"/>
+    <enumeration name="RevealerTransitionType" glib:type-name="GtkRevealerTransitionType" glib:get-type="gtk_revealer_transition_type_get_type" c:type="GtkRevealerTransitionType"/>
     <enumeration name="SelectionMode" glib:type-name="GtkSelectionMode" glib:get-type="gtk_selection_mode_get_type" c:type="GtkSelectionMode"/>
     <enumeration name="SizeGroupMode" glib:type-name="GtkSizeGroupMode" glib:get-type="gtk_size_group_mode_get_type" c:type="GtkSizeGroupMode"/>
     <bitfield name="TextSearchFlags" glib:type-name="GtkTextSearchFlags" glib:get-type="gtk_text_search_flags_get_type" c:type="GtkTextSearchFlags"/>

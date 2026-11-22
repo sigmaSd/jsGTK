@@ -745,6 +745,74 @@ export const gtk4Symbols = {
     result: "void",
   },
   gdk_content_formats_get_type: { parameters: [], result: "u64" },
+  // sort_func has notified scope. destroy has async scope.
+  gtk_list_box_set_sort_func: {
+    parameters: ["pointer", "function", "pointer", "pointer"],
+    result: "void",
+  },
+  gtk_list_box_invalidate_sort: { parameters: ["pointer"], result: "void" },
+  gtk_list_box_set_placeholder: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_list_box_row_changed: { parameters: ["pointer"], result: "void" },
+  gtk_list_box_row_set_activatable: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_revealer_new: { parameters: [], result: "pointer" },
+  gtk_revealer_set_child: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_revealer_set_reveal_child: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_revealer_get_reveal_child: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_revealer_set_transition_type: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_revealer_set_transition_duration: {
+    parameters: ["pointer", "u32"],
+    result: "void",
+  },
+  gtk_toggle_button_set_group: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  // Since 4.6.
+  gtk_menu_button_set_child: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  // Since 4.4.
+  gtk_menu_button_set_always_show_arrow: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_menu_button_popdown: { parameters: ["pointer"], result: "void" },
+  gtk_label_set_width_chars: { parameters: ["pointer", "i32"], result: "void" },
+  gtk_widget_set_opacity: { parameters: ["pointer", "f64"], result: "void" },
+  gtk_widget_set_can_target: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_widget_set_focusable: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Return transfer full.
+  gtk_event_controller_motion_new: { parameters: [], result: "pointer" },
+  gtk_event_controller_motion_contains_pointer: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_button_set_child: { parameters: ["pointer", "pointer"], result: "void" },
 } as const;
 
 export interface ButtonProperties {

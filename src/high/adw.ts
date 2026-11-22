@@ -7,7 +7,7 @@ import {
   Widget,
   Window,
 } from "./gtk4.ts";
-import type { GObject } from "./gobject.ts";
+import { GObject } from "./gobject.ts";
 
 // ============================================================================
 // Builder Extensions for Adwaita Widgets
@@ -54,6 +54,12 @@ export const ColorScheme = {
   FORCE_DARK: 4,
   PREFER_DARK: 2,
   PREFER_LIGHT: 3,
+} as const;
+
+// AdwToastPriority
+export const ToastPriority = {
+  NORMAL: 0,
+  HIGH: 1,
 } as const;
 
 // Adwaita response appearance (for MessageDialog)
@@ -271,6 +277,163 @@ export class StatusPage extends Widget {
   setIconName(iconName: string): void {
     adw.symbols.adw_status_page_set_icon_name(this.ptr, cstr(iconName));
   }
+
+  /** Content shown below the description, such as buttons or a list. */
+  setChild(child: Widget | null): void {
+    adw.symbols.adw_status_page_set_child(this.ptr, child?.ptr ?? null);
+  }
+}
+
+// AdwWindowTitle: a title and subtitle for a header bar
+export class WindowTitle extends Widget {
+  constructor(title = "", subtitle = "") {
+    super(adw.symbols.adw_window_title_new(cstr(title), cstr(subtitle)));
+  }
+
+  setTitle(title: string): void {
+    adw.symbols.adw_window_title_set_title(this.ptr, cstr(title));
+  }
+
+  setSubtitle(subtitle: string): void {
+    adw.symbols.adw_window_title_set_subtitle(this.ptr, cstr(subtitle));
+  }
+}
+
+// AdwButtonContent: an icon and a label, for use as a button's child
+export class ButtonContent extends Widget {
+  constructor() {
+    super(adw.symbols.adw_button_content_new());
+  }
+
+  setIconName(iconName: string): void {
+    adw.symbols.adw_button_content_set_icon_name(this.ptr, cstr(iconName));
+  }
+
+  setLabel(label: string): void {
+    adw.symbols.adw_button_content_set_label(this.ptr, cstr(label));
+  }
+}
+
+// AdwToast: a short message shown by a ToastOverlay
+export class Toast extends GObject {
+  constructor(title: string) {
+    super(adw.symbols.adw_toast_new(cstr(title)));
+  }
+
+  setTitle(title: string): void {
+    adw.symbols.adw_toast_set_title(this.ptr, cstr(title));
+  }
+
+  /** Show a button on the toast. Pass an empty string to hide it. */
+  setButtonLabel(label: string): void {
+    adw.symbols.adw_toast_set_button_label(
+      this.ptr,
+      label ? cstr(label) : null,
+    );
+  }
+
+  /** Seconds before the toast hides itself; 0 keeps it until dismissed. */
+  setTimeout(seconds: number): void {
+    adw.symbols.adw_toast_set_timeout(this.ptr, seconds);
+  }
+
+  /** One of {@link ToastPriority}. */
+  setPriority(priority: number): void {
+    adw.symbols.adw_toast_set_priority(this.ptr, priority);
+  }
+
+  dismiss(): void {
+    adw.symbols.adw_toast_dismiss(this.ptr);
+  }
+
+  onButtonClicked(callback: () => void): number {
+    return this.connect("button-clicked", () => callback());
+  }
+
+  onDismissed(callback: () => void): number {
+    return this.connect("dismissed", () => callback());
+  }
+}
+
+// AdwToastOverlay: shows toasts above its child
+export class ToastOverlay extends Widget {
+  constructor() {
+    super(adw.symbols.adw_toast_overlay_new());
+  }
+
+  setChild(child: Widget | null): void {
+    adw.symbols.adw_toast_overlay_set_child(this.ptr, child?.ptr ?? null);
+  }
+
+  /** Show a toast. The overlay takes ownership of it. */
+  addToast(toast: Toast): void {
+    adw.symbols.adw_toast_overlay_add_toast(this.ptr, toast.ptr);
+  }
+}
+
+// AdwOverlaySplitView: a sidebar next to, or sliding over, the content
+export class OverlaySplitView extends Widget {
+  constructor() {
+    super(adw.symbols.adw_overlay_split_view_new());
+  }
+
+  setContent(content: Widget | null): void {
+    adw.symbols.adw_overlay_split_view_set_content(
+      this.ptr,
+      content?.ptr ?? null,
+    );
+  }
+
+  setSidebar(sidebar: Widget | null): void {
+    adw.symbols.adw_overlay_split_view_set_sidebar(
+      this.ptr,
+      sidebar?.ptr ?? null,
+    );
+  }
+
+  setShowSidebar(show: boolean): void {
+    adw.symbols.adw_overlay_split_view_set_show_sidebar(this.ptr, show);
+  }
+
+  getShowSidebar(): boolean {
+    return adw.symbols.adw_overlay_split_view_get_show_sidebar(this.ptr);
+  }
+
+  /** When collapsed, the sidebar slides over the content instead of beside it. */
+  setCollapsed(collapsed: boolean): void {
+    adw.symbols.adw_overlay_split_view_set_collapsed(this.ptr, collapsed);
+  }
+
+  /** `PackType.START` or `PackType.END` from the gtk4 module. */
+  setSidebarPosition(position: number): void {
+    adw.symbols.adw_overlay_split_view_set_sidebar_position(
+      this.ptr,
+      position,
+    );
+  }
+
+  setMinSidebarWidth(width: number): void {
+    adw.symbols.adw_overlay_split_view_set_min_sidebar_width(this.ptr, width);
+  }
+
+  setMaxSidebarWidth(width: number): void {
+    adw.symbols.adw_overlay_split_view_set_max_sidebar_width(this.ptr, width);
+  }
+
+  setSidebarWidthFraction(fraction: number): void {
+    adw.symbols.adw_overlay_split_view_set_sidebar_width_fraction(
+      this.ptr,
+      fraction,
+    );
+  }
+
+  onShowSidebarChanged(callback: (shown: boolean) => void): number {
+    return this.connectNotify(
+      "show-sidebar",
+      (object) =>
+        callback(adw.symbols.adw_overlay_split_view_get_show_sidebar(object)),
+    );
+  }
 }
 
 // AdwToolbarView extends GtkWidget
@@ -306,6 +469,14 @@ export class PreferencesGroup extends Widget {
 
   setTitle(title: string): void {
     adw.symbols.adw_preferences_group_set_title(this.ptr, cstr(title));
+  }
+
+  /** A widget shown at the end of the group's title row. */
+  setHeaderSuffix(suffix: Widget | null): void {
+    adw.symbols.adw_preferences_group_set_header_suffix(
+      this.ptr,
+      suffix?.ptr ?? null,
+    );
   }
 
   setDescription(description: string): void {
@@ -509,6 +680,18 @@ export class ActionRow extends ListBoxRow {
     adw.symbols.adw_action_row_add_suffix(this.ptr, widget.ptr);
   }
 
+  addPrefix(widget: Widget): void {
+    adw.symbols.adw_action_row_add_prefix(this.ptr, widget.ptr);
+  }
+
+  /** Activating the row activates this widget, e.g. toggles a check button. */
+  setActivatableWidget(widget: Widget | null): void {
+    adw.symbols.adw_action_row_set_activatable_widget(
+      this.ptr,
+      widget?.ptr ?? null,
+    );
+  }
+
   setTitle(title: string): void {
     adw.symbols.adw_preferences_row_set_title(this.ptr, cstr(title));
   }
@@ -586,6 +769,36 @@ export class SwitchRow extends ActionRow {
   }
 }
 
+// AdwSpinRow: an action row with a number entry and +/- buttons
+export class SpinRow extends ActionRow {
+  constructor(min: number, max: number, step: number) {
+    super(adw.symbols.adw_spin_row_new_with_range(min, max, step));
+  }
+
+  setValue(value: number): void {
+    adw.symbols.adw_spin_row_set_value(this.ptr, value);
+  }
+
+  getValue(): number {
+    return adw.symbols.adw_spin_row_get_value(this.ptr);
+  }
+
+  setDigits(digits: number): void {
+    adw.symbols.adw_spin_row_set_digits(this.ptr, digits);
+  }
+
+  setRange(min: number, max: number): void {
+    adw.symbols.adw_spin_row_set_range(this.ptr, min, max);
+  }
+
+  onValueChanged(callback: (value: number) => void): number {
+    return this.connectNotify(
+      "value",
+      (object) => callback(adw.symbols.adw_spin_row_get_value(object)),
+    );
+  }
+}
+
 // AdwMessageDialog extends GtkWindow extends GtkWidget
 // Adwaita MessageDialog
 export class MessageDialog extends Window {
@@ -656,16 +869,26 @@ export class MessageDialog extends Window {
 }
 
 // StyleManager wrapper for Adwaita theme control
-export class StyleManager {
-  ptr: Deno.PointerValue;
-
+export class StyleManager extends GObject {
   private constructor(ptr: Deno.PointerValue) {
-    this.ptr = ptr;
+    super(ptr);
   }
 
   static getDefault(): StyleManager {
     const ptr = adw.symbols.adw_style_manager_get_default();
-    return new StyleManager(ptr);
+    return GObject.lookup<StyleManager>(ptr) ?? new StyleManager(ptr);
+  }
+
+  /** Whether the app currently uses the dark style. */
+  getDark(): boolean {
+    return adw.symbols.adw_style_manager_get_dark(this.ptr);
+  }
+
+  onDarkChanged(callback: (dark: boolean) => void): number {
+    return this.connectNotify(
+      "dark",
+      (object) => callback(adw.symbols.adw_style_manager_get_dark(object)),
+    );
   }
 
   setColorScheme(scheme: number): void {

@@ -12,5 +12,6 @@
  */
 import "./modular.ts";
 import "./widget.ts";
+import "./adaptive.ts";
 import "./dbus.ts";
 import "./launch.ts";

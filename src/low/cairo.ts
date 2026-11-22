@@ -34,4 +34,15 @@ export const cairo = Deno.dlopen(LIB_PATHS.cairo, {
   cairo_paint: { parameters: ["pointer"], result: "void" },
   cairo_scale: { parameters: ["pointer", "f64", "f64"], result: "void" },
   cairo_translate: { parameters: ["pointer", "f64", "f64"], result: "void" },
+  cairo_new_path: { parameters: ["pointer"], result: "void" },
+  cairo_close_path: { parameters: ["pointer"], result: "void" },
+  cairo_fill_preserve: { parameters: ["pointer"], result: "void" },
+  cairo_curve_to: {
+    parameters: ["pointer", "f64", "f64", "f64", "f64", "f64", "f64"],
+    result: "void",
+  },
+  cairo_set_line_join: { parameters: ["pointer", "i32"], result: "void" },
+  cairo_set_line_cap: { parameters: ["pointer", "i32"], result: "void" },
+  cairo_save: { parameters: ["pointer"], result: "void" },
+  cairo_restore: { parameters: ["pointer"], result: "void" },
 });

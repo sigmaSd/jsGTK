@@ -175,8 +175,11 @@ const editor = new GtkEditor({
 - `Box` - Horizontal/vertical container
 - `Frame` - Container with border and optional label
 - `ScrolledWindow` - Scrollable container
-- `ListBox` - Vertical list container
+- `ListBox` - Vertical list container, with sorting, filtering and a placeholder
+- `Revealer` - Animated show/hide container
 - `ToolbarView` - Adwaita toolbar view
+- `OverlaySplitView` - Adwaita sidebar that overlays the content when narrow
+- `ToastOverlay` - Adwaita container that shows `Toast` notifications
 
 ### Basic Widgets
 
@@ -184,7 +187,9 @@ const editor = new GtkEditor({
 - `Button` - Clickable button
 - `Entry` - Text input field
 - `DropDown` - Dropdown selection menu
-- `MenuButton` - Button that opens a menu
+- `MenuButton` - Button that opens a menu or popover
+- `ToggleButton` - Button that stays pressed, optionally grouped like radios
+- `SearchEntry` - Search field
 
 ### Windows
 
@@ -197,7 +202,12 @@ const editor = new GtkEditor({
 ### Adwaita Widgets
 
 - `HeaderBar` - Modern GNOME header bar
+- `WindowTitle` - Header bar title with a subtitle
+- `ButtonContent` - Button child with an icon and a label
 - `ActionRow` - List row with title/subtitle
+- `SpinRow` - Number input row
+- `StatusPage` - Empty, loading or error page
+- `Toast` - Short notification with an optional action button
 - `ComboRow` - Combo box row for preferences
 - `PreferencesPage` - Page for preferences window
 - `PreferencesGroup` - Group within preferences page
@@ -207,7 +217,8 @@ const editor = new GtkEditor({
 - `Builder` - Load UI from XML files
 - `Menu` - Application menu
 - `SimpleAction` - Application action
-- `StyleManager` - Theme and appearance management
+- `StyleManager` - Theme and appearance management, including dark mode changes
+- `EventControllerMotion` - Pointer enter and leave events
 
 ## Usage
 

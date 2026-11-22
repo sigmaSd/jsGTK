@@ -276,6 +276,19 @@
           <type name="Gtk.Widget" c:type="GtkWidget*"/>
         </return-value>
       </constructor>
+      <method name="add_prefix" c:identifier="adw_action_row_add_prefix">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="ActionRow" c:type="AdwActionRow*"/>
+          </instance-parameter>
+          <parameter name="widget" transfer-ownership="none">
+            <type name="Gtk.Widget" c:type="GtkWidget*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="add_suffix" c:identifier="adw_action_row_add_suffix">
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -297,6 +310,19 @@
           <instance-parameter name="self" transfer-ownership="none">
             <type name="ActionRow" c:type="AdwActionRow*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_activatable_widget" c:identifier="adw_action_row_set_activatable_widget" glib:set-property="activatable-widget">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="ActionRow" c:type="AdwActionRow*"/>
+          </instance-parameter>
+          <parameter name="widget" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Gtk.Widget" c:type="GtkWidget*"/>
+          </parameter>
         </parameters>
       </method>
       <method name="set_subtitle" c:identifier="adw_action_row_set_subtitle" glib:set-property="subtitle">
@@ -399,6 +425,39 @@
           </instance-parameter>
           <parameter name="content" transfer-ownership="none" nullable="1" allow-none="1">
             <type name="Gtk.Widget" c:type="GtkWidget*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="ButtonContent" c:symbol-prefix="button_content" c:type="AdwButtonContent" parent="Gtk.Widget" final="1" glib:type-name="AdwButtonContent" glib:get-type="adw_button_content_get_type" glib:type-struct="ButtonContentClass">
+      <constructor name="new" c:identifier="adw_button_content_new">
+        <return-value transfer-ownership="none">
+          <type name="Gtk.Widget" c:type="GtkWidget*"/>
+        </return-value>
+      </constructor>
+      <method name="set_icon_name" c:identifier="adw_button_content_set_icon_name" glib:set-property="icon-name">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="ButtonContent" c:type="AdwButtonContent*"/>
+          </instance-parameter>
+          <parameter name="icon_name" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_label" c:identifier="adw_button_content_set_label" glib:set-property="label">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="ButtonContent" c:type="AdwButtonContent*"/>
+          </instance-parameter>
+          <parameter name="label" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
           </parameter>
         </parameters>
       </method>
@@ -1127,6 +1186,127 @@
         </parameters>
       </method>
     </class>
+    <class name="OverlaySplitView" c:symbol-prefix="overlay_split_view" c:type="AdwOverlaySplitView" version="1.4" parent="Gtk.Widget" final="1" glib:type-name="AdwOverlaySplitView" glib:get-type="adw_overlay_split_view_get_type" glib:type-struct="OverlaySplitViewClass">
+      <constructor name="new" c:identifier="adw_overlay_split_view_new" version="1.4">
+        <return-value transfer-ownership="none">
+          <type name="Gtk.Widget" c:type="GtkWidget*"/>
+        </return-value>
+      </constructor>
+      <method name="get_show_sidebar" c:identifier="adw_overlay_split_view_get_show_sidebar" glib:get-property="show-sidebar" version="1.4">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="OverlaySplitView" c:type="AdwOverlaySplitView*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_collapsed" c:identifier="adw_overlay_split_view_set_collapsed" glib:set-property="collapsed" version="1.4">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="OverlaySplitView" c:type="AdwOverlaySplitView*"/>
+          </instance-parameter>
+          <parameter name="collapsed" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_content" c:identifier="adw_overlay_split_view_set_content" glib:set-property="content" version="1.4">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="OverlaySplitView" c:type="AdwOverlaySplitView*"/>
+          </instance-parameter>
+          <parameter name="content" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Gtk.Widget" c:type="GtkWidget*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_max_sidebar_width" c:identifier="adw_overlay_split_view_set_max_sidebar_width" glib:set-property="max-sidebar-width" version="1.4">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="OverlaySplitView" c:type="AdwOverlaySplitView*"/>
+          </instance-parameter>
+          <parameter name="width" transfer-ownership="none">
+            <type name="gdouble" c:type="double"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_min_sidebar_width" c:identifier="adw_overlay_split_view_set_min_sidebar_width" glib:set-property="min-sidebar-width" version="1.4">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="OverlaySplitView" c:type="AdwOverlaySplitView*"/>
+          </instance-parameter>
+          <parameter name="width" transfer-ownership="none">
+            <type name="gdouble" c:type="double"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_show_sidebar" c:identifier="adw_overlay_split_view_set_show_sidebar" glib:set-property="show-sidebar" version="1.4">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="OverlaySplitView" c:type="AdwOverlaySplitView*"/>
+          </instance-parameter>
+          <parameter name="show_sidebar" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_sidebar" c:identifier="adw_overlay_split_view_set_sidebar" glib:set-property="sidebar" version="1.4">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="OverlaySplitView" c:type="AdwOverlaySplitView*"/>
+          </instance-parameter>
+          <parameter name="sidebar" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Gtk.Widget" c:type="GtkWidget*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_sidebar_position" c:identifier="adw_overlay_split_view_set_sidebar_position" glib:set-property="sidebar-position" version="1.4">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="OverlaySplitView" c:type="AdwOverlaySplitView*"/>
+          </instance-parameter>
+          <parameter name="position" transfer-ownership="none">
+            <type name="Gtk.PackType" c:type="GtkPackType"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_sidebar_width_fraction" c:identifier="adw_overlay_split_view_set_sidebar_width_fraction" glib:set-property="sidebar-width-fraction" version="1.4">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="OverlaySplitView" c:type="AdwOverlaySplitView*"/>
+          </instance-parameter>
+          <parameter name="fraction" transfer-ownership="none">
+            <type name="gdouble" c:type="double"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
     <class name="PreferencesDialog" c:symbol-prefix="preferences_dialog" c:type="AdwPreferencesDialog" version="1.5" parent="Dialog" glib:type-name="AdwPreferencesDialog" glib:get-type="adw_preferences_dialog_get_type" glib:type-struct="PreferencesDialogClass">
       <constructor name="new" c:identifier="adw_preferences_dialog_new" version="1.5">
         <return-value transfer-ownership="none">
@@ -1199,6 +1379,19 @@
           </instance-parameter>
           <parameter name="description" transfer-ownership="none" nullable="1" allow-none="1">
             <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_header_suffix" c:identifier="adw_preferences_group_set_header_suffix" glib:set-property="header-suffix" version="1.1">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="PreferencesGroup" c:type="AdwPreferencesGroup*"/>
+          </instance-parameter>
+          <parameter name="suffix" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Gtk.Widget" c:type="GtkWidget*"/>
           </parameter>
         </parameters>
       </method>
@@ -1307,6 +1500,76 @@
         </parameters>
       </method>
     </class>
+    <class name="SpinRow" c:symbol-prefix="spin_row" c:type="AdwSpinRow" version="1.4" parent="ActionRow" final="1" glib:type-name="AdwSpinRow" glib:get-type="adw_spin_row_get_type" glib:type-struct="SpinRowClass">
+      <constructor name="new_with_range" c:identifier="adw_spin_row_new_with_range" version="1.4">
+        <return-value transfer-ownership="none">
+          <type name="Gtk.Widget" c:type="GtkWidget*"/>
+        </return-value>
+        <parameters>
+          <parameter name="min" transfer-ownership="none">
+            <type name="gdouble" c:type="double"/>
+          </parameter>
+          <parameter name="max" transfer-ownership="none">
+            <type name="gdouble" c:type="double"/>
+          </parameter>
+          <parameter name="step" transfer-ownership="none">
+            <type name="gdouble" c:type="double"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_value" c:identifier="adw_spin_row_get_value" glib:get-property="value" version="1.4">
+        <return-value transfer-ownership="none">
+          <type name="gdouble" c:type="double"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="SpinRow" c:type="AdwSpinRow*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_digits" c:identifier="adw_spin_row_set_digits" glib:set-property="digits" version="1.4">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="SpinRow" c:type="AdwSpinRow*"/>
+          </instance-parameter>
+          <parameter name="digits" transfer-ownership="none">
+            <type name="guint" c:type="guint"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_range" c:identifier="adw_spin_row_set_range" version="1.4">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="SpinRow" c:type="AdwSpinRow*"/>
+          </instance-parameter>
+          <parameter name="min" transfer-ownership="none">
+            <type name="gdouble" c:type="double"/>
+          </parameter>
+          <parameter name="max" transfer-ownership="none">
+            <type name="gdouble" c:type="double"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_value" c:identifier="adw_spin_row_set_value" glib:set-property="value" version="1.4">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="SpinRow" c:type="AdwSpinRow*"/>
+          </instance-parameter>
+          <parameter name="value" transfer-ownership="none">
+            <type name="gdouble" c:type="double"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
     <class name="Spinner" c:symbol-prefix="spinner" c:type="AdwSpinner" version="1.6" parent="Gtk.Widget" final="1" glib:type-name="AdwSpinner" glib:get-type="adw_spinner_get_type" glib:type-struct="SpinnerClass">
       <constructor name="new" c:identifier="adw_spinner_new" version="1.6">
         <return-value transfer-ownership="none">
@@ -1355,6 +1618,19 @@
           <type name="Gtk.Widget" c:type="GtkWidget*"/>
         </return-value>
       </constructor>
+      <method name="set_child" c:identifier="adw_status_page_set_child" glib:set-property="child">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="StatusPage" c:type="AdwStatusPage*"/>
+          </instance-parameter>
+          <parameter name="child" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Gtk.Widget" c:type="GtkWidget*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_description" c:identifier="adw_status_page_set_description" glib:set-property="description">
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -1411,6 +1687,16 @@
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_dark" c:identifier="adw_style_manager_get_dark" glib:get-property="dark">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="StyleManager" c:type="AdwStyleManager*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="set_color_scheme" c:identifier="adw_style_manager_set_color_scheme" glib:set-property="color-scheme">
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -1451,6 +1737,113 @@
           </instance-parameter>
           <parameter name="is_active" transfer-ownership="none">
             <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="Toast" c:symbol-prefix="toast" c:type="AdwToast" parent="GObject.Object" final="1" glib:type-name="AdwToast" glib:get-type="adw_toast_get_type" glib:type-struct="ToastClass">
+      <constructor name="new" c:identifier="adw_toast_new">
+        <return-value transfer-ownership="full">
+          <type name="Toast" c:type="AdwToast*"/>
+        </return-value>
+        <parameters>
+          <parameter name="title" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="dismiss" c:identifier="adw_toast_dismiss">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_button_label" c:identifier="adw_toast_set_button_label" glib:set-property="button-label">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+          <parameter name="button_label" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_priority" c:identifier="adw_toast_set_priority" glib:set-property="priority">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+          <parameter name="priority" transfer-ownership="none">
+            <type name="ToastPriority" c:type="AdwToastPriority"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_timeout" c:identifier="adw_toast_set_timeout" glib:set-property="timeout">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+          <parameter name="timeout" transfer-ownership="none">
+            <type name="guint" c:type="guint"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_title" c:identifier="adw_toast_set_title" glib:set-property="title">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+          <parameter name="title" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="ToastOverlay" c:symbol-prefix="toast_overlay" c:type="AdwToastOverlay" parent="Gtk.Widget" final="1" glib:type-name="AdwToastOverlay" glib:get-type="adw_toast_overlay_get_type" glib:type-struct="ToastOverlayClass">
+      <constructor name="new" c:identifier="adw_toast_overlay_new">
+        <return-value transfer-ownership="none">
+          <type name="Gtk.Widget" c:type="GtkWidget*"/>
+        </return-value>
+      </constructor>
+      <method name="add_toast" c:identifier="adw_toast_overlay_add_toast">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="ToastOverlay" c:type="AdwToastOverlay*"/>
+          </instance-parameter>
+          <parameter name="toast" transfer-ownership="full">
+            <type name="Toast" c:type="AdwToast*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_child" c:identifier="adw_toast_overlay_set_child" glib:set-property="child">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="ToastOverlay" c:type="AdwToastOverlay*"/>
+          </instance-parameter>
+          <parameter name="child" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Gtk.Widget" c:type="GtkWidget*"/>
           </parameter>
         </parameters>
       </method>
@@ -1571,6 +1964,47 @@
         </parameters>
       </method>
     </class>
+    <class name="WindowTitle" c:symbol-prefix="window_title" c:type="AdwWindowTitle" parent="Gtk.Widget" final="1" glib:type-name="AdwWindowTitle" glib:get-type="adw_window_title_get_type" glib:type-struct="WindowTitleClass">
+      <constructor name="new" c:identifier="adw_window_title_new">
+        <return-value transfer-ownership="none">
+          <type name="Gtk.Widget" c:type="GtkWidget*"/>
+        </return-value>
+        <parameters>
+          <parameter name="title" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="subtitle" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="set_subtitle" c:identifier="adw_window_title_set_subtitle" glib:set-property="subtitle">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="WindowTitle" c:type="AdwWindowTitle*"/>
+          </instance-parameter>
+          <parameter name="subtitle" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_title" c:identifier="adw_window_title_set_title" glib:set-property="title">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="WindowTitle" c:type="AdwWindowTitle*"/>
+          </instance-parameter>
+          <parameter name="title" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
     <function name="init" c:identifier="adw_init">
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -1583,5 +2017,6 @@
     </function>
     <enumeration name="ColorScheme" glib:type-name="AdwColorScheme" glib:get-type="adw_color_scheme_get_type" c:type="AdwColorScheme"/>
     <enumeration name="ResponseAppearance" version="1.2" glib:type-name="AdwResponseAppearance" glib:get-type="adw_response_appearance_get_type" c:type="AdwResponseAppearance"/>
+    <enumeration name="ToastPriority" glib:type-name="AdwToastPriority" glib:get-type="adw_toast_priority_get_type" c:type="AdwToastPriority"/>
   </namespace>
 </repository>

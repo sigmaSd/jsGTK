@@ -344,4 +344,11 @@ export const gioSymbols = {
     ],
     result: "pointer",
   },
+  g_app_info_get_executable: { parameters: ["pointer"], result: "pointer" },
+  // Since 2.34.
+  g_desktop_app_info_get_startup_wm_class: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
 } as const;

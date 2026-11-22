@@ -313,7 +313,9 @@
         "g_cancellable_cancel",
         "g_cancellable_is_cancelled",
         "g_dbus_connection_new_for_address_sync",
-        "g_dbus_connection_call_sync"
+        "g_dbus_connection_call_sync",
+        "g_app_info_get_executable",
+        "g_desktop_app_info_get_startup_wm_class"
       ],
       "optionalGroups": [
         {
@@ -659,7 +661,29 @@
         "gdk_content_formats_builder_add_gtype",
         "gdk_content_formats_builder_to_formats",
         "gdk_content_formats_builder_unref",
-        "gdk_content_formats_get_type"
+        "gdk_content_formats_get_type",
+        "gtk_list_box_set_sort_func",
+        "gtk_list_box_invalidate_sort",
+        "gtk_list_box_set_placeholder",
+        "gtk_list_box_row_changed",
+        "gtk_list_box_row_set_activatable",
+        "gtk_revealer_new",
+        "gtk_revealer_set_child",
+        "gtk_revealer_set_reveal_child",
+        "gtk_revealer_get_reveal_child",
+        "gtk_revealer_set_transition_type",
+        "gtk_revealer_set_transition_duration",
+        "gtk_toggle_button_set_group",
+        "gtk_menu_button_set_child",
+        "gtk_menu_button_set_always_show_arrow",
+        "gtk_menu_button_popdown",
+        "gtk_label_set_width_chars",
+        "gtk_widget_set_opacity",
+        "gtk_widget_set_can_target",
+        "gtk_widget_set_focusable",
+        "gtk_event_controller_motion_new",
+        "gtk_event_controller_motion_contains_pointer",
+        "gtk_button_set_child"
       ],
       "overrides": {
         "gtk_builder_add_from_string": {
@@ -679,6 +703,12 @@
             "3": "pointer"
           },
           "reason": "The wrapper passes an opaque native callback address."
+        },
+        "gtk_list_box_set_sort_func": {
+          "parameters": {
+            "3": "pointer"
+          },
+          "reason": "The wrapper passes no destroy notify."
         },
         "gtk_css_provider_load_from_data": {
           "parameters": {
@@ -874,7 +904,42 @@
         "adw_carousel_indicator_lines_set_carousel",
         "adw_carousel_indicator_lines_get_carousel",
         "adw_is_initialized",
-        "adw_dialog_present"
+        "adw_dialog_present",
+        "adw_window_title_new",
+        "adw_window_title_set_title",
+        "adw_window_title_set_subtitle",
+        "adw_button_content_new",
+        "adw_button_content_set_icon_name",
+        "adw_button_content_set_label",
+        "adw_toast_overlay_new",
+        "adw_toast_overlay_set_child",
+        "adw_toast_overlay_add_toast",
+        "adw_toast_new",
+        "adw_toast_set_title",
+        "adw_toast_set_button_label",
+        "adw_toast_set_timeout",
+        "adw_toast_set_priority",
+        "adw_toast_dismiss",
+        "adw_overlay_split_view_new",
+        "adw_overlay_split_view_set_content",
+        "adw_overlay_split_view_set_sidebar",
+        "adw_overlay_split_view_set_show_sidebar",
+        "adw_overlay_split_view_get_show_sidebar",
+        "adw_overlay_split_view_set_collapsed",
+        "adw_overlay_split_view_set_sidebar_position",
+        "adw_overlay_split_view_set_max_sidebar_width",
+        "adw_overlay_split_view_set_min_sidebar_width",
+        "adw_overlay_split_view_set_sidebar_width_fraction",
+        "adw_spin_row_new_with_range",
+        "adw_spin_row_set_value",
+        "adw_spin_row_get_value",
+        "adw_spin_row_set_digits",
+        "adw_spin_row_set_range",
+        "adw_action_row_add_prefix",
+        "adw_action_row_set_activatable_widget",
+        "adw_status_page_set_child",
+        "adw_style_manager_get_dark",
+        "adw_preferences_group_set_header_suffix"
       ],
       "optionalGroups": [
         {
