@@ -35,11 +35,12 @@
 
 import type { Application } from "./gtk4.ts";
 import { glib } from "../low/glib.ts";
+import { LIB_PATHS } from "../low/paths/mod.ts";
 
 export interface EventLoopOptions {
   /**
    * Polling interval in milliseconds, used only when GLib can't be waited on
-   * from a worker thread (on Bun, or with GLib older than 2.72). The loop then
+   * from another thread (GLib older than 2.72). The loop then
    * checks GLib right away while busy and backs off from `pollInterval` to
    * 250 ms while idle.
    * @default 16
@@ -117,15 +118,89 @@ function enableOwnerlessPolling(context: Deno.PointerObject): boolean {
   return true;
 }
 
-/** Whether g_poll runs on a worker thread and returns a promise. */
-function canPollOffThread(): boolean {
-  const empty = new Uint8Array(POLLFD_SIZE * 16);
+/** Waits in g_poll off the main thread. */
+interface Waiter {
+  /** Room for `count` GPollFDs that `wait` can poll. */
+  buffer(count: number): Uint8Array;
+  wait(fds: Uint8Array, count: number, timeout: number): Promise<unknown>;
+  close(): void;
+}
+
+/** Deno and Node: g_poll as a nonblocking FFI call. */
+const nonblockingWaiter: Waiter = {
+  // At least 128 bytes, so the engine keeps it at a fixed address.
+  buffer: (count) => new Uint8Array(POLLFD_SIZE * Math.max(count, 16)),
+  wait: (fds, count, timeout) =>
+    glib.symbols.g_poll(Deno.UnsafePointer.of(fds), count, timeout),
+  close: () => {},
+};
+
+/**
+ * Bun has no nonblocking FFI calls, so a Worker blocks in g_poll on a
+ * SharedArrayBuffer the main thread fills, and posts back when it returns.
+ */
+class WorkerWaiter implements Waiter {
+  #worker: Worker;
+  #done: (() => void) | null = null;
+
+  private constructor(worker: Worker) {
+    this.#worker = worker;
+    worker.onmessage = () => {
+      const done = this.#done;
+      this.#done = null;
+      done?.();
+    };
+  }
+
+  static async start(): Promise<WorkerWaiter | null> {
+    try {
+      const worker = new Worker(
+        new URL("./eventloop_worker.ts", import.meta.url).href,
+        { type: "module" },
+      );
+      const ready = new Promise<boolean>((resolve) => {
+        worker.onmessage = (event) => resolve(event.data === "ready");
+        worker.onerror = () => resolve(false);
+      });
+      worker.postMessage({ library: LIB_PATHS.glib });
+      if (!(await ready)) {
+        worker.terminate();
+        return null;
+      }
+      return new WorkerWaiter(worker);
+    } catch {
+      return null;
+    }
+  }
+
+  buffer(count: number): Uint8Array {
+    return new Uint8Array(
+      new SharedArrayBuffer(POLLFD_SIZE * Math.max(count, 16)),
+    );
+  }
+
+  wait(fds: Uint8Array, count: number, timeout: number): Promise<void> {
+    return new Promise((resolve) => {
+      this.#done = resolve;
+      this.#worker.postMessage({ fds: fds.buffer, count, timeout });
+    });
+  }
+
+  close(): void {
+    this.#worker.terminate();
+  }
+}
+
+/** A way to wait for GLib off the main thread, or null for polling. */
+async function startWaiter(): Promise<Waiter | null> {
+  const probe = nonblockingWaiter.buffer(0);
   const result: unknown = glib.symbols.g_poll(
-    Deno.UnsafePointer.of(empty),
+    Deno.UnsafePointer.of(probe),
     0,
     0,
   );
-  return result instanceof Promise;
+  if (result instanceof Promise) return nonblockingWaiter;
+  return await WorkerWaiter.start();
 }
 
 /**
@@ -165,9 +240,16 @@ export class EventLoop {
     const context = this.#mainContextPtr;
     if (glib.symbols.g_main_context_acquire(context)) {
       try {
-        if (enableOwnerlessPolling(context) && canPollOffThread()) {
+        const waiter = enableOwnerlessPolling(context)
+          ? await startWaiter()
+          : null;
+        if (waiter) {
           this.#mode = "driven";
-          await this.#runDriven();
+          try {
+            await this.#runDriven(waiter);
+          } finally {
+            waiter.close();
+          }
           return;
         }
       } finally {
@@ -179,14 +261,14 @@ export class EventLoop {
   }
 
   /** Run GLib's main context one iteration at a time, waiting off-thread. */
-  async #runDriven(): Promise<void> {
+  async #runDriven(waiter: Waiter): Promise<void> {
     const context = this.#mainContextPtr;
     // At least 128 bytes each, so the engine keeps them at a fixed address.
     const priority = new Int32Array(32);
     const timeout = new Int32Array(32);
     const priorityPtr = Deno.UnsafePointer.of(priority);
     const timeoutPtr = Deno.UnsafePointer.of(timeout);
-    let fds = new Uint8Array(POLLFD_SIZE * 16);
+    let fds = waiter.buffer(16);
     let fdsPtr = Deno.UnsafePointer.of(fds);
 
     while (this.#isRunning) {
@@ -209,7 +291,7 @@ export class EventLoop {
         capacity,
       );
       while (count > capacity) {
-        fds = new Uint8Array(POLLFD_SIZE * count * 2);
+        fds = waiter.buffer(count * 2);
         fdsPtr = Deno.UnsafePointer.of(fds);
         capacity = fds.length / POLLFD_SIZE;
         count = glib.symbols.g_main_context_query(
@@ -233,11 +315,7 @@ export class EventLoop {
       // Wait on a worker thread while JavaScript keeps running. Sources
       // added meanwhile wake the wait through GLib's wakeup descriptor. When
       // work is already ready, this only lets JavaScript run once.
-      await glib.symbols.g_poll(
-        fdsPtr,
-        ready ? 0 : count,
-        ready ? 0 : timeout[0],
-      );
+      await waiter.wait(fds, ready ? 0 : count, ready ? 0 : timeout[0]);
     }
   }
 

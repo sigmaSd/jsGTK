@@ -298,10 +298,11 @@ running during the wait, and GLib work added from JavaScript (a redraw, an idle
 callback, a timeout) wakes the wait at once. Nothing wakes up while the app is
 idle.
 
-This needs off-thread FFI calls (Deno, and Node with `@sigma/deno-compat` 0.25.0
-or later) and GLib 2.72 or later. Otherwise, as on Bun, the loop checks GLib on
-a timer instead. `eventLoop.mode` says which one is running: `"driven"` or
-`"polling"`.
+Deno and Node (with `@sigma/deno-compat` 0.25.0 or later) wait with a
+nonblocking FFI call. Bun has none, so a Worker waits in `g_poll` on a
+`SharedArrayBuffer` the main thread fills. This needs GLib 2.72 or later; with
+older GLib the loop checks GLib on a timer instead. `eventLoop.mode` says which
+one is running: `"driven"` or `"polling"`.
 
 ```typescript
 // Only used in "polling" mode (default: 16ms)
