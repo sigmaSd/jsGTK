@@ -14,6 +14,13 @@ import { gobject } from "../low/gobject.ts";
 import { gtk4 } from "../low/gtk4.ts";
 import { createGValue, cstr, readCStr } from "../low/utils.ts";
 import { CairoContext } from "./cairo.ts";
+import {
+  type LabelMethods,
+  labelMethods,
+  type ListBoxMethods,
+  listBoxMethods,
+} from "./generated/gtk4.ts";
+import { applyGenerated, registerWrappers } from "./wrappers.ts";
 import { AppLaunchContext, File, type Menu, type SimpleAction } from "./gio.ts";
 import { unixSignalAdd as glibUnixSignalAdd } from "./glib.ts";
 import {
@@ -853,6 +860,10 @@ export class Label extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface Label extends LabelMethods {}
+applyGenerated(Label, labelMethods);
+
 // GTK Button
 export class Button extends Widget {
   override connect<Name extends WidgetMember<ButtonSignals>>(
@@ -1357,6 +1368,10 @@ export class ListBox extends Widget {
     gtk4.symbols.gtk_list_box_remove_all(this.ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface ListBox extends ListBoxMethods {}
+applyGenerated(ListBox, listBoxMethods);
 
 // GtkStringList extends GObject (implements GListModel)
 export class StringList extends GObject {
@@ -2810,3 +2825,27 @@ export class ViewSwitcher extends Widget {
     adw.symbols.adw_view_switcher_set_stack(this.ptr, stack.ptr);
   }
 }
+
+export {
+  Justification,
+  ListTabBehavior,
+  MovementStep,
+  NaturalWrapMode,
+  PangoEllipsizeMode,
+  PangoWrapMode,
+} from "./generated/gtk4.ts";
+
+// Wrap objects GTK hands back in the most specific class available.
+registerWrappers({
+  GtkWidget: Widget,
+  GtkWindow: Window,
+  GtkBox: Box,
+  GtkLabel: Label,
+  GtkButton: Button,
+  GtkImage: Image,
+  GtkEntry: Entry,
+  GtkAdjustment: Adjustment,
+  GtkScrolledWindow: ScrolledWindow,
+  GtkListBox: ListBox,
+  GtkListBoxRow: ListBoxRow,
+});

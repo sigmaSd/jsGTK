@@ -41,13 +41,13 @@ export const glibSymbols = {
   g_atomic_int_or: { parameters: ["pointer", "u32"], result: "u32" },
   // Since 2.6.
   glib_check_version: { parameters: ["u32", "u32", "u32"], result: "pointer" },
-  g_timeout_add: { parameters: ["u32", "function", "pointer"], result: "u32" },
+  g_timeout_add: { parameters: ["u32", "pointer", "pointer"], result: "u32" },
   // Since 2.14.
   g_timeout_add_seconds: {
-    parameters: ["u32", "function", "pointer"],
+    parameters: ["u32", "pointer", "pointer"],
     result: "u32",
   },
-  g_idle_add: { parameters: ["function", "pointer"], result: "u32" },
+  g_idle_add: { parameters: ["pointer", "pointer"], result: "u32" },
   g_source_remove: { parameters: ["u32"], result: "gboolean" },
   g_free: { parameters: ["pointer"], result: "void" },
   g_error_free: { parameters: ["pointer"], result: "void" },
@@ -60,7 +60,7 @@ export const glibSymbols = {
   g_malloc0: { parameters: ["usize"], result: "pointer" },
   // Since 2.30.
   g_unix_signal_add: {
-    parameters: ["i32", "function", "pointer"],
+    parameters: ["i32", "pointer", "pointer"],
     result: "u32",
     optional: true,
   },
@@ -72,7 +72,7 @@ export const glibSymbols = {
   },
   g_io_channel_unref: { parameters: ["pointer"], result: "void" },
   g_io_add_watch: {
-    parameters: ["pointer", "i32", "function", "pointer"],
+    parameters: ["pointer", "i32", "pointer", "pointer"],
     result: "u32",
   },
   // Since 2.32. Return transfer full.

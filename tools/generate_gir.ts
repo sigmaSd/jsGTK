@@ -6,6 +6,14 @@ import {
 } from "@xmldom/xmldom";
 import { join } from "node:path";
 import config from "./gir/bindings.json" with { type: "json" };
+import {
+  classMembers,
+  type ClassProfile,
+  classSymbols,
+  generateClasses,
+  type HandWritten,
+  type Namespace,
+} from "./generate_classes.ts";
 
 const ROOT = new URL("../", import.meta.url);
 const GIR = new URL("./gir/", import.meta.url);
@@ -78,7 +86,48 @@ export type Profile = {
   symbols: string[];
   optionalGroups?: { reason: string; symbols: string[] }[];
   overrides?: Record<string, Override>;
+  /** High-level classes whose methods are generated from GIR. */
+  highLevel?: ClassProfile;
 };
+
+/** The GIR namespaces a profile's classes can refer to. */
+function namespacesFor(
+  profile: Profile,
+  inputs: Map<string, Input>,
+): Map<string, Namespace> {
+  const namespaces = new Map<string, Namespace>();
+  const add = (file: string) => {
+    const input = inputs.get(file)!;
+    namespaces.set(input.source.namespace, {
+      name: input.source.namespace,
+      node: input.namespace,
+    });
+  };
+  // GTK 3 shares GTK 4's namespace name; only GTK 3 profiles see it.
+  for (const file of inputs.keys()) if (file !== "Gtk-3.0.gir") add(file);
+  for (const file of profile.inputs) add(file);
+  return namespaces;
+}
+
+/** Every symbol a profile binds: its list, then its generated methods. */
+function profileSymbols(profile: Profile, inputs: Map<string, Input>) {
+  const symbols = [...profile.symbols];
+  if (profile.highLevel) {
+    const listed = new Set(symbols);
+    for (
+      const symbol of classSymbols(
+        namespacesFor(profile, inputs),
+        profile.highLevel,
+      )
+    ) {
+      if (!listed.has(symbol)) {
+        listed.add(symbol);
+        symbols.push(symbol);
+      }
+    }
+  }
+  return symbols;
+}
 
 type Source = { namespace: string; package: string; optional?: boolean };
 type Input = { source: Source; namespace: Element; text: string };
@@ -171,8 +220,9 @@ function abiType(
   const cType = entry?.getAttributeNS(C, "type")?.replace(/\s+\*/g, "*").trim();
   if (!cType) throw new Error(`${symbol}: missing GIR C type`);
   const typeKind = known.get(cType);
+  // Callbacks are passed as pointers: Bun rejects NULL for "function".
   if (parameter && typeKind === "callback") {
-    return "function";
+    return "pointer";
   }
   const scalar = scalars.get(cType);
   if (scalar) return scalar;
@@ -265,10 +315,11 @@ function annotations({ node, since }: Declaration): string[] {
 }
 
 export function build(profile: Profile, inputs: Map<string, Input>) {
-  const requested = new Set(profile.symbols);
-  if (requested.size !== profile.symbols.length) {
+  if (new Set(profile.symbols).size !== profile.symbols.length) {
     throw new Error("Duplicate symbol in the allowlist");
   }
+  const symbols = profileSymbols(profile, inputs);
+  const requested = new Set(symbols);
   const declarations = new Map<
     string,
     { declaration: Declaration; source: Source }
@@ -303,11 +354,11 @@ export function build(profile: Profile, inputs: Map<string, Input>) {
     if (!override.reason) throw new Error(`${symbol}: override needs a reason`);
   }
 
-  const missing = profile.symbols.filter((symbol) => !declarations.has(symbol));
+  const missing = symbols.filter((symbol) => !declarations.has(symbol));
   if (missing.length) {
     throw new Error(`No GIR declarations for ${missing.join(", ")}`);
   }
-  return profile.symbols.map((symbol) => {
+  return symbols.map((symbol) => {
     const { declaration, source } = declarations.get(symbol)!;
     const override = overrides[symbol];
     const binding = signature(symbol, declaration, known, override);
@@ -319,13 +370,20 @@ export function build(profile: Profile, inputs: Map<string, Input>) {
   });
 }
 
-function copySignature(node: Element) {
+function copySignature(node: Element, doc = false) {
   const copy = node.cloneNode(false);
   for (const entry of children(node)) {
     if (
-      entry.namespaceURI === CORE && signatureTags.has(entry.localName ?? "")
+      entry.namespaceURI === CORE &&
+      (signatureTags.has(entry.localName ?? "") ||
+        doc && entry.localName === "doc")
     ) {
-      copy.appendChild(copySignature(entry));
+      // Only the declaration's own documentation, not its parameters'.
+      copy.appendChild(
+        entry.localName === "doc"
+          ? entry.cloneNode(true)
+          : copySignature(entry),
+      );
     }
   }
   return copy;
@@ -449,9 +507,22 @@ async function snapshots(profiles: Profile[], inputs: Map<string, Input>) {
   for (const profile of profiles) {
     for (const file of profile.inputs) {
       const symbols = selected.get(file) ?? new Set<string>();
-      for (const name of profile.symbols) symbols.add(name);
+      for (const name of profileSymbols(profile, inputs)) symbols.add(name);
       selected.set(file, symbols);
     }
+  }
+  // Class members and the types they use, kept whole so the high-level
+  // classes generate the same from the snapshot.
+  const classNodes = new Set<Element>();
+  const classTypes = new Set<string>();
+  for (const profile of profiles) {
+    if (!profile.highLevel) continue;
+    const { members, types } = classMembers(
+      namespacesFor(profile, inputs),
+      profile.highLevel,
+    );
+    for (const member of members) classNodes.add(member);
+    for (const type of types) classTypes.add(type);
   }
   const requiredTypes = new Set<string>();
   const declarations = new Map<string, Declaration[]>();
@@ -524,8 +595,45 @@ async function snapshots(profiles: Profile[], inputs: Map<string, Input>) {
     for (const { node, getter } of declarations.get(file)!) {
       if (getter) copyContainer(node);
       else {copyContainer(node.parentNode as Element).appendChild(
-          doc.importNode(copySignature(node), true),
+          doc.importNode(copySignature(node, classNodes.has(node)), true),
         );}
+    }
+    if (file !== "Gtk-3.0.gir") {
+      for (const node of classNodes) {
+        if (
+          node.localName !== "signal" ||
+          node.ownerDocument !== namespace.ownerDocument
+        ) continue;
+        copyContainer(node.parentNode as Element).appendChild(
+          doc.importNode(copySignature(node, true), true),
+        );
+      }
+      for (const entry of children(namespace)) {
+        const qualified = `${source.namespace}.${entry.getAttribute("name")}`;
+        if (!classTypes.has(qualified)) continue;
+        if (
+          entry.localName === "enumeration" || entry.localName === "bitfield"
+        ) {
+          const copy = copyContainer(entry);
+          if (!children(copy).some((m) => m.localName === "member")) {
+            const text = child(entry, "doc");
+            if (text) {
+              copy.appendChild(doc.importNode(text.cloneNode(true), true));
+            }
+            for (const member of children(entry)) {
+              if (member.localName === "member") {
+                copy.appendChild(doc.importNode(member.cloneNode(false), true));
+              }
+            }
+          }
+        } else if (entry.localName === "callback") {
+          if (!requiredTypes.has(entry.getAttributeNS(C, "type") ?? "")) {
+            copiedNamespace.appendChild(
+              doc.importNode(copySignature(entry), true),
+            );
+          }
+        } else copyContainer(entry);
+      }
     }
     for (const entry of children(namespace)) {
       const cType = entry.getAttributeNS(C, "type");
@@ -545,7 +653,7 @@ async function snapshots(profiles: Profile[], inputs: Map<string, Input>) {
       const copied = new Set<Element>();
       for (const { properties, signals } of widgetDeclarations(input)) {
         for (const { owner, node } of [...properties, ...signals]) {
-          if (copied.has(node)) continue;
+          if (copied.has(node) || classNodes.has(node)) continue;
           copied.add(node);
           copyContainer(owner).appendChild(
             doc.importNode(copySignature(node), true),
@@ -610,6 +718,10 @@ async function generate(
     lines.push(`  ${symbol}: { ${fields.join(", ")} },`);
   }
   lines.push("} as const;", ...widgets);
+  return await format(lines.join("\n") + "\n");
+}
+
+async function format(text: string): Promise<string> {
   const formatter = new Deno.Command(Deno.execPath(), {
     args: ["fmt", "--ext", "ts", "-"],
     cwd: ROOT,
@@ -617,13 +729,51 @@ async function generate(
     stdout: "piped",
   }).spawn();
   const writer = formatter.stdin.getWriter();
-  await writer.write(new TextEncoder().encode(lines.join("\n") + "\n"));
+  await writer.write(new TextEncoder().encode(text));
   await writer.close();
   const result = await formatter.output();
   if (!result.success) {
-    throw new Error("Could not format the generated FFI table");
+    throw new Error("Could not format generated code");
   }
   return new TextDecoder().decode(result.stdout);
+}
+
+/** Hand-written classes in src/high, read with `deno doc`. */
+async function handWrittenClasses(): Promise<HandWritten> {
+  const modules = ["gobject.ts", "gtk4.ts", "adw.ts", "gio.ts"];
+  const output = await new Deno.Command(Deno.execPath(), {
+    args: ["doc", "--json", ...modules.map((m) => `src/high/${m}`)],
+    cwd: ROOT,
+    stdout: "piped",
+  }).output();
+  if (!output.success) throw new Error("deno doc failed on src/high");
+  const doc = JSON.parse(new TextDecoder().decode(output.stdout));
+  const result: HandWritten = new Map();
+  for (const [url, module] of Object.entries(doc.nodes)) {
+    const file = url.slice(url.lastIndexOf("/") + 1);
+    // deno-lint-ignore no-explicit-any
+    for (const symbol of (module as any).symbols) {
+      for (const declaration of symbol.declarations) {
+        if (declaration.kind !== "class") continue;
+        const def = declaration.def;
+        const methods = new Set<string>([
+          // deno-lint-ignore no-explicit-any
+          ...(def.methods ?? []).map((m: any) => m.name),
+          // deno-lint-ignore no-explicit-any
+          ...(def.properties ?? []).map((p: any) => p.name),
+        ]);
+        const parent = typeof def.extends === "string"
+          ? def.extends
+          : def.extends?.repr ?? null;
+        result.set(`${file}:${symbol.name}`, {
+          module: file,
+          methods,
+          parent,
+        });
+      }
+    }
+  }
+  return result;
 }
 
 async function main(args: string[]) {
@@ -679,6 +829,23 @@ async function main(args: string[]) {
       text: await generate(profile, entries, widgets),
     };
   }));
+  const classInputs = pinnedInputs ?? inputs;
+  const withClasses = profiles.filter(([, profile]) => profile.highLevel);
+  const handWritten = withClasses.length
+    ? await handWrittenClasses()
+    : new Map();
+  const classModules = await Promise.all(
+    withClasses.map(async ([name, profile]) => ({
+      name,
+      text: await format(
+        generateClasses(
+          namespacesFor(profile, classInputs),
+          profile.highLevel!,
+          handWritten,
+        ),
+      ),
+    })),
+  );
   if (pinned) {
     for (const [file, text] of pinned) {
       await Deno.writeTextFile(new URL(file, GIR), text);
@@ -694,6 +861,17 @@ async function main(args: string[]) {
       }
     } else await Deno.writeTextFile(path, text);
     console.log(`${name}: ${count} symbols`);
+  }
+  for (const { name, text } of classModules) {
+    const path = new URL(`src/high/generated/${name}.ts`, ROOT);
+    if (check) {
+      if (await Deno.readTextFile(path) !== text) {
+        throw new Error(
+          `${name}: generated classes are stale. Run deno task gir.`,
+        );
+      }
+    } else await Deno.writeTextFile(path, text);
+    console.log(`${name}: generated classes`);
   }
 }
 

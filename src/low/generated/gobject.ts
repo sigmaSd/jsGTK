@@ -31,7 +31,7 @@ export const gobjectSymbols = {
   },
   // data has notified scope. destroy_data has notified scope.
   g_signal_connect_data: {
-    parameters: ["pointer", "buffer", "function", "pointer", "pointer", "u32"],
+    parameters: ["pointer", "buffer", "pointer", "pointer", "pointer", "u32"],
     result: "u64",
   },
   g_signal_handler_disconnect: {
@@ -73,4 +73,7 @@ export const gobjectSymbols = {
     parameters: ["pointer", "buffer", "pointer", "pointer"],
     result: "void",
   },
+  g_type_name_from_instance: { parameters: ["pointer"], result: "pointer" },
+  g_type_parent: { parameters: ["usize"], result: "usize" },
+  g_type_name: { parameters: ["usize"], result: "pointer" },
 } as const;

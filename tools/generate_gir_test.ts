@@ -34,16 +34,17 @@ Deno.test("GIR throws adds the trailing native error argument", () => {
   assert.ok(file.notes.includes("Trailing GError**"));
 });
 
-Deno.test("GIR distinguishes callbacks from their opaque data", () => {
+Deno.test("GIR passes callbacks as pointers and notes their scope", () => {
+  // Pointers, not "function": Bun rejects NULL for "function" parameters.
   const launch = entry("gio", "g_app_info_launch_default_for_uri_async");
-  assert.equal(launch.binding.parameters[3], "function");
+  assert.equal(launch.binding.parameters[3], "pointer");
   assert.ok(launch.notes.includes("callback has async scope"));
   assert.equal(
     entry("glib", "g_timeout_add").binding.parameters[1],
-    "function",
+    "pointer",
   );
   const connect = entry("gobject", "g_signal_connect_data");
-  assert.equal(connect.binding.parameters[2], "function");
+  assert.equal(connect.binding.parameters[2], "pointer");
   assert.equal(connect.binding.parameters[3], "pointer");
 });
 

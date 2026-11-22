@@ -15,3 +15,4 @@ import "./widget.ts";
 import "./adaptive.ts";
 import "./dbus.ts";
 import "./launch.ts";
+import "./generated.ts";

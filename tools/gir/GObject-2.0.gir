@@ -446,6 +446,36 @@
         </parameter>
       </parameters>
     </function>
+    <function name="type_name" c:identifier="g_type_name">
+      <return-value transfer-ownership="none" nullable="1">
+        <type name="utf8" c:type="const gchar*"/>
+      </return-value>
+      <parameters>
+        <parameter name="type" transfer-ownership="none">
+          <type name="GType" c:type="GType"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="type_name_from_instance" c:identifier="g_type_name_from_instance">
+      <return-value transfer-ownership="none">
+        <type name="utf8" c:type="const gchar*"/>
+      </return-value>
+      <parameters>
+        <parameter name="instance" transfer-ownership="none">
+          <type name="TypeInstance" c:type="GTypeInstance*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="type_parent" c:identifier="g_type_parent">
+      <return-value transfer-ownership="none">
+        <type name="GType" c:type="GType"/>
+      </return-value>
+      <parameters>
+        <parameter name="type" transfer-ownership="none">
+          <type name="GType" c:type="GType"/>
+        </parameter>
+      </parameters>
+    </function>
     <callback name="Callback" c:type="GCallback">
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>

@@ -29,9 +29,9 @@
   },
   "tasks": {
     "test": "deno lint && deno check && deno run --v8-flags=--expose-gc --allow-ffi --allow-env --allow-run=deno test/run_deno.ts && bun test --timeout 60000 test/runner_test.ts && npm i && node --expose-gc --test-force-exit --test test/runner_test.ts",
-    "gir": "deno run --allow-read=tools/gir --allow-write=src/low/generated --allow-run=deno tools/generate_gir.ts",
-    "gir:check": "deno run --allow-read=tools/gir,src/low/generated --allow-run=deno tools/generate_gir.ts --check",
-    "gir:refresh": "deno run --allow-read --allow-write=tools/gir,src/low/generated --allow-run=deno tools/generate_gir.ts --refresh-from",
+    "gir": "deno run --allow-read=tools/gir --allow-write=src/low/generated,src/high/generated --allow-run=deno tools/generate_gir.ts",
+    "gir:check": "deno run --allow-read=tools/gir,src/low/generated,src/high/generated --allow-run=deno tools/generate_gir.ts --check",
+    "gir:refresh": "deno run --allow-read --allow-write=tools/gir,src/low/generated,src/high/generated --allow-run=deno tools/generate_gir.ts --refresh-from",
     "gir:test": "deno test --allow-read=tools/gir tools/generate_gir_test.ts",
     "test:wayland": "deno run --allow-env --allow-sys=homedir --allow-read --allow-write --allow-ffi --allow-run=deno,bun,node,dbus-daemon,mutter test/wayland_focus_driver.ts"
   },

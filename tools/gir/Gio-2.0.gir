@@ -1063,6 +1063,8 @@
         </parameter>
       </parameters>
     </function>
+    <interface name="ListModel" c:symbol-prefix="list_model" c:type="GListModel" glib:type-name="GListModel" glib:get-type="g_list_model_get_type" glib:type-struct="ListModelInterface"/>
+    <class name="MenuModel" c:symbol-prefix="menu_model" c:type="GMenuModel" version="2.32" parent="GObject.Object" abstract="1" glib:type-name="GMenuModel" glib:get-type="g_menu_model_get_type" glib:type-struct="MenuModelClass"/>
     <bitfield name="ApplicationFlags" version="2.28" glib:type-name="GApplicationFlags" glib:get-type="g_application_flags_get_type" c:type="GApplicationFlags"/>
     <callback name="AsyncReadyCallback" c:type="GAsyncReadyCallback">
       <return-value transfer-ownership="none">

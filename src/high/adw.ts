@@ -8,6 +8,8 @@ import {
   Window,
 } from "./gtk4.ts";
 import { GObject } from "./gobject.ts";
+import { type ToastMethods, toastMethods } from "./generated/adw.ts";
+import { applyGenerated, registerWrappers } from "./wrappers.ts";
 
 // ============================================================================
 // Builder Extensions for Adwaita Widgets
@@ -354,6 +356,10 @@ export class Toast extends GObject {
     return this.connect("dismissed", () => callback());
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface Toast extends ToastMethods {}
+applyGenerated(Toast, toastMethods);
 
 // AdwToastOverlay: shows toasts above its child
 export class ToastOverlay extends Widget {
@@ -1055,3 +1061,15 @@ export class CarouselIndicatorLines extends Widget {
     );
   }
 }
+
+// Wrap objects libadwaita hands back in the most specific class available.
+registerWrappers({
+  AdwActionRow: ActionRow,
+  AdwComboRow: ComboRow,
+  AdwSwitchRow: SwitchRow,
+  AdwSpinRow: SpinRow,
+  AdwToast: Toast,
+  AdwWindow: AdwWindow,
+  AdwStatusPage: StatusPage,
+  AdwNavigationPage: NavigationPage,
+});

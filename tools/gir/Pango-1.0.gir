@@ -3,6 +3,37 @@
   <!-- Signature-only snapshot of Pango-1.0.gir from Pango 1.58.2. -->
   <!-- Upstream SHA-256 8366e5e18e81b0d8660bc5c9d7036b9d00608597e22f20c922e5d8dddfc08cc4 -->
   <namespace name="Pango" version="1.0">
-    <enumeration name="EllipsizeMode" glib:type-name="PangoEllipsizeMode" glib:get-type="pango_ellipsize_mode_get_type" c:type="PangoEllipsizeMode"/>
+    <record name="AttrList" c:type="PangoAttrList" opaque="1" glib:type-name="PangoAttrList" glib:get-type="pango_attr_list_get_type" c:symbol-prefix="attr_list"/>
+    <enumeration name="EllipsizeMode" glib:type-name="PangoEllipsizeMode" glib:get-type="pango_ellipsize_mode_get_type" c:type="PangoEllipsizeMode">
+      <doc xml:space="preserve" filename="pango/pango-layout.h" line="97">
+        `PangoEllipsizeMode` describes what sort of ellipsization
+should be applied to text.
+
+In the ellipsization process characters are removed from the
+text in order to make it fit to a given width and replaced
+with an ellipsis.
+      </doc>
+      <member name="none" value="0" c:identifier="PANGO_ELLIPSIZE_NONE" glib:nick="none" glib:name="PANGO_ELLIPSIZE_NONE"/>
+      <member name="start" value="1" c:identifier="PANGO_ELLIPSIZE_START" glib:nick="start" glib:name="PANGO_ELLIPSIZE_START"/>
+      <member name="middle" value="2" c:identifier="PANGO_ELLIPSIZE_MIDDLE" glib:nick="middle" glib:name="PANGO_ELLIPSIZE_MIDDLE"/>
+      <member name="end" value="3" c:identifier="PANGO_ELLIPSIZE_END" glib:nick="end" glib:name="PANGO_ELLIPSIZE_END"/>
+    </enumeration>
+    <class name="Layout" c:symbol-prefix="layout" c:type="PangoLayout" parent="GObject.Object" glib:type-name="PangoLayout" glib:get-type="pango_layout_get_type" glib:type-struct="LayoutClass"/>
+    <record name="TabArray" c:type="PangoTabArray" opaque="1" glib:type-name="PangoTabArray" glib:get-type="pango_tab_array_get_type" c:symbol-prefix="tab_array"/>
+    <enumeration name="WrapMode" glib:type-name="PangoWrapMode" glib:get-type="pango_wrap_mode_get_type" c:type="PangoWrapMode">
+      <doc xml:space="preserve" filename="pango/pango-layout.h" line="67">
+        `PangoWrapMode` describes how to wrap the lines of a `PangoLayout`
+to the desired width.
+
+For @PANGO_WRAP_WORD, Pango uses break opportunities that are determined
+by the Unicode line breaking algorithm. For @PANGO_WRAP_CHAR, Pango allows
+breaking at grapheme boundaries that are determined by the Unicode text
+segmentation algorithm.
+      </doc>
+      <member name="word" value="0" c:identifier="PANGO_WRAP_WORD" glib:nick="word" glib:name="PANGO_WRAP_WORD"/>
+      <member name="char" value="1" c:identifier="PANGO_WRAP_CHAR" glib:nick="char" glib:name="PANGO_WRAP_CHAR"/>
+      <member name="word_char" value="2" c:identifier="PANGO_WRAP_WORD_CHAR" glib:nick="word-char" glib:name="PANGO_WRAP_WORD_CHAR"/>
+      <member name="none" value="3" c:identifier="PANGO_WRAP_NONE" version="1.56" glib:nick="none" glib:name="PANGO_WRAP_NONE"/>
+    </enumeration>
   </namespace>
 </repository>

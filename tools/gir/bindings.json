@@ -183,7 +183,10 @@
         "g_object_new_with_properties",
         "g_object_set_data",
         "g_object_get_data",
-        "g_object_set_data_full"
+        "g_object_set_data_full",
+        "g_type_name_from_instance",
+        "g_type_parent",
+        "g_type_name"
       ],
       "overrides": {
         "g_object_weak_ref": {
@@ -784,6 +787,15 @@
           "result": "u64",
           "reason": "Preserve the existing u64 representation of GType used by the wrapper."
         }
+      },
+      "highLevel": {
+        "namespace": "Gtk",
+        "library": "gtk4",
+        "libraryModule": "../../low/gtk4.ts",
+        "classes": {
+          "Label": {},
+          "ListBox": {}
+        }
       }
     },
     "adw": {
@@ -988,7 +1000,15 @@
           ],
           "reason": "Preserve availability checks in existing Adwaita wrappers."
         }
-      ]
+      ],
+      "highLevel": {
+        "namespace": "Adw",
+        "library": "adw",
+        "libraryModule": "../../low/adw.ts",
+        "classes": {
+          "Toast": {}
+        }
+      }
     },
     "app_indicator": {
       "exportName": "appIndicatorSymbols",

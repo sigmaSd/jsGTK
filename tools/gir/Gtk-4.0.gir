@@ -1227,7 +1227,78 @@
           </parameter>
         </parameters>
       </constructor>
-      <method name="get_text" c:identifier="gtk_label_get_text">
+      <method name="get_current_uri" c:identifier="gtk_label_get_current_uri">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="5973">
+          Returns the URI for the active link in the label.
+
+The active link is the one under the mouse pointer or, in a
+selectable label, the link in which the text cursor is currently
+positioned.
+
+This function is intended for use in a [signal@Gtk.Label::activate-link]
+handler or for use in a [signal@Gtk.Widget::query-tooltip] handler.
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_ellipsize" c:identifier="gtk_label_get_ellipsize" glib:get-property="ellipsize">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="4110">
+          Returns the ellipsization mode of the label.
+
+See [method@Gtk.Label.set_ellipsize].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="Pango.EllipsizeMode" c:type="PangoEllipsizeMode"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_extra_menu" c:identifier="gtk_label_get_extra_menu" glib:get-property="extra-menu">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="6182">
+          Gets the extra menu model of the label.
+
+See [method@Gtk.Label.set_extra_menu].
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="Gio.MenuModel" c:type="GMenuModel*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_justify" c:identifier="gtk_label_get_justify" glib:get-property="justify">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="4063">
+          Returns the justification of the label.
+
+See [method@Gtk.Label.set_justify].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="Justification" c:type="GtkJustification"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_label" c:identifier="gtk_label_get_label" glib:get-property="label">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="3440">
+          Fetches the text from a label.
+
+The returned text includes any embedded underlines indicating
+mnemonics and Pango markup. (See [method@Gtk.Label.get_text]).
+        </doc>
         <return-value transfer-ownership="none">
           <type name="utf8" c:type="const char*"/>
         </return-value>
@@ -1237,7 +1308,281 @@
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_layout" c:identifier="gtk_label_get_layout">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="5414">
+          Gets the Pango layout used to display the label.
+
+The layout is useful to e.g. convert text positions to pixel
+positions, in combination with [method@Gtk.Label.get_layout_offsets].
+The returned layout is owned by the @label so need not be
+freed by the caller. The @label is free to recreate its layout
+at any time, so it should be considered read-only.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="Pango.Layout" c:type="PangoLayout*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_lines" c:identifier="gtk_label_get_lines" glib:get-property="lines">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="6055">
+          Gets the number of lines to which an ellipsized, wrapping
+label should be limited.
+
+See [method@Gtk.Label.set_lines].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_max_width_chars" c:identifier="gtk_label_get_max_width_chars" glib:get-property="max-width-chars">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="4189">
+          Retrieves the maximum width of the label in characters.
+
+See [method@Gtk.Label.set_width_chars].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_mnemonic_keyval" c:identifier="gtk_label_get_mnemonic_keyval" glib:get-property="mnemonic-keyval">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="3182">
+          Return the mnemonic accelerator.
+
+If the label has been set so that it has a mnemonic key this function
+returns the keyval used for the mnemonic accelerator. If there is no
+mnemonic set up it returns `GDK_KEY_VoidSymbol`.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="guint" c:type="guint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_mnemonic_widget" c:identifier="gtk_label_get_mnemonic_widget" glib:get-property="mnemonic-widget">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="3163">
+          Retrieves the mnemonic target of this label.
+
+See [method@Gtk.Label.set_mnemonic_widget].
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="Widget" c:type="GtkWidget*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_natural_wrap_mode" c:identifier="gtk_label_get_natural_wrap_mode" glib:get-property="natural-wrap-mode" version="4.6">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="4337">
+          Returns natural line wrap mode used by the label.
+
+See [method@Gtk.Label.set_natural_wrap_mode].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="NaturalWrapMode" c:type="GtkNaturalWrapMode"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_selectable" c:identifier="gtk_label_get_selectable" glib:get-property="selectable">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="5177">
+          Returns whether the label is selectable.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_single_line_mode" c:identifier="gtk_label_get_single_line_mode" glib:get-property="single-line-mode">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="5575">
+          Returns whether the label is in single line mode.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_text" c:identifier="gtk_label_get_text">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="4009">
+          Gets the text of the label.
+
+The returned text is as it appears on screen. This does not include
+any embedded underlines indicating mnemonics or Pango markup. (See
+[method@Gtk.Label.get_label])
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_use_markup" c:identifier="gtk_label_get_use_markup" glib:get-property="use-markup">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="5492">
+          Returns whether the label’s text is interpreted as Pango markup.
+
+See [method@Gtk.Label.set_use_markup].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_use_underline" c:identifier="gtk_label_get_use_underline" glib:get-property="use-underline">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="5531">
+          Returns whether underlines in the label indicate mnemonics.
+
+See [method@Gtk.Label.set_use_underline].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_width_chars" c:identifier="gtk_label_get_width_chars" glib:get-property="width-chars">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="4149">
+          Retrieves the desired width of the label in characters.
+
+See [method@Gtk.Label.set_width_chars].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_wrap" c:identifier="gtk_label_get_wrap" glib:get-property="wrap">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="4242">
+          Returns whether lines in the label are automatically wrapped.
+
+See [method@Gtk.Label.set_wrap].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_wrap_mode" c:identifier="gtk_label_get_wrap_mode" glib:get-property="wrap-mode">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="4292">
+          Returns line wrap mode used by the label.
+
+See [method@Gtk.Label.set_wrap_mode].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="Pango.WrapMode" c:type="PangoWrapMode"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_xalign" c:identifier="gtk_label_get_xalign" glib:get-property="xalign">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="6100">
+          Gets the `xalign` of the label.
+
+See the [property@Gtk.Label:xalign] property.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gfloat" c:type="float"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_yalign" c:identifier="gtk_label_get_yalign" glib:get-property="yalign">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="6144">
+          Gets the `yalign` of the label.
+
+See the [property@Gtk.Label:yalign] property.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gfloat" c:type="float"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="select_region" c:identifier="gtk_label_select_region">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="5312">
+          Selects a range of characters in the label, if the label is selectable.
+
+See [method@Gtk.Label.set_selectable]. If the label is not selectable,
+this function has no effect. If @start_offset or
+@end_offset are -1, then the end of the label will be substituted.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+          <parameter name="start_offset" transfer-ownership="none">
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="end_offset" transfer-ownership="none">
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_ellipsize" c:identifier="gtk_label_set_ellipsize" glib:set-property="ellipsize">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="4081">
+          Sets the mode used to ellipsize the text.
+
+The text will be ellipsized if there is not
+enough space to render the entire string.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1250,7 +1595,54 @@
           </parameter>
         </parameters>
       </method>
-      <method name="set_markup" c:identifier="gtk_label_set_markup">
+      <method name="set_extra_menu" c:identifier="gtk_label_set_extra_menu" glib:set-property="extra-menu">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="6162">
+          Sets a menu model to add to the context menu of the label.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+          <parameter name="model" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Gio.MenuModel" c:type="GMenuModel*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_justify" c:identifier="gtk_label_set_justify" glib:set-property="justify">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="4029">
+          Sets the alignment of lines in the label relative to each other.
+
+This function has no effect on labels containing only a single line.
+
+[enum@Gtk.Justification.left] is the default value when the widget
+is first created with [ctor@Gtk.Label.new].
+
+If you instead want to set the alignment of the label as a whole,
+use [method@Gtk.Widget.set_halign] instead.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+          <parameter name="jtype" transfer-ownership="none">
+            <type name="Justification" c:type="GtkJustification"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_label" c:identifier="gtk_label_set_label" glib:set-property="label">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="3415">
+          Sets the text of the label.
+
+The label is interpreted as including embedded underlines and/or Pango
+markup depending on the values of the [property@Gtk.Label:use-underline]
+and [property@Gtk.Label:use-markup] properties.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1263,7 +1655,162 @@
           </parameter>
         </parameters>
       </method>
+      <method name="set_lines" c:identifier="gtk_label_set_lines" glib:set-property="lines">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="6029">
+          Sets the number of lines to which an ellipsized, wrapping label
+should be limited.
+
+This has no effect if the label is not wrapping or ellipsized.
+Set this to -1 if you don’t want to limit the number of lines.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+          <parameter name="lines" transfer-ownership="none">
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_markup" c:identifier="gtk_label_set_markup">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="3925">
+          Sets the labels text and attributes from markup.
+
+The string must be marked up with Pango markup
+(see [func@Pango.parse_markup]).
+
+If @str is external data, you may need to escape it
+with [func@GLib.markup_escape_text] or [func@GLib.markup_printf_escaped]:
+
+```c
+GtkWidget *self = gtk_label_new (NULL);
+const char *str = "...";
+const char *format = "&lt;span style=\"italic\"&gt;\%s&lt;/span&gt;";
+char *markup;
+
+markup = g_markup_printf_escaped (format, str);
+gtk_label_set_markup (GTK_LABEL (self), markup);
+g_free (markup);
+```
+
+This function sets the [property@Gtk.Label:use-markup] property
+to true.
+
+Also see [method@Gtk.Label.set_text].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+          <parameter name="str" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_markup_with_mnemonic" c:identifier="gtk_label_set_markup_with_mnemonic">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="3974">
+          Sets the labels text, attributes and mnemonic from markup.
+
+Parses @str which is marked up with Pango markup (see [func@Pango.parse_markup]),
+setting the label’s text and attribute list based on the parse results.
+If characters in @str are preceded by an underscore, they are underlined
+indicating that they represent a keyboard accelerator called a mnemonic.
+
+The mnemonic key can be used to activate another widget, chosen
+automatically, or explicitly using [method@Gtk.Label.set_mnemonic_widget].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+          <parameter name="str" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_max_width_chars" c:identifier="gtk_label_set_max_width_chars" glib:set-property="max-width-chars">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="4167">
+          Sets the maximum width of the label in characters.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+          <parameter name="n_chars" transfer-ownership="none">
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_mnemonic_widget" c:identifier="gtk_label_set_mnemonic_widget" glib:set-property="mnemonic-widget">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="3111">
+          Associate the label with its mnemonic target.
+
+If the label has been set so that it has a mnemonic key (using
+i.e. [method@Gtk.Label.set_markup_with_mnemonic],
+[method@Gtk.Label.set_text_with_mnemonic],
+[ctor@Gtk.Label.new_with_mnemonic]
+or the [property@Gtk.Label:use_underline] property) the label can
+be associated with a widget that is the target of the mnemonic.
+When the label is inside a widget (like a [class@Gtk.Button] or a
+[class@Gtk.Notebook] tab) it is automatically associated with the
+correct widget, but sometimes (i.e. when the target is a [class@Gtk.Entry]
+next to the label) you need to set it explicitly using this function.
+
+The target widget will be accelerated by emitting the
+[signal@Gtk.Widget::mnemonic-activate] signal on it. The default handler
+for this signal will activate the widget if there are no mnemonic
+collisions and toggle focus between the colliding widgets otherwise.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+          <parameter name="widget" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Widget" c:type="GtkWidget*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_natural_wrap_mode" c:identifier="gtk_label_set_natural_wrap_mode" glib:set-property="natural-wrap-mode" version="4.6">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="4310">
+          Selects the line wrapping for the natural size request.
+
+This only affects the natural size requested, for the actual wrapping used,
+see the [property@Gtk.Label:wrap-mode] property.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+          <parameter name="wrap_mode" transfer-ownership="none">
+            <type name="NaturalWrapMode" c:type="GtkNaturalWrapMode"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_selectable" c:identifier="gtk_label_set_selectable" glib:set-property="selectable">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="5123">
+          Makes text in the label selectable.
+
+Selectable labels allow the user to select text from the label,
+for copy-and-paste.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1276,7 +1823,54 @@
           </parameter>
         </parameters>
       </method>
+      <method name="set_single_line_mode" c:identifier="gtk_label_set_single_line_mode" glib:set-property="single-line-mode">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="5549">
+          Sets whether the label is in single line mode.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+          <parameter name="single_line_mode" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_text" c:identifier="gtk_label_set_text">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="3320">
+          Sets the text for the label.
+
+It overwrites any text that was there before and clears any
+previously set mnemonic accelerators, and sets the
+[property@Gtk.Label:use-underline] and
+[property@Gtk.Label:use-markup] properties to false.
+
+Also see [method@Gtk.Label.set_markup].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+          <parameter name="str" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_text_with_mnemonic" c:identifier="gtk_label_set_text_with_mnemonic">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="4409">
+          Sets the text for the label, with mnemonics.
+
+If characters in @str are preceded by an underscore, they are underlined
+indicating that they represent a keyboard accelerator called a mnemonic.
+The mnemonic key can be used to activate another widget, chosen
+automatically, or explicitly using [method@Gtk.Label.set_mnemonic_widget].
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1290,6 +1884,27 @@
         </parameters>
       </method>
       <method name="set_use_markup" c:identifier="gtk_label_set_use_markup" glib:set-property="use-markup">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="5469">
+          Sets whether the text of the label contains markup.
+
+See [method@Gtk.Label.set_markup].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+          <parameter name="setting" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_use_underline" c:identifier="gtk_label_set_use_underline" glib:set-property="use-underline">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="5510">
+          Sets whether underlines in the text indicate mnemonics.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1303,6 +1918,9 @@
         </parameters>
       </method>
       <method name="set_width_chars" c:identifier="gtk_label_set_width_chars" glib:set-property="width-chars">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="4128">
+          Sets the desired width in characters of the label.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1316,6 +1934,19 @@
         </parameters>
       </method>
       <method name="set_wrap" c:identifier="gtk_label_set_wrap" glib:set-property="wrap">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="4207">
+          Toggles line wrapping within the label.
+
+True makes it break lines if text exceeds the widget’s size.
+false lets the text get cut off by the edge of the widget if
+it exceeds the widget size.
+
+Note that setting line wrapping to true does not make the label
+wrap at its parent widget’s width, because GTK widgets conceptually
+can’t make their requisition depend on the parent  widget’s size.
+For a label that wraps at a specific position, set the label’s width
+using [method@Gtk.Widget.set_size_request].
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1328,7 +1959,37 @@
           </parameter>
         </parameters>
       </method>
+      <method name="set_wrap_mode" c:identifier="gtk_label_set_wrap_mode" glib:set-property="wrap-mode">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="4260">
+          Controls how line wrapping is done.
+
+This only affects the label if line wrapping is on. (See
+[method@Gtk.Label.set_wrap])
+
+The default is [enum@Pango.WrapMode.word], which means
+wrap on word boundaries.
+
+For sizing behavior, also consider the
+[property@Gtk.Label:natural-wrap-mode] property.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+          <parameter name="wrap_mode" transfer-ownership="none">
+            <type name="Pango.WrapMode" c:type="PangoWrapMode"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_xalign" c:identifier="gtk_label_set_xalign" glib:set-property="xalign">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="6074">
+          Sets the `xalign` of the label.
+
+See the [property@Gtk.Label:xalign] property.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1341,6 +2002,104 @@
           </parameter>
         </parameters>
       </method>
+      <method name="set_yalign" c:identifier="gtk_label_set_yalign" glib:set-property="yalign">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="6118">
+          Sets the `yalign` of the label.
+
+See the [property@Gtk.Label:yalign] property.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Label" c:type="GtkLabel*"/>
+          </instance-parameter>
+          <parameter name="yalign" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <glib:signal name="activate-current-link" when="last" action="1">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="2410">
+          Gets emitted when the user activates a link in the label.
+
+The `::activate-current-link` is a [keybinding signal](class.SignalAction.html).
+
+Applications may also emit the signal with g_signal_emit_by_name()
+if they need to control activation of URIs programmatically.
+
+The default bindings for this signal are all forms of the &lt;kbd&gt;Enter&lt;/kbd&gt; key.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
+      <glib:signal name="activate-link" when="last">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="2432">
+          Gets emitted to activate a URI.
+
+Applications may connect to it to override the default behaviour,
+which is to call [method@Gtk.FileLauncher.launch].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="uri" transfer-ownership="none">
+            <type name="utf8" c:type="gchar*"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
+      <glib:signal name="copy-clipboard" when="last" action="1">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="2391">
+          Gets emitted to copy the selection to the clipboard.
+
+The `::copy-clipboard` signal is a [keybinding signal](class.SignalAction.html).
+
+The default binding for this signal is &lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;c&lt;/kbd&gt;.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
+      <glib:signal name="move-cursor" when="last" action="1">
+        <doc xml:space="preserve" filename="gtk/gtklabel.c" line="2349">
+          Gets emitted when the user initiates a cursor movement.
+
+The `::move-cursor` signal is a [keybinding signal](class.SignalAction.html).
+If the cursor is not visible in @entry, this signal causes the viewport to
+be moved instead.
+
+Applications should not connect to it, but may emit it with
+[func@GObject.signal_emit_by_name] if they need to control
+the cursor programmatically.
+
+The default bindings for this signal come in two variants, the
+variant with the &lt;kbd&gt;Shift&lt;/kbd&gt; modifier extends the selection,
+the variant without the &lt;kbd&gt;Shift&lt;/kbd&gt; modifier does not.
+There are too many key combinations to list them all here.
+
+- &lt;kbd&gt;←&lt;/kbd&gt;, &lt;kbd&gt;→&lt;/kbd&gt;, &lt;kbd&gt;↑&lt;/kbd&gt;, &lt;kbd&gt;↓&lt;/kbd&gt;
+  move by individual characters/lines
+- &lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;←&lt;/kbd&gt;, etc. move by words/paragraphs
+- &lt;kbd&gt;Home&lt;/kbd&gt; and &lt;kbd&gt;End&lt;/kbd&gt; move to the ends of the buffer
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="step" transfer-ownership="none">
+            <type name="MovementStep"/>
+          </parameter>
+          <parameter name="count" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+          <parameter name="extend_selection" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
     </class>
     <class name="LevelBar" c:symbol-prefix="level_bar" c:type="GtkLevelBar" parent="Widget" glib:type-name="GtkLevelBar" glib:get-type="gtk_level_bar_get_type">
       <constructor name="new" c:identifier="gtk_level_bar_new">
@@ -1395,6 +2154,12 @@
         </return-value>
       </constructor>
       <method name="append" c:identifier="gtk_list_box_append">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="3009">
+          Append a widget to the list.
+
+If a sort function is set, the widget will
+actually be inserted at the calculated position.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1407,7 +2172,114 @@
           </parameter>
         </parameters>
       </method>
+      <method name="drag_highlight_row" c:identifier="gtk_list_box_drag_highlight_row">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="3113">
+          Add a drag highlight to a row.
+
+This is a helper function for implementing DnD onto a `GtkListBox`.
+The passed in @row will be highlighted by setting the
+%GTK_STATE_FLAG_DROP_ACTIVE state and any previously highlighted
+row will be unhighlighted.
+
+The row will also be unhighlighted when the widget gets
+a drag leave event.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+          <parameter name="row" transfer-ownership="none">
+            <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="drag_unhighlight_row" c:identifier="gtk_list_box_drag_unhighlight_row">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="3094">
+          If a row has previously been highlighted via gtk_list_box_drag_highlight_row(),
+it will have the highlight removed.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_activate_on_single_click" c:identifier="gtk_list_box_get_activate_on_single_click" glib:get-property="activate-on-single-click">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="1540">
+          Returns whether rows activate on single clicks.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_adjustment" c:identifier="gtk_list_box_get_adjustment">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="1136">
+          Gets the adjustment (if any) that the widget uses to
+for vertical scrolling.
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="Adjustment" c:type="GtkAdjustment*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_row_at_index" c:identifier="gtk_list_box_get_row_at_index">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="835">
+          Gets the n-th child in the list (not counting headers).
+
+If @index_ is negative or larger than the number of items in the
+list, %NULL is returned.
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+          <parameter name="index_" transfer-ownership="none">
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_row_at_y" c:identifier="gtk_list_box_get_row_at_y">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="879">
+          Gets the row at the @y position.
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+          <parameter name="y" transfer-ownership="none">
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="get_selected_row" c:identifier="gtk_list_box_get_selected_row">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="815">
+          Gets the selected row, or %NULL if no rows are selected.
+
+Note that the box may allow multiple selection, in which
+case you should use [method@Gtk.ListBox.selected_foreach] to
+find all selected rows.
+        </doc>
         <return-value transfer-ownership="none" nullable="1">
           <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
         </return-value>
@@ -1417,7 +2289,98 @@
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_selection_mode" c:identifier="gtk_list_box_get_selection_mode" glib:get-property="selection-mode">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="1234">
+          Gets the selection mode of the listbox.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="SelectionMode" c:type="GtkSelectionMode"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_show_separators" c:identifier="gtk_list_box_get_show_separators" glib:get-property="show-separators">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="4138">
+          Returns whether the list box should show separators
+between rows.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_tab_behavior" c:identifier="gtk_list_box_get_tab_behavior" glib:get-property="tab-behavior" version="4.18">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="4178">
+          Returns the behavior of the &lt;kbd&gt;Tab&lt;/kbd&gt; and &lt;kbd&gt;Shift&lt;/kbd&gt;+&lt;kbd&gt;Tab&lt;/kbd&gt; keys.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="ListTabBehavior" c:type="GtkListTabBehavior"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="insert" c:identifier="gtk_list_box_insert">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="3026">
+          Insert the @child into the @box at @position.
+
+If a sort function is
+set, the widget will actually be inserted at the calculated position.
+
+If @position is -1, or larger than the total number of items in the
+@box, then the @child will be appended to the end.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+          <parameter name="child" transfer-ownership="none">
+            <type name="Widget" c:type="GtkWidget*"/>
+          </parameter>
+          <parameter name="position" transfer-ownership="none">
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="invalidate_filter" c:identifier="gtk_list_box_invalidate_filter">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="1343">
+          Update the filtering for all rows.
+
+Call this when result
+of the filter function on the @box is changed due
+to an external factor. For instance, this would be used
+if the filter function just looked for a specific search
+string and the entry with the search string has changed.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="invalidate_headers" c:identifier="gtk_list_box_invalidate_headers">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="1427">
+          Update the separators for all rows.
+
+Call this when result
+of the header function on the @box is changed due
+to an external factor.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1428,6 +2391,13 @@
         </parameters>
       </method>
       <method name="invalidate_sort" c:identifier="gtk_list_box_invalidate_sort">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="1386">
+          Update the sorting for all rows.
+
+Call this when result
+of the sort function on the @box is changed due
+to an external factor.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1438,6 +2408,12 @@
         </parameters>
       </method>
       <method name="prepend" c:identifier="gtk_list_box_prepend">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="2992">
+          Prepend a widget to the list.
+
+If a sort function is set, the widget will
+actually be inserted at the calculated position.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1451,6 +2427,9 @@
         </parameters>
       </method>
       <method name="remove" c:identifier="gtk_list_box_remove">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="2393">
+          Removes a child from @box.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1464,6 +2443,24 @@
         </parameters>
       </method>
       <method name="remove_all" c:identifier="gtk_list_box_remove_all" version="4.12">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="2499">
+          Removes all rows from @box.
+
+This function does nothing if @box is backed by a model.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="select_all" c:identifier="gtk_list_box_select_all">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="952">
+          Select all children of @box, if the selection mode allows it.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1474,6 +2471,9 @@
         </parameters>
       </method>
       <method name="select_row" c:identifier="gtk_list_box_select_row">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="907">
+          Make @row the currently selected row.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1486,7 +2486,85 @@
           </parameter>
         </parameters>
       </method>
+      <method name="selected_foreach" c:identifier="gtk_list_box_selected_foreach">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="1014">
+          Calls a function for each selected child.
+
+Note that the selection cannot be modified from within this function.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+          <parameter name="func" transfer-ownership="none" scope="call" closure="1">
+            <type name="ListBoxForeachFunc" c:type="GtkListBoxForeachFunc"/>
+          </parameter>
+          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_activate_on_single_click" c:identifier="gtk_list_box_set_activate_on_single_click" glib:set-property="activate-on-single-click">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="1516">
+          If @single is %TRUE, rows will be activated when you click on them,
+otherwise you need to double-click.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+          <parameter name="single" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_adjustment" c:identifier="gtk_list_box_set_adjustment">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="1106">
+          Sets the adjustment (if any) that the widget uses to
+for vertical scrolling.
+
+For instance, this is used to get the page size for
+PageUp/Down key handling.
+
+In the normal case when the @box is packed inside
+a `GtkScrolledWindow` the adjustment from that will
+be picked up automatically, so there is no need
+to manually do that.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+          <parameter name="adjustment" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Adjustment" c:type="GtkAdjustment*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_filter_func" c:identifier="gtk_list_box_set_filter_func">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="1250">
+          By setting a filter function on the @box one can decide dynamically which
+of the rows to show.
+
+For instance, to implement a search function on a list that
+filters the original list to only show the matching rows.
+
+The @filter_func will be called for each row after the call, and
+it will continue to be called each time a row changes (via
+[method@Gtk.ListBoxRow.changed]) or when [method@Gtk.ListBox.invalidate_filter]
+is called.
+
+Note that using a filter function is incompatible with using a model
+(see [method@Gtk.ListBox.bind_model]).
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1505,7 +2583,57 @@
           </parameter>
         </parameters>
       </method>
+      <method name="set_header_func" c:identifier="gtk_list_box_set_header_func">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="1292">
+          Sets a header function.
+
+By setting a header function on the @box one can dynamically add headers
+in front of rows, depending on the contents of the row and its position
+in the list.
+
+For instance, one could use it to add headers in front of the first item
+of a new kind, in a list sorted by the kind.
+
+The @update_header can look at the current header widget using
+[method@Gtk.ListBoxRow.get_header] and either update the state of the widget
+as needed, or set a new one using [method@Gtk.ListBoxRow.set_header]. If no
+header is needed, set the header to %NULL.
+
+Note that you may get many calls @update_header to this for a particular
+row when e.g. changing things that don’t affect the header. In this case
+it is important for performance to not blindly replace an existing header
+with an identical one.
+
+The @update_header function will be called for each row after the call,
+and it will continue to be called each time a row changes (via
+[method@Gtk.ListBoxRow.changed]) and when the row before changes (either
+by [method@Gtk.ListBoxRow.changed] on the previous row, or when the previous
+row becomes a different row). It is also called for all rows when
+[method@Gtk.ListBox.invalidate_headers] is called.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+          <parameter name="update_header" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="1" destroy="2">
+            <type name="ListBoxUpdateHeaderFunc" c:type="GtkListBoxUpdateHeaderFunc"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="destroy" transfer-ownership="none" scope="async">
+            <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_placeholder" c:identifier="gtk_list_box_set_placeholder">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="1075">
+          Sets the placeholder widget that is shown in the list when
+it doesn't display any visible children.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1519,6 +2647,9 @@
         </parameters>
       </method>
       <method name="set_selection_mode" c:identifier="gtk_list_box_set_selection_mode" glib:set-property="selection-mode">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="1195">
+          Sets how selection works in the listbox.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1532,6 +2663,10 @@
         </parameters>
       </method>
       <method name="set_show_separators" c:identifier="gtk_list_box_set_show_separators" glib:set-property="show-separators">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="4111">
+          Sets whether the list box should show separators
+between rows.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1545,6 +2680,20 @@
         </parameters>
       </method>
       <method name="set_sort_func" c:identifier="gtk_list_box_set_sort_func">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="1448">
+          Sets a sort function.
+
+By setting a sort function on the @box one can dynamically reorder
+the rows of the list, based on the contents of the rows.
+
+The @sort_func will be called for each row after the call, and will
+continue to be called each time a row changes (via
+[method@Gtk.ListBoxRow.changed]) and when [method@Gtk.ListBox.invalidate_sort]
+is called.
+
+Note that using a sort function is incompatible with using a model
+(see [method@Gtk.ListBox.bind_model]).
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1563,6 +2712,167 @@
           </parameter>
         </parameters>
       </method>
+      <method name="set_tab_behavior" c:identifier="gtk_list_box_set_tab_behavior" glib:set-property="tab-behavior" version="4.18">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="4155">
+          Sets the behavior of the &lt;kbd&gt;Tab&lt;/kbd&gt; and &lt;kbd&gt;Shift&lt;/kbd&gt;+&lt;kbd&gt;Tab&lt;/kbd&gt; keys.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+          <parameter name="behavior" transfer-ownership="none">
+            <type name="ListTabBehavior" c:type="GtkListTabBehavior"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="unselect_all" c:identifier="gtk_list_box_unselect_all">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="973">
+          Unselect all children of @box, if the selection mode allows it.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="unselect_row" c:identifier="gtk_list_box_unselect_row">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="935">
+          Unselects a single row of @box, if the selection mode allows it.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="box" transfer-ownership="none">
+            <type name="ListBox" c:type="GtkListBox*"/>
+          </instance-parameter>
+          <parameter name="row" transfer-ownership="none">
+            <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <glib:signal name="activate-cursor-row" when="last" action="1">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="674">
+          Emitted when the cursor row is activated.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
+      <glib:signal name="move-cursor" when="last" action="1">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="705">
+          Emitted when the user initiates a cursor movement.
+
+The default bindings for this signal come in two variants, the variant with
+the Shift modifier extends the selection, the variant without the Shift
+modifier does not. There are too many key combinations to list them all
+here.
+
+- &lt;kbd&gt;←&lt;/kbd&gt;, &lt;kbd&gt;→&lt;/kbd&gt;, &lt;kbd&gt;↑&lt;/kbd&gt;, &lt;kbd&gt;↓&lt;/kbd&gt;
+  move by individual children
+- &lt;kbd&gt;Home&lt;/kbd&gt;, &lt;kbd&gt;End&lt;/kbd&gt; move to the ends of the box
+- &lt;kbd&gt;PgUp&lt;/kbd&gt;, &lt;kbd&gt;PgDn&lt;/kbd&gt; move vertically by pages
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="step" transfer-ownership="none">
+            <type name="MovementStep"/>
+          </parameter>
+          <parameter name="count" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+          <parameter name="extend" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+          <parameter name="modify" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
+      <glib:signal name="row-activated" when="last">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="657">
+          Emitted when a row has been activated by the user.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="row" transfer-ownership="none">
+            <type name="ListBoxRow"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
+      <glib:signal name="row-selected" when="last">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="582">
+          Emitted when a new row is selected, or (with a %NULL @row)
+when the selection is cleared.
+
+When the @box is using %GTK_SELECTION_MULTIPLE, this signal will not
+give you the full picture of selection changes, and you should use
+the [signal@Gtk.ListBox::selected-rows-changed] signal instead.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="row" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="ListBoxRow"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
+      <glib:signal name="select-all" when="last" action="1">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="618">
+          Emitted to select all children of the box, if the selection
+mode permits it.
+
+This is a [keybinding signal](class.SignalAction.html).
+
+The default binding for this signal is &lt;kbd&gt;Ctrl&lt;/kbd&gt;-&lt;kbd&gt;a&lt;/kbd&gt;.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
+      <glib:signal name="selected-rows-changed" when="first">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="604">
+          Emitted when the set of selected rows changes.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
+      <glib:signal name="toggle-cursor-row" when="last" action="1">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="689">
+          Emitted when the cursor row is toggled.
+
+The default bindings for this signal is &lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;␣&lt;/kbd&gt;.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
+      <glib:signal name="unselect-all" when="last" action="1">
+        <doc xml:space="preserve" filename="gtk/gtklistbox.c" line="637">
+          Emitted to unselect all children of the box, if the selection
+mode permits it.
+
+This is a [keybinding signal](class.SignalAction.html).
+
+The default binding for this signal is
+&lt;kbd&gt;Ctrl&lt;/kbd&gt;-&lt;kbd&gt;Shift&lt;/kbd&gt;-&lt;kbd&gt;a&lt;/kbd&gt;.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
     </class>
     <class name="ListBoxRow" c:symbol-prefix="list_box_row" c:type="GtkListBoxRow" parent="Widget" glib:type-name="GtkListBoxRow" glib:get-type="gtk_list_box_row_get_type" glib:type-struct="ListBoxRowClass">
       <constructor name="new" c:identifier="gtk_list_box_row_new">
@@ -3549,6 +4859,74 @@
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
     </function>
+    <enumeration name="Justification" glib:type-name="GtkJustification" glib:get-type="gtk_justification_get_type" c:type="GtkJustification">
+      <doc xml:space="preserve" filename="gtk/gtkenums.h" line="273">
+        Used for justifying the text inside a [class@Label] widget.
+      </doc>
+      <member name="left" value="0" c:identifier="GTK_JUSTIFY_LEFT" glib:nick="left" glib:name="GTK_JUSTIFY_LEFT"/>
+      <member name="right" value="1" c:identifier="GTK_JUSTIFY_RIGHT" glib:nick="right" glib:name="GTK_JUSTIFY_RIGHT"/>
+      <member name="center" value="2" c:identifier="GTK_JUSTIFY_CENTER" glib:nick="center" glib:name="GTK_JUSTIFY_CENTER"/>
+      <member name="fill" value="3" c:identifier="GTK_JUSTIFY_FILL" glib:nick="fill" glib:name="GTK_JUSTIFY_FILL"/>
+    </enumeration>
+    <callback name="ListBoxCreateWidgetFunc" c:type="GtkListBoxCreateWidgetFunc">
+      <return-value transfer-ownership="full">
+        <type name="Widget" c:type="GtkWidget*"/>
+      </return-value>
+      <parameters>
+        <parameter name="item" transfer-ownership="none">
+          <type name="GObject.Object" c:type="gpointer"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <enumeration name="ListTabBehavior" version="4.12" glib:type-name="GtkListTabBehavior" glib:get-type="gtk_list_tab_behavior_get_type" c:type="GtkListTabBehavior">
+      <doc xml:space="preserve" filename="gtk/gtkenums.h" line="290">
+        Used to configure the focus behavior in the `GTK_DIR_TAB_FORWARD`
+and `GTK_DIR_TAB_BACKWARD` direction, like the &lt;kbd&gt;Tab&lt;/kbd&gt; key
+in a [class@Gtk.ListView].
+      </doc>
+      <member name="all" value="0" c:identifier="GTK_LIST_TAB_ALL" glib:nick="all" glib:name="GTK_LIST_TAB_ALL"/>
+      <member name="item" value="1" c:identifier="GTK_LIST_TAB_ITEM" glib:nick="item" glib:name="GTK_LIST_TAB_ITEM"/>
+      <member name="cell" value="2" c:identifier="GTK_LIST_TAB_CELL" glib:nick="cell" glib:name="GTK_LIST_TAB_CELL"/>
+    </enumeration>
+    <enumeration name="MovementStep" glib:type-name="GtkMovementStep" glib:get-type="gtk_movement_step_get_type" c:type="GtkMovementStep">
+      <doc xml:space="preserve" filename="gtk/gtkenums.h" line="352">
+        Passed as argument to various keybinding signals for moving the
+cursor position.
+      </doc>
+      <member name="logical_positions" value="0" c:identifier="GTK_MOVEMENT_LOGICAL_POSITIONS" glib:nick="logical-positions" glib:name="GTK_MOVEMENT_LOGICAL_POSITIONS"/>
+      <member name="visual_positions" value="1" c:identifier="GTK_MOVEMENT_VISUAL_POSITIONS" glib:nick="visual-positions" glib:name="GTK_MOVEMENT_VISUAL_POSITIONS"/>
+      <member name="words" value="2" c:identifier="GTK_MOVEMENT_WORDS" glib:nick="words" glib:name="GTK_MOVEMENT_WORDS"/>
+      <member name="display_lines" value="3" c:identifier="GTK_MOVEMENT_DISPLAY_LINES" glib:nick="display-lines" glib:name="GTK_MOVEMENT_DISPLAY_LINES"/>
+      <member name="display_line_ends" value="4" c:identifier="GTK_MOVEMENT_DISPLAY_LINE_ENDS" glib:nick="display-line-ends" glib:name="GTK_MOVEMENT_DISPLAY_LINE_ENDS"/>
+      <member name="paragraphs" value="5" c:identifier="GTK_MOVEMENT_PARAGRAPHS" glib:nick="paragraphs" glib:name="GTK_MOVEMENT_PARAGRAPHS"/>
+      <member name="paragraph_ends" value="6" c:identifier="GTK_MOVEMENT_PARAGRAPH_ENDS" glib:nick="paragraph-ends" glib:name="GTK_MOVEMENT_PARAGRAPH_ENDS"/>
+      <member name="pages" value="7" c:identifier="GTK_MOVEMENT_PAGES" glib:nick="pages" glib:name="GTK_MOVEMENT_PAGES"/>
+      <member name="buffer_ends" value="8" c:identifier="GTK_MOVEMENT_BUFFER_ENDS" glib:nick="buffer-ends" glib:name="GTK_MOVEMENT_BUFFER_ENDS"/>
+      <member name="horizontal_pages" value="9" c:identifier="GTK_MOVEMENT_HORIZONTAL_PAGES" glib:nick="horizontal-pages" glib:name="GTK_MOVEMENT_HORIZONTAL_PAGES"/>
+    </enumeration>
+    <enumeration name="NaturalWrapMode" version="4.6" glib:type-name="GtkNaturalWrapMode" glib:get-type="gtk_natural_wrap_mode_get_type" c:type="GtkNaturalWrapMode">
+      <doc xml:space="preserve" filename="gtk/gtkenums.h" line="382">
+        Options for selecting a different wrap mode for natural size
+requests.
+
+See for example the [property@Gtk.Label:natural-wrap-mode] property.
+      </doc>
+      <member name="inherit" value="0" c:identifier="GTK_NATURAL_WRAP_INHERIT" glib:nick="inherit" glib:name="GTK_NATURAL_WRAP_INHERIT"/>
+      <member name="none" value="1" c:identifier="GTK_NATURAL_WRAP_NONE" glib:nick="none" glib:name="GTK_NATURAL_WRAP_NONE"/>
+      <member name="word" value="2" c:identifier="GTK_NATURAL_WRAP_WORD" glib:nick="word" glib:name="GTK_NATURAL_WRAP_WORD"/>
+    </enumeration>
+    <enumeration name="SelectionMode" glib:type-name="GtkSelectionMode" glib:get-type="gtk_selection_mode_get_type" c:type="GtkSelectionMode">
+      <doc xml:space="preserve" filename="gtk/gtkenums.h" line="538">
+        Used to control what selections users are allowed to make.
+      </doc>
+      <member name="none" value="0" c:identifier="GTK_SELECTION_NONE" glib:nick="none" glib:name="GTK_SELECTION_NONE"/>
+      <member name="single" value="1" c:identifier="GTK_SELECTION_SINGLE" glib:nick="single" glib:name="GTK_SELECTION_SINGLE"/>
+      <member name="browse" value="2" c:identifier="GTK_SELECTION_BROWSE" glib:nick="browse" glib:name="GTK_SELECTION_BROWSE"/>
+      <member name="multiple" value="3" c:identifier="GTK_SELECTION_MULTIPLE" glib:nick="multiple" glib:name="GTK_SELECTION_MULTIPLE"/>
+    </enumeration>
     <enumeration name="Align" glib:type-name="GtkAlign" glib:get-type="gtk_align_get_type" c:type="GtkAlign"/>
     <bitfield name="ApplicationInhibitFlags" glib:type-name="GtkApplicationInhibitFlags" glib:get-type="gtk_application_inhibit_flags_get_type" c:type="GtkApplicationInhibitFlags"/>
     <callback name="DrawingAreaDrawFunc" c:type="GtkDrawingAreaDrawFunc">
@@ -3587,6 +4965,22 @@
         </parameter>
       </parameters>
     </callback>
+    <callback name="ListBoxForeachFunc" c:type="GtkListBoxForeachFunc">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="box" transfer-ownership="none">
+          <type name="ListBox" c:type="GtkListBox*"/>
+        </parameter>
+        <parameter name="row" transfer-ownership="none">
+          <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
     <callback name="ListBoxSortFunc" c:type="GtkListBoxSortFunc">
       <return-value transfer-ownership="none">
         <type name="gint" c:type="int"/>
@@ -3603,11 +4997,26 @@
         </parameter>
       </parameters>
     </callback>
+    <callback name="ListBoxUpdateHeaderFunc" c:type="GtkListBoxUpdateHeaderFunc">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="row" transfer-ownership="none">
+          <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
+        </parameter>
+        <parameter name="before" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
     <enumeration name="Orientation" glib:type-name="GtkOrientation" glib:get-type="gtk_orientation_get_type" c:type="GtkOrientation"/>
     <enumeration name="PackType" glib:type-name="GtkPackType" glib:get-type="gtk_pack_type_get_type" c:type="GtkPackType"/>
     <enumeration name="PolicyType" glib:type-name="GtkPolicyType" glib:get-type="gtk_policy_type_get_type" c:type="GtkPolicyType"/>
     <enumeration name="RevealerTransitionType" glib:type-name="GtkRevealerTransitionType" glib:get-type="gtk_revealer_transition_type_get_type" c:type="GtkRevealerTransitionType"/>
-    <enumeration name="SelectionMode" glib:type-name="GtkSelectionMode" glib:get-type="gtk_selection_mode_get_type" c:type="GtkSelectionMode"/>
     <enumeration name="SizeGroupMode" glib:type-name="GtkSizeGroupMode" glib:get-type="gtk_size_group_mode_get_type" c:type="GtkSizeGroupMode"/>
     <bitfield name="TextSearchFlags" glib:type-name="GtkTextSearchFlags" glib:get-type="gtk_text_search_flags_get_type" c:type="GtkTextSearchFlags"/>
     <interface name="Actionable" c:symbol-prefix="actionable" c:type="GtkActionable" glib:type-name="GtkActionable" glib:get-type="gtk_actionable_get_type" glib:type-struct="ActionableInterface">

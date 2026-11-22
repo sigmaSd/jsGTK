@@ -113,7 +113,7 @@ export const gioSymbols = {
   },
   // Since 2.50. callback has async scope.
   g_app_info_launch_default_for_uri_async: {
-    parameters: ["buffer", "pointer", "pointer", "function", "pointer"],
+    parameters: ["buffer", "pointer", "pointer", "pointer", "pointer"],
     result: "void",
   },
   // Since 2.50. Trailing GError**.
@@ -180,7 +180,7 @@ export const gioSymbols = {
   },
   // Since 2.40. callback has async scope.
   g_subprocess_wait_async: {
-    parameters: ["pointer", "pointer", "function", "pointer"],
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
     result: "void",
   },
   // Since 2.40. Trailing GError**.
@@ -202,7 +202,7 @@ export const gioSymbols = {
       "usize",
       "i32",
       "pointer",
-      "function",
+      "pointer",
       "pointer",
     ],
     result: "void",
@@ -229,7 +229,7 @@ export const gioSymbols = {
   },
   // Since 2.34. callback has async scope.
   g_input_stream_read_bytes_async: {
-    parameters: ["pointer", "usize", "i32", "pointer", "function", "pointer"],
+    parameters: ["pointer", "usize", "i32", "pointer", "pointer", "pointer"],
     result: "void",
   },
   // Since 2.34. Trailing GError**. Return transfer full.
@@ -306,7 +306,7 @@ export const gioSymbols = {
       "i32",
       "i32",
       "pointer",
-      "function",
+      "pointer",
       "pointer",
     ],
     result: "void",

@@ -344,14 +344,14 @@ export const adwSymbols = {
   },
   // Since 1.3. callback has async scope.
   adw_message_dialog_choose: {
-    parameters: ["pointer", "pointer", "function", "pointer"],
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
     result: "void",
   },
   // Since 1.5.
   adw_alert_dialog_new: { parameters: ["buffer", "buffer"], result: "pointer" },
   // Since 1.5. callback has async scope.
   adw_alert_dialog_choose: {
-    parameters: ["pointer", "pointer", "pointer", "function", "pointer"],
+    parameters: ["pointer", "pointer", "pointer", "pointer", "pointer"],
     result: "void",
   },
   // Since 1.5.
@@ -614,6 +614,33 @@ export const adwSymbols = {
   // Since 1.1.
   adw_preferences_group_set_header_suffix: {
     parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  adw_toast_get_action_name: { parameters: ["pointer"], result: "pointer" },
+  adw_toast_get_button_label: { parameters: ["pointer"], result: "pointer" },
+  // Since 1.2.
+  adw_toast_get_custom_title: { parameters: ["pointer"], result: "pointer" },
+  adw_toast_get_priority: { parameters: ["pointer"], result: "i32" },
+  adw_toast_get_timeout: { parameters: ["pointer"], result: "u32" },
+  adw_toast_get_title: { parameters: ["pointer"], result: "pointer" },
+  // Since 1.4.
+  adw_toast_get_use_markup: { parameters: ["pointer"], result: "gboolean" },
+  adw_toast_set_action_name: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  // Since 1.2.
+  adw_toast_set_custom_title: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  adw_toast_set_detailed_action_name: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  // Since 1.4.
+  adw_toast_set_use_markup: {
+    parameters: ["pointer", "gboolean"],
     result: "void",
   },
 } as const;

@@ -169,7 +169,7 @@ export const gtk4Symbols = {
   gtk_drawing_area_new: { parameters: [], result: "pointer" },
   // draw_func has notified scope. destroy has async scope.
   gtk_drawing_area_set_draw_func: {
-    parameters: ["pointer", "function", "pointer", "pointer"],
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
     result: "void",
   },
   gtk_drawing_area_set_content_width: {
@@ -211,7 +211,7 @@ export const gtk4Symbols = {
   },
   // filter_func has notified scope. destroy has async scope.
   gtk_list_box_set_filter_func: {
-    parameters: ["pointer", "function", "pointer", "pointer"],
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
     result: "void",
   },
   gtk_list_box_invalidate_filter: { parameters: ["pointer"], result: "void" },
@@ -361,7 +361,7 @@ export const gtk4Symbols = {
   },
   // Since 4.10. callback has async scope.
   gtk_file_dialog_open: {
-    parameters: ["pointer", "pointer", "pointer", "function", "pointer"],
+    parameters: ["pointer", "pointer", "pointer", "pointer", "pointer"],
     result: "void",
   },
   // Since 4.10. Trailing GError**. Return transfer full.
@@ -371,7 +371,7 @@ export const gtk4Symbols = {
   },
   // Since 4.10. callback has async scope.
   gtk_file_dialog_select_folder: {
-    parameters: ["pointer", "pointer", "pointer", "function", "pointer"],
+    parameters: ["pointer", "pointer", "pointer", "pointer", "pointer"],
     result: "void",
   },
   // Since 4.10. Trailing GError**. Return transfer full.
@@ -468,7 +468,7 @@ export const gtk4Symbols = {
   },
   // callback has async scope.
   gdk_clipboard_read_async: {
-    parameters: ["pointer", "pointer", "i32", "pointer", "function", "pointer"],
+    parameters: ["pointer", "pointer", "i32", "pointer", "pointer", "pointer"],
     result: "void",
   },
   // Trailing GError**. Return transfer full.
@@ -478,7 +478,7 @@ export const gtk4Symbols = {
   },
   // callback has async scope.
   gdk_clipboard_read_text_async: {
-    parameters: ["pointer", "pointer", "function", "pointer"],
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
     result: "void",
   },
   // Trailing GError**. Return transfer full.
@@ -488,7 +488,7 @@ export const gtk4Symbols = {
   },
   // callback has async scope.
   gdk_clipboard_read_texture_async: {
-    parameters: ["pointer", "pointer", "function", "pointer"],
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
     result: "void",
   },
   // Trailing GError**. Return transfer full.
@@ -747,7 +747,7 @@ export const gtk4Symbols = {
   gdk_content_formats_get_type: { parameters: [], result: "u64" },
   // sort_func has notified scope. destroy has async scope.
   gtk_list_box_set_sort_func: {
-    parameters: ["pointer", "function", "pointer", "pointer"],
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
     result: "void",
   },
   gtk_list_box_invalidate_sort: { parameters: ["pointer"], result: "void" },
@@ -813,6 +813,139 @@ export const gtk4Symbols = {
     result: "gboolean",
   },
   gtk_button_set_child: { parameters: ["pointer", "pointer"], result: "void" },
+  gtk_label_get_current_uri: { parameters: ["pointer"], result: "pointer" },
+  gtk_label_get_ellipsize: { parameters: ["pointer"], result: "i32" },
+  gtk_label_get_extra_menu: { parameters: ["pointer"], result: "pointer" },
+  gtk_label_get_justify: { parameters: ["pointer"], result: "i32" },
+  gtk_label_get_label: { parameters: ["pointer"], result: "pointer" },
+  gtk_label_get_layout: { parameters: ["pointer"], result: "pointer" },
+  gtk_label_get_lines: { parameters: ["pointer"], result: "i32" },
+  gtk_label_get_max_width_chars: { parameters: ["pointer"], result: "i32" },
+  gtk_label_get_mnemonic_keyval: { parameters: ["pointer"], result: "u32" },
+  gtk_label_get_mnemonic_widget: { parameters: ["pointer"], result: "pointer" },
+  // Since 4.6.
+  gtk_label_get_natural_wrap_mode: { parameters: ["pointer"], result: "i32" },
+  gtk_label_get_selectable: { parameters: ["pointer"], result: "gboolean" },
+  gtk_label_get_single_line_mode: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_label_get_use_markup: { parameters: ["pointer"], result: "gboolean" },
+  gtk_label_get_use_underline: { parameters: ["pointer"], result: "gboolean" },
+  gtk_label_get_width_chars: { parameters: ["pointer"], result: "i32" },
+  gtk_label_get_wrap: { parameters: ["pointer"], result: "gboolean" },
+  gtk_label_get_wrap_mode: { parameters: ["pointer"], result: "i32" },
+  gtk_label_get_xalign: { parameters: ["pointer"], result: "f32" },
+  gtk_label_get_yalign: { parameters: ["pointer"], result: "f32" },
+  gtk_label_select_region: {
+    parameters: ["pointer", "i32", "i32"],
+    result: "void",
+  },
+  gtk_label_set_extra_menu: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_label_set_justify: { parameters: ["pointer", "i32"], result: "void" },
+  gtk_label_set_label: { parameters: ["pointer", "buffer"], result: "void" },
+  gtk_label_set_lines: { parameters: ["pointer", "i32"], result: "void" },
+  gtk_label_set_markup_with_mnemonic: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_label_set_max_width_chars: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_label_set_mnemonic_widget: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  // Since 4.6.
+  gtk_label_set_natural_wrap_mode: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_label_set_single_line_mode: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_label_set_text_with_mnemonic: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_label_set_use_underline: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_label_set_wrap_mode: { parameters: ["pointer", "i32"], result: "void" },
+  gtk_label_set_yalign: { parameters: ["pointer", "f32"], result: "void" },
+  gtk_list_box_drag_highlight_row: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_list_box_drag_unhighlight_row: {
+    parameters: ["pointer"],
+    result: "void",
+  },
+  gtk_list_box_get_activate_on_single_click: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_list_box_get_adjustment: { parameters: ["pointer"], result: "pointer" },
+  gtk_list_box_get_row_at_index: {
+    parameters: ["pointer", "i32"],
+    result: "pointer",
+  },
+  gtk_list_box_get_row_at_y: {
+    parameters: ["pointer", "i32"],
+    result: "pointer",
+  },
+  gtk_list_box_get_selection_mode: { parameters: ["pointer"], result: "i32" },
+  gtk_list_box_get_show_separators: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  // Since 4.18.
+  gtk_list_box_get_tab_behavior: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  gtk_list_box_insert: {
+    parameters: ["pointer", "pointer", "i32"],
+    result: "void",
+  },
+  gtk_list_box_invalidate_headers: { parameters: ["pointer"], result: "void" },
+  gtk_list_box_select_all: { parameters: ["pointer"], result: "void" },
+  // func has call scope.
+  gtk_list_box_selected_foreach: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "void",
+  },
+  gtk_list_box_set_activate_on_single_click: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_list_box_set_adjustment: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  // update_header has notified scope. destroy has async scope.
+  gtk_list_box_set_header_func: {
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+  },
+  // Since 4.18.
+  gtk_list_box_set_tab_behavior: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_list_box_unselect_all: { parameters: ["pointer"], result: "void" },
+  gtk_list_box_unselect_row: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
 } as const;
 
 export interface ButtonProperties {

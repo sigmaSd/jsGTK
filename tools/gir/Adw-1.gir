@@ -1753,6 +1753,12 @@
         </parameters>
       </constructor>
       <method name="dismiss" c:identifier="adw_toast_dismiss">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="937">
+          Dismisses @self.
+
+Does nothing if @self has already been dismissed, or hasn't been added to an
+[class@ToastOverlay].
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1762,7 +1768,130 @@
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_action_name" c:identifier="adw_toast_get_action_name" glib:get-property="action-name">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="637">
+          Gets the name of the associated action.
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_button_label" c:identifier="adw_toast_get_button_label" glib:get-property="button-label">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="596">
+          Gets the label to show on the button.
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_custom_title" c:identifier="adw_toast_get_custom_title" glib:get-property="custom-title" version="1.2">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="881">
+          Gets the custom title widget of @self.
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="Gtk.Widget" c:type="GtkWidget*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_priority" c:identifier="adw_toast_get_priority" glib:get-property="priority">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="791">
+          Gets priority for @self.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="ToastPriority" c:type="AdwToastPriority"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_timeout" c:identifier="adw_toast_get_timeout" glib:get-property="timeout">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="838">
+          Gets timeout for @self.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="guint" c:type="guint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_title" c:identifier="adw_toast_get_title" glib:get-property="title">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="540">
+          Gets the title that will be displayed on the toast.
+
+If a custom title has been set with [method@Adw.Toast.set_custom_title]
+the return value will be %NULL.
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_use_markup" c:identifier="adw_toast_get_use_markup" glib:get-property="use-markup" version="1.4">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="975">
+          Gets whether to use Pango markup for the toast title.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_action_name" c:identifier="adw_toast_set_action_name" glib:set-property="action-name">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="653">
+          Sets the name of the associated action.
+
+It will be activated when clicking the button.
+
+See [property@Toast:action-target].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+          <parameter name="action_name" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_button_label" c:identifier="adw_toast_set_button_label" glib:set-property="button-label">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="612">
+          Sets the label to show on the button.
+
+Underlines in the button text can be used to indicate a mnemonic.
+
+If set to `NULL`, the button won't be shown.
+
+See [property@Toast:action-name].
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1775,7 +1904,58 @@
           </parameter>
         </parameters>
       </method>
+      <method name="set_custom_title" c:identifier="adw_toast_set_custom_title" glib:set-property="custom-title" version="1.2">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="899">
+          Sets the custom title widget of @self.
+
+It will be displayed instead of the title if set. In this case,
+[property@Toast:title] is ignored.
+
+Setting a custom title will unset [property@Toast:title].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+          <parameter name="widget" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Gtk.Widget" c:type="GtkWidget*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_detailed_action_name" c:identifier="adw_toast_set_detailed_action_name">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="752">
+          Sets the action name and its parameter.
+
+@detailed_action_name is a string in the format accepted by
+[func@Gio.Action.parse_detailed_name].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+          <parameter name="detailed_action_name" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_priority" c:identifier="adw_toast_set_priority" glib:set-property="priority">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="807">
+          Sets priority for @self.
+
+Priority controls how the toast behaves when another toast is already
+being displayed.
+
+If @priority is [enum@Adw.ToastPriority.normal], the toast will be queued.
+
+If @priority is [enum@Adw.ToastPriority.high], the toast will be displayed
+immediately, pushing the previous toast into the queue instead.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1789,6 +1969,15 @@
         </parameters>
       </method>
       <method name="set_timeout" c:identifier="adw_toast_set_timeout" glib:set-property="timeout">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="854">
+          Sets timeout for @self.
+
+If @timeout is 0, the toast is displayed indefinitely until manually
+dismissed.
+
+Toasts cannot disappear while being hovered, pressed (on touchscreen), or
+have keyboard focus inside them.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1802,6 +1991,15 @@
         </parameters>
       </method>
       <method name="set_title" c:identifier="adw_toast_set_title" glib:set-property="title">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="562">
+          Sets the title that will be displayed on the toast.
+
+The title can be marked up with the Pango text markup language.
+
+Setting a title will unset [property@Toast:custom-title].
+
+If [property@Toast:custom-title] is set, it will be used instead.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1814,6 +2012,42 @@
           </parameter>
         </parameters>
       </method>
+      <method name="set_use_markup" c:identifier="adw_toast_set_use_markup" glib:set-property="use-markup" version="1.4">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="993">
+          Whether to use Pango markup for the toast title.
+
+See also [func@Pango.parse_markup].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+          <parameter name="use_markup" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <glib:signal name="button-clicked" when="last" version="1.2">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="448">
+          Emitted after the button has been clicked.
+
+It can be used as an alternative to setting an action.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
+      <glib:signal name="dismissed" when="first">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="431">
+          Emitted when the toast has been dismissed.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
     </class>
     <class name="ToastOverlay" c:symbol-prefix="toast_overlay" c:type="AdwToastOverlay" parent="Gtk.Widget" final="1" glib:type-name="AdwToastOverlay" glib:get-type="adw_toast_overlay_get_type" glib:type-struct="ToastOverlayClass">
       <constructor name="new" c:identifier="adw_toast_overlay_new">
@@ -2015,8 +2249,14 @@
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
     </function>
+    <enumeration name="ToastPriority" glib:type-name="AdwToastPriority" glib:get-type="adw_toast_priority_get_type" c:type="AdwToastPriority">
+      <doc xml:space="preserve" filename="src/adw-toast.c" line="14">
+        [class@Toast] behavior when another toast is already displayed.
+      </doc>
+      <member name="normal" value="0" c:identifier="ADW_TOAST_PRIORITY_NORMAL" glib:nick="normal" glib:name="ADW_TOAST_PRIORITY_NORMAL"/>
+      <member name="high" value="1" c:identifier="ADW_TOAST_PRIORITY_HIGH" glib:nick="high" glib:name="ADW_TOAST_PRIORITY_HIGH"/>
+    </enumeration>
     <enumeration name="ColorScheme" glib:type-name="AdwColorScheme" glib:get-type="adw_color_scheme_get_type" c:type="AdwColorScheme"/>
     <enumeration name="ResponseAppearance" version="1.2" glib:type-name="AdwResponseAppearance" glib:get-type="adw_response_appearance_get_type" c:type="AdwResponseAppearance"/>
-    <enumeration name="ToastPriority" glib:type-name="AdwToastPriority" glib:get-type="adw_toast_priority_get_type" c:type="AdwToastPriority"/>
   </namespace>
 </repository>

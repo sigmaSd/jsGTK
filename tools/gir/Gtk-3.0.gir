@@ -136,6 +136,7 @@
     </function>
     <enumeration name="Align" glib:type-name="GtkAlign" glib:get-type="gtk_align_get_type" c:type="GtkAlign"/>
     <bitfield name="ApplicationInhibitFlags" version="3.4" glib:type-name="GtkApplicationInhibitFlags" glib:get-type="gtk_application_inhibit_flags_get_type" c:type="GtkApplicationInhibitFlags"/>
+    <enumeration name="Justification" glib:type-name="GtkJustification" glib:get-type="gtk_justification_get_type" c:type="GtkJustification"/>
     <enumeration name="License" version="3.0" glib:type-name="GtkLicense" glib:get-type="gtk_license_get_type" c:type="GtkLicense"/>
     <callback name="ListBoxFilterFunc" c:type="GtkListBoxFilterFunc" version="3.10">
       <return-value transfer-ownership="none">
@@ -150,8 +151,58 @@
         </parameter>
       </parameters>
     </callback>
+    <callback name="ListBoxForeachFunc" c:type="GtkListBoxForeachFunc" version="3.14">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="box" transfer-ownership="none">
+          <type name="ListBox" c:type="GtkListBox*"/>
+        </parameter>
+        <parameter name="row" transfer-ownership="none">
+          <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="ListBoxSortFunc" c:type="GtkListBoxSortFunc" version="3.10">
+      <return-value transfer-ownership="none">
+        <type name="gint" c:type="gint"/>
+      </return-value>
+      <parameters>
+        <parameter name="row1" transfer-ownership="none">
+          <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
+        </parameter>
+        <parameter name="row2" transfer-ownership="none">
+          <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="ListBoxUpdateHeaderFunc" c:type="GtkListBoxUpdateHeaderFunc" version="3.10">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="row" transfer-ownership="none">
+          <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
+        </parameter>
+        <parameter name="before" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="ListBoxRow" c:type="GtkListBoxRow*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
     <enumeration name="Orientation" glib:type-name="GtkOrientation" glib:get-type="gtk_orientation_get_type" c:type="GtkOrientation"/>
+    <enumeration name="PackType" glib:type-name="GtkPackType" glib:get-type="gtk_pack_type_get_type" c:type="GtkPackType"/>
     <enumeration name="PolicyType" glib:type-name="GtkPolicyType" glib:get-type="gtk_policy_type_get_type" c:type="GtkPolicyType"/>
+    <enumeration name="RevealerTransitionType" glib:type-name="GtkRevealerTransitionType" glib:get-type="gtk_revealer_transition_type_get_type" c:type="GtkRevealerTransitionType"/>
     <enumeration name="SelectionMode" glib:type-name="GtkSelectionMode" glib:get-type="gtk_selection_mode_get_type" c:type="GtkSelectionMode"/>
     <enumeration name="SizeGroupMode" glib:type-name="GtkSizeGroupMode" glib:get-type="gtk_size_group_mode_get_type" c:type="GtkSizeGroupMode"/>
     <bitfield name="TextSearchFlags" glib:type-name="GtkTextSearchFlags" glib:get-type="gtk_text_search_flags_get_type" c:type="GtkTextSearchFlags"/>
