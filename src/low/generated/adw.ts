@@ -860,6 +860,12 @@ export const adwSymbols = {
     result: "pointer",
     optional: true,
   },
+  // Since 1.5. Return transfer full.
+  adw_application_window_get_dialogs: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
   // Since 1.5.
   adw_application_window_get_visible_dialog: {
     parameters: ["pointer"],
@@ -912,6 +918,21 @@ export const adwSymbols = {
   adw_carousel_set_spacing: {
     parameters: ["pointer", "u32"],
     result: "void",
+    optional: true,
+  },
+  adw_swipeable_get_cancel_progress: {
+    parameters: ["pointer"],
+    result: "f64",
+    optional: true,
+  },
+  adw_swipeable_get_distance: {
+    parameters: ["pointer"],
+    result: "f64",
+    optional: true,
+  },
+  adw_swipeable_get_progress: {
+    parameters: ["pointer"],
+    result: "f64",
     optional: true,
   },
   adw_clamp_get_child: {
@@ -1263,6 +1284,12 @@ export const adwSymbols = {
   adw_navigation_view_get_hhomogeneous: {
     parameters: ["pointer"],
     result: "gboolean",
+    optional: true,
+  },
+  // Since 1.4. Return transfer full.
+  adw_navigation_view_get_navigation_stack: {
+    parameters: ["pointer"],
+    result: "pointer",
     optional: true,
   },
   // Since 1.4.
@@ -1765,6 +1792,11 @@ export const adwSymbols = {
     result: "pointer",
     optional: true,
   },
+  adw_toast_get_action_target_value: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
   adw_toast_get_button_label: {
     parameters: ["pointer"],
     result: "pointer",
@@ -1799,6 +1831,11 @@ export const adwSymbols = {
   },
   adw_toast_set_action_name: {
     parameters: ["pointer", "buffer"],
+    result: "void",
+    optional: true,
+  },
+  adw_toast_set_action_target_value: {
+    parameters: ["pointer", "pointer"],
     result: "void",
     optional: true,
   },

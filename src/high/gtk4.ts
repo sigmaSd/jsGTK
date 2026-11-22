@@ -51,6 +51,8 @@ import {
   dropDownMethods,
   type DropTargetMethods,
   dropTargetMethods,
+  type EntryMethods,
+  entryMethods,
   type EventControllerKeyMethods,
   eventControllerKeyMethods,
   type EventControllerMethods,
@@ -1676,6 +1678,10 @@ export class Entry extends Widget {
     return this.connect("changed", callback);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface Entry extends EntryMethods {}
+applyGenerated(Entry, entryMethods, "GtkEntry");
 
 export class SearchBar extends Widget {
   constructor(ptr?: Deno.PointerValue) {

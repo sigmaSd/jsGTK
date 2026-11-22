@@ -293,6 +293,9 @@
           </parameter>
         </parameters>
       </method>
+      <implements name="Paintable"/>
+      <implements name="Gio.Icon"/>
+      <implements name="Gio.LoadableIcon"/>
     </class>
     <class name="Device" c:symbol-prefix="device" c:type="GdkDevice" parent="GObject.Object" abstract="1" glib:type-name="GdkDevice" glib:get-type="gdk_device_get_type" glib:type-struct="DeviceClass"/>
     <bitfield name="DragAction" glib:type-name="GdkDragAction" glib:get-type="gdk_drag_action_get_type" c:type="GdkDragAction">
@@ -341,5 +344,6 @@ of this enumeration. Your code should preserve and ignore them. You can use
     <record name="RGBA" c:type="GdkRGBA" glib:type-name="GdkRGBA" glib:get-type="gdk_rgba_get_type" c:symbol-prefix="rgba"/>
     <record name="Rectangle" c:type="GdkRectangle" glib:type-name="GdkRectangle" glib:get-type="gdk_rectangle_get_type" c:symbol-prefix="rectangle"/>
     <class name="Snapshot" c:symbol-prefix="snapshot" c:type="GdkSnapshot" parent="GObject.Object" abstract="1" glib:type-name="GdkSnapshot" glib:get-type="gdk_snapshot_get_type" glib:type-struct="SnapshotClass"/>
+    <class name="Surface" c:symbol-prefix="surface" c:type="GdkSurface" parent="GObject.Object" abstract="1" glib:type-name="GdkSurface" glib:get-type="gdk_surface_get_type" glib:type-struct="SurfaceClass"/>
   </namespace>
 </repository>

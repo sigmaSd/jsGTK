@@ -222,7 +222,8 @@ export class GObject {
         const handler = callback as (...args: unknown[]) => unknown;
         // Generated declarations include the trailing user data pointer.
         if (definition) args.pop();
-        handler(...args);
+        // Signals with a result (e.g. close-request) return the handler's.
+        return handler(...args) as never;
       },
     );
     return this.connectNative(signal, cb);

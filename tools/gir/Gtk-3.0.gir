@@ -140,6 +140,7 @@
     <enumeration name="BaselinePosition" version="3.10" glib:type-name="GtkBaselinePosition" glib:get-type="gtk_baseline_position_get_type" c:type="GtkBaselinePosition"/>
     <enumeration name="CornerType" glib:type-name="GtkCornerType" glib:get-type="gtk_corner_type_get_type" c:type="GtkCornerType"/>
     <enumeration name="DirectionType" glib:type-name="GtkDirectionType" glib:get-type="gtk_direction_type_get_type" c:type="GtkDirectionType"/>
+    <bitfield name="IconLookupFlags" glib:type-name="GtkIconLookupFlags" glib:get-type="gtk_icon_lookup_flags_get_type" c:type="GtkIconLookupFlags"/>
     <enumeration name="IconSize" glib:type-name="GtkIconSize" glib:get-type="gtk_icon_size_get_type" c:type="GtkIconSize"/>
     <enumeration name="ImageType" glib:type-name="GtkImageType" glib:get-type="gtk_image_type_get_type" c:type="GtkImageType"/>
     <bitfield name="InputHints" version="3.6" glib:type-name="GtkInputHints" glib:get-type="gtk_input_hints_get_type" c:type="GtkInputHints"/>
@@ -214,6 +215,7 @@
     <enumeration name="PositionType" glib:type-name="GtkPositionType" glib:get-type="gtk_position_type_get_type" c:type="GtkPositionType"/>
     <enumeration name="PropagationPhase" version="3.14" glib:type-name="GtkPropagationPhase" glib:get-type="gtk_propagation_phase_get_type" c:type="GtkPropagationPhase"/>
     <enumeration name="RevealerTransitionType" glib:type-name="GtkRevealerTransitionType" glib:get-type="gtk_revealer_transition_type_get_type" c:type="GtkRevealerTransitionType"/>
+    <enumeration name="ScrollablePolicy" glib:type-name="GtkScrollablePolicy" glib:get-type="gtk_scrollable_policy_get_type" c:type="GtkScrollablePolicy"/>
     <enumeration name="SelectionMode" glib:type-name="GtkSelectionMode" glib:get-type="gtk_selection_mode_get_type" c:type="GtkSelectionMode"/>
     <enumeration name="SizeGroupMode" glib:type-name="GtkSizeGroupMode" glib:get-type="gtk_size_group_mode_get_type" c:type="GtkSizeGroupMode"/>
     <enumeration name="SizeRequestMode" glib:type-name="GtkSizeRequestMode" glib:get-type="gtk_size_request_mode_get_type" c:type="GtkSizeRequestMode"/>

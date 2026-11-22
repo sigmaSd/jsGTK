@@ -5,14 +5,17 @@
 import { gtk4 } from "../../low/gtk4.ts";
 import { cstr, readCStr } from "../../low/utils.ts";
 import {
+  asyncCall,
   borrowed,
   connectSignal,
   cstrOrNull,
+  ErrorSlot,
   missing,
   notifiedCallback,
+  owned,
   takeString,
 } from "../wrappers.ts";
-import type { Cancellable, Menu } from "../gio.ts";
+import type { Cancellable, File, Menu } from "../gio.ts";
 import type { GObject } from "../gobject.ts";
 import type {
   Adjustment,
@@ -21,6 +24,7 @@ import type {
   Clipboard,
   ColumnView,
   ColumnViewColumn,
+  ContentProvider,
   Cursor,
   Display,
   DrawingArea,
@@ -35,6 +39,212 @@ import type {
   Widget,
   Window,
 } from "../gtk4.ts";
+
+/**
+ * The priority of an accessibility announcement.
+ */
+export const AccessibleAnnouncementPriority = {
+  LOW: 0,
+  MEDIUM: 1,
+  HIGH: 2,
+} as const;
+export type AccessibleAnnouncementPriority =
+  (typeof AccessibleAnnouncementPriority)[
+    keyof typeof AccessibleAnnouncementPriority
+  ];
+
+/**
+ * The various platform states which can be queried
+ * using `getPlatformState()`.
+ */
+export const AccessiblePlatformState = {
+  FOCUSABLE: 0,
+  FOCUSED: 1,
+  ACTIVE: 2,
+} as const;
+export type AccessiblePlatformState =
+  (typeof AccessiblePlatformState)[keyof typeof AccessiblePlatformState];
+
+/**
+ * The possible accessible properties of a `Accessible`.
+ */
+export const AccessibleProperty = {
+  AUTOCOMPLETE: 0,
+  DESCRIPTION: 1,
+  HAS_POPUP: 2,
+  KEY_SHORTCUTS: 3,
+  LABEL: 4,
+  LEVEL: 5,
+  MODAL: 6,
+  MULTI_LINE: 7,
+  MULTI_SELECTABLE: 8,
+  ORIENTATION: 9,
+  PLACEHOLDER: 10,
+  READ_ONLY: 11,
+  REQUIRED: 12,
+  ROLE_DESCRIPTION: 13,
+  SORT: 14,
+  VALUE_MAX: 15,
+  VALUE_MIN: 16,
+  VALUE_NOW: 17,
+  VALUE_TEXT: 18,
+  HELP_TEXT: 19,
+} as const;
+export type AccessibleProperty =
+  (typeof AccessibleProperty)[keyof typeof AccessibleProperty];
+
+/**
+ * The possible accessible relations of a `Accessible`.
+ */
+export const AccessibleRelation = {
+  ACTIVE_DESCENDANT: 0,
+  COL_COUNT: 1,
+  COL_INDEX: 2,
+  COL_INDEX_TEXT: 3,
+  COL_SPAN: 4,
+  CONTROLS: 5,
+  DESCRIBED_BY: 6,
+  DETAILS: 7,
+  ERROR_MESSAGE: 8,
+  FLOW_TO: 9,
+  LABELLED_BY: 10,
+  OWNS: 11,
+  POS_IN_SET: 12,
+  ROW_COUNT: 13,
+  ROW_INDEX: 14,
+  ROW_INDEX_TEXT: 15,
+  ROW_SPAN: 16,
+  SET_SIZE: 17,
+  LABEL_FOR: 18,
+  DESCRIPTION_FOR: 19,
+  CONTROLLED_BY: 20,
+  DETAILS_FOR: 21,
+  ERROR_MESSAGE_FOR: 22,
+  FLOW_FROM: 23,
+} as const;
+export type AccessibleRelation =
+  (typeof AccessibleRelation)[keyof typeof AccessibleRelation];
+
+/**
+ * The accessible role for a `Accessible` implementation.
+ */
+export const AccessibleRole = {
+  ALERT: 0,
+  ALERT_DIALOG: 1,
+  BANNER: 2,
+  BUTTON: 3,
+  CAPTION: 4,
+  CELL: 5,
+  CHECKBOX: 6,
+  COLUMN_HEADER: 7,
+  COMBO_BOX: 8,
+  COMMAND: 9,
+  COMPOSITE: 10,
+  DIALOG: 11,
+  DOCUMENT: 12,
+  FEED: 13,
+  FORM: 14,
+  GENERIC: 15,
+  GRID: 16,
+  GRID_CELL: 17,
+  GROUP: 18,
+  HEADING: 19,
+  IMG: 20,
+  INPUT: 21,
+  LABEL: 22,
+  LANDMARK: 23,
+  LEGEND: 24,
+  LINK: 25,
+  LIST: 26,
+  LIST_BOX: 27,
+  LIST_ITEM: 28,
+  LOG: 29,
+  MAIN: 30,
+  MARQUEE: 31,
+  MATH: 32,
+  METER: 33,
+  MENU: 34,
+  MENU_BAR: 35,
+  MENU_ITEM: 36,
+  MENU_ITEM_CHECKBOX: 37,
+  MENU_ITEM_RADIO: 38,
+  NAVIGATION: 39,
+  NONE: 40,
+  NOTE: 41,
+  OPTION: 42,
+  PRESENTATION: 43,
+  PROGRESS_BAR: 44,
+  RADIO: 45,
+  RADIO_GROUP: 46,
+  RANGE: 47,
+  REGION: 48,
+  ROW: 49,
+  ROW_GROUP: 50,
+  ROW_HEADER: 51,
+  SCROLLBAR: 52,
+  SEARCH: 53,
+  SEARCH_BOX: 54,
+  SECTION: 55,
+  SECTION_HEAD: 56,
+  SELECT: 57,
+  SEPARATOR: 58,
+  SLIDER: 59,
+  SPIN_BUTTON: 60,
+  STATUS: 61,
+  STRUCTURE: 62,
+  SWITCH: 63,
+  TAB: 64,
+  TABLE: 65,
+  TAB_LIST: 66,
+  TAB_PANEL: 67,
+  TEXT_BOX: 68,
+  TIME: 69,
+  TIMER: 70,
+  TOOLBAR: 71,
+  TOOLTIP: 72,
+  TREE: 73,
+  TREE_GRID: 74,
+  TREE_ITEM: 75,
+  WIDGET: 76,
+  WINDOW: 77,
+  TOGGLE_BUTTON: 78,
+  APPLICATION: 79,
+  PARAGRAPH: 80,
+  BLOCK_QUOTE: 81,
+  ARTICLE: 82,
+  COMMENT: 83,
+  TERMINAL: 84,
+} as const;
+export type AccessibleRole =
+  (typeof AccessibleRole)[keyof typeof AccessibleRole];
+
+/**
+ * The possible accessible states of a `Accessible`.
+ */
+export const AccessibleState = {
+  BUSY: 0,
+  CHECKED: 1,
+  DISABLED: 2,
+  EXPANDED: 3,
+  HIDDEN: 4,
+  INVALID: 5,
+  PRESSED: 6,
+  SELECTED: 7,
+  VISITED: 8,
+} as const;
+export type AccessibleState =
+  (typeof AccessibleState)[keyof typeof AccessibleState];
+
+/**
+ * The type of contents change operation.
+ */
+export const AccessibleTextContentChange = {
+  INSERT: 0,
+  REMOVE: 1,
+} as const;
+export type AccessibleTextContentChange = (typeof AccessibleTextContentChange)[
+  keyof typeof AccessibleTextContentChange
+];
 
 /**
  * Controls how a widget deals with extra space in a single dimension.
@@ -352,6 +562,40 @@ export const ScrollStep = {
 export type ScrollStep = (typeof ScrollStep)[keyof typeof ScrollStep];
 
 /**
+ * Scrolling types.
+ */
+export const ScrollType = {
+  NONE: 0,
+  JUMP: 1,
+  STEP_BACKWARD: 2,
+  STEP_FORWARD: 3,
+  PAGE_BACKWARD: 4,
+  PAGE_FORWARD: 5,
+  STEP_UP: 6,
+  STEP_DOWN: 7,
+  PAGE_UP: 8,
+  PAGE_DOWN: 9,
+  STEP_LEFT: 10,
+  STEP_RIGHT: 11,
+  PAGE_LEFT: 12,
+  PAGE_RIGHT: 13,
+  START: 14,
+  END: 15,
+} as const;
+export type ScrollType = (typeof ScrollType)[keyof typeof ScrollType];
+
+/**
+ * Defines the policy to be used in a scrollable widget when updating
+ * the scrolled window adjustments in a given orientation.
+ */
+export const ScrollablePolicy = {
+  MINIMUM: 0,
+  NATURAL: 1,
+} as const;
+export type ScrollablePolicy =
+  (typeof ScrollablePolicy)[keyof typeof ScrollablePolicy];
+
+/**
  * Used to control what selections users are allowed to make.
  */
 export const SelectionMode = {
@@ -415,6 +659,17 @@ export const TextDirection = {
   RTL: 2,
 } as const;
 export type TextDirection = (typeof TextDirection)[keyof typeof TextDirection];
+
+/**
+ * Granularity types that extend the text selection. Use the
+ * `GtkTextView::extend-selection` signal to customize the selection.
+ */
+export const TextExtendSelection = {
+  WORD: 0,
+  LINE: 1,
+} as const;
+export type TextExtendSelection =
+  (typeof TextExtendSelection)[keyof typeof TextExtendSelection];
 
 /**
  * Used to reference the parts of `GtkTextView`.
@@ -726,6 +981,10 @@ export interface ApplicationMethods {
    */
   getWindowById(id: number): Window | null;
   /**
+   * Gets a list of the window associated with the application.
+   */
+  getWindows(): Deno.PointerValue;
+  /**
    * Remove a window from the application.
    */
   removeWindow(window: Window): void;
@@ -770,6 +1029,10 @@ export const applicationMethods: ApplicationMethods & ThisType<GObject> = {
       (gtk4.symbols.gtk_application_get_window_by_id ??
         missing("gtk_application_get_window_by_id"))(this.ptr, id),
     );
+  },
+  getWindows(this: GObject): Deno.PointerValue {
+    return (gtk4.symbols.gtk_application_get_windows ??
+      missing("gtk_application_get_windows"))(this.ptr);
   },
   removeWindow(this: GObject, window: Window): void {
     (gtk4.symbols.gtk_application_remove_window ??
@@ -881,6 +1144,14 @@ export interface BoxMethods {
    * in the box.
    */
   setHomogeneous(homogeneous: boolean): void;
+  /**
+   * Retrieves the orientation of the `orientable`.
+   */
+  getOrientation(): Orientation;
+  /**
+   * Sets the orientation of the `orientable`.
+   */
+  setOrientation(orientation: Orientation): void;
 }
 
 /** Implementations of {@linkcode BoxMethods}. */
@@ -940,10 +1211,31 @@ export const boxMethods: BoxMethods & ThisType<GObject> = {
     (gtk4.symbols.gtk_box_set_homogeneous ??
       missing("gtk_box_set_homogeneous"))(this.ptr, homogeneous);
   },
+  getOrientation(this: GObject): Orientation {
+    return (gtk4.symbols.gtk_orientable_get_orientation ??
+      missing("gtk_orientable_get_orientation"))(this.ptr) as Orientation;
+  },
+  setOrientation(this: GObject, orientation: Orientation): void {
+    (gtk4.symbols.gtk_orientable_set_orientation ??
+      missing("gtk_orientable_set_orientation"))(this.ptr, orientation);
+  },
 };
 
 /** Methods generated for `GtkBuilder`. */
 export interface BuilderMethods {
+  /**
+   * Parses a resource file containing a UI definition
+   * and merges it with the current contents of `builder`.
+   */
+  addFromResource(resourcePath: string): boolean;
+  /**
+   * Creates a closure to invoke the function called `functionName`.
+   */
+  createClosure(
+    functionName: string,
+    flags: number,
+    object: GObject | null,
+  ): Deno.PointerValue;
   /**
    * Add `object` to the `builder` object pool so it can be
    * referenced just like any other object built by builder.
@@ -977,6 +1269,35 @@ export interface BuilderMethods {
 
 /** Implementations of {@linkcode BuilderMethods}. */
 export const builderMethods: BuilderMethods & ThisType<GObject> = {
+  addFromResource(this: GObject, resourcePath: string): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gtk4.symbols.gtk_builder_add_from_resource ??
+      missing("gtk_builder_add_from_resource"))(
+        this.ptr,
+        cstr(resourcePath),
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  createClosure(
+    this: GObject,
+    functionName: string,
+    flags: number,
+    object: GObject | null,
+  ): Deno.PointerValue {
+    const __error = new ErrorSlot();
+    const __value = (gtk4.symbols.gtk_builder_create_closure ??
+      missing("gtk_builder_create_closure"))(
+        this.ptr,
+        cstr(functionName),
+        flags,
+        object?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
   exposeObject(this: GObject, name: string, object: GObject): void {
     (gtk4.symbols.gtk_builder_expose_object ??
       missing("gtk_builder_expose_object"))(this.ptr, cstr(name), object.ptr);
@@ -1066,6 +1387,28 @@ export interface ButtonMethods {
    * Emitted when the button has been activated (pressed and released).
    */
   onClicked(callback: () => void): number;
+  /**
+   * Gets the action name for `actionable`.
+   */
+  getActionName(): string | null;
+  /**
+   * Gets the current target value of `actionable`.
+   */
+  getActionTargetValue(): Deno.PointerValue;
+  /**
+   * Specifies the name of the action with which this widget should be
+   * associated.
+   */
+  setActionName(actionName: string | null): void;
+  /**
+   * Sets the target value of an actionable widget.
+   */
+  setActionTargetValue(targetValue: Deno.PointerValue): void;
+  /**
+   * Sets the action-name and associated string target value of an
+   * actionable widget.
+   */
+  setDetailedActionName(detailedActionName: string): void;
 }
 
 /** Implementations of {@linkcode ButtonMethods}. */
@@ -1119,6 +1462,34 @@ export const buttonMethods: ButtonMethods & ThisType<GObject> = {
       result: "void",
     }, () => callback());
   },
+  getActionName(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      (gtk4.symbols.gtk_actionable_get_action_name ??
+        missing("gtk_actionable_get_action_name"))(this.ptr),
+    );
+  },
+  getActionTargetValue(this: GObject): Deno.PointerValue {
+    return (gtk4.symbols.gtk_actionable_get_action_target_value ??
+      missing("gtk_actionable_get_action_target_value"))(this.ptr);
+  },
+  setActionName(this: GObject, actionName: string | null): void {
+    (gtk4.symbols.gtk_actionable_set_action_name ??
+      missing("gtk_actionable_set_action_name"))(
+        this.ptr,
+        cstrOrNull(actionName),
+      );
+  },
+  setActionTargetValue(this: GObject, targetValue: Deno.PointerValue): void {
+    (gtk4.symbols.gtk_actionable_set_action_target_value ??
+      missing("gtk_actionable_set_action_target_value"))(this.ptr, targetValue);
+  },
+  setDetailedActionName(this: GObject, detailedActionName: string): void {
+    (gtk4.symbols.gtk_actionable_set_detailed_action_name ??
+      missing("gtk_actionable_set_detailed_action_name"))(
+        this.ptr,
+        cstr(detailedActionName),
+      );
+  },
 };
 
 /** Methods generated for `GtkCheckButton`. */
@@ -1143,6 +1514,28 @@ export interface CheckButtonMethods {
    * Emitted to when the check button is activated.
    */
   onActivate(callback: () => void): number;
+  /**
+   * Gets the action name for `actionable`.
+   */
+  getActionName(): string | null;
+  /**
+   * Gets the current target value of `actionable`.
+   */
+  getActionTargetValue(): Deno.PointerValue;
+  /**
+   * Specifies the name of the action with which this widget should be
+   * associated.
+   */
+  setActionName(actionName: string | null): void;
+  /**
+   * Sets the target value of an actionable widget.
+   */
+  setActionTargetValue(targetValue: Deno.PointerValue): void;
+  /**
+   * Sets the action-name and associated string target value of an
+   * actionable widget.
+   */
+  setDetailedActionName(detailedActionName: string): void;
 }
 
 /** Implementations of {@linkcode CheckButtonMethods}. */
@@ -1173,6 +1566,34 @@ export const checkButtonMethods: CheckButtonMethods & ThisType<GObject> = {
       parameters: ["pointer", "pointer"],
       result: "void",
     }, () => callback());
+  },
+  getActionName(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      (gtk4.symbols.gtk_actionable_get_action_name ??
+        missing("gtk_actionable_get_action_name"))(this.ptr),
+    );
+  },
+  getActionTargetValue(this: GObject): Deno.PointerValue {
+    return (gtk4.symbols.gtk_actionable_get_action_target_value ??
+      missing("gtk_actionable_get_action_target_value"))(this.ptr);
+  },
+  setActionName(this: GObject, actionName: string | null): void {
+    (gtk4.symbols.gtk_actionable_set_action_name ??
+      missing("gtk_actionable_set_action_name"))(
+        this.ptr,
+        cstrOrNull(actionName),
+      );
+  },
+  setActionTargetValue(this: GObject, targetValue: Deno.PointerValue): void {
+    (gtk4.symbols.gtk_actionable_set_action_target_value ??
+      missing("gtk_actionable_set_action_target_value"))(this.ptr, targetValue);
+  },
+  setDetailedActionName(this: GObject, detailedActionName: string): void {
+    (gtk4.symbols.gtk_actionable_set_detailed_action_name ??
+      missing("gtk_actionable_set_detailed_action_name"))(
+        this.ptr,
+        cstr(detailedActionName),
+      );
   },
 };
 
@@ -1275,6 +1696,38 @@ export interface ColumnViewMethods {
    * the GtkListBase|list.activate-item action.
    */
   onActivate(callback: (position: number) => void): number;
+  /**
+   * Retrieves the `GtkAdjustment` used for horizontal scrolling.
+   */
+  getHadjustment(): Adjustment | null;
+  /**
+   * Gets the horizontal `GtkScrollablePolicy`.
+   */
+  getHscrollPolicy(): ScrollablePolicy;
+  /**
+   * Retrieves the `GtkAdjustment` used for vertical scrolling.
+   */
+  getVadjustment(): Adjustment | null;
+  /**
+   * Gets the vertical `GtkScrollablePolicy`.
+   */
+  getVscrollPolicy(): ScrollablePolicy;
+  /**
+   * Sets the horizontal adjustment of the `GtkScrollable`.
+   */
+  setHadjustment(hadjustment: Adjustment | null): void;
+  /**
+   * Sets the `GtkScrollablePolicy`.
+   */
+  setHscrollPolicy(policy: ScrollablePolicy): void;
+  /**
+   * Sets the vertical adjustment of the `GtkScrollable`.
+   */
+  setVadjustment(vadjustment: Adjustment | null): void;
+  /**
+   * Sets the `GtkScrollablePolicy`.
+   */
+  setVscrollPolicy(policy: ScrollablePolicy): void;
 }
 
 /** Implementations of {@linkcode ColumnViewMethods}. */
@@ -1417,6 +1870,52 @@ export const columnViewMethods: ColumnViewMethods & ThisType<GObject> = {
       parameters: ["pointer", "u32", "pointer"],
       result: "void",
     }, (a0: never) => callback(a0));
+  },
+  getHadjustment(this: GObject): Adjustment | null {
+    return borrowed<Adjustment>(
+      (gtk4.symbols.gtk_scrollable_get_hadjustment ??
+        missing("gtk_scrollable_get_hadjustment"))(this.ptr),
+    );
+  },
+  getHscrollPolicy(this: GObject): ScrollablePolicy {
+    return (gtk4.symbols.gtk_scrollable_get_hscroll_policy ??
+      missing("gtk_scrollable_get_hscroll_policy"))(
+        this.ptr,
+      ) as ScrollablePolicy;
+  },
+  getVadjustment(this: GObject): Adjustment | null {
+    return borrowed<Adjustment>(
+      (gtk4.symbols.gtk_scrollable_get_vadjustment ??
+        missing("gtk_scrollable_get_vadjustment"))(this.ptr),
+    );
+  },
+  getVscrollPolicy(this: GObject): ScrollablePolicy {
+    return (gtk4.symbols.gtk_scrollable_get_vscroll_policy ??
+      missing("gtk_scrollable_get_vscroll_policy"))(
+        this.ptr,
+      ) as ScrollablePolicy;
+  },
+  setHadjustment(this: GObject, hadjustment: Adjustment | null): void {
+    (gtk4.symbols.gtk_scrollable_set_hadjustment ??
+      missing("gtk_scrollable_set_hadjustment"))(
+        this.ptr,
+        hadjustment?.ptr ?? null,
+      );
+  },
+  setHscrollPolicy(this: GObject, policy: ScrollablePolicy): void {
+    (gtk4.symbols.gtk_scrollable_set_hscroll_policy ??
+      missing("gtk_scrollable_set_hscroll_policy"))(this.ptr, policy);
+  },
+  setVadjustment(this: GObject, vadjustment: Adjustment | null): void {
+    (gtk4.symbols.gtk_scrollable_set_vadjustment ??
+      missing("gtk_scrollable_set_vadjustment"))(
+        this.ptr,
+        vadjustment?.ptr ?? null,
+      );
+  },
+  setVscrollPolicy(this: GObject, policy: ScrollablePolicy): void {
+    (gtk4.symbols.gtk_scrollable_set_vscroll_policy ??
+      missing("gtk_scrollable_set_vscroll_policy"))(this.ptr, policy);
   },
 };
 
@@ -1616,9 +2115,13 @@ export const columnViewColumnMethods:
 /** Methods generated for `GtkCssProvider`. */
 export interface CssProviderMethods {
   /**
+   * Loads `data` into `cssProvider`.
+   */
+  loadFromBytes(data: Deno.PointerValue): void;
+  /**
    * Loads the data contained in `file` into `cssProvider`.
    */
-  loadFromFile(file: GObject): void;
+  loadFromFile(file: File): void;
   /**
    * Loads the data contained in `path` into `cssProvider`.
    */
@@ -1637,11 +2140,22 @@ export interface CssProviderMethods {
    * format.
    */
   toString(): string;
+  /**
+   * Signals that a parsing error occurred.
+   */
+  onParsingError(
+    callback: (section: Deno.PointerValue, error: Deno.PointerValue) => void,
+  ): number;
+  onGtkPrivateChanged(callback: () => void): number;
 }
 
 /** Implementations of {@linkcode CssProviderMethods}. */
 export const cssProviderMethods: CssProviderMethods & ThisType<GObject> = {
-  loadFromFile(this: GObject, file: GObject): void {
+  loadFromBytes(this: GObject, data: Deno.PointerValue): void {
+    (gtk4.symbols.gtk_css_provider_load_from_bytes ??
+      missing("gtk_css_provider_load_from_bytes", "4.12"))(this.ptr, data);
+  },
+  loadFromFile(this: GObject, file: File): void {
     (gtk4.symbols.gtk_css_provider_load_from_file ??
       missing("gtk_css_provider_load_from_file"))(this.ptr, file.ptr);
   },
@@ -1668,6 +2182,21 @@ export const cssProviderMethods: CssProviderMethods & ThisType<GObject> = {
       (gtk4.symbols.gtk_css_provider_to_string ??
         missing("gtk_css_provider_to_string"))(this.ptr),
     ) ?? "";
+  },
+  onParsingError(
+    this: GObject,
+    callback: (section: Deno.PointerValue, error: Deno.PointerValue) => void,
+  ): number {
+    return connectSignal(this, "parsing-error", {
+      parameters: ["pointer", "pointer", "pointer", "pointer"],
+      result: "void",
+    }, (a0: never, a1: never) => callback(a0, a1));
+  },
+  onGtkPrivateChanged(this: GObject, callback: () => void): number {
+    return connectSignal(this, "gtk-private-changed", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
   },
 };
 
@@ -1875,9 +2404,17 @@ export interface DropTargetMethods {
    */
   getCurrentDrop(): GObject | null;
   /**
+   * Gets the data formats that this drop target accepts.
+   */
+  getFormats(): Deno.PointerValue;
+  /**
    * Gets whether data should be preloaded on hover.
    */
   getPreload(): boolean;
+  /**
+   * Gets the current drop data, as a `GValue`.
+   */
+  getValue(): Deno.PointerValue;
   /**
    * Rejects the ongoing drop operation.
    */
@@ -1890,6 +2427,10 @@ export interface DropTargetMethods {
    * Sets whether data should be preloaded on hover.
    */
   setPreload(preload: boolean): void;
+  /**
+   * Emitted on the drop site when a drop operation is about to begin.
+   */
+  onAccept(callback: (drop: GObject) => boolean): number;
   /**
    * Emitted on the drop site when the pointer leaves the widget.
    */
@@ -1908,9 +2449,17 @@ export const dropTargetMethods: DropTargetMethods & ThisType<GObject> = {
         missing("gtk_drop_target_get_current_drop", "4.4"))(this.ptr),
     );
   },
+  getFormats(this: GObject): Deno.PointerValue {
+    return (gtk4.symbols.gtk_drop_target_get_formats ??
+      missing("gtk_drop_target_get_formats"))(this.ptr);
+  },
   getPreload(this: GObject): boolean {
     return (gtk4.symbols.gtk_drop_target_get_preload ??
       missing("gtk_drop_target_get_preload"))(this.ptr);
+  },
+  getValue(this: GObject): Deno.PointerValue {
+    return (gtk4.symbols.gtk_drop_target_get_value ??
+      missing("gtk_drop_target_get_value"))(this.ptr);
   },
   reject(this: GObject): void {
     (gtk4.symbols.gtk_drop_target_reject ?? missing("gtk_drop_target_reject"))(
@@ -1924,6 +2473,12 @@ export const dropTargetMethods: DropTargetMethods & ThisType<GObject> = {
   setPreload(this: GObject, preload: boolean): void {
     (gtk4.symbols.gtk_drop_target_set_preload ??
       missing("gtk_drop_target_set_preload"))(this.ptr, preload);
+  },
+  onAccept(this: GObject, callback: (drop: GObject) => boolean): number {
+    return connectSignal(this, "accept", {
+      parameters: ["pointer", "pointer", "pointer"],
+      result: "i32",
+    }, (a0: never) => (callback(borrowed<GObject>(a0)!)) ? 1 : 0);
   },
   onLeave(this: GObject, callback: () => void): number {
     return connectSignal(this, "leave", {
@@ -2080,6 +2635,10 @@ export interface EventControllerKeyMethods {
   onKeyReleased(
     callback: (keyval: number, keycode: number, state: number) => void,
   ): number;
+  /**
+   * Emitted whenever the state of modifier keys and pointer buttons change.
+   */
+  onModifiers(callback: (state: number) => boolean): number;
 }
 
 /** Implementations of {@linkcode EventControllerKeyMethods}. */
@@ -2117,6 +2676,12 @@ export const eventControllerKeyMethods:
         parameters: ["pointer", "u32", "u32", "u32", "pointer"],
         result: "void",
       }, (a0: never, a1: never, a2: never) => callback(a0, a1, a2));
+    },
+    onModifiers(this: GObject, callback: (state: number) => boolean): number {
+      return connectSignal(this, "modifiers", {
+        parameters: ["pointer", "u32", "pointer"],
+        result: "i32",
+      }, (a0: never) => (callback(a0)) ? 1 : 0);
     },
   };
 
@@ -2168,12 +2733,12 @@ export interface FileDialogMethods {
    * Gets the file that will be initially selected in
    * the file chooser dialog.
    */
-  getInitialFile(): GObject | null;
+  getInitialFile(): File | null;
   /**
    * Gets the folder that will be set as the
    * initial folder in the file chooser dialog.
    */
-  getInitialFolder(): GObject | null;
+  getInitialFolder(): File | null;
   /**
    * Gets the filename that will be initially selected.
    */
@@ -2188,6 +2753,24 @@ export interface FileDialogMethods {
    */
   getTitle(): string;
   /**
+   * Presents a file chooser dialog to the user.
+   */
+  openMultiple(
+    parent: Window | null,
+    cancellable: Cancellable | null,
+  ): Promise<GObject>;
+  /**
+   * Presents a file chooser dialog to the user.
+   */
+  save(parent: Window | null, cancellable: Cancellable | null): Promise<File>;
+  /**
+   * Presents a file chooser dialog to the user.
+   */
+  selectMultipleFolders(
+    parent: Window | null,
+    cancellable: Cancellable | null,
+  ): Promise<GObject>;
+  /**
    * Sets the label shown on the file chooser's accept button.
    */
   setAcceptLabel(acceptLabel: string | null): void;
@@ -2195,12 +2778,12 @@ export interface FileDialogMethods {
    * Sets the file that will be initially selected in
    * the file chooser dialog.
    */
-  setInitialFile(file: GObject | null): void;
+  setInitialFile(file: File | null): void;
   /**
    * Sets the folder that will be set as the
    * initial folder in the file chooser dialog.
    */
-  setInitialFolder(folder: GObject | null): void;
+  setInitialFolder(folder: File | null): void;
   /**
    * Sets the filename that will be initially selected.
    */
@@ -2232,14 +2815,14 @@ export const fileDialogMethods: FileDialogMethods & ThisType<GObject> = {
         missing("gtk_file_dialog_get_filters", "4.10"))(this.ptr),
     );
   },
-  getInitialFile(this: GObject): GObject | null {
-    return borrowed<GObject>(
+  getInitialFile(this: GObject): File | null {
+    return borrowed<File>(
       (gtk4.symbols.gtk_file_dialog_get_initial_file ??
         missing("gtk_file_dialog_get_initial_file", "4.10"))(this.ptr),
     );
   },
-  getInitialFolder(this: GObject): GObject | null {
-    return borrowed<GObject>(
+  getInitialFolder(this: GObject): File | null {
+    return borrowed<File>(
       (gtk4.symbols.gtk_file_dialog_get_initial_folder ??
         missing("gtk_file_dialog_get_initial_folder", "4.10"))(this.ptr),
     );
@@ -2260,6 +2843,87 @@ export const fileDialogMethods: FileDialogMethods & ThisType<GObject> = {
         missing("gtk_file_dialog_get_title", "4.10"))(this.ptr),
     );
   },
+  openMultiple(
+    this: GObject,
+    parent: Window | null,
+    cancellable: Cancellable | null,
+  ): Promise<GObject> {
+    return asyncCall(
+      (__callback) => {
+        (gtk4.symbols.gtk_file_dialog_open_multiple ??
+          missing("gtk_file_dialog_open_multiple", "4.10"))(
+            this.ptr,
+            parent?.ptr ?? null,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        owned<GObject>(
+          (gtk4.symbols.gtk_file_dialog_open_multiple_finish ??
+            missing("gtk_file_dialog_open_multiple_finish", "4.10"))(
+              this.ptr,
+              __result,
+              __error.pointer,
+            ),
+        )!,
+    );
+  },
+  save(
+    this: GObject,
+    parent: Window | null,
+    cancellable: Cancellable | null,
+  ): Promise<File> {
+    return asyncCall(
+      (__callback) => {
+        (gtk4.symbols.gtk_file_dialog_save ??
+          missing("gtk_file_dialog_save", "4.10"))(
+            this.ptr,
+            parent?.ptr ?? null,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        owned<File>(
+          (gtk4.symbols.gtk_file_dialog_save_finish ??
+            missing("gtk_file_dialog_save_finish", "4.10"))(
+              this.ptr,
+              __result,
+              __error.pointer,
+            ),
+        )!,
+    );
+  },
+  selectMultipleFolders(
+    this: GObject,
+    parent: Window | null,
+    cancellable: Cancellable | null,
+  ): Promise<GObject> {
+    return asyncCall(
+      (__callback) => {
+        (gtk4.symbols.gtk_file_dialog_select_multiple_folders ??
+          missing("gtk_file_dialog_select_multiple_folders", "4.10"))(
+            this.ptr,
+            parent?.ptr ?? null,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        owned<GObject>(
+          (gtk4.symbols.gtk_file_dialog_select_multiple_folders_finish ??
+            missing("gtk_file_dialog_select_multiple_folders_finish", "4.10"))(
+              this.ptr,
+              __result,
+              __error.pointer,
+            ),
+        )!,
+    );
+  },
   setAcceptLabel(this: GObject, acceptLabel: string | null): void {
     (gtk4.symbols.gtk_file_dialog_set_accept_label ??
       missing("gtk_file_dialog_set_accept_label", "4.10"))(
@@ -2267,14 +2931,14 @@ export const fileDialogMethods: FileDialogMethods & ThisType<GObject> = {
         cstrOrNull(acceptLabel),
       );
   },
-  setInitialFile(this: GObject, file: GObject | null): void {
+  setInitialFile(this: GObject, file: File | null): void {
     (gtk4.symbols.gtk_file_dialog_set_initial_file ??
       missing("gtk_file_dialog_set_initial_file", "4.10"))(
         this.ptr,
         file?.ptr ?? null,
       );
   },
-  setInitialFolder(this: GObject, folder: GObject | null): void {
+  setInitialFolder(this: GObject, folder: File | null): void {
     (gtk4.symbols.gtk_file_dialog_set_initial_folder ??
       missing("gtk_file_dialog_set_initial_folder", "4.10"))(
         this.ptr,
@@ -2304,6 +2968,14 @@ export interface FileFilterMethods {
    * Gets the human-readable name for the filter.
    */
   getName(): string | null;
+  /**
+   * Serialize a file filter to an `a{sv}` variant.
+   */
+  toGvariant(): Deno.PointerValue;
+  /**
+   * Gets the ID of the `buildable` object.
+   */
+  getBuildableId(): string | null;
 }
 
 /** Implementations of {@linkcode FileFilterMethods}. */
@@ -2316,6 +2988,16 @@ export const fileFilterMethods: FileFilterMethods & ThisType<GObject> = {
     return ((p) => p ? readCStr(p) : null)(
       (gtk4.symbols.gtk_file_filter_get_name ??
         missing("gtk_file_filter_get_name"))(this.ptr),
+    );
+  },
+  toGvariant(this: GObject): Deno.PointerValue {
+    return (gtk4.symbols.gtk_file_filter_to_gvariant ??
+      missing("gtk_file_filter_to_gvariant"))(this.ptr);
+  },
+  getBuildableId(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      (gtk4.symbols.gtk_buildable_get_buildable_id ??
+        missing("gtk_buildable_get_buildable_id"))(this.ptr),
     );
   },
 };
@@ -2408,6 +3090,18 @@ export interface GestureClickMethods {
    * Emitted whenever any time/distance threshold has been exceeded.
    */
   onStopped(callback: () => void): number;
+  /**
+   * Emitted whenever the gesture receives a release
+   * event that had no previous corresponding press.
+   */
+  onUnpairedRelease(
+    callback: (
+      x: number,
+      y: number,
+      button: number,
+      sequence: Deno.PointerValue,
+    ) => void,
+  ): number;
 }
 
 /** Implementations of {@linkcode GestureClickMethods}. */
@@ -2426,6 +3120,25 @@ export const gestureClickMethods: GestureClickMethods & ThisType<GObject> = {
       parameters: ["pointer", "pointer"],
       result: "void",
     }, () => callback());
+  },
+  onUnpairedRelease(
+    this: GObject,
+    callback: (
+      x: number,
+      y: number,
+      button: number,
+      sequence: Deno.PointerValue,
+    ) => void,
+  ): number {
+    return connectSignal(
+      this,
+      "unpaired-release",
+      {
+        parameters: ["pointer", "f64", "f64", "u32", "pointer", "pointer"],
+        result: "void",
+      },
+      (a0: never, a1: never, a2: never, a3: never) => callback(a0, a1, a2, a3),
+    );
   },
 };
 
@@ -2511,6 +3224,14 @@ export interface GridMethods {
    * Sets whether all rows of `grid` will have the same height.
    */
   setRowHomogeneous(homogeneous: boolean): void;
+  /**
+   * Retrieves the orientation of the `orientable`.
+   */
+  getOrientation(): Orientation;
+  /**
+   * Sets the orientation of the `orientable`.
+   */
+  setOrientation(orientation: Orientation): void;
 }
 
 /** Implementations of {@linkcode GridMethods}. */
@@ -2622,6 +3343,14 @@ export const gridMethods: GridMethods & ThisType<GObject> = {
   setRowHomogeneous(this: GObject, homogeneous: boolean): void {
     (gtk4.symbols.gtk_grid_set_row_homogeneous ??
       missing("gtk_grid_set_row_homogeneous"))(this.ptr, homogeneous);
+  },
+  getOrientation(this: GObject): Orientation {
+    return (gtk4.symbols.gtk_orientable_get_orientation ??
+      missing("gtk_orientable_get_orientation"))(this.ptr) as Orientation;
+  },
+  setOrientation(this: GObject, orientation: Orientation): void {
+    (gtk4.symbols.gtk_orientable_set_orientation ??
+      missing("gtk_orientable_set_orientation"))(this.ptr, orientation);
   },
 };
 
@@ -2749,6 +3478,16 @@ export interface IconThemeMethods {
    */
   hasGicon(gicon: GObject): boolean;
   /**
+   * Looks up a icon for a desired size and window scale.
+   */
+  lookupByGicon(
+    icon: GObject,
+    size: number,
+    scale: number,
+    direction: TextDirection,
+    flags: number,
+  ): GObject;
+  /**
    * Sets the name of the icon theme that the `GtkIconTheme` object uses
    * overriding system configuration.
    */
@@ -2784,6 +3523,26 @@ export const iconThemeMethods: IconThemeMethods & ThisType<GObject> = {
   hasGicon(this: GObject, gicon: GObject): boolean {
     return (gtk4.symbols.gtk_icon_theme_has_gicon ??
       missing("gtk_icon_theme_has_gicon", "4.2"))(this.ptr, gicon.ptr);
+  },
+  lookupByGicon(
+    this: GObject,
+    icon: GObject,
+    size: number,
+    scale: number,
+    direction: TextDirection,
+    flags: number,
+  ): GObject {
+    return owned<GObject>(
+      (gtk4.symbols.gtk_icon_theme_lookup_by_gicon ??
+        missing("gtk_icon_theme_lookup_by_gicon"))(
+          this.ptr,
+          icon.ptr,
+          size,
+          scale,
+          direction,
+          flags,
+        ),
+    )!;
   },
   setThemeName(this: GObject, themeName: string | null): void {
     (gtk4.symbols.gtk_icon_theme_set_theme_name ??
@@ -2919,6 +3678,10 @@ export const imageMethods: ImageMethods & ThisType<GObject> = {
 /** Methods generated for `GtkLabel`. */
 export interface LabelMethods {
   /**
+   * Gets the label's attribute list.
+   */
+  getAttributes(): Deno.PointerValue;
+  /**
    * Returns the URI for the active link in the label.
    */
   getCurrentUri(): string | null;
@@ -3004,6 +3767,10 @@ export interface LabelMethods {
    */
   selectRegion(startOffset: number, endOffset: number): void;
   /**
+   * Apply attributes to the label text.
+   */
+  setAttributes(attrs: Deno.PointerValue): void;
+  /**
    * Sets a menu model to add to the context menu of the label.
    */
   setExtraMenu(model: GObject | null): void;
@@ -3041,6 +3808,10 @@ export interface LabelMethods {
    */
   setSingleLineMode(singleLineMode: boolean): void;
   /**
+   * Sets tab stops for the label.
+   */
+  setTabs(tabs: Deno.PointerValue): void;
+  /**
    * Sets the text for the label, with mnemonics.
    */
   setTextWithMnemonic(str: string): void;
@@ -3061,6 +3832,10 @@ export interface LabelMethods {
    */
   onActivateCurrentLink(callback: () => void): number;
   /**
+   * Gets emitted to activate a URI.
+   */
+  onActivateLink(callback: (uri: string) => boolean): number;
+  /**
    * Gets emitted to copy the selection to the clipboard.
    */
   onCopyClipboard(callback: () => void): number;
@@ -3074,10 +3849,30 @@ export interface LabelMethods {
       extendSelection: boolean,
     ) => void,
   ): number;
+  /**
+   * Updates the position of the caret.
+   */
+  updateCaretPosition(): void;
+  /**
+   * Notifies assistive technologies of a change in contents.
+   */
+  updateContents(
+    change: AccessibleTextContentChange,
+    start: number,
+    end: number,
+  ): void;
+  /**
+   * Updates the boundary of the selection.
+   */
+  updateSelectionBound(): void;
 }
 
 /** Implementations of {@linkcode LabelMethods}. */
 export const labelMethods: LabelMethods & ThisType<GObject> = {
+  getAttributes(this: GObject): Deno.PointerValue {
+    return (gtk4.symbols.gtk_label_get_attributes ??
+      missing("gtk_label_get_attributes"))(this.ptr);
+  },
   getCurrentUri(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
       (gtk4.symbols.gtk_label_get_current_uri ??
@@ -3178,6 +3973,10 @@ export const labelMethods: LabelMethods & ThisType<GObject> = {
     (gtk4.symbols.gtk_label_select_region ??
       missing("gtk_label_select_region"))(this.ptr, startOffset, endOffset);
   },
+  setAttributes(this: GObject, attrs: Deno.PointerValue): void {
+    (gtk4.symbols.gtk_label_set_attributes ??
+      missing("gtk_label_set_attributes"))(this.ptr, attrs);
+  },
   setExtraMenu(this: GObject, model: GObject | null): void {
     (gtk4.symbols.gtk_label_set_extra_menu ??
       missing("gtk_label_set_extra_menu"))(this.ptr, model?.ptr ?? null);
@@ -3220,6 +4019,12 @@ export const labelMethods: LabelMethods & ThisType<GObject> = {
     (gtk4.symbols.gtk_label_set_single_line_mode ??
       missing("gtk_label_set_single_line_mode"))(this.ptr, singleLineMode);
   },
+  setTabs(this: GObject, tabs: Deno.PointerValue): void {
+    (gtk4.symbols.gtk_label_set_tabs ?? missing("gtk_label_set_tabs", "4.8"))(
+      this.ptr,
+      tabs,
+    );
+  },
   setTextWithMnemonic(this: GObject, str: string): void {
     (gtk4.symbols.gtk_label_set_text_with_mnemonic ??
       missing("gtk_label_set_text_with_mnemonic"))(this.ptr, cstr(str));
@@ -3243,6 +4048,12 @@ export const labelMethods: LabelMethods & ThisType<GObject> = {
       parameters: ["pointer", "pointer"],
       result: "void",
     }, () => callback());
+  },
+  onActivateLink(this: GObject, callback: (uri: string) => boolean): number {
+    return connectSignal(this, "activate-link", {
+      parameters: ["pointer", "pointer", "pointer"],
+      result: "i32",
+    }, (a0: never) => (callback(readCStr(a0))) ? 1 : 0);
   },
   onCopyClipboard(this: GObject, callback: () => void): number {
     return connectSignal(this, "copy-clipboard", {
@@ -3268,6 +4079,28 @@ export const labelMethods: LabelMethods & ThisType<GObject> = {
       (a0: never, a1: never, a2: never) =>
         callback(a0 as MovementStep, a1, a2 !== 0),
     );
+  },
+  updateCaretPosition(this: GObject): void {
+    (gtk4.symbols.gtk_accessible_text_update_caret_position ??
+      missing("gtk_accessible_text_update_caret_position", "4.14"))(this.ptr);
+  },
+  updateContents(
+    this: GObject,
+    change: AccessibleTextContentChange,
+    start: number,
+    end: number,
+  ): void {
+    (gtk4.symbols.gtk_accessible_text_update_contents ??
+      missing("gtk_accessible_text_update_contents", "4.14"))(
+        this.ptr,
+        change,
+        start,
+        end,
+      );
+  },
+  updateSelectionBound(this: GObject): void {
+    (gtk4.symbols.gtk_accessible_text_update_selection_bound ??
+      missing("gtk_accessible_text_update_selection_bound", "4.14"))(this.ptr);
   },
 };
 
@@ -3313,6 +4146,14 @@ export interface LevelBarMethods {
    * Emitted when an offset specified on the bar changes value.
    */
   onOffsetChanged(callback: (name: string) => void): number;
+  /**
+   * Retrieves the orientation of the `orientable`.
+   */
+  getOrientation(): Orientation;
+  /**
+   * Sets the orientation of the `orientable`.
+   */
+  setOrientation(orientation: Orientation): void;
 }
 
 /** Implementations of {@linkcode LevelBarMethods}. */
@@ -3360,6 +4201,14 @@ export const levelBarMethods: LevelBarMethods & ThisType<GObject> = {
       parameters: ["pointer", "pointer", "pointer"],
       result: "void",
     }, (a0: never) => callback(readCStr(a0)));
+  },
+  getOrientation(this: GObject): Orientation {
+    return (gtk4.symbols.gtk_orientable_get_orientation ??
+      missing("gtk_orientable_get_orientation"))(this.ptr) as Orientation;
+  },
+  setOrientation(this: GObject, orientation: Orientation): void {
+    (gtk4.symbols.gtk_orientable_set_orientation ??
+      missing("gtk_orientable_set_orientation"))(this.ptr, orientation);
   },
 };
 
@@ -3708,6 +4557,28 @@ export interface ListBoxRowMethods {
    * This is a keybinding signal, which will cause this row to be activated.
    */
   onActivate(callback: () => void): number;
+  /**
+   * Gets the action name for `actionable`.
+   */
+  getActionName(): string | null;
+  /**
+   * Gets the current target value of `actionable`.
+   */
+  getActionTargetValue(): Deno.PointerValue;
+  /**
+   * Specifies the name of the action with which this widget should be
+   * associated.
+   */
+  setActionName(actionName: string | null): void;
+  /**
+   * Sets the target value of an actionable widget.
+   */
+  setActionTargetValue(targetValue: Deno.PointerValue): void;
+  /**
+   * Sets the action-name and associated string target value of an
+   * actionable widget.
+   */
+  setDetailedActionName(detailedActionName: string): void;
 }
 
 /** Implementations of {@linkcode ListBoxRowMethods}. */
@@ -3743,6 +4614,34 @@ export const listBoxRowMethods: ListBoxRowMethods & ThisType<GObject> = {
       parameters: ["pointer", "pointer"],
       result: "void",
     }, () => callback());
+  },
+  getActionName(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      (gtk4.symbols.gtk_actionable_get_action_name ??
+        missing("gtk_actionable_get_action_name"))(this.ptr),
+    );
+  },
+  getActionTargetValue(this: GObject): Deno.PointerValue {
+    return (gtk4.symbols.gtk_actionable_get_action_target_value ??
+      missing("gtk_actionable_get_action_target_value"))(this.ptr);
+  },
+  setActionName(this: GObject, actionName: string | null): void {
+    (gtk4.symbols.gtk_actionable_set_action_name ??
+      missing("gtk_actionable_set_action_name"))(
+        this.ptr,
+        cstrOrNull(actionName),
+      );
+  },
+  setActionTargetValue(this: GObject, targetValue: Deno.PointerValue): void {
+    (gtk4.symbols.gtk_actionable_set_action_target_value ??
+      missing("gtk_actionable_set_action_target_value"))(this.ptr, targetValue);
+  },
+  setDetailedActionName(this: GObject, detailedActionName: string): void {
+    (gtk4.symbols.gtk_actionable_set_detailed_action_name ??
+      missing("gtk_actionable_set_detailed_action_name"))(
+        this.ptr,
+        cstr(detailedActionName),
+      );
   },
 };
 
@@ -4091,6 +4990,13 @@ export interface OverlayMethods {
    * Sets whether `widget` is included in the measured size of `overlay`.
    */
   setMeasureOverlay(widget: Widget, measure: boolean): void;
+  /**
+   * Emitted to determine the position and size of any overlay
+   * child widgets.
+   */
+  onGetChildPosition(
+    callback: (widget: Widget, allocation: Deno.PointerValue) => boolean,
+  ): number;
 }
 
 /** Implementations of {@linkcode OverlayMethods}. */
@@ -4130,6 +5036,15 @@ export const overlayMethods: OverlayMethods & ThisType<GObject> = {
         measure,
       );
   },
+  onGetChildPosition(
+    this: GObject,
+    callback: (widget: Widget, allocation: Deno.PointerValue) => boolean,
+  ): number {
+    return connectSignal(this, "get-child-position", {
+      parameters: ["pointer", "pointer", "pointer", "pointer"],
+      result: "i32",
+    }, (a0: never, a1: never) => (callback(borrowed<Widget>(a0)!, a1)) ? 1 : 0);
+  },
 };
 
 /** Methods generated for `GtkPicture`. */
@@ -4149,7 +5064,7 @@ export interface PictureMethods {
   /**
    * Gets the `GFile` currently displayed if `self` is displaying a file.
    */
-  getFile(): GObject | null;
+  getFile(): File | null;
   /**
    * Returns whether the contents are isolated.
    */
@@ -4169,7 +5084,7 @@ export interface PictureMethods {
   /**
    * Makes `self` load and display `file`.
    */
-  setFile(file: GObject | null): void;
+  setFile(file: File | null): void;
   /**
    * If set to true, then the contents will be rendered individually.
    */
@@ -4201,8 +5116,8 @@ export const pictureMethods: PictureMethods & ThisType<GObject> = {
     return (gtk4.symbols.gtk_picture_get_content_fit ??
       missing("gtk_picture_get_content_fit", "4.8"))(this.ptr) as ContentFit;
   },
-  getFile(this: GObject): GObject | null {
-    return borrowed<GObject>(
+  getFile(this: GObject): File | null {
+    return borrowed<File>(
       (gtk4.symbols.gtk_picture_get_file ?? missing("gtk_picture_get_file"))(
         this.ptr,
       ),
@@ -4229,7 +5144,7 @@ export const pictureMethods: PictureMethods & ThisType<GObject> = {
     (gtk4.symbols.gtk_picture_set_content_fit ??
       missing("gtk_picture_set_content_fit", "4.8"))(this.ptr, contentFit);
   },
-  setFile(this: GObject, file: GObject | null): void {
+  setFile(this: GObject, file: File | null): void {
     (gtk4.symbols.gtk_picture_set_file ?? missing("gtk_picture_set_file"))(
       this.ptr,
       file?.ptr ?? null,
@@ -4311,6 +5226,10 @@ export interface PopoverMethods {
    */
   setOffset(xOffset: number, yOffset: number): void;
   /**
+   * Sets the rectangle that `popover` points to.
+   */
+  setPointingTo(rect: Deno.PointerValue): void;
+  /**
    * Sets the preferred position for `popover` to appear.
    */
   setPosition(position: PositionType): void;
@@ -4322,6 +5241,10 @@ export interface PopoverMethods {
    * Emitted when the popover is closed.
    */
   onClosed(callback: () => void): number;
+  /**
+   * Returns the surface of this `GtkNative`.
+   */
+  getSurface(): GObject | null;
 }
 
 /** Implementations of {@linkcode PopoverMethods}. */
@@ -4385,6 +5308,10 @@ export const popoverMethods: PopoverMethods & ThisType<GObject> = {
       yOffset,
     );
   },
+  setPointingTo(this: GObject, rect: Deno.PointerValue): void {
+    (gtk4.symbols.gtk_popover_set_pointing_to ??
+      missing("gtk_popover_set_pointing_to"))(this.ptr, rect);
+  },
   setPosition(this: GObject, position: PositionType): void {
     (gtk4.symbols.gtk_popover_set_position ??
       missing("gtk_popover_set_position"))(this.ptr, position);
@@ -4400,6 +5327,12 @@ export const popoverMethods: PopoverMethods & ThisType<GObject> = {
       parameters: ["pointer", "pointer"],
       result: "void",
     }, () => callback());
+  },
+  getSurface(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_native_get_surface ??
+        missing("gtk_native_get_surface"))(this.ptr),
+    );
   },
 };
 
@@ -4489,6 +5422,14 @@ export interface ProgressBarMethods {
    * bouncing block.
    */
   setPulseStep(fraction: number): void;
+  /**
+   * Retrieves the orientation of the `orientable`.
+   */
+  getOrientation(): Orientation;
+  /**
+   * Sets the orientation of the `orientable`.
+   */
+  setOrientation(orientation: Orientation): void;
 }
 
 /** Implementations of {@linkcode ProgressBarMethods}. */
@@ -4528,6 +5469,14 @@ export const progressBarMethods: ProgressBarMethods & ThisType<GObject> = {
   setPulseStep(this: GObject, fraction: number): void {
     (gtk4.symbols.gtk_progress_bar_set_pulse_step ??
       missing("gtk_progress_bar_set_pulse_step"))(this.ptr, fraction);
+  },
+  getOrientation(this: GObject): Orientation {
+    return (gtk4.symbols.gtk_orientable_get_orientation ??
+      missing("gtk_orientable_get_orientation"))(this.ptr) as Orientation;
+  },
+  setOrientation(this: GObject, orientation: Orientation): void {
+    (gtk4.symbols.gtk_orientable_set_orientation ??
+      missing("gtk_orientable_set_orientation"))(this.ptr, orientation);
   },
 };
 
@@ -4799,6 +5748,12 @@ export interface ScrolledWindowMethods {
    * keybinding.
    */
   onMoveFocusOut(callback: (directionType: DirectionType) => void): number;
+  /**
+   * Emitted when a keybinding that scrolls is pressed.
+   */
+  onScrollChild(
+    callback: (scroll: ScrollType, horizontal: boolean) => boolean,
+  ): number;
 }
 
 /** Implementations of {@linkcode ScrolledWindowMethods}. */
@@ -4967,6 +5922,18 @@ export const scrolledWindowMethods: ScrolledWindowMethods & ThisType<GObject> =
         result: "void",
       }, (a0: never) => callback(a0 as DirectionType));
     },
+    onScrollChild(
+      this: GObject,
+      callback: (scroll: ScrollType, horizontal: boolean) => boolean,
+    ): number {
+      return connectSignal(
+        this,
+        "scroll-child",
+        { parameters: ["pointer", "i32", "i32", "pointer"], result: "i32" },
+        (a0: never, a1: never) =>
+          (callback(a0 as ScrollType, a1 !== 0)) ? 1 : 0,
+      );
+    },
   };
 
 /** Methods generated for `GtkSearchBar`. */
@@ -5072,6 +6039,116 @@ export interface SearchEntryMethods {
    * Emitted when the user stops a search via keyboard input.
    */
   onStopSearch(callback: () => void): number;
+  /**
+   * Retrieves the accessible platform state from the editable delegate.
+   */
+  delegateGetAccessiblePlatformState(state: AccessiblePlatformState): boolean;
+  /**
+   * Deletes the currently selected text of the editable.
+   */
+  deleteSelection(): void;
+  /**
+   * Deletes a sequence of characters.
+   */
+  deleteText(startPos: number, endPos: number): void;
+  /**
+   * Undoes the setup done by `initDelegate()`.
+   */
+  finishDelegate(): void;
+  /**
+   * Gets the alignment of the editable.
+   */
+  getAlignment(): number;
+  /**
+   * Retrieves a sequence of characters.
+   */
+  getChars(startPos: number, endPos: number): string;
+  /**
+   * Retrieves the contents of `editable`, including *pseudo-content*
+   * such as the preedit buffer.
+   */
+  getCompleteText(): string;
+  /**
+   * Gets the `GtkEditable` that `editable` is delegating its
+   * implementation to.
+   */
+  getDelegate(): GObject | null;
+  /**
+   * Retrieves whether `editable` is editable.
+   */
+  getEditable(): boolean;
+  /**
+   * Gets if undo/redo actions are enabled for `editable`
+   */
+  getEnableUndo(): boolean;
+  /**
+   * Retrieves the widget that was previously set up as input interceptor
+   * for `editable`. See `setInputInterceptor()`.
+   */
+  getInputInterceptor(): Widget | null;
+  /**
+   * Retrieves the desired maximum width of `editable`, in characters.
+   */
+  getMaxWidthChars(): number;
+  /**
+   * Retrieves the current position of the cursor relative
+   * to the start of the content of the editable.
+   */
+  getPosition(): number;
+  /**
+   * Gets the number of characters of space reserved
+   * for the contents of the editable.
+   */
+  getWidthChars(): number;
+  /**
+   * Sets up a delegate for `GtkEditable`.
+   */
+  initDelegate(): void;
+  /**
+   * Sets the alignment for the contents of the editable.
+   */
+  setAlignment(xalign: number): void;
+  /**
+   * Determines if the user can edit the text in the editable widget.
+   */
+  setEditable(isEditable: boolean): void;
+  /**
+   * If enabled, changes to `editable` will be saved for undo/redo
+   * actions.
+   */
+  setEnableUndo(enableUndo: boolean): void;
+  /**
+   * Sets `interceptor` as the widget that `editable` will intercept key events from.
+   */
+  setInputInterceptor(interceptor: Widget | null): void;
+  /**
+   * Sets the desired maximum width in characters of `editable`.
+   */
+  setMaxWidthChars(nChars: number): void;
+  /**
+   * Sets the cursor position in the editable to the given value.
+   */
+  setPosition(position: number): void;
+  /**
+   * Changes the size request of the editable to be about the
+   * right size for `nChars` characters.
+   */
+  setWidthChars(nChars: number): void;
+  /**
+   * Emitted when text is deleted from the widget by the user.
+   */
+  onDeleteText(callback: (startPos: number, endPos: number) => void): number;
+  /**
+   * Emitted whenever keyboard input has been handled through the
+   * input interceptor widget set through `setInputInterceptor()`
+   */
+  onInputIntercepted(callback: () => void): number;
+  /**
+   * Emitted when text is inserted into the widget by the user.
+   */
+  onInsertText(
+    callback: (text: string, length: number, position: number) => void,
+  ): number;
 }
 
 /** Implementations of {@linkcode SearchEntryMethods}. */
@@ -5145,14 +6222,160 @@ export const searchEntryMethods: SearchEntryMethods & ThisType<GObject> = {
       result: "void",
     }, () => callback());
   },
+  delegateGetAccessiblePlatformState(
+    this: GObject,
+    state: AccessiblePlatformState,
+  ): boolean {
+    return (gtk4.symbols.gtk_editable_delegate_get_accessible_platform_state ??
+      missing("gtk_editable_delegate_get_accessible_platform_state", "4.10"))(
+        this.ptr,
+        state,
+      );
+  },
+  deleteSelection(this: GObject): void {
+    (gtk4.symbols.gtk_editable_delete_selection ??
+      missing("gtk_editable_delete_selection"))(this.ptr);
+  },
+  deleteText(this: GObject, startPos: number, endPos: number): void {
+    (gtk4.symbols.gtk_editable_delete_text ??
+      missing("gtk_editable_delete_text"))(this.ptr, startPos, endPos);
+  },
+  finishDelegate(this: GObject): void {
+    (gtk4.symbols.gtk_editable_finish_delegate ??
+      missing("gtk_editable_finish_delegate"))(this.ptr);
+  },
+  getAlignment(this: GObject): number {
+    return (gtk4.symbols.gtk_editable_get_alignment ??
+      missing("gtk_editable_get_alignment"))(this.ptr);
+  },
+  getChars(this: GObject, startPos: number, endPos: number): string {
+    return takeString(
+      (gtk4.symbols.gtk_editable_get_chars ??
+        missing("gtk_editable_get_chars"))(this.ptr, startPos, endPos),
+    ) ?? "";
+  },
+  getCompleteText(this: GObject): string {
+    return takeString(
+      (gtk4.symbols.gtk_editable_get_complete_text ??
+        missing("gtk_editable_get_complete_text", "4.24"))(this.ptr),
+    ) ?? "";
+  },
+  getDelegate(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_editable_get_delegate ??
+        missing("gtk_editable_get_delegate"))(this.ptr),
+    );
+  },
+  getEditable(this: GObject): boolean {
+    return (gtk4.symbols.gtk_editable_get_editable ??
+      missing("gtk_editable_get_editable"))(this.ptr);
+  },
+  getEnableUndo(this: GObject): boolean {
+    return (gtk4.symbols.gtk_editable_get_enable_undo ??
+      missing("gtk_editable_get_enable_undo"))(this.ptr);
+  },
+  getInputInterceptor(this: GObject): Widget | null {
+    return owned<Widget>(
+      (gtk4.symbols.gtk_editable_get_input_interceptor ??
+        missing("gtk_editable_get_input_interceptor", "4.24"))(this.ptr),
+    );
+  },
+  getMaxWidthChars(this: GObject): number {
+    return (gtk4.symbols.gtk_editable_get_max_width_chars ??
+      missing("gtk_editable_get_max_width_chars"))(this.ptr);
+  },
+  getPosition(this: GObject): number {
+    return (gtk4.symbols.gtk_editable_get_position ??
+      missing("gtk_editable_get_position"))(this.ptr);
+  },
+  getWidthChars(this: GObject): number {
+    return (gtk4.symbols.gtk_editable_get_width_chars ??
+      missing("gtk_editable_get_width_chars"))(this.ptr);
+  },
+  initDelegate(this: GObject): void {
+    (gtk4.symbols.gtk_editable_init_delegate ??
+      missing("gtk_editable_init_delegate"))(this.ptr);
+  },
+  setAlignment(this: GObject, xalign: number): void {
+    (gtk4.symbols.gtk_editable_set_alignment ??
+      missing("gtk_editable_set_alignment"))(this.ptr, xalign);
+  },
+  setEditable(this: GObject, isEditable: boolean): void {
+    (gtk4.symbols.gtk_editable_set_editable ??
+      missing("gtk_editable_set_editable"))(this.ptr, isEditable);
+  },
+  setEnableUndo(this: GObject, enableUndo: boolean): void {
+    (gtk4.symbols.gtk_editable_set_enable_undo ??
+      missing("gtk_editable_set_enable_undo"))(this.ptr, enableUndo);
+  },
+  setInputInterceptor(this: GObject, interceptor: Widget | null): void {
+    (gtk4.symbols.gtk_editable_set_input_interceptor ??
+      missing("gtk_editable_set_input_interceptor", "4.24"))(
+        this.ptr,
+        interceptor?.ptr ?? null,
+      );
+  },
+  setMaxWidthChars(this: GObject, nChars: number): void {
+    (gtk4.symbols.gtk_editable_set_max_width_chars ??
+      missing("gtk_editable_set_max_width_chars"))(this.ptr, nChars);
+  },
+  setPosition(this: GObject, position: number): void {
+    (gtk4.symbols.gtk_editable_set_position ??
+      missing("gtk_editable_set_position"))(this.ptr, position);
+  },
+  setWidthChars(this: GObject, nChars: number): void {
+    (gtk4.symbols.gtk_editable_set_width_chars ??
+      missing("gtk_editable_set_width_chars"))(this.ptr, nChars);
+  },
+  onDeleteText(
+    this: GObject,
+    callback: (startPos: number, endPos: number) => void,
+  ): number {
+    return connectSignal(this, "delete-text", {
+      parameters: ["pointer", "i32", "i32", "pointer"],
+      result: "void",
+    }, (a0: never, a1: never) => callback(a0, a1));
+  },
+  onInputIntercepted(this: GObject, callback: () => void): number {
+    return connectSignal(this, "input-intercepted", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onInsertText(
+    this: GObject,
+    callback: (text: string, length: number, position: number) => void,
+  ): number {
+    return connectSignal(this, "insert-text", {
+      parameters: ["pointer", "pointer", "i32", "i32", "pointer"],
+      result: "void",
+    }, (a0: never, a1: never, a2: never) => callback(readCStr(a0), a1, a2));
+  },
 };
 
 /** Methods generated for `GtkSeparator`. */
 export interface SeparatorMethods {
+  /**
+   * Retrieves the orientation of the `orientable`.
+   */
+  getOrientation(): Orientation;
+  /**
+   * Sets the orientation of the `orientable`.
+   */
+  setOrientation(orientation: Orientation): void;
 }
 
 /** Implementations of {@linkcode SeparatorMethods}. */
-export const separatorMethods: SeparatorMethods & ThisType<GObject> = {};
+export const separatorMethods: SeparatorMethods & ThisType<GObject> = {
+  getOrientation(this: GObject): Orientation {
+    return (gtk4.symbols.gtk_orientable_get_orientation ??
+      missing("gtk_orientable_get_orientation"))(this.ptr) as Orientation;
+  },
+  setOrientation(this: GObject, orientation: Orientation): void {
+    (gtk4.symbols.gtk_orientable_set_orientation ??
+      missing("gtk_orientable_set_orientation"))(this.ptr, orientation);
+  },
+};
 
 /** Methods generated for `GtkSignalListItemFactory`. */
 export interface SignalListItemFactoryMethods {
@@ -5204,6 +6427,59 @@ export interface SingleSelectionMethods {
    * Selects the item at the given position.
    */
   setSelected(position: number): void;
+  /**
+   * This function emits the `sections-changed`
+   * signal to notify about changes to sections.
+   */
+  sectionsChanged(position: number, nItems: number): void;
+  /**
+   * Emitted when the start-of-section state of some of the items in `model` changes.
+   */
+  onSectionsChanged(
+    callback: (position: number, nItems: number) => void,
+  ): number;
+  /**
+   * Checks if the given item is selected.
+   */
+  isSelected(position: number): boolean;
+  /**
+   * Requests to select all items in the model.
+   */
+  selectAll(): boolean;
+  /**
+   * Requests to select an item in the model.
+   */
+  selectItem(position: number, unselectRest: boolean): boolean;
+  /**
+   * Requests to select a range of items in the model.
+   */
+  selectRange(position: number, nItems: number, unselectRest: boolean): boolean;
+  /**
+   * Helper function for implementations of `GtkSelectionModel`.
+   */
+  selectionChanged(position: number, nItems: number): void;
+  /**
+   * Make selection changes.
+   */
+  setSelection(selected: Deno.PointerValue, mask: Deno.PointerValue): boolean;
+  /**
+   * Requests to unselect all items in the model.
+   */
+  unselectAll(): boolean;
+  /**
+   * Requests to unselect an item in the model.
+   */
+  unselectItem(position: number): boolean;
+  /**
+   * Requests to unselect a range of items in the model.
+   */
+  unselectRange(position: number, nItems: number): boolean;
+  /**
+   * Emitted when the selection state of some of the items in `model` changes.
+   */
+  onSelectionChanged(
+    callback: (position: number, nItems: number) => void,
+  ): number;
 }
 
 /** Implementations of {@linkcode SingleSelectionMethods}. */
@@ -5256,6 +6532,98 @@ export const singleSelectionMethods:
       (gtk4.symbols.gtk_single_selection_set_selected ??
         missing("gtk_single_selection_set_selected"))(this.ptr, position);
     },
+    sectionsChanged(this: GObject, position: number, nItems: number): void {
+      (gtk4.symbols.gtk_section_model_sections_changed ??
+        missing("gtk_section_model_sections_changed", "4.12"))(
+          this.ptr,
+          position,
+          nItems,
+        );
+    },
+    onSectionsChanged(
+      this: GObject,
+      callback: (position: number, nItems: number) => void,
+    ): number {
+      return connectSignal(this, "sections-changed", {
+        parameters: ["pointer", "u32", "u32", "pointer"],
+        result: "void",
+      }, (a0: never, a1: never) => callback(a0, a1));
+    },
+    isSelected(this: GObject, position: number): boolean {
+      return (gtk4.symbols.gtk_selection_model_is_selected ??
+        missing("gtk_selection_model_is_selected"))(this.ptr, position);
+    },
+    selectAll(this: GObject): boolean {
+      return (gtk4.symbols.gtk_selection_model_select_all ??
+        missing("gtk_selection_model_select_all"))(this.ptr);
+    },
+    selectItem(
+      this: GObject,
+      position: number,
+      unselectRest: boolean,
+    ): boolean {
+      return (gtk4.symbols.gtk_selection_model_select_item ??
+        missing("gtk_selection_model_select_item"))(
+          this.ptr,
+          position,
+          unselectRest,
+        );
+    },
+    selectRange(
+      this: GObject,
+      position: number,
+      nItems: number,
+      unselectRest: boolean,
+    ): boolean {
+      return (gtk4.symbols.gtk_selection_model_select_range ??
+        missing("gtk_selection_model_select_range"))(
+          this.ptr,
+          position,
+          nItems,
+          unselectRest,
+        );
+    },
+    selectionChanged(this: GObject, position: number, nItems: number): void {
+      (gtk4.symbols.gtk_selection_model_selection_changed ??
+        missing("gtk_selection_model_selection_changed"))(
+          this.ptr,
+          position,
+          nItems,
+        );
+    },
+    setSelection(
+      this: GObject,
+      selected: Deno.PointerValue,
+      mask: Deno.PointerValue,
+    ): boolean {
+      return (gtk4.symbols.gtk_selection_model_set_selection ??
+        missing("gtk_selection_model_set_selection"))(this.ptr, selected, mask);
+    },
+    unselectAll(this: GObject): boolean {
+      return (gtk4.symbols.gtk_selection_model_unselect_all ??
+        missing("gtk_selection_model_unselect_all"))(this.ptr);
+    },
+    unselectItem(this: GObject, position: number): boolean {
+      return (gtk4.symbols.gtk_selection_model_unselect_item ??
+        missing("gtk_selection_model_unselect_item"))(this.ptr, position);
+    },
+    unselectRange(this: GObject, position: number, nItems: number): boolean {
+      return (gtk4.symbols.gtk_selection_model_unselect_range ??
+        missing("gtk_selection_model_unselect_range"))(
+          this.ptr,
+          position,
+          nItems,
+        );
+    },
+    onSelectionChanged(
+      this: GObject,
+      callback: (position: number, nItems: number) => void,
+    ): number {
+      return connectSignal(this, "selection-changed", {
+        parameters: ["pointer", "u32", "u32", "pointer"],
+        result: "void",
+      }, (a0: never, a1: never) => callback(a0, a1));
+    },
   };
 
 /** Methods generated for `GtkSizeGroup`. */
@@ -5265,6 +6633,10 @@ export interface SizeGroupMethods {
    */
   getMode(): SizeGroupMode;
   /**
+   * Returns the list of widgets associated with `sizeGroup`.
+   */
+  getWidgets(): Deno.PointerValue;
+  /**
    * Removes a widget from a `GtkSizeGroup`.
    */
   removeWidget(widget: Widget): void;
@@ -5272,6 +6644,10 @@ export interface SizeGroupMethods {
    * Sets the `GtkSizeGroupMode` of the size group.
    */
   setMode(mode: SizeGroupMode): void;
+  /**
+   * Gets the ID of the `buildable` object.
+   */
+  getBuildableId(): string | null;
 }
 
 /** Implementations of {@linkcode SizeGroupMethods}. */
@@ -5280,6 +6656,10 @@ export const sizeGroupMethods: SizeGroupMethods & ThisType<GObject> = {
     return (gtk4.symbols.gtk_size_group_get_mode ??
       missing("gtk_size_group_get_mode"))(this.ptr) as SizeGroupMode;
   },
+  getWidgets(this: GObject): Deno.PointerValue {
+    return (gtk4.symbols.gtk_size_group_get_widgets ??
+      missing("gtk_size_group_get_widgets"))(this.ptr);
+  },
   removeWidget(this: GObject, widget: Widget): void {
     (gtk4.symbols.gtk_size_group_remove_widget ??
       missing("gtk_size_group_remove_widget"))(this.ptr, widget.ptr);
@@ -5287,6 +6667,12 @@ export const sizeGroupMethods: SizeGroupMethods & ThisType<GObject> = {
   setMode(this: GObject, mode: SizeGroupMode): void {
     (gtk4.symbols.gtk_size_group_set_mode ??
       missing("gtk_size_group_set_mode"))(this.ptr, mode);
+  },
+  getBuildableId(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      (gtk4.symbols.gtk_buildable_get_buildable_id ??
+        missing("gtk_buildable_get_buildable_id"))(this.ptr),
+    );
   },
 };
 
@@ -5324,6 +6710,10 @@ export interface StringListMethods {
    * Removes the string at `position` from `self`.
    */
   remove(position: number): void;
+  /**
+   * Gets the ID of the `buildable` object.
+   */
+  getBuildableId(): string | null;
 }
 
 /** Implementations of {@linkcode StringListMethods}. */
@@ -5338,6 +6728,12 @@ export const stringListMethods: StringListMethods & ThisType<GObject> = {
       position,
     );
   },
+  getBuildableId(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      (gtk4.symbols.gtk_buildable_get_buildable_id ??
+        missing("gtk_buildable_get_buildable_id"))(this.ptr),
+    );
+  },
 };
 
 /** Methods generated for `GtkSwitch`. */
@@ -5350,6 +6746,32 @@ export interface SwitchMethods {
    * Sets the underlying state of the `GtkSwitch`.
    */
   setState(state: boolean): void;
+  /**
+   * Emitted to change the underlying state.
+   */
+  onStateSet(callback: (state: boolean) => boolean): number;
+  /**
+   * Gets the action name for `actionable`.
+   */
+  getActionName(): string | null;
+  /**
+   * Gets the current target value of `actionable`.
+   */
+  getActionTargetValue(): Deno.PointerValue;
+  /**
+   * Specifies the name of the action with which this widget should be
+   * associated.
+   */
+  setActionName(actionName: string | null): void;
+  /**
+   * Sets the target value of an actionable widget.
+   */
+  setActionTargetValue(targetValue: Deno.PointerValue): void;
+  /**
+   * Sets the action-name and associated string target value of an
+   * actionable widget.
+   */
+  setDetailedActionName(detailedActionName: string): void;
 }
 
 /** Implementations of {@linkcode SwitchMethods}. */
@@ -5363,6 +6785,40 @@ export const switchMethods: SwitchMethods & ThisType<GObject> = {
       this.ptr,
       state,
     );
+  },
+  onStateSet(this: GObject, callback: (state: boolean) => boolean): number {
+    return connectSignal(this, "state-set", {
+      parameters: ["pointer", "i32", "pointer"],
+      result: "i32",
+    }, (a0: never) => (callback(a0 !== 0)) ? 1 : 0);
+  },
+  getActionName(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      (gtk4.symbols.gtk_actionable_get_action_name ??
+        missing("gtk_actionable_get_action_name"))(this.ptr),
+    );
+  },
+  getActionTargetValue(this: GObject): Deno.PointerValue {
+    return (gtk4.symbols.gtk_actionable_get_action_target_value ??
+      missing("gtk_actionable_get_action_target_value"))(this.ptr);
+  },
+  setActionName(this: GObject, actionName: string | null): void {
+    (gtk4.symbols.gtk_actionable_set_action_name ??
+      missing("gtk_actionable_set_action_name"))(
+        this.ptr,
+        cstrOrNull(actionName),
+      );
+  },
+  setActionTargetValue(this: GObject, targetValue: Deno.PointerValue): void {
+    (gtk4.symbols.gtk_actionable_set_action_target_value ??
+      missing("gtk_actionable_set_action_target_value"))(this.ptr, targetValue);
+  },
+  setDetailedActionName(this: GObject, detailedActionName: string): void {
+    (gtk4.symbols.gtk_actionable_set_detailed_action_name ??
+      missing("gtk_actionable_set_detailed_action_name"))(
+        this.ptr,
+        cstr(detailedActionName),
+      );
   },
 };
 
@@ -5382,10 +6838,31 @@ export interface TextBufferMethods {
     ) => void,
   ): number;
   /**
+   * Adds the mark at position `where`.
+   */
+  addMark(mark: GObject, where: Deno.PointerValue): void;
+  /**
    * Adds `clipboard` to the list of clipboards in which the selection
    * contents of `buffer` are available.
    */
   addSelectionClipboard(clipboard: Clipboard): void;
+  /**
+   * Emits the “apply-tag” signal on `buffer`.
+   */
+  applyTag(
+    tag: GObject,
+    start: Deno.PointerValue,
+    end: Deno.PointerValue,
+  ): void;
+  /**
+   * Performs the appropriate action as if the user hit the delete
+   * key with the cursor at the position specified by `iter`.
+   */
+  backspace(
+    iter: Deno.PointerValue,
+    interactive: boolean,
+    defaultEditable: boolean,
+  ): boolean;
   /**
    * Denotes the beginning of an action that may not be undone.
    */
@@ -5395,10 +6872,26 @@ export interface TextBufferMethods {
    */
   copyClipboard(clipboard: Clipboard): void;
   /**
+   * Creates and inserts a child anchor.
+   */
+  createChildAnchor(iter: Deno.PointerValue): GObject;
+  /**
    * Copies the currently-selected text to a clipboard,
    * then deletes said text if it’s editable.
    */
   cutClipboard(clipboard: Clipboard, defaultEditable: boolean): void;
+  /**
+   * Deletes text between `start` and `end`.
+   */
+  delete(start: Deno.PointerValue, end: Deno.PointerValue): void;
+  /**
+   * Deletes all editable text in the given range.
+   */
+  deleteInteractive(
+    startIter: Deno.PointerValue,
+    endIter: Deno.PointerValue,
+    defaultEditable: boolean,
+  ): boolean;
   /**
    * Deletes `mark`, so that it’s no longer located anywhere in the
    * buffer.
@@ -5466,6 +6959,18 @@ export interface TextBufferMethods {
    */
   getSelectionBound(): GObject;
   /**
+   * Get a content provider for this buffer.
+   */
+  getSelectionContent(): ContentProvider;
+  /**
+   * Returns the text in the range [`start`,`end`).
+   */
+  getSlice(
+    start: Deno.PointerValue,
+    end: Deno.PointerValue,
+    includeHiddenChars: boolean,
+  ): string;
+  /**
    * Get the `GtkTextTagTable` associated with this buffer.
    */
   getTagTable(): GObject;
@@ -5474,6 +6979,19 @@ export interface TextBufferMethods {
    */
   insertAtCursor(text: string, len: number): void;
   /**
+   * Inserts a child widget anchor into the text buffer at `iter`.
+   */
+  insertChildAnchor(iter: Deno.PointerValue, anchor: GObject): void;
+  /**
+   * Inserts `text` in `buffer`.
+   */
+  insertInteractive(
+    iter: Deno.PointerValue,
+    text: string,
+    len: number,
+    defaultEditable: boolean,
+  ): boolean;
+  /**
    * Inserts `text` in `buffer`.
    */
   insertInteractiveAtCursor(
@@ -5481,6 +6999,54 @@ export interface TextBufferMethods {
     len: number,
     defaultEditable: boolean,
   ): boolean;
+  /**
+   * Inserts the text in `markup` at position `iter`.
+   */
+  insertMarkup(iter: Deno.PointerValue, markup: string, len: number): void;
+  /**
+   * Inserts an image into the text buffer at `iter`.
+   */
+  insertPaintable(iter: Deno.PointerValue, paintable: GObject): void;
+  /**
+   * Copies text, tags, and paintables between `start` and `end`
+   * and inserts the copy at `iter`.
+   */
+  insertRange(
+    iter: Deno.PointerValue,
+    start: Deno.PointerValue,
+    end: Deno.PointerValue,
+  ): void;
+  /**
+   * Copies text, tags, and paintables between `start` and `end`
+   * and inserts the copy at `iter`.
+   */
+  insertRangeInteractive(
+    iter: Deno.PointerValue,
+    start: Deno.PointerValue,
+    end: Deno.PointerValue,
+    defaultEditable: boolean,
+  ): boolean;
+  /**
+   * Moves `mark` to the new location `where`.
+   */
+  moveMark(mark: GObject, where: Deno.PointerValue): void;
+  /**
+   * Moves the mark named `name` (which must exist) to location `where`.
+   */
+  moveMarkByName(name: string, where: Deno.PointerValue): void;
+  /**
+   * Pastes the contents of a clipboard.
+   */
+  pasteClipboard(
+    clipboard: Clipboard,
+    overrideLocation: Deno.PointerValue,
+    defaultEditable: boolean,
+  ): void;
+  /**
+   * This function moves the “insert” and “selection_bound” marks
+   * simultaneously.
+   */
+  placeCursor(where: Deno.PointerValue): void;
   /**
    * Redoes the next redoable action on the buffer, if there is one.
    */
@@ -5495,6 +7061,19 @@ export interface TextBufferMethods {
    * `addSelectionClipboard()`
    */
   removeSelectionClipboard(clipboard: Clipboard): void;
+  /**
+   * Emits the “remove-tag” signal.
+   */
+  removeTag(
+    tag: GObject,
+    start: Deno.PointerValue,
+    end: Deno.PointerValue,
+  ): void;
+  /**
+   * This function moves the “insert” and “selection_bound” marks
+   * simultaneously.
+   */
+  selectRange(ins: Deno.PointerValue, bound: Deno.PointerValue): void;
   /**
    * Sets whether or not to enable undoable actions in the text buffer.
    */
@@ -5513,6 +7092,16 @@ export interface TextBufferMethods {
    */
   undo(): void;
   /**
+   * Emitted to apply a tag to a range of text in a `GtkTextBuffer`.
+   */
+  onApplyTag(
+    callback: (
+      tag: GObject,
+      start: Deno.PointerValue,
+      end: Deno.PointerValue,
+    ) => void,
+  ): number;
+  /**
    * Emitted at the beginning of a single user-visible
    * operation on a `GtkTextBuffer`.
    */
@@ -5522,14 +7111,44 @@ export interface TextBufferMethods {
    */
   onChanged(callback: () => void): number;
   /**
+   * Emitted to delete a range from a `GtkTextBuffer`.
+   */
+  onDeleteRange(
+    callback: (start: Deno.PointerValue, end: Deno.PointerValue) => void,
+  ): number;
+  /**
    * Emitted at the end of a single user-visible
    * operation on the `GtkTextBuffer`.
    */
   onEndUserAction(callback: () => void): number;
   /**
+   * Emitted to insert a `GtkTextChildAnchor` in a `GtkTextBuffer`.
+   */
+  onInsertChildAnchor(
+    callback: (location: Deno.PointerValue, anchor: GObject) => void,
+  ): number;
+  /**
+   * Emitted to insert a `GdkPaintable` in a `GtkTextBuffer`.
+   */
+  onInsertPaintable(
+    callback: (location: Deno.PointerValue, paintable: GObject) => void,
+  ): number;
+  /**
+   * Emitted to insert text in a `GtkTextBuffer`.
+   */
+  onInsertText(
+    callback: (location: Deno.PointerValue, text: string, len: number) => void,
+  ): number;
+  /**
    * Emitted as notification after a `GtkTextMark` is deleted.
    */
   onMarkDeleted(callback: (mark: GObject) => void): number;
+  /**
+   * Emitted as notification after a `GtkTextMark` is set.
+   */
+  onMarkSet(
+    callback: (location: Deno.PointerValue, mark: GObject) => void,
+  ): number;
   /**
    * Emitted when the modified bit of a `GtkTextBuffer` flips.
    */
@@ -5543,6 +7162,17 @@ export interface TextBufferMethods {
    * previously undone operation.
    */
   onRedo(callback: () => void): number;
+  /**
+   * Emitted to remove all occurrences of `tag` from a range
+   * of text in a `GtkTextBuffer`.
+   */
+  onRemoveTag(
+    callback: (
+      tag: GObject,
+      start: Deno.PointerValue,
+      end: Deno.PointerValue,
+    ) => void,
+  ): number;
   /**
    * Emitted when a request has been made to undo the
    * previous operation or set of operations that have
@@ -5587,11 +7217,38 @@ export const textBufferMethods: TextBufferMethods & ThisType<GObject> = {
         __3,
       );
   },
+  addMark(this: GObject, mark: GObject, where: Deno.PointerValue): void {
+    (gtk4.symbols.gtk_text_buffer_add_mark ??
+      missing("gtk_text_buffer_add_mark"))(this.ptr, mark.ptr, where);
+  },
   addSelectionClipboard(this: GObject, clipboard: Clipboard): void {
     (gtk4.symbols.gtk_text_buffer_add_selection_clipboard ??
       missing("gtk_text_buffer_add_selection_clipboard"))(
         this.ptr,
         clipboard.ptr,
+      );
+  },
+  applyTag(
+    this: GObject,
+    tag: GObject,
+    start: Deno.PointerValue,
+    end: Deno.PointerValue,
+  ): void {
+    (gtk4.symbols.gtk_text_buffer_apply_tag ??
+      missing("gtk_text_buffer_apply_tag"))(this.ptr, tag.ptr, start, end);
+  },
+  backspace(
+    this: GObject,
+    iter: Deno.PointerValue,
+    interactive: boolean,
+    defaultEditable: boolean,
+  ): boolean {
+    return (gtk4.symbols.gtk_text_buffer_backspace ??
+      missing("gtk_text_buffer_backspace"))(
+        this.ptr,
+        iter,
+        interactive,
+        defaultEditable,
       );
   },
   beginIrreversibleAction(this: GObject): void {
@@ -5602,6 +7259,12 @@ export const textBufferMethods: TextBufferMethods & ThisType<GObject> = {
     (gtk4.symbols.gtk_text_buffer_copy_clipboard ??
       missing("gtk_text_buffer_copy_clipboard"))(this.ptr, clipboard.ptr);
   },
+  createChildAnchor(this: GObject, iter: Deno.PointerValue): GObject {
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_text_buffer_create_child_anchor ??
+        missing("gtk_text_buffer_create_child_anchor"))(this.ptr, iter),
+    )!;
+  },
   cutClipboard(
     this: GObject,
     clipboard: Clipboard,
@@ -5611,6 +7274,27 @@ export const textBufferMethods: TextBufferMethods & ThisType<GObject> = {
       missing("gtk_text_buffer_cut_clipboard"))(
         this.ptr,
         clipboard.ptr,
+        defaultEditable,
+      );
+  },
+  delete(
+    this: GObject,
+    start: Deno.PointerValue,
+    end: Deno.PointerValue,
+  ): void {
+    gtk4.symbols.gtk_text_buffer_delete(this.ptr, start, end);
+  },
+  deleteInteractive(
+    this: GObject,
+    startIter: Deno.PointerValue,
+    endIter: Deno.PointerValue,
+    defaultEditable: boolean,
+  ): boolean {
+    return (gtk4.symbols.gtk_text_buffer_delete_interactive ??
+      missing("gtk_text_buffer_delete_interactive"))(
+        this.ptr,
+        startIter,
+        endIter,
         defaultEditable,
       );
   },
@@ -5687,6 +7371,28 @@ export const textBufferMethods: TextBufferMethods & ThisType<GObject> = {
         missing("gtk_text_buffer_get_selection_bound"))(this.ptr),
     )!;
   },
+  getSelectionContent(this: GObject): ContentProvider {
+    return owned<ContentProvider>(
+      (gtk4.symbols.gtk_text_buffer_get_selection_content ??
+        missing("gtk_text_buffer_get_selection_content"))(this.ptr),
+    )!;
+  },
+  getSlice(
+    this: GObject,
+    start: Deno.PointerValue,
+    end: Deno.PointerValue,
+    includeHiddenChars: boolean,
+  ): string {
+    return takeString(
+      (gtk4.symbols.gtk_text_buffer_get_slice ??
+        missing("gtk_text_buffer_get_slice"))(
+          this.ptr,
+          start,
+          end,
+          includeHiddenChars,
+        ),
+    ) ?? "";
+  },
   getTagTable(this: GObject): GObject {
     return borrowed<GObject>(
       (gtk4.symbols.gtk_text_buffer_get_tag_table ??
@@ -5696,6 +7402,34 @@ export const textBufferMethods: TextBufferMethods & ThisType<GObject> = {
   insertAtCursor(this: GObject, text: string, len: number): void {
     (gtk4.symbols.gtk_text_buffer_insert_at_cursor ??
       missing("gtk_text_buffer_insert_at_cursor"))(this.ptr, cstr(text), len);
+  },
+  insertChildAnchor(
+    this: GObject,
+    iter: Deno.PointerValue,
+    anchor: GObject,
+  ): void {
+    (gtk4.symbols.gtk_text_buffer_insert_child_anchor ??
+      missing("gtk_text_buffer_insert_child_anchor"))(
+        this.ptr,
+        iter,
+        anchor.ptr,
+      );
+  },
+  insertInteractive(
+    this: GObject,
+    iter: Deno.PointerValue,
+    text: string,
+    len: number,
+    defaultEditable: boolean,
+  ): boolean {
+    return (gtk4.symbols.gtk_text_buffer_insert_interactive ??
+      missing("gtk_text_buffer_insert_interactive"))(
+        this.ptr,
+        iter,
+        cstr(text),
+        len,
+        defaultEditable,
+      );
   },
   insertInteractiveAtCursor(
     this: GObject,
@@ -5710,6 +7444,87 @@ export const textBufferMethods: TextBufferMethods & ThisType<GObject> = {
         len,
         defaultEditable,
       );
+  },
+  insertMarkup(
+    this: GObject,
+    iter: Deno.PointerValue,
+    markup: string,
+    len: number,
+  ): void {
+    (gtk4.symbols.gtk_text_buffer_insert_markup ??
+      missing("gtk_text_buffer_insert_markup"))(
+        this.ptr,
+        iter,
+        cstr(markup),
+        len,
+      );
+  },
+  insertPaintable(
+    this: GObject,
+    iter: Deno.PointerValue,
+    paintable: GObject,
+  ): void {
+    (gtk4.symbols.gtk_text_buffer_insert_paintable ??
+      missing("gtk_text_buffer_insert_paintable"))(
+        this.ptr,
+        iter,
+        paintable.ptr,
+      );
+  },
+  insertRange(
+    this: GObject,
+    iter: Deno.PointerValue,
+    start: Deno.PointerValue,
+    end: Deno.PointerValue,
+  ): void {
+    (gtk4.symbols.gtk_text_buffer_insert_range ??
+      missing("gtk_text_buffer_insert_range"))(this.ptr, iter, start, end);
+  },
+  insertRangeInteractive(
+    this: GObject,
+    iter: Deno.PointerValue,
+    start: Deno.PointerValue,
+    end: Deno.PointerValue,
+    defaultEditable: boolean,
+  ): boolean {
+    return (gtk4.symbols.gtk_text_buffer_insert_range_interactive ??
+      missing("gtk_text_buffer_insert_range_interactive"))(
+        this.ptr,
+        iter,
+        start,
+        end,
+        defaultEditable,
+      );
+  },
+  moveMark(this: GObject, mark: GObject, where: Deno.PointerValue): void {
+    (gtk4.symbols.gtk_text_buffer_move_mark ??
+      missing("gtk_text_buffer_move_mark"))(this.ptr, mark.ptr, where);
+  },
+  moveMarkByName(this: GObject, name: string, where: Deno.PointerValue): void {
+    (gtk4.symbols.gtk_text_buffer_move_mark_by_name ??
+      missing("gtk_text_buffer_move_mark_by_name"))(
+        this.ptr,
+        cstr(name),
+        where,
+      );
+  },
+  pasteClipboard(
+    this: GObject,
+    clipboard: Clipboard,
+    overrideLocation: Deno.PointerValue,
+    defaultEditable: boolean,
+  ): void {
+    (gtk4.symbols.gtk_text_buffer_paste_clipboard ??
+      missing("gtk_text_buffer_paste_clipboard"))(
+        this.ptr,
+        clipboard.ptr,
+        overrideLocation,
+        defaultEditable,
+      );
+  },
+  placeCursor(this: GObject, where: Deno.PointerValue): void {
+    (gtk4.symbols.gtk_text_buffer_place_cursor ??
+      missing("gtk_text_buffer_place_cursor"))(this.ptr, where);
   },
   redo(this: GObject): void {
     (gtk4.symbols.gtk_text_buffer_redo ?? missing("gtk_text_buffer_redo"))(
@@ -5730,6 +7545,23 @@ export const textBufferMethods: TextBufferMethods & ThisType<GObject> = {
         clipboard.ptr,
       );
   },
+  removeTag(
+    this: GObject,
+    tag: GObject,
+    start: Deno.PointerValue,
+    end: Deno.PointerValue,
+  ): void {
+    (gtk4.symbols.gtk_text_buffer_remove_tag ??
+      missing("gtk_text_buffer_remove_tag"))(this.ptr, tag.ptr, start, end);
+  },
+  selectRange(
+    this: GObject,
+    ins: Deno.PointerValue,
+    bound: Deno.PointerValue,
+  ): void {
+    (gtk4.symbols.gtk_text_buffer_select_range ??
+      missing("gtk_text_buffer_select_range"))(this.ptr, ins, bound);
+  },
   setEnableUndo(this: GObject, enableUndo: boolean): void {
     (gtk4.symbols.gtk_text_buffer_set_enable_undo ??
       missing("gtk_text_buffer_set_enable_undo"))(this.ptr, enableUndo);
@@ -5747,6 +7579,25 @@ export const textBufferMethods: TextBufferMethods & ThisType<GObject> = {
       this.ptr,
     );
   },
+  onApplyTag(
+    this: GObject,
+    callback: (
+      tag: GObject,
+      start: Deno.PointerValue,
+      end: Deno.PointerValue,
+    ) => void,
+  ): number {
+    return connectSignal(
+      this,
+      "apply-tag",
+      {
+        parameters: ["pointer", "pointer", "pointer", "pointer", "pointer"],
+        result: "void",
+      },
+      (a0: never, a1: never, a2: never) =>
+        callback(borrowed<GObject>(a0)!, a1, a2),
+    );
+  },
   onBeginUserAction(this: GObject, callback: () => void): number {
     return connectSignal(this, "begin-user-action", {
       parameters: ["pointer", "pointer"],
@@ -5759,17 +7610,62 @@ export const textBufferMethods: TextBufferMethods & ThisType<GObject> = {
       result: "void",
     }, () => callback());
   },
+  onDeleteRange(
+    this: GObject,
+    callback: (start: Deno.PointerValue, end: Deno.PointerValue) => void,
+  ): number {
+    return connectSignal(this, "delete-range", {
+      parameters: ["pointer", "pointer", "pointer", "pointer"],
+      result: "void",
+    }, (a0: never, a1: never) => callback(a0, a1));
+  },
   onEndUserAction(this: GObject, callback: () => void): number {
     return connectSignal(this, "end-user-action", {
       parameters: ["pointer", "pointer"],
       result: "void",
     }, () => callback());
   },
+  onInsertChildAnchor(
+    this: GObject,
+    callback: (location: Deno.PointerValue, anchor: GObject) => void,
+  ): number {
+    return connectSignal(this, "insert-child-anchor", {
+      parameters: ["pointer", "pointer", "pointer", "pointer"],
+      result: "void",
+    }, (a0: never, a1: never) => callback(a0, borrowed<GObject>(a1)!));
+  },
+  onInsertPaintable(
+    this: GObject,
+    callback: (location: Deno.PointerValue, paintable: GObject) => void,
+  ): number {
+    return connectSignal(this, "insert-paintable", {
+      parameters: ["pointer", "pointer", "pointer", "pointer"],
+      result: "void",
+    }, (a0: never, a1: never) => callback(a0, borrowed<GObject>(a1)!));
+  },
+  onInsertText(
+    this: GObject,
+    callback: (location: Deno.PointerValue, text: string, len: number) => void,
+  ): number {
+    return connectSignal(this, "insert-text", {
+      parameters: ["pointer", "pointer", "pointer", "i32", "pointer"],
+      result: "void",
+    }, (a0: never, a1: never, a2: never) => callback(a0, readCStr(a1), a2));
+  },
   onMarkDeleted(this: GObject, callback: (mark: GObject) => void): number {
     return connectSignal(this, "mark-deleted", {
       parameters: ["pointer", "pointer", "pointer"],
       result: "void",
     }, (a0: never) => callback(borrowed<GObject>(a0)!));
+  },
+  onMarkSet(
+    this: GObject,
+    callback: (location: Deno.PointerValue, mark: GObject) => void,
+  ): number {
+    return connectSignal(this, "mark-set", {
+      parameters: ["pointer", "pointer", "pointer", "pointer"],
+      result: "void",
+    }, (a0: never, a1: never) => callback(a0, borrowed<GObject>(a1)!));
   },
   onModifiedChanged(this: GObject, callback: () => void): number {
     return connectSignal(this, "modified-changed", {
@@ -5789,6 +7685,25 @@ export const textBufferMethods: TextBufferMethods & ThisType<GObject> = {
       result: "void",
     }, () => callback());
   },
+  onRemoveTag(
+    this: GObject,
+    callback: (
+      tag: GObject,
+      start: Deno.PointerValue,
+      end: Deno.PointerValue,
+    ) => void,
+  ): number {
+    return connectSignal(
+      this,
+      "remove-tag",
+      {
+        parameters: ["pointer", "pointer", "pointer", "pointer", "pointer"],
+        result: "void",
+      },
+      (a0: never, a1: never, a2: never) =>
+        callback(borrowed<GObject>(a0)!, a1, a2),
+    );
+  },
   onUndo(this: GObject, callback: () => void): number {
     return connectSignal(this, "undo", {
       parameters: ["pointer", "pointer"],
@@ -5807,6 +7722,22 @@ export interface TextViewMethods {
    * Adds `child` at a fixed coordinate in the `GtkTextView`'s text window.
    */
   addOverlay(child: Widget, xpos: number, ypos: number): void;
+  /**
+   * Moves the given `iter` backward by one display (wrapped) line.
+   */
+  backwardDisplayLine(iter: Deno.PointerValue): boolean;
+  /**
+   * Moves the given `iter` backward to the next display line start.
+   */
+  backwardDisplayLineStart(iter: Deno.PointerValue): boolean;
+  /**
+   * Moves the given `iter` forward by one display (wrapped) line.
+   */
+  forwardDisplayLine(iter: Deno.PointerValue): boolean;
+  /**
+   * Moves the given `iter` forward to the next display line end.
+   */
+  forwardDisplayLineEnd(iter: Deno.PointerValue): boolean;
   /**
    * Returns whether pressing the <kbd>Tab</kbd> key inserts a tab characters.
    */
@@ -5905,6 +7836,11 @@ export interface TextViewMethods {
    */
   moveOverlay(child: Widget, xpos: number, ypos: number): void;
   /**
+   * Move the iterator a given number of characters visually, treating
+   * it as the strong cursor position.
+   */
+  moveVisually(iter: Deno.PointerValue, count: number): boolean;
+  /**
    * Moves the cursor to the currently visible region of the
    * buffer.
    */
@@ -5926,6 +7862,17 @@ export interface TextViewMethods {
    * within the visible area of the widget.
    */
   scrollMarkOnscreen(mark: GObject): void;
+  /**
+   * Scrolls `textView` so that `iter` is on the screen in the position
+   * indicated by `xalign` and `yalign`.
+   */
+  scrollToIter(
+    iter: Deno.PointerValue,
+    withinMargin: number,
+    useAlign: boolean,
+    xalign: number,
+    yalign: number,
+  ): boolean;
   /**
    * Sets the behavior of the text widget when the <kbd>Tab</kbd> key is pressed.
    */
@@ -5990,6 +7937,10 @@ export interface TextViewMethods {
    */
   setRightMargin(rightMargin: number): void;
   /**
+   * Sets the default tab stops for paragraphs in `textView`.
+   */
+  setTabs(tabs: Deno.PointerValue): void;
+  /**
    * Sets the top margin for text in `textView`.
    */
   setTopMargin(topMargin: number): void;
@@ -5997,6 +7948,10 @@ export interface TextViewMethods {
    * Sets the line wrapping for the view.
    */
   setWrapMode(wrapMode: WrapMode): void;
+  /**
+   * Determines whether `iter` is at the start of a display line.
+   */
+  startsDisplayLine(iter: Deno.PointerValue): boolean;
   /**
    * Gets emitted when the user asks for it.
    */
@@ -6014,6 +7969,17 @@ export interface TextViewMethods {
    */
   onDeleteFromCursor(
     callback: (type: DeleteType, count: number) => void,
+  ): number;
+  /**
+   * Emitted when the selection needs to be extended at `location`.
+   */
+  onExtendSelection(
+    callback: (
+      granularity: TextExtendSelection,
+      location: Deno.PointerValue,
+      start: Deno.PointerValue,
+      end: Deno.PointerValue,
+    ) => boolean,
   ): number;
   /**
    * Gets emitted when the user initiates the insertion of a
@@ -6063,6 +8029,54 @@ export interface TextViewMethods {
    * Gets emitted to toggle the overwrite mode of the text view.
    */
   onToggleOverwrite(callback: () => void): number;
+  /**
+   * Updates the position of the caret.
+   */
+  updateCaretPosition(): void;
+  /**
+   * Notifies assistive technologies of a change in contents.
+   */
+  updateContents(
+    change: AccessibleTextContentChange,
+    start: number,
+    end: number,
+  ): void;
+  /**
+   * Updates the boundary of the selection.
+   */
+  updateSelectionBound(): void;
+  /**
+   * Retrieves the `GtkAdjustment` used for horizontal scrolling.
+   */
+  getHadjustment(): Adjustment | null;
+  /**
+   * Gets the horizontal `GtkScrollablePolicy`.
+   */
+  getHscrollPolicy(): ScrollablePolicy;
+  /**
+   * Retrieves the `GtkAdjustment` used for vertical scrolling.
+   */
+  getVadjustment(): Adjustment | null;
+  /**
+   * Gets the vertical `GtkScrollablePolicy`.
+   */
+  getVscrollPolicy(): ScrollablePolicy;
+  /**
+   * Sets the horizontal adjustment of the `GtkScrollable`.
+   */
+  setHadjustment(hadjustment: Adjustment | null): void;
+  /**
+   * Sets the `GtkScrollablePolicy`.
+   */
+  setHscrollPolicy(policy: ScrollablePolicy): void;
+  /**
+   * Sets the vertical adjustment of the `GtkScrollable`.
+   */
+  setVadjustment(vadjustment: Adjustment | null): void;
+  /**
+   * Sets the `GtkScrollablePolicy`.
+   */
+  setVscrollPolicy(policy: ScrollablePolicy): void;
 }
 
 /** Implementations of {@linkcode TextViewMethods}. */
@@ -6078,6 +8092,22 @@ export const textViewMethods: TextViewMethods & ThisType<GObject> = {
   addOverlay(this: GObject, child: Widget, xpos: number, ypos: number): void {
     (gtk4.symbols.gtk_text_view_add_overlay ??
       missing("gtk_text_view_add_overlay"))(this.ptr, child.ptr, xpos, ypos);
+  },
+  backwardDisplayLine(this: GObject, iter: Deno.PointerValue): boolean {
+    return (gtk4.symbols.gtk_text_view_backward_display_line ??
+      missing("gtk_text_view_backward_display_line"))(this.ptr, iter);
+  },
+  backwardDisplayLineStart(this: GObject, iter: Deno.PointerValue): boolean {
+    return (gtk4.symbols.gtk_text_view_backward_display_line_start ??
+      missing("gtk_text_view_backward_display_line_start"))(this.ptr, iter);
+  },
+  forwardDisplayLine(this: GObject, iter: Deno.PointerValue): boolean {
+    return (gtk4.symbols.gtk_text_view_forward_display_line ??
+      missing("gtk_text_view_forward_display_line"))(this.ptr, iter);
+  },
+  forwardDisplayLineEnd(this: GObject, iter: Deno.PointerValue): boolean {
+    return (gtk4.symbols.gtk_text_view_forward_display_line_end ??
+      missing("gtk_text_view_forward_display_line_end"))(this.ptr, iter);
   },
   getAcceptsTab(this: GObject): boolean {
     return (gtk4.symbols.gtk_text_view_get_accepts_tab ??
@@ -6179,6 +8209,10 @@ export const textViewMethods: TextViewMethods & ThisType<GObject> = {
     (gtk4.symbols.gtk_text_view_move_overlay ??
       missing("gtk_text_view_move_overlay"))(this.ptr, child.ptr, xpos, ypos);
   },
+  moveVisually(this: GObject, iter: Deno.PointerValue, count: number): boolean {
+    return (gtk4.symbols.gtk_text_view_move_visually ??
+      missing("gtk_text_view_move_visually"))(this.ptr, iter, count);
+  },
   placeCursorOnscreen(this: GObject): boolean {
     return (gtk4.symbols.gtk_text_view_place_cursor_onscreen ??
       missing("gtk_text_view_place_cursor_onscreen"))(this.ptr);
@@ -6200,6 +8234,23 @@ export const textViewMethods: TextViewMethods & ThisType<GObject> = {
   scrollMarkOnscreen(this: GObject, mark: GObject): void {
     (gtk4.symbols.gtk_text_view_scroll_mark_onscreen ??
       missing("gtk_text_view_scroll_mark_onscreen"))(this.ptr, mark.ptr);
+  },
+  scrollToIter(
+    this: GObject,
+    iter: Deno.PointerValue,
+    withinMargin: number,
+    useAlign: boolean,
+    xalign: number,
+    yalign: number,
+  ): boolean {
+    return gtk4.symbols.gtk_text_view_scroll_to_iter(
+      this.ptr,
+      iter,
+      withinMargin,
+      useAlign,
+      xalign,
+      yalign,
+    );
   },
   setAcceptsTab(this: GObject, acceptsTab: boolean): void {
     (gtk4.symbols.gtk_text_view_set_accepts_tab ??
@@ -6270,6 +8321,12 @@ export const textViewMethods: TextViewMethods & ThisType<GObject> = {
     (gtk4.symbols.gtk_text_view_set_right_margin ??
       missing("gtk_text_view_set_right_margin"))(this.ptr, rightMargin);
   },
+  setTabs(this: GObject, tabs: Deno.PointerValue): void {
+    (gtk4.symbols.gtk_text_view_set_tabs ?? missing("gtk_text_view_set_tabs"))(
+      this.ptr,
+      tabs,
+    );
+  },
   setTopMargin(this: GObject, topMargin: number): void {
     (gtk4.symbols.gtk_text_view_set_top_margin ??
       missing("gtk_text_view_set_top_margin"))(this.ptr, topMargin);
@@ -6277,6 +8334,10 @@ export const textViewMethods: TextViewMethods & ThisType<GObject> = {
   setWrapMode(this: GObject, wrapMode: WrapMode): void {
     (gtk4.symbols.gtk_text_view_set_wrap_mode ??
       missing("gtk_text_view_set_wrap_mode"))(this.ptr, wrapMode);
+  },
+  startsDisplayLine(this: GObject, iter: Deno.PointerValue): boolean {
+    return (gtk4.symbols.gtk_text_view_starts_display_line ??
+      missing("gtk_text_view_starts_display_line"))(this.ptr, iter);
   },
   onBackspace(this: GObject, callback: () => void): number {
     return connectSignal(this, "backspace", {
@@ -6304,6 +8365,33 @@ export const textViewMethods: TextViewMethods & ThisType<GObject> = {
       parameters: ["pointer", "i32", "i32", "pointer"],
       result: "void",
     }, (a0: never, a1: never) => callback(a0 as DeleteType, a1));
+  },
+  onExtendSelection(
+    this: GObject,
+    callback: (
+      granularity: TextExtendSelection,
+      location: Deno.PointerValue,
+      start: Deno.PointerValue,
+      end: Deno.PointerValue,
+    ) => boolean,
+  ): number {
+    return connectSignal(
+      this,
+      "extend-selection",
+      {
+        parameters: [
+          "pointer",
+          "i32",
+          "pointer",
+          "pointer",
+          "pointer",
+          "pointer",
+        ],
+        result: "i32",
+      },
+      (a0: never, a1: never, a2: never, a3: never) =>
+        (callback(a0 as TextExtendSelection, a1, a2, a3)) ? 1 : 0,
+    );
   },
   onInsertAtCursor(this: GObject, callback: (string: string) => void): number {
     return connectSignal(this, "insert-at-cursor", {
@@ -6381,6 +8469,74 @@ export const textViewMethods: TextViewMethods & ThisType<GObject> = {
       result: "void",
     }, () => callback());
   },
+  updateCaretPosition(this: GObject): void {
+    (gtk4.symbols.gtk_accessible_text_update_caret_position ??
+      missing("gtk_accessible_text_update_caret_position", "4.14"))(this.ptr);
+  },
+  updateContents(
+    this: GObject,
+    change: AccessibleTextContentChange,
+    start: number,
+    end: number,
+  ): void {
+    (gtk4.symbols.gtk_accessible_text_update_contents ??
+      missing("gtk_accessible_text_update_contents", "4.14"))(
+        this.ptr,
+        change,
+        start,
+        end,
+      );
+  },
+  updateSelectionBound(this: GObject): void {
+    (gtk4.symbols.gtk_accessible_text_update_selection_bound ??
+      missing("gtk_accessible_text_update_selection_bound", "4.14"))(this.ptr);
+  },
+  getHadjustment(this: GObject): Adjustment | null {
+    return borrowed<Adjustment>(
+      (gtk4.symbols.gtk_scrollable_get_hadjustment ??
+        missing("gtk_scrollable_get_hadjustment"))(this.ptr),
+    );
+  },
+  getHscrollPolicy(this: GObject): ScrollablePolicy {
+    return (gtk4.symbols.gtk_scrollable_get_hscroll_policy ??
+      missing("gtk_scrollable_get_hscroll_policy"))(
+        this.ptr,
+      ) as ScrollablePolicy;
+  },
+  getVadjustment(this: GObject): Adjustment | null {
+    return borrowed<Adjustment>(
+      (gtk4.symbols.gtk_scrollable_get_vadjustment ??
+        missing("gtk_scrollable_get_vadjustment"))(this.ptr),
+    );
+  },
+  getVscrollPolicy(this: GObject): ScrollablePolicy {
+    return (gtk4.symbols.gtk_scrollable_get_vscroll_policy ??
+      missing("gtk_scrollable_get_vscroll_policy"))(
+        this.ptr,
+      ) as ScrollablePolicy;
+  },
+  setHadjustment(this: GObject, hadjustment: Adjustment | null): void {
+    (gtk4.symbols.gtk_scrollable_set_hadjustment ??
+      missing("gtk_scrollable_set_hadjustment"))(
+        this.ptr,
+        hadjustment?.ptr ?? null,
+      );
+  },
+  setHscrollPolicy(this: GObject, policy: ScrollablePolicy): void {
+    (gtk4.symbols.gtk_scrollable_set_hscroll_policy ??
+      missing("gtk_scrollable_set_hscroll_policy"))(this.ptr, policy);
+  },
+  setVadjustment(this: GObject, vadjustment: Adjustment | null): void {
+    (gtk4.symbols.gtk_scrollable_set_vadjustment ??
+      missing("gtk_scrollable_set_vadjustment"))(
+        this.ptr,
+        vadjustment?.ptr ?? null,
+      );
+  },
+  setVscrollPolicy(this: GObject, policy: ScrollablePolicy): void {
+    (gtk4.symbols.gtk_scrollable_set_vscroll_policy ??
+      missing("gtk_scrollable_set_vscroll_policy"))(this.ptr, policy);
+  },
 };
 
 /** Methods generated for `GtkToggleButton`. */
@@ -6397,6 +8553,10 @@ export interface WidgetMethods {
    * `installAction()`.
    */
   actionSetEnabled(actionName: string, enabled: boolean): void;
+  /**
+   * Activates an action for the widget.
+   */
+  activateActionVariant(name: string, args: Deno.PointerValue): boolean;
   /**
    * Activates the `default.activate` action for the widget.
    */
@@ -6426,6 +8586,14 @@ export interface WidgetMethods {
    * Tests if a given point is contained in the widget.
    */
   contains(x: number, y: number): boolean;
+  /**
+   * Creates a new `PangoContext` that is configured for the widget.
+   */
+  createPangoContext(): GObject;
+  /**
+   * Creates a new `PangoLayout` that is configured for the widget.
+   */
+  createPangoLayout(text: string | null): GObject;
   /**
    * Checks to see if a drag movement has passed the GTK drag threshold.
    */
@@ -6699,6 +8867,14 @@ export interface WidgetMethods {
    */
   mnemonicActivate(groupCycling: boolean): boolean;
   /**
+   * Returns a list model to track the children of the widget.
+   */
+  observeChildren(): GObject;
+  /**
+   * Returns a list model to track the event controllers of the widget.
+   */
+  observeControllers(): GObject;
+  /**
    * Finds the descendant of the widget closest to a point.
    */
   pick(x: number, y: number, flags: number): Widget | null;
@@ -6844,13 +9020,32 @@ export interface WidgetMethods {
    */
   onHide(callback: () => void): number;
   /**
+   * Emitted if keyboard navigation fails.
+   */
+  onKeynavFailed(callback: (direction: DirectionType) => boolean): number;
+  /**
    * Emitted when `widget` is going to be mapped.
    */
   onMap(callback: () => void): number;
   /**
+   * Emitted when a widget is activated via a mnemonic.
+   */
+  onMnemonicActivate(callback: (groupCycling: boolean) => boolean): number;
+  /**
    * Emitted when the focus is moved.
    */
   onMoveFocus(callback: (direction: DirectionType) => void): number;
+  /**
+   * Emitted when the widget’s tooltip is about to be shown.
+   */
+  onQueryTooltip(
+    callback: (
+      x: number,
+      y: number,
+      keyboardMode: boolean,
+      tooltip: GObject,
+    ) => boolean,
+  ): number;
   /**
    * Emitted when `widget` is associated with a `GdkSurface`.
    */
@@ -6871,6 +9066,69 @@ export interface WidgetMethods {
    * Emitted when the `GdkSurface` associated with `widget` is destroyed.
    */
   onUnrealize(callback: () => void): number;
+  /**
+   * Requests the user's screen reader to announce the given message.
+   */
+  announce(message: string, priority: AccessibleAnnouncementPriority): void;
+  /**
+   * Retrieves the accessible identifier for the accessible object.
+   */
+  getAccessibleId(): string | null;
+  /**
+   * Retrieves the accessible parent for an accessible object.
+   */
+  getAccessibleParent(): GObject | null;
+  /**
+   * Retrieves the accessible role of an accessible object.
+   */
+  getAccessibleRole(): AccessibleRole;
+  /**
+   * Retrieves the implementation for the given accessible object.
+   */
+  getAtContext(): GObject;
+  /**
+   * Retrieves the first accessible child of an accessible object.
+   */
+  getFirstAccessibleChild(): GObject | null;
+  /**
+   * Retrieves the next accessible sibling of an accessible object
+   */
+  getNextAccessibleSibling(): GObject | null;
+  /**
+   * Queries a platform state, such as focus.
+   */
+  getPlatformState(state: AccessiblePlatformState): boolean;
+  /**
+   * Resets the accessible property to its default value.
+   */
+  resetProperty(property: AccessibleProperty): void;
+  /**
+   * Resets the accessible relation to its default value.
+   */
+  resetRelation(relation: AccessibleRelation): void;
+  /**
+   * Resets the accessible state to its default value.
+   */
+  resetState(state: AccessibleState): void;
+  /**
+   * Sets the parent and sibling of an accessible object.
+   */
+  setAccessibleParent(
+    parent: GObject | null,
+    nextSibling: GObject | null,
+  ): void;
+  /**
+   * Updates the next accessible sibling.
+   */
+  updateNextAccessibleSibling(newSibling: GObject | null): void;
+  /**
+   * Informs ATs that the platform state has changed.
+   */
+  updatePlatformState(state: AccessiblePlatformState): void;
+  /**
+   * Gets the ID of the `buildable` object.
+   */
+  getBuildableId(): string | null;
 }
 
 /** Implementations of {@linkcode WidgetMethods}. */
@@ -6881,6 +9139,18 @@ export const widgetMethods: WidgetMethods & ThisType<GObject> = {
         this.ptr,
         cstr(actionName),
         enabled,
+      );
+  },
+  activateActionVariant(
+    this: GObject,
+    name: string,
+    args: Deno.PointerValue,
+  ): boolean {
+    return (gtk4.symbols.gtk_widget_activate_action_variant ??
+      missing("gtk_widget_activate_action_variant"))(
+        this.ptr,
+        cstr(name),
+        args,
       );
   },
   activateDefault(this: GObject): void {
@@ -6929,6 +9199,18 @@ export const widgetMethods: WidgetMethods & ThisType<GObject> = {
       x,
       y,
     );
+  },
+  createPangoContext(this: GObject): GObject {
+    return owned<GObject>(
+      (gtk4.symbols.gtk_widget_create_pango_context ??
+        missing("gtk_widget_create_pango_context"))(this.ptr),
+    )!;
+  },
+  createPangoLayout(this: GObject, text: string | null): GObject {
+    return owned<GObject>(
+      (gtk4.symbols.gtk_widget_create_pango_layout ??
+        missing("gtk_widget_create_pango_layout"))(this.ptr, cstrOrNull(text)),
+    )!;
   },
   dragCheckThreshold(
     this: GObject,
@@ -7260,6 +9542,18 @@ export const widgetMethods: WidgetMethods & ThisType<GObject> = {
     return (gtk4.symbols.gtk_widget_mnemonic_activate ??
       missing("gtk_widget_mnemonic_activate"))(this.ptr, groupCycling);
   },
+  observeChildren(this: GObject): GObject {
+    return owned<GObject>(
+      (gtk4.symbols.gtk_widget_observe_children ??
+        missing("gtk_widget_observe_children"))(this.ptr),
+    )!;
+  },
+  observeControllers(this: GObject): GObject {
+    return owned<GObject>(
+      (gtk4.symbols.gtk_widget_observe_controllers ??
+        missing("gtk_widget_observe_controllers"))(this.ptr),
+    )!;
+  },
   pick(this: GObject, x: number, y: number, flags: number): Widget | null {
     return borrowed<Widget>(
       (gtk4.symbols.gtk_widget_pick ?? missing("gtk_widget_pick"))(
@@ -7408,11 +9702,29 @@ export const widgetMethods: WidgetMethods & ThisType<GObject> = {
       result: "void",
     }, () => callback());
   },
+  onKeynavFailed(
+    this: GObject,
+    callback: (direction: DirectionType) => boolean,
+  ): number {
+    return connectSignal(this, "keynav-failed", {
+      parameters: ["pointer", "i32", "pointer"],
+      result: "i32",
+    }, (a0: never) => (callback(a0 as DirectionType)) ? 1 : 0);
+  },
   onMap(this: GObject, callback: () => void): number {
     return connectSignal(this, "map", {
       parameters: ["pointer", "pointer"],
       result: "void",
     }, () => callback());
+  },
+  onMnemonicActivate(
+    this: GObject,
+    callback: (groupCycling: boolean) => boolean,
+  ): number {
+    return connectSignal(this, "mnemonic-activate", {
+      parameters: ["pointer", "i32", "pointer"],
+      result: "i32",
+    }, (a0: never) => (callback(a0 !== 0)) ? 1 : 0);
   },
   onMoveFocus(
     this: GObject,
@@ -7422,6 +9734,26 @@ export const widgetMethods: WidgetMethods & ThisType<GObject> = {
       parameters: ["pointer", "i32", "pointer"],
       result: "void",
     }, (a0: never) => callback(a0 as DirectionType));
+  },
+  onQueryTooltip(
+    this: GObject,
+    callback: (
+      x: number,
+      y: number,
+      keyboardMode: boolean,
+      tooltip: GObject,
+    ) => boolean,
+  ): number {
+    return connectSignal(
+      this,
+      "query-tooltip",
+      {
+        parameters: ["pointer", "i32", "i32", "i32", "pointer", "pointer"],
+        result: "i32",
+      },
+      (a0: never, a1: never, a2: never, a3: never) =>
+        (callback(a0, a1, a2 !== 0, borrowed<GObject>(a3)!)) ? 1 : 0,
+    );
   },
   onRealize(this: GObject, callback: () => void): number {
     return connectSignal(this, "realize", {
@@ -7455,6 +9787,101 @@ export const widgetMethods: WidgetMethods & ThisType<GObject> = {
       parameters: ["pointer", "pointer"],
       result: "void",
     }, () => callback());
+  },
+  announce(
+    this: GObject,
+    message: string,
+    priority: AccessibleAnnouncementPriority,
+  ): void {
+    (gtk4.symbols.gtk_accessible_announce ??
+      missing("gtk_accessible_announce", "4.14"))(
+        this.ptr,
+        cstr(message),
+        priority,
+      );
+  },
+  getAccessibleId(this: GObject): string | null {
+    return takeString(
+      (gtk4.symbols.gtk_accessible_get_accessible_id ??
+        missing("gtk_accessible_get_accessible_id", "4.22"))(this.ptr),
+    );
+  },
+  getAccessibleParent(this: GObject): GObject | null {
+    return owned<GObject>(
+      (gtk4.symbols.gtk_accessible_get_accessible_parent ??
+        missing("gtk_accessible_get_accessible_parent", "4.10"))(this.ptr),
+    );
+  },
+  getAccessibleRole(this: GObject): AccessibleRole {
+    return (gtk4.symbols.gtk_accessible_get_accessible_role ??
+      missing("gtk_accessible_get_accessible_role", "4.10"))(
+        this.ptr,
+      ) as AccessibleRole;
+  },
+  getAtContext(this: GObject): GObject {
+    return owned<GObject>(
+      (gtk4.symbols.gtk_accessible_get_at_context ??
+        missing("gtk_accessible_get_at_context", "4.10"))(this.ptr),
+    )!;
+  },
+  getFirstAccessibleChild(this: GObject): GObject | null {
+    return owned<GObject>(
+      (gtk4.symbols.gtk_accessible_get_first_accessible_child ??
+        missing("gtk_accessible_get_first_accessible_child", "4.10"))(this.ptr),
+    );
+  },
+  getNextAccessibleSibling(this: GObject): GObject | null {
+    return owned<GObject>(
+      (gtk4.symbols.gtk_accessible_get_next_accessible_sibling ??
+        missing("gtk_accessible_get_next_accessible_sibling", "4.10"))(
+          this.ptr,
+        ),
+    );
+  },
+  getPlatformState(this: GObject, state: AccessiblePlatformState): boolean {
+    return (gtk4.symbols.gtk_accessible_get_platform_state ??
+      missing("gtk_accessible_get_platform_state", "4.10"))(this.ptr, state);
+  },
+  resetProperty(this: GObject, property: AccessibleProperty): void {
+    (gtk4.symbols.gtk_accessible_reset_property ??
+      missing("gtk_accessible_reset_property", "4.10"))(this.ptr, property);
+  },
+  resetRelation(this: GObject, relation: AccessibleRelation): void {
+    (gtk4.symbols.gtk_accessible_reset_relation ??
+      missing("gtk_accessible_reset_relation", "4.10"))(this.ptr, relation);
+  },
+  resetState(this: GObject, state: AccessibleState): void {
+    (gtk4.symbols.gtk_accessible_reset_state ??
+      missing("gtk_accessible_reset_state", "4.10"))(this.ptr, state);
+  },
+  setAccessibleParent(
+    this: GObject,
+    parent: GObject | null,
+    nextSibling: GObject | null,
+  ): void {
+    (gtk4.symbols.gtk_accessible_set_accessible_parent ??
+      missing("gtk_accessible_set_accessible_parent", "4.10"))(
+        this.ptr,
+        parent?.ptr ?? null,
+        nextSibling?.ptr ?? null,
+      );
+  },
+  updateNextAccessibleSibling(this: GObject, newSibling: GObject | null): void {
+    (gtk4.symbols.gtk_accessible_update_next_accessible_sibling ??
+      missing("gtk_accessible_update_next_accessible_sibling", "4.10"))(
+        this.ptr,
+        newSibling?.ptr ?? null,
+      );
+  },
+  updatePlatformState(this: GObject, state: AccessiblePlatformState): void {
+    (gtk4.symbols.gtk_accessible_update_platform_state ??
+      missing("gtk_accessible_update_platform_state", "4.18"))(this.ptr, state);
+  },
+  getBuildableId(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      (gtk4.symbols.gtk_buildable_get_buildable_id ??
+        missing("gtk_buildable_get_buildable_id"))(this.ptr),
+    );
   },
 };
 
@@ -7626,9 +10053,17 @@ export interface WindowMethods {
    */
   onActivateFocus(callback: () => void): number;
   /**
+   * Emitted when the user enables or disables interactive debugging.
+   */
+  onEnableDebugging(callback: (toggle: boolean) => boolean): number;
+  /**
    * Emitted when the compositor has decided to eliminate a window.
    */
   onForceClose(callback: () => void): number;
+  /**
+   * Returns the surface of this `GtkNative`.
+   */
+  getSurface(): GObject | null;
 }
 
 /** Implementations of {@linkcode WindowMethods}. */
@@ -7830,63 +10265,294 @@ export const windowMethods: WindowMethods & ThisType<GObject> = {
       result: "void",
     }, () => callback());
   },
+  onEnableDebugging(
+    this: GObject,
+    callback: (toggle: boolean) => boolean,
+  ): number {
+    return connectSignal(this, "enable-debugging", {
+      parameters: ["pointer", "i32", "pointer"],
+      result: "i32",
+    }, (a0: never) => (callback(a0 !== 0)) ? 1 : 0);
+  },
   onForceClose(this: GObject, callback: () => void): number {
     return connectSignal(this, "force-close", {
       parameters: ["pointer", "pointer"],
       result: "void",
     }, () => callback());
   },
+  getSurface(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_native_get_surface ??
+        missing("gtk_native_get_surface"))(this.ptr),
+    );
+  },
+};
+
+/** Methods generated for `GtkEntry`. */
+export interface EntryMethods {
+  /**
+   * Retrieves the accessible platform state from the editable delegate.
+   */
+  delegateGetAccessiblePlatformState(state: AccessiblePlatformState): boolean;
+  /**
+   * Deletes the currently selected text of the editable.
+   */
+  deleteSelection(): void;
+  /**
+   * Deletes a sequence of characters.
+   */
+  deleteText(startPos: number, endPos: number): void;
+  /**
+   * Undoes the setup done by `initDelegate()`.
+   */
+  finishDelegate(): void;
+  /**
+   * Gets the alignment of the editable.
+   */
+  getAlignment(): number;
+  /**
+   * Retrieves a sequence of characters.
+   */
+  getChars(startPos: number, endPos: number): string;
+  /**
+   * Retrieves the contents of `editable`, including *pseudo-content*
+   * such as the preedit buffer.
+   */
+  getCompleteText(): string;
+  /**
+   * Gets the `GtkEditable` that `editable` is delegating its
+   * implementation to.
+   */
+  getDelegate(): GObject | null;
+  /**
+   * Retrieves whether `editable` is editable.
+   */
+  getEditable(): boolean;
+  /**
+   * Gets if undo/redo actions are enabled for `editable`
+   */
+  getEnableUndo(): boolean;
+  /**
+   * Retrieves the widget that was previously set up as input interceptor
+   * for `editable`. See `setInputInterceptor()`.
+   */
+  getInputInterceptor(): Widget | null;
+  /**
+   * Retrieves the desired maximum width of `editable`, in characters.
+   */
+  getMaxWidthChars(): number;
+  /**
+   * Retrieves the current position of the cursor relative
+   * to the start of the content of the editable.
+   */
+  getPosition(): number;
+  /**
+   * Gets the number of characters of space reserved
+   * for the contents of the editable.
+   */
+  getWidthChars(): number;
+  /**
+   * Sets up a delegate for `GtkEditable`.
+   */
+  initDelegate(): void;
+  /**
+   * Sets the alignment for the contents of the editable.
+   */
+  setAlignment(xalign: number): void;
+  /**
+   * Determines if the user can edit the text in the editable widget.
+   */
+  setEditable(isEditable: boolean): void;
+  /**
+   * If enabled, changes to `editable` will be saved for undo/redo
+   * actions.
+   */
+  setEnableUndo(enableUndo: boolean): void;
+  /**
+   * Sets `interceptor` as the widget that `editable` will intercept key events from.
+   */
+  setInputInterceptor(interceptor: Widget | null): void;
+  /**
+   * Sets the desired maximum width in characters of `editable`.
+   */
+  setMaxWidthChars(nChars: number): void;
+  /**
+   * Sets the cursor position in the editable to the given value.
+   */
+  setPosition(position: number): void;
+  /**
+   * Changes the size request of the editable to be about the
+   * right size for `nChars` characters.
+   */
+  setWidthChars(nChars: number): void;
+  /**
+   * Emitted when text is deleted from the widget by the user.
+   */
+  onDeleteText(callback: (startPos: number, endPos: number) => void): number;
+  /**
+   * Emitted whenever keyboard input has been handled through the
+   * input interceptor widget set through `setInputInterceptor()`
+   */
+  onInputIntercepted(callback: () => void): number;
+  /**
+   * Emitted when text is inserted into the widget by the user.
+   */
+  onInsertText(
+    callback: (text: string, length: number, position: number) => void,
+  ): number;
+}
+
+/** Implementations of {@linkcode EntryMethods}. */
+export const entryMethods: EntryMethods & ThisType<GObject> = {
+  delegateGetAccessiblePlatformState(
+    this: GObject,
+    state: AccessiblePlatformState,
+  ): boolean {
+    return (gtk4.symbols.gtk_editable_delegate_get_accessible_platform_state ??
+      missing("gtk_editable_delegate_get_accessible_platform_state", "4.10"))(
+        this.ptr,
+        state,
+      );
+  },
+  deleteSelection(this: GObject): void {
+    (gtk4.symbols.gtk_editable_delete_selection ??
+      missing("gtk_editable_delete_selection"))(this.ptr);
+  },
+  deleteText(this: GObject, startPos: number, endPos: number): void {
+    (gtk4.symbols.gtk_editable_delete_text ??
+      missing("gtk_editable_delete_text"))(this.ptr, startPos, endPos);
+  },
+  finishDelegate(this: GObject): void {
+    (gtk4.symbols.gtk_editable_finish_delegate ??
+      missing("gtk_editable_finish_delegate"))(this.ptr);
+  },
+  getAlignment(this: GObject): number {
+    return (gtk4.symbols.gtk_editable_get_alignment ??
+      missing("gtk_editable_get_alignment"))(this.ptr);
+  },
+  getChars(this: GObject, startPos: number, endPos: number): string {
+    return takeString(
+      (gtk4.symbols.gtk_editable_get_chars ??
+        missing("gtk_editable_get_chars"))(this.ptr, startPos, endPos),
+    ) ?? "";
+  },
+  getCompleteText(this: GObject): string {
+    return takeString(
+      (gtk4.symbols.gtk_editable_get_complete_text ??
+        missing("gtk_editable_get_complete_text", "4.24"))(this.ptr),
+    ) ?? "";
+  },
+  getDelegate(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_editable_get_delegate ??
+        missing("gtk_editable_get_delegate"))(this.ptr),
+    );
+  },
+  getEditable(this: GObject): boolean {
+    return (gtk4.symbols.gtk_editable_get_editable ??
+      missing("gtk_editable_get_editable"))(this.ptr);
+  },
+  getEnableUndo(this: GObject): boolean {
+    return (gtk4.symbols.gtk_editable_get_enable_undo ??
+      missing("gtk_editable_get_enable_undo"))(this.ptr);
+  },
+  getInputInterceptor(this: GObject): Widget | null {
+    return owned<Widget>(
+      (gtk4.symbols.gtk_editable_get_input_interceptor ??
+        missing("gtk_editable_get_input_interceptor", "4.24"))(this.ptr),
+    );
+  },
+  getMaxWidthChars(this: GObject): number {
+    return (gtk4.symbols.gtk_editable_get_max_width_chars ??
+      missing("gtk_editable_get_max_width_chars"))(this.ptr);
+  },
+  getPosition(this: GObject): number {
+    return (gtk4.symbols.gtk_editable_get_position ??
+      missing("gtk_editable_get_position"))(this.ptr);
+  },
+  getWidthChars(this: GObject): number {
+    return (gtk4.symbols.gtk_editable_get_width_chars ??
+      missing("gtk_editable_get_width_chars"))(this.ptr);
+  },
+  initDelegate(this: GObject): void {
+    (gtk4.symbols.gtk_editable_init_delegate ??
+      missing("gtk_editable_init_delegate"))(this.ptr);
+  },
+  setAlignment(this: GObject, xalign: number): void {
+    (gtk4.symbols.gtk_editable_set_alignment ??
+      missing("gtk_editable_set_alignment"))(this.ptr, xalign);
+  },
+  setEditable(this: GObject, isEditable: boolean): void {
+    (gtk4.symbols.gtk_editable_set_editable ??
+      missing("gtk_editable_set_editable"))(this.ptr, isEditable);
+  },
+  setEnableUndo(this: GObject, enableUndo: boolean): void {
+    (gtk4.symbols.gtk_editable_set_enable_undo ??
+      missing("gtk_editable_set_enable_undo"))(this.ptr, enableUndo);
+  },
+  setInputInterceptor(this: GObject, interceptor: Widget | null): void {
+    (gtk4.symbols.gtk_editable_set_input_interceptor ??
+      missing("gtk_editable_set_input_interceptor", "4.24"))(
+        this.ptr,
+        interceptor?.ptr ?? null,
+      );
+  },
+  setMaxWidthChars(this: GObject, nChars: number): void {
+    (gtk4.symbols.gtk_editable_set_max_width_chars ??
+      missing("gtk_editable_set_max_width_chars"))(this.ptr, nChars);
+  },
+  setPosition(this: GObject, position: number): void {
+    (gtk4.symbols.gtk_editable_set_position ??
+      missing("gtk_editable_set_position"))(this.ptr, position);
+  },
+  setWidthChars(this: GObject, nChars: number): void {
+    (gtk4.symbols.gtk_editable_set_width_chars ??
+      missing("gtk_editable_set_width_chars"))(this.ptr, nChars);
+  },
+  onDeleteText(
+    this: GObject,
+    callback: (startPos: number, endPos: number) => void,
+  ): number {
+    return connectSignal(this, "delete-text", {
+      parameters: ["pointer", "i32", "i32", "pointer"],
+      result: "void",
+    }, (a0: never, a1: never) => callback(a0, a1));
+  },
+  onInputIntercepted(this: GObject, callback: () => void): number {
+    return connectSignal(this, "input-intercepted", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onInsertText(
+    this: GObject,
+    callback: (text: string, length: number, position: number) => void,
+  ): number {
+    return connectSignal(this, "insert-text", {
+      parameters: ["pointer", "pointer", "i32", "i32", "pointer"],
+      result: "void",
+    }, (a0: never, a1: never, a2: never) => callback(readCStr(a0), a1, a2));
+  },
 };
 
 // Not generated (unsupported shapes):
 // - Application.set_accels_for_action: arrays and varargs
-// - Builder.add_from_file: GError
-// - Builder.add_from_string: GError
-// - CssProvider.parsing-error: record CssSection
+// - Builder.add_from_string: unknown type gssize
 // - DrawingArea.set_draw_func: unknown type cairo.Context
-// - DropTarget.accept: signal with a result
-// - DropTarget.drop: signal with a result
 // - DropTarget.enter: signal with a result
 // - DropTarget.motion: signal with a result
-// - EventControllerKey.key-pressed: signal with a result
-// - EventControllerKey.modifiers: signal with a result
-// - FileDialog.open: callback scope async
-// - FileDialog.open_finish: GError
-// - FileDialog.select_folder: callback scope async
-// - FileDialog.select_folder_finish: GError
-// - GestureClick.unpaired-release: record Gdk.EventSequence
-// - Label.activate-link: signal with a result
 // - MenuButton.get_direction: same name as Gtk.Widget.get_direction
 // - MenuButton.set_direction: same name as Gtk.Widget.set_direction
-// - Overlay.get-child-position: signal with a result
-// - ScrolledWindow.scroll-child: signal with a result
-// - StringList.take: string ownership transfer
-// - Switch.state-set: signal with a result
-// - TextBuffer.apply-tag: record TextIter
-// - TextBuffer.apply_tag_by_name: record TextIter
-// - TextBuffer.create_mark: record TextIter
-// - TextBuffer.delete-range: record TextIter
-// - TextBuffer.delete: record TextIter
+// - Popover.realize: same name as Gtk.Widget.realize
+// - Popover.unrealize: same name as Gtk.Widget.unrealize
 // - TextBuffer.get_bounds: out parameter
 // - TextBuffer.get_end_iter: out parameter
 // - TextBuffer.get_iter_at_line: out parameter
 // - TextBuffer.get_iter_at_offset: out parameter
 // - TextBuffer.get_start_iter: out parameter
-// - TextBuffer.get_text: record TextIter
-// - TextBuffer.insert-child-anchor: record TextIter
-// - TextBuffer.insert-paintable: record TextIter
-// - TextBuffer.insert-text: record TextIter
-// - TextBuffer.insert: record TextIter
-// - TextBuffer.mark-set: record TextIter
-// - TextBuffer.remove-tag: record TextIter
-// - TextBuffer.remove_all_tags: record TextIter
-// - TextBuffer.remove_tag_by_name: record TextIter
-// - TextView.extend-selection: signal with a result
-// - TextView.scroll_to_iter: record TextIter
 // - Widget.add_controller: object ownership transfer
 // - Widget.compute_bounds: out parameter
-// - Widget.keynav-failed: signal with a result
-// - Widget.mnemonic-activate: signal with a result
-// - Widget.query-tooltip: signal with a result
-// - Window.close-request: signal with a result
-// - Window.enable-debugging: signal with a result
+// - Window.get_focus (Root): name taken by another member
+// - Window.realize: same name as Gtk.Widget.realize
+// - Window.set_focus (Root): name taken by another member
+// - Window.unrealize: same name as Gtk.Widget.unrealize

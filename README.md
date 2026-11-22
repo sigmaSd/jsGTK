@@ -559,13 +559,27 @@ export interface MyWidget extends MyWidgetMethods {}
 applyGenerated(MyWidget, myWidgetMethods, "GtkMyWidget");
 ```
 
-Generated code lives in `src/high/generated/`. It turns nullable strings into
-`string | null`, enums into typed constants, borrowed objects into the wrapper
-already in use (or one of the object's real class), and notified callbacks into
-callbacks freed when GTK releases them. Methods a class or its hand-written
-ancestors define are left out, so hand-written code always wins. Methods the
-generator can't express yet (out parameters, arrays, `GError`, async callbacks)
-are listed at the end of each generated file.
+Generated code lives in `src/high/generated/`:
+
+- nullable strings become `string | null`, and enums become typed constants;
+- objects GTK lends come back as the wrapper already in use, or one of the
+  object's real class; objects it hands over (`transfer full`) are owned by the
+  returned wrapper, and `unref()` releases them;
+- methods that can fail throw a `GError` (from `./src/high/wrappers.ts`) with
+  GLib's message, domain and code;
+- async methods with a finish function return promises, e.g.
+  `await file.queryInfoAsync("standard::type", 0, 0, null)`;
+- signals get typed `on…` helpers, and a handler can return a boolean or number
+  to GTK (`onStateSet`, `onActivateLink`);
+- a class gets the methods of the interfaces it implements (`Editable`,
+  `Orientable`), and wrappers of interfaces (`File`, `AppInfo`) can be generated
+  too;
+- structs pass through as opaque pointers;
+- callbacks GTK keeps are freed when GTK releases them.
+
+Methods a class or its hand-written ancestors define are left out, so
+hand-written code always wins. The few methods the generator can't express yet
+(out parameters, arrays) are listed at the end of each generated file.
 
 ### Regenerating the native bindings
 

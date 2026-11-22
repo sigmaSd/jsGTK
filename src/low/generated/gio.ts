@@ -351,6 +351,12 @@ export const gioSymbols = {
     result: "pointer",
     optional: true,
   },
+  // Return transfer full.
+  g_app_launch_context_get_display: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
   g_app_launch_context_launch_failed: {
     parameters: ["pointer", "buffer"],
     result: "void",
@@ -365,6 +371,12 @@ export const gioSymbols = {
   g_cancellable_get_fd: {
     parameters: ["pointer"],
     result: "i32",
+    optional: true,
+  },
+  // Since 2.22.
+  g_cancellable_make_pollfd: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
     optional: true,
   },
   g_cancellable_pop_current: {
@@ -388,6 +400,12 @@ export const gioSymbols = {
     result: "void",
     optional: true,
   },
+  // Trailing GError**.
+  g_cancellable_set_error_if_cancelled: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
   // Since 2.26.
   g_dbus_proxy_get_connection: {
     parameters: ["pointer"],
@@ -404,6 +422,12 @@ export const gioSymbols = {
   g_dbus_proxy_get_flags: {
     parameters: ["pointer"],
     result: "i32",
+    optional: true,
+  },
+  // Since 2.26.
+  g_dbus_proxy_get_interface_info: {
+    parameters: ["pointer"],
+    result: "pointer",
     optional: true,
   },
   // Since 2.26.
@@ -431,14 +455,80 @@ export const gioSymbols = {
     optional: true,
   },
   // Since 2.26.
+  g_dbus_proxy_set_cached_property: {
+    parameters: ["pointer", "buffer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.26.
   g_dbus_proxy_set_default_timeout: {
     parameters: ["pointer", "i32"],
     result: "void",
     optional: true,
   },
+  // Since 2.26.
+  g_dbus_proxy_set_interface_info: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.22. callback has async scope.
+  g_async_initable_init_async: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.22. Trailing GError**.
+  g_async_initable_init_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.22. Trailing GError**. Return transfer full.
+  g_async_initable_new_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.32. Return transfer full.
+  g_dbus_interface_dup_object: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.30.
+  g_dbus_interface_get_info: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.30.
+  g_dbus_interface_set_object: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.22. Trailing GError**.
+  g_initable_init: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
   g_input_stream_clear_pending: {
     parameters: ["pointer"],
     result: "void",
+    optional: true,
+  },
+  // callback has async scope.
+  g_input_stream_close_async: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_input_stream_close_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
     optional: true,
   },
   g_input_stream_has_pending: {
@@ -448,6 +538,12 @@ export const gioSymbols = {
   },
   g_input_stream_is_closed: {
     parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_input_stream_set_pending: {
+    parameters: ["pointer", "pointer"],
     result: "gboolean",
     optional: true,
   },
@@ -472,6 +568,24 @@ export const gioSymbols = {
   // Since 2.46. compare_func has call scope.
   g_list_store_sort: {
     parameters: ["pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.44.
+  g_list_model_get_n_items: {
+    parameters: ["pointer"],
+    result: "u32",
+    optional: true,
+  },
+  // Since 2.44. Return transfer full.
+  g_list_model_get_object: {
+    parameters: ["pointer", "u32"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.44.
+  g_list_model_items_changed: {
+    parameters: ["pointer", "u32", "u32", "u32"],
     result: "void",
     optional: true,
   },
@@ -555,6 +669,12 @@ export const gioSymbols = {
     result: "void",
     optional: true,
   },
+  // Since 2.40.
+  g_notification_add_button_with_target_value: {
+    parameters: ["pointer", "buffer", "buffer", "pointer"],
+    result: "void",
+    optional: true,
+  },
   // Since 2.70.
   g_notification_set_category: {
     parameters: ["pointer", "buffer"],
@@ -564,6 +684,12 @@ export const gioSymbols = {
   // Since 2.40.
   g_notification_set_default_action: {
     parameters: ["pointer", "buffer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.40.
+  g_notification_set_default_action_and_target_value: {
+    parameters: ["pointer", "buffer", "pointer"],
     result: "void",
     optional: true,
   },
@@ -590,6 +716,30 @@ export const gioSymbols = {
     result: "void",
     optional: true,
   },
+  // callback has async scope.
+  g_output_stream_close_async: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_output_stream_close_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // callback has async scope.
+  g_output_stream_flush_async: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_output_stream_flush_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
   g_output_stream_has_pending: {
     parameters: ["pointer"],
     result: "gboolean",
@@ -606,10 +756,64 @@ export const gioSymbols = {
     result: "gboolean",
     optional: true,
   },
+  // Trailing GError**.
+  g_output_stream_set_pending: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
   // Since 2.28.
   g_simple_action_set_enabled: {
     parameters: ["pointer", "gboolean"],
     result: "void",
+    optional: true,
+  },
+  // Since 2.30.
+  g_simple_action_set_state: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.44.
+  g_simple_action_set_state_hint: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.28.
+  g_action_activate: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.30.
+  g_action_change_state: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.28.
+  g_action_get_enabled: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.28.
+  g_action_get_name: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.28.
+  g_action_get_parameter_type: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.28.
+  g_action_get_state_type: {
+    parameters: ["pointer"],
+    result: "pointer",
     optional: true,
   },
   // Since 2.40.
@@ -646,6 +850,753 @@ export const gioSymbols = {
   g_subprocess_send_signal: {
     parameters: ["pointer", "i32"],
     result: "void",
+    optional: true,
+  },
+  // Since 2.40. Trailing GError**.
+  g_subprocess_wait_check: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.40. callback has async scope.
+  g_subprocess_wait_check_async: {
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.40. Trailing GError**.
+  g_subprocess_wait_check_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_append_to: {
+    parameters: ["pointer", "i32", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // callback has async scope.
+  g_file_append_to_async: {
+    parameters: ["pointer", "i32", "i32", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_append_to_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.68. Trailing GError**. Return transfer full.
+  g_file_build_attribute_list_for_copy: {
+    parameters: ["pointer", "i32", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.82.
+  g_file_copy_async_with_closures: {
+    parameters: [
+      "pointer",
+      "pointer",
+      "i32",
+      "i32",
+      "pointer",
+      "pointer",
+      "pointer",
+    ],
+    result: "void",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_file_copy_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_file_copy_attributes: {
+    parameters: ["pointer", "pointer", "i32", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_create: {
+    parameters: ["pointer", "i32", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // callback has async scope.
+  g_file_create_async: {
+    parameters: ["pointer", "i32", "i32", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_create_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.22. Trailing GError**. Return transfer full.
+  g_file_create_readwrite: {
+    parameters: ["pointer", "i32", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.22. callback has async scope.
+  g_file_create_readwrite_async: {
+    parameters: ["pointer", "i32", "i32", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.22. Trailing GError**. Return transfer full.
+  g_file_create_readwrite_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_file_delete: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.34. callback has async scope.
+  g_file_delete_async: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.34. Trailing GError**.
+  g_file_delete_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Return transfer full.
+  g_file_dup: { parameters: ["pointer"], result: "pointer", optional: true },
+  // Since 2.22. callback has async scope.
+  g_file_eject_mountable_with_operation: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.22. Trailing GError**.
+  g_file_eject_mountable_with_operation_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_enumerate_children: {
+    parameters: ["pointer", "buffer", "i32", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // callback has async scope.
+  g_file_enumerate_children_async: {
+    parameters: [
+      "pointer",
+      "buffer",
+      "i32",
+      "i32",
+      "pointer",
+      "pointer",
+      "pointer",
+    ],
+    result: "void",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_enumerate_children_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  g_file_equal: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_find_enclosing_mount: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // callback has async scope.
+  g_file_find_enclosing_mount_async: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_find_enclosing_mount_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Return transfer full.
+  g_file_get_basename: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Return transfer full.
+  g_file_get_child: {
+    parameters: ["pointer", "buffer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_get_child_for_display_name: {
+    parameters: ["pointer", "buffer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Return transfer full.
+  g_file_get_parent: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Return transfer full.
+  g_file_get_parse_name: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Return transfer full.
+  g_file_get_relative_path: {
+    parameters: ["pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Return transfer full.
+  g_file_get_uri_scheme: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.24.
+  g_file_has_parent: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  g_file_has_prefix: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  g_file_has_uri_scheme: {
+    parameters: ["pointer", "buffer"],
+    result: "gboolean",
+    optional: true,
+  },
+  g_file_hash: { parameters: ["pointer"], result: "u32", optional: true },
+  g_file_is_native: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_file_make_directory: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.38. callback has async scope.
+  g_file_make_directory_async: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.38. Trailing GError**.
+  g_file_make_directory_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.18. Trailing GError**.
+  g_file_make_directory_with_parents: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_file_make_symbolic_link: {
+    parameters: ["pointer", "buffer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.74. callback has async scope.
+  g_file_make_symbolic_link_async: {
+    parameters: ["pointer", "buffer", "i32", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.74. Trailing GError**.
+  g_file_make_symbolic_link_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.18. Trailing GError**. Return transfer full.
+  g_file_monitor: {
+    parameters: ["pointer", "i32", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_monitor_directory: {
+    parameters: ["pointer", "i32", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_monitor_file: {
+    parameters: ["pointer", "i32", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // callback has async scope.
+  g_file_mount_enclosing_volume: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_file_mount_enclosing_volume_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // callback has async scope.
+  g_file_mount_mountable: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_mount_mountable_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.82.
+  g_file_move_async_with_closures: {
+    parameters: [
+      "pointer",
+      "pointer",
+      "i32",
+      "i32",
+      "pointer",
+      "pointer",
+      "pointer",
+    ],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.72. Trailing GError**.
+  g_file_move_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.22. Trailing GError**. Return transfer full.
+  g_file_open_readwrite: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.22. callback has async scope.
+  g_file_open_readwrite_async: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.22. Trailing GError**. Return transfer full.
+  g_file_open_readwrite_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.56.
+  g_file_peek_path: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.22. callback has async scope.
+  g_file_poll_mountable: {
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.22. Trailing GError**.
+  g_file_poll_mountable_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_query_default_handler: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.60. callback has async scope.
+  g_file_query_default_handler_async: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.60. Trailing GError**. Return transfer full.
+  g_file_query_default_handler_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  g_file_query_exists: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.18.
+  g_file_query_file_type: {
+    parameters: ["pointer", "i32", "pointer"],
+    result: "i32",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_query_filesystem_info: {
+    parameters: ["pointer", "buffer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // callback has async scope.
+  g_file_query_filesystem_info_async: {
+    parameters: ["pointer", "buffer", "i32", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_query_filesystem_info_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_query_info: {
+    parameters: ["pointer", "buffer", "i32", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // callback has async scope.
+  g_file_query_info_async: {
+    parameters: [
+      "pointer",
+      "buffer",
+      "i32",
+      "i32",
+      "pointer",
+      "pointer",
+      "pointer",
+    ],
+    result: "void",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_query_info_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_read: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // callback has async scope.
+  g_file_read_async: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_read_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_replace: {
+    parameters: ["pointer", "buffer", "gboolean", "i32", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // callback has async scope.
+  g_file_replace_async: {
+    parameters: [
+      "pointer",
+      "buffer",
+      "gboolean",
+      "i32",
+      "i32",
+      "pointer",
+      "pointer",
+      "pointer",
+    ],
+    result: "void",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_replace_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.22. Trailing GError**. Return transfer full.
+  g_file_replace_readwrite: {
+    parameters: ["pointer", "buffer", "gboolean", "i32", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.22. callback has async scope.
+  g_file_replace_readwrite_async: {
+    parameters: [
+      "pointer",
+      "buffer",
+      "gboolean",
+      "i32",
+      "i32",
+      "pointer",
+      "pointer",
+      "pointer",
+    ],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.22. Trailing GError**. Return transfer full.
+  g_file_replace_readwrite_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Return transfer full.
+  g_file_resolve_relative_path: {
+    parameters: ["pointer", "buffer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_file_set_attribute_byte_string: {
+    parameters: ["pointer", "buffer", "buffer", "i32", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_file_set_attribute_int32: {
+    parameters: ["pointer", "buffer", "i32", "i32", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_file_set_attribute_string: {
+    parameters: ["pointer", "buffer", "buffer", "i32", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_file_set_attribute_uint32: {
+    parameters: ["pointer", "buffer", "u32", "i32", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_file_set_attributes_from_info: {
+    parameters: ["pointer", "pointer", "i32", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_set_display_name: {
+    parameters: ["pointer", "buffer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // callback has async scope.
+  g_file_set_display_name_async: {
+    parameters: ["pointer", "buffer", "i32", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Trailing GError**. Return transfer full.
+  g_file_set_display_name_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 2.22. callback has async scope.
+  g_file_start_mountable: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.22. Trailing GError**.
+  g_file_start_mountable_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.22. callback has async scope.
+  g_file_stop_mountable: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.22. Trailing GError**.
+  g_file_stop_mountable_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.22.
+  g_file_supports_thread_contexts: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_file_trash: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.38. callback has async scope.
+  g_file_trash_async: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.38. Trailing GError**.
+  g_file_trash_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.22. callback has async scope.
+  g_file_unmount_mountable_with_operation: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.22. Trailing GError**.
+  g_file_unmount_mountable_with_operation_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_app_info_add_supports_type: {
+    parameters: ["pointer", "buffer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.20.
+  g_app_info_can_delete: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  g_app_info_can_remove_supports_type: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.20.
+  g_app_info_delete: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Return transfer full.
+  g_app_info_dup: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  g_app_info_equal: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.20.
+  g_app_info_get_commandline: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_app_info_launch_uris: {
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 2.60. callback has async scope.
+  g_app_info_launch_uris_async: {
+    parameters: [
+      "pointer",
+      "pointer",
+      "pointer",
+      "pointer",
+      "pointer",
+      "pointer",
+    ],
+    result: "void",
+    optional: true,
+  },
+  // Since 2.60. Trailing GError**.
+  g_app_info_launch_uris_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_app_info_remove_supports_type: {
+    parameters: ["pointer", "buffer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_app_info_set_as_default_for_extension: {
+    parameters: ["pointer", "buffer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_app_info_set_as_default_for_type: {
+    parameters: ["pointer", "buffer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**.
+  g_app_info_set_as_last_used_for_type: {
+    parameters: ["pointer", "buffer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  g_app_info_supports_files: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  g_app_info_supports_uris: {
+    parameters: ["pointer"],
+    result: "gboolean",
     optional: true,
   },
 } as const;

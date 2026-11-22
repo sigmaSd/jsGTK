@@ -641,6 +641,16 @@
         </parameter>
       </parameters>
     </function>
+    <function name="quark_to_string" c:identifier="g_quark_to_string">
+      <return-value transfer-ownership="none">
+        <type name="utf8" c:type="const gchar*"/>
+      </return-value>
+      <parameters>
+        <parameter name="quark" transfer-ownership="none">
+          <type name="Quark" c:type="GQuark"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="set_application_name" c:identifier="g_set_application_name" version="2.2">
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>

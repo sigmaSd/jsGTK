@@ -4,7 +4,13 @@
 
 import { adw } from "../../low/adw.ts";
 import { cstr, readCStr } from "../../low/utils.ts";
-import { borrowed, connectSignal, cstrOrNull, missing } from "../wrappers.ts";
+import {
+  borrowed,
+  connectSignal,
+  cstrOrNull,
+  missing,
+  owned,
+} from "../wrappers.ts";
 import type {
   Carousel,
   Dialog,
@@ -278,6 +284,10 @@ export interface AboutDialogMethods {
    * Sets the translator credits string.
    */
   setTranslatorCredits(translatorCredits: string): void;
+  /**
+   * Emitted when a URL is activated.
+   */
+  onActivateLink(callback: (uri: string) => boolean): number;
 }
 
 /** Implementations of {@linkcode AboutDialogMethods}. */
@@ -488,6 +498,12 @@ export const aboutDialogMethods: AboutDialogMethods & ThisType<GObject> = {
         cstr(translatorCredits),
       );
   },
+  onActivateLink(this: GObject, callback: (uri: string) => boolean): number {
+    return connectSignal(this, "activate-link", {
+      parameters: ["pointer", "pointer", "pointer"],
+      result: "i32",
+    }, (a0: never) => (callback(readCStr(a0))) ? 1 : 0);
+  },
 };
 
 /** Methods generated for `AdwAboutWindow`. */
@@ -605,6 +621,10 @@ export interface ApplicationWindowMethods {
    */
   getCurrentBreakpoint(): GObject | null;
   /**
+   * Returns a `ListModel` that contains the open dialogs of `self`.
+   */
+  getDialogs(): GObject;
+  /**
    * Returns the currently visible dialog in `self`, if there's one.
    */
   getVisibleDialog(): Dialog | null;
@@ -637,6 +657,12 @@ export const applicationWindowMethods:
             this.ptr,
           ),
       );
+    },
+    getDialogs(this: GObject): GObject {
+      return owned<GObject>(
+        (adw.symbols.adw_application_window_get_dialogs ??
+          missing("adw_application_window_get_dialogs", "1.5"))(this.ptr),
+      )!;
     },
     getVisibleDialog(this: GObject): Dialog | null {
       return borrowed<Dialog>(
@@ -770,6 +796,10 @@ export interface CarouselMethods {
    */
   setRevealDuration(revealDuration: number): void;
   /**
+   * Sets the scroll animation spring parameters for `self`.
+   */
+  setScrollParams(params: Deno.PointerValue): void;
+  /**
    * Sets spacing between pages in pixels.
    */
   setSpacing(spacing: number): void;
@@ -777,6 +807,18 @@ export interface CarouselMethods {
    * This signal is emitted after a page has been changed.
    */
   onPageChanged(callback: (index: number) => void): number;
+  /**
+   * Gets the progress `self` will snap back to after the gesture is canceled.
+   */
+  getCancelProgress(): number;
+  /**
+   * Gets the swipe distance of `self`.
+   */
+  getDistance(): number;
+  /**
+   * Gets the current progress of `self`.
+   */
+  getProgress(): number;
 }
 
 /** Implementations of {@linkcode CarouselMethods}. */
@@ -821,6 +863,9 @@ export const carouselMethods: CarouselMethods & ThisType<GObject> = {
   setRevealDuration(this: GObject, revealDuration: number): void {
     adw.symbols.adw_carousel_set_reveal_duration(this.ptr, revealDuration);
   },
+  setScrollParams(this: GObject, params: Deno.PointerValue): void {
+    adw.symbols.adw_carousel_set_scroll_params(this.ptr, params);
+  },
   setSpacing(this: GObject, spacing: number): void {
     (adw.symbols.adw_carousel_set_spacing ??
       missing("adw_carousel_set_spacing"))(this.ptr, spacing);
@@ -830,6 +875,18 @@ export const carouselMethods: CarouselMethods & ThisType<GObject> = {
       parameters: ["pointer", "u32", "pointer"],
       result: "void",
     }, (a0: never) => callback(a0));
+  },
+  getCancelProgress(this: GObject): number {
+    return (adw.symbols.adw_swipeable_get_cancel_progress ??
+      missing("adw_swipeable_get_cancel_progress"))(this.ptr);
+  },
+  getDistance(this: GObject): number {
+    return (adw.symbols.adw_swipeable_get_distance ??
+      missing("adw_swipeable_get_distance"))(this.ptr);
+  },
+  getProgress(this: GObject): number {
+    return (adw.symbols.adw_swipeable_get_progress ??
+      missing("adw_swipeable_get_progress"))(this.ptr);
   },
 };
 
@@ -1567,6 +1624,10 @@ export interface NavigationViewMethods {
    */
   getHhomogeneous(): boolean;
   /**
+   * Returns a `ListModel` that contains the pages in navigation stack.
+   */
+  getNavigationStack(): GObject;
+  /**
    * Gets whether pressing Escape pops the current page on `self`.
    */
   getPopOnEscape(): boolean;
@@ -1622,6 +1683,18 @@ export interface NavigationViewMethods {
    * Emitted after the navigation stack has been replaced.
    */
   onReplaced(callback: () => void): number;
+  /**
+   * Gets the progress `self` will snap back to after the gesture is canceled.
+   */
+  getCancelProgress(): number;
+  /**
+   * Gets the swipe distance of `self`.
+   */
+  getDistance(): number;
+  /**
+   * Gets the current progress of `self`.
+   */
+  getProgress(): number;
 }
 
 /** Implementations of {@linkcode NavigationViewMethods}. */
@@ -1642,6 +1715,12 @@ export const navigationViewMethods: NavigationViewMethods & ThisType<GObject> =
     getHhomogeneous(this: GObject): boolean {
       return (adw.symbols.adw_navigation_view_get_hhomogeneous ??
         missing("adw_navigation_view_get_hhomogeneous", "1.7"))(this.ptr);
+    },
+    getNavigationStack(this: GObject): GObject {
+      return owned<GObject>(
+        (adw.symbols.adw_navigation_view_get_navigation_stack ??
+          missing("adw_navigation_view_get_navigation_stack", "1.4"))(this.ptr),
+      )!;
     },
     getPopOnEscape(this: GObject): boolean {
       return (adw.symbols.adw_navigation_view_get_pop_on_escape ??
@@ -1724,6 +1803,18 @@ export const navigationViewMethods: NavigationViewMethods & ThisType<GObject> =
         result: "void",
       }, () => callback());
     },
+    getCancelProgress(this: GObject): number {
+      return (adw.symbols.adw_swipeable_get_cancel_progress ??
+        missing("adw_swipeable_get_cancel_progress"))(this.ptr);
+    },
+    getDistance(this: GObject): number {
+      return (adw.symbols.adw_swipeable_get_distance ??
+        missing("adw_swipeable_get_distance"))(this.ptr);
+    },
+    getProgress(this: GObject): number {
+      return (adw.symbols.adw_swipeable_get_progress ??
+        missing("adw_swipeable_get_progress"))(this.ptr);
+    },
   };
 
 /** Methods generated for `AdwOverlaySplitView`. */
@@ -1788,6 +1879,18 @@ export interface OverlaySplitViewMethods {
    * Sets the length unit for minimum and maximum sidebar widths.
    */
   setSidebarWidthUnit(unit: LengthUnit): void;
+  /**
+   * Gets the progress `self` will snap back to after the gesture is canceled.
+   */
+  getCancelProgress(): number;
+  /**
+   * Gets the swipe distance of `self`.
+   */
+  getDistance(): number;
+  /**
+   * Gets the current progress of `self`.
+   */
+  getProgress(): number;
 }
 
 /** Implementations of {@linkcode OverlaySplitViewMethods}. */
@@ -1883,6 +1986,18 @@ export const overlaySplitViewMethods:
           this.ptr,
           unit,
         );
+    },
+    getCancelProgress(this: GObject): number {
+      return (adw.symbols.adw_swipeable_get_cancel_progress ??
+        missing("adw_swipeable_get_cancel_progress"))(this.ptr);
+    },
+    getDistance(this: GObject): number {
+      return (adw.symbols.adw_swipeable_get_distance ??
+        missing("adw_swipeable_get_distance"))(this.ptr);
+    },
+    getProgress(this: GObject): number {
+      return (adw.symbols.adw_swipeable_get_progress ??
+        missing("adw_swipeable_get_progress"))(this.ptr);
     },
   };
 
@@ -2289,6 +2404,14 @@ export interface SpinRowMethods {
    */
   update(): void;
   /**
+   * Emitted to convert the user's input into a double value.
+   */
+  onInput(callback: (newValue: number) => number): number;
+  /**
+   * Emitted to tweak the formatting of the value for display.
+   */
+  onOutput(callback: () => boolean): number;
+  /**
    * Emitted right after the spinbutton wraps.
    */
   onWrapped(callback: () => void): number;
@@ -2373,6 +2496,18 @@ export const spinRowMethods: SpinRowMethods & ThisType<GObject> = {
     (adw.symbols.adw_spin_row_update ?? missing("adw_spin_row_update", "1.4"))(
       this.ptr,
     );
+  },
+  onInput(this: GObject, callback: (newValue: number) => number): number {
+    return connectSignal(this, "input", {
+      parameters: ["pointer", "f64", "pointer"],
+      result: "i32",
+    }, (a0: never) => callback(a0));
+  },
+  onOutput(this: GObject, callback: () => boolean): number {
+    return connectSignal(this, "output", {
+      parameters: ["pointer", "pointer"],
+      result: "i32",
+    }, () => (callback()) ? 1 : 0);
   },
   onWrapped(this: GObject, callback: () => void): number {
     return connectSignal(this, "wrapped", {
@@ -2546,6 +2681,10 @@ export interface ToastMethods {
    */
   getActionName(): string | null;
   /**
+   * Gets the parameter for action invocations.
+   */
+  getActionTargetValue(): Deno.PointerValue;
+  /**
    * Gets the label to show on the button.
    */
   getButtonLabel(): string | null;
@@ -2574,6 +2713,10 @@ export interface ToastMethods {
    */
   setActionName(actionName: string | null): void;
   /**
+   * Sets the parameter for action invocations.
+   */
+  setActionTargetValue(actionTarget: Deno.PointerValue): void;
+  /**
    * Sets the custom title widget of `self`.
    */
   setCustomTitle(widget: Widget | null): void;
@@ -2594,6 +2737,10 @@ export const toastMethods: ToastMethods & ThisType<GObject> = {
       (adw.symbols.adw_toast_get_action_name ??
         missing("adw_toast_get_action_name"))(this.ptr),
     );
+  },
+  getActionTargetValue(this: GObject): Deno.PointerValue {
+    return (adw.symbols.adw_toast_get_action_target_value ??
+      missing("adw_toast_get_action_target_value"))(this.ptr);
   },
   getButtonLabel(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
@@ -2629,6 +2776,10 @@ export const toastMethods: ToastMethods & ThisType<GObject> = {
   setActionName(this: GObject, actionName: string | null): void {
     (adw.symbols.adw_toast_set_action_name ??
       missing("adw_toast_set_action_name"))(this.ptr, cstrOrNull(actionName));
+  },
+  setActionTargetValue(this: GObject, actionTarget: Deno.PointerValue): void {
+    (adw.symbols.adw_toast_set_action_target_value ??
+      missing("adw_toast_set_action_target_value"))(this.ptr, actionTarget);
   },
   setCustomTitle(this: GObject, widget: Widget | null): void {
     (adw.symbols.adw_toast_set_custom_title ??
@@ -2863,13 +3014,9 @@ export const windowTitleMethods: WindowTitleMethods & ThisType<GObject> = {
 };
 
 // Not generated (unsupported shapes):
-// - AboutDialog.activate-link: signal with a result
 // - AboutDialog.set_developers: arrays and varargs
-// - Carousel.get_scroll_params: record SpringParams
-// - Carousel.set_scroll_params: record SpringParams
+// - Carousel.get_scroll_params: struct ownership
 // - NavigationView.get-next-page: signal with a result
 // - PreferencesPage.get_name: same name as Gtk.Widget.get_name
 // - PreferencesPage.set_name: same name as Gtk.Widget.set_name
-// - SpinRow.input: signal with a result
-// - SpinRow.output: signal with a result
 // - ToastOverlay.add_toast: object ownership transfer

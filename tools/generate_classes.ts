@@ -18,6 +18,12 @@ export type ClassConfig = {
   wrapper?: string;
   /** Methods or signals to leave out, by GIR name, with the reason. */
   skip?: Record<string, string>;
+  /**
+   * Generate only these interfaces' methods: for a hand-written class whose
+   * hand-written subclasses aren't GIR subclasses but do implement these
+   * interfaces (Entry and SearchEntry both implement Editable).
+   */
+  interfacesOnly?: string[];
 };
 
 export type ClassProfile = {
@@ -72,7 +78,7 @@ export function girClasses(
       if (!modules.includes(module) || result.has(key)) continue;
       const node = namespaces.get(ns) &&
         children(namespaces.get(ns)!.node).find((entry) =>
-          entry.localName === "class" && entry.getAttribute("name") === name
+          isType(entry) && entry.getAttribute("name") === name
         );
       if (node) result.set(key, `${ns}.${name}`);
     }
@@ -92,7 +98,7 @@ export function girAncestors(
     const owner: Namespace | undefined = namespaces.get(ns);
     const node: Element | undefined = owner &&
       children(owner.node).find((entry) =>
-        entry.localName === "class" && entry.getAttribute("name") === name
+        isType(entry) && entry.getAttribute("name") === name
       );
     chain.push(current);
     const parent: string | null | undefined = node?.getAttribute("parent");
@@ -101,6 +107,44 @@ export function girAncestors(
       : null;
   }
   return chain;
+}
+
+/** The `implements` elements of a type and its GIR ancestors. */
+export function implementsOf(
+  namespaces: Map<string, Namespace>,
+  qualified: string,
+): Element[] {
+  const found: Element[] = [];
+  for (const ancestor of girAncestors(namespaces, qualified)) {
+    const [ns, name] = ancestor.split(".", 2);
+    const owner = namespaces.get(ns);
+    const node = owner &&
+      children(owner.node).find((e) =>
+        isType(e) && e.getAttribute("name") === name
+      );
+    for (const entry of node ? children(node) : []) {
+      if (entry.localName === "implements") found.push(entry);
+    }
+  }
+  return found;
+}
+
+/** A type's GIR ancestors and the interfaces they implement, qualified. */
+function lineage(
+  namespaces: Map<string, Namespace>,
+  qualified: string,
+): string[] {
+  const result = girAncestors(namespaces, qualified);
+  for (const entry of implementsOf(namespaces, qualified)) {
+    const iface = entry.getAttribute("name")!;
+    const ns = entry.parentNode
+      ? ((entry.parentNode as Element).parentNode as Element).getAttribute(
+        "name",
+      )
+      : null;
+    result.push(iface.includes(".") ? iface : `${ns}.${iface}`);
+  }
+  return result;
 }
 
 /** The hand-written key of a class's parent. */
@@ -124,19 +168,28 @@ export function checkHierarchy(
   namespaces: Map<string, Namespace>,
   generated: Set<string>,
   handWritten: HandWritten,
+  /** Interface-only classes: GIR class -> interfaces whose methods it gets. */
+  interfaceOnly: Map<string, string[]> = new Map(),
 ): void {
   const gir = girClasses(namespaces, handWritten);
   const problems: string[] = [];
   for (const key of handWritten.keys()) {
     const own = gir.get(key);
     if (!own) continue;
-    const ancestors = girAncestors(namespaces, own);
+    const ancestors = lineage(namespaces, own);
     for (
       let parent = parentKey(handWritten, key);
       parent;
       parent = parentKey(handWritten, parent)
     ) {
       const parentGir = gir.get(parent);
+      for (const iface of parentGir ? interfaceOnly.get(parentGir) ?? [] : []) {
+        if (!ancestors.includes(iface)) {
+          problems.push(
+            `${key} (${own}) inherits generated ${iface} methods from ${parent}, but doesn't implement ${iface}`,
+          );
+        }
+      }
       if (
         parentGir && generated.has(parentGir) && !ancestors.includes(parentGir)
       ) {
@@ -152,6 +205,11 @@ export function checkHierarchy(
         problems.join("\n"),
     );
   }
+}
+
+/** GIR classes and interfaces: the types wrappers can stand for. */
+function isType(node: Element): boolean {
+  return node.localName === "class" || node.localName === "interface";
 }
 
 function children(node: Element): Element[] {
@@ -349,9 +407,10 @@ class Generator {
       if (resolved.node.getAttributeNS(GLIB, "fundamental") === "1") {
         throw new Unsupported("fundamental type");
       }
-      if (direction === "out" && transfer !== "none") {
+      if (direction === "out" && transfer === "container") {
         throw new Unsupported("returned object ownership");
       }
+      const take = direction === "out" && transfer === "full";
       if (direction === "in" && transfer !== "none") {
         throw new Unsupported("object ownership transfer");
       }
@@ -361,14 +420,28 @@ class Generator {
         ts: nullable ? `${wrapper} | null` : wrapper,
         abi: "pointer",
         toNative: (v: string) => nullable ? `${v}?.ptr ?? null` : `${v}.ptr`,
-        fromNative: (v: string) =>
-          nullable
-            ? `borrowed<${wrapper}>(${v})`
-            : `borrowed<${wrapper}>(${v})!`,
+        fromNative: (v: string) => {
+          const wrap = take ? "owned" : "borrowed";
+          this.runtime.add(wrap);
+          return nullable
+            ? `${wrap}<${wrapper}>(${v})`
+            : `${wrap}<${wrapper}>(${v})!`;
+        },
         fromSignal: (v: string) =>
           nullable
             ? `borrowed<${wrapper}>(${v})`
             : `borrowed<${wrapper}>(${v})!`,
+      };
+    }
+    if (resolved.kind === "record" || resolved.kind === "union") {
+      // Structs pass through as opaque pointers.
+      if (transfer !== "none") throw new Unsupported("struct ownership");
+      return {
+        ts: "Deno.PointerValue",
+        abi: "pointer",
+        toNative: (v: string) => v,
+        fromNative: (v: string) => v,
+        fromSignal: (v: string) => v,
       };
     }
     throw new Unsupported(`${resolved.kind} ${name}`);
@@ -404,21 +477,33 @@ class Generator {
 
   /** One generated method, or null when its shape isn't supported. */
   method(node: Element, owner: string) {
-    const symbol = node.getAttributeNS(C, "identifier")!;
     if (
       node.getAttribute("introspectable") === "0" ||
       node.getAttribute("deprecated") === "1" ||
       node.hasAttribute("shadowed-by") || node.hasAttribute("moved-to")
     ) return null;
-    if (node.getAttribute("throws") === "1") {
-      throw new Unsupported("GError");
-    }
+    const owner_ = node.parentNode as Element;
+    // Finish functions are called by the async methods that need them.
+    if (finishedBy(owner_, node.getAttribute("name")!)) return null;
+    const finishName = node.getAttributeNS(GLIB, "finish-func");
+    const finish = finishName
+      ? children(owner_).find((m) =>
+        m.localName === "method" && m.getAttribute("name") === finishName
+      )
+      : undefined;
+    if (finishName && !finish) throw new Unsupported("missing finish function");
+    const throws = node.getAttribute("throws") === "1";
     const args = params(node);
     const consumed = new Set<number>();
+    const nulls = new Set<number>();
     const tsParams: string[] = [];
     const prelude: string[] = [];
     const nativeArgs: string[] = ["this.ptr"];
     for (const [index, arg] of args.entries()) {
+      if (nulls.has(index)) {
+        nativeArgs.push("null");
+        continue;
+      }
       if (consumed.has(index)) {
         nativeArgs.push(`__${index}`);
         continue;
@@ -433,6 +518,16 @@ class Generator {
       const resolved = typeName
         ? this.resolve(typeName, this.profile.namespace)
         : null;
+      if (
+        resolved?.kind === "callback" && finish &&
+        arg.getAttribute("scope") === "async"
+      ) {
+        // The GAsyncReadyCallback; asyncCall() provides it.
+        const closure = arg.getAttribute("closure");
+        if (closure !== null) nulls.add(Number(closure));
+        nativeArgs.push("__callback");
+        continue;
+      }
       if (resolved?.kind === "callback") {
         const callback = this.callback(arg, resolved, args, index, consumed);
         tsParams.push(`${name}: ${callback.ts}`);
@@ -449,25 +544,78 @@ class Generator {
     // Callback arguments filled in by the prelude.
     // Symbols only generated methods use are optional in the FFI table:
     // newer than the library's minimum version, or missing on a platform.
-    const version = node.getAttribute("version") ??
-      (node.parentNode as Element).getAttribute("version");
-    const optional = !this.profile.listed?.has(symbol);
-    if (optional || version) this.runtime.add("missing");
-    const fn = optional || version
-      ? `(${this.profile.library}.symbols.${symbol} ?? missing("${symbol}"${
-        version ? `, "${version}"` : ""
-      }))`
-      : `${this.profile.library}.symbols.${symbol}`;
+    const fn = this.symbol(node);
+    const name = camel(node.getAttribute("name")!);
+    if (throws) {
+      this.runtime.add("ErrorSlot");
+      nativeArgs.push("__error.pointer");
+    }
     const call = `${fn}(${nativeArgs.join(", ")})`;
+
+    if (finish) {
+      // Resolve with what the finish function returns.
+      const finishSymbol = finish.getAttributeNS(C, "identifier")!;
+      const finishArgs = params(finish);
+      if (
+        finishArgs.length !== 1 ||
+        child(finishArgs[0], "type")?.getAttribute("name") !==
+              "Gio.AsyncResult" &&
+          child(finishArgs[0], "type")?.getAttribute("name") !== "AsyncResult"
+      ) {
+        throw new Unsupported("finish function with out parameters");
+      }
+      const result = this.value(
+        child(finish, "return-value")!,
+        this.profile.namespace,
+        "out",
+      );
+      const finishFn = this.symbol(finish);
+      const finishCall = `${finishFn}(this.ptr, __result${
+        finish.getAttribute("throws") === "1" ? ", __error.pointer" : ""
+      })`;
+      this.runtime.add("asyncCall");
+      this.used.add(finishSymbol);
+      const resolveWith = result.ts === "void"
+        ? `${finishCall}`
+        : result.fromNative!(finishCall);
+      const body = [
+        ...prelude,
+        ...(throws ? ["const __error = new ErrorSlot();"] : []),
+        `return asyncCall((__callback) => {`,
+        `  ${call};`,
+        ...(throws ? ["  __error.check();"] : []),
+        `}, (__result, __error) => ${resolveWith});`,
+      ];
+      return {
+        name,
+        doc: this.doc(node),
+        signature: `${name}(${tsParams.join(", ")}): Promise<${result.ts}>`,
+        body,
+        owner,
+      };
+    }
+
     const returned = this.value(
       child(node, "return-value")!,
       this.profile.namespace,
       "out",
     );
-    const body = returned.ts === "void"
-      ? [...prelude, `${call};`]
-      : [...prelude, `return ${returned.fromNative!(call)};`];
-    const name = camel(node.getAttribute("name")!);
+    let body: string[];
+    if (throws) {
+      body = [
+        ...prelude,
+        "const __error = new ErrorSlot();",
+        returned.ts === "void" ? `${call};` : `const __value = ${call};`,
+        "__error.check();",
+        ...(returned.ts === "void"
+          ? []
+          : [`return ${returned.fromNative!("__value")};`]),
+      ];
+    } else {
+      body = returned.ts === "void"
+        ? [...prelude, `${call};`]
+        : [...prelude, `return ${returned.fromNative!(call)};`];
+    }
     return {
       name,
       doc: this.doc(node),
@@ -475,6 +623,24 @@ class Generator {
       body,
       owner,
     };
+  }
+
+  /** Symbols of finish functions generated async methods call. */
+  used = new Set<string>();
+
+  /** A symbol reference, guarded when it may be missing. */
+  symbol(node: Element): string {
+    const symbol = node.getAttributeNS(C, "identifier")!;
+    const version = node.getAttribute("version") ??
+      (node.parentNode as Element).getAttribute("version");
+    const optional = !this.profile.listed?.has(symbol);
+    if (!optional && !version) {
+      return `${this.profile.library}.symbols.${symbol}`;
+    }
+    this.runtime.add("missing");
+    return `(${this.profile.library}.symbols.${symbol} ?? missing("${symbol}"${
+      version ? `, "${version}"` : ""
+    }))`;
   }
 
   /** A callback parameter; marks its user data and destroy notify consumed. */
@@ -583,9 +749,21 @@ class Generator {
 
   signal(node: Element, owner: string) {
     if (node.getAttribute("deprecated") === "1") return null;
-    const returned = child(child(node, "return-value")!, "type")
+    const returnType = child(child(node, "return-value")!, "type")
       ?.getAttribute("name");
-    if (returned !== "none") throw new Unsupported("signal with a result");
+    const result = returnType === "none"
+      ? { ts: "void", abi: "void", wrap: (v: string) => v }
+      : returnType === "gboolean"
+      ? { ts: "boolean", abi: "i32", wrap: (v: string) => `(${v}) ? 1 : 0` }
+      : INTEGERS.has(returnType ?? "")
+      ? {
+        ts: "number",
+        abi: INTEGERS.get(returnType!)!,
+        wrap: (v: string) => v,
+      }
+      : (() => {
+        throw new Unsupported("signal with a result");
+      })();
     const tsArgs: string[] = [];
     const abi = ["pointer"];
     const conversions: string[] = [];
@@ -606,13 +784,15 @@ class Generator {
     return {
       name,
       doc: this.doc(node),
-      signature: `${name}(callback: (${tsArgs.join(", ")}) => void): number`,
+      signature: `${name}(callback: (${
+        tsArgs.join(", ")
+      }) => ${result.ts}): number`,
       body: [
         `return connectSignal(this, ${JSON.stringify(signal)}, { parameters: ${
           JSON.stringify(abi)
-        }, result: "void" }, (${typedArgs.join(", ")}) => callback(${
-          conversions.join(", ")
-        }));`,
+        }, result: "${result.abi}" }, (${typedArgs.join(", ")}) => ${
+          result.wrap(`callback(${conversions.join(", ")})`)
+        });`,
       ],
       owner,
     };
@@ -639,10 +819,71 @@ class Generator {
   }
 }
 
-/** Find a class in a namespace. */
+/** Whether a method is another method's finish function. */
+function finishedBy(owner: Element, name: string): boolean {
+  return children(owner).some((m) =>
+    m.localName === "method" && m.getAttributeNS(GLIB, "finish-func") === name
+  );
+}
+
+/**
+ * The members generated for a class: its own methods and signals (unless
+ * `interfacesOnly`), then those of the same-namespace interfaces it
+ * implements that no GIR ancestor already implements.
+ */
+function membersOf(
+  namespaces: Map<string, Namespace>,
+  namespace: Namespace,
+  name: string,
+  config: ClassConfig,
+): { member: Element; owner: string }[] {
+  const node = classNode(namespace, name);
+  const isMember = (m: Element) =>
+    m.localName === "method" ||
+    m.namespaceURI === GLIB && m.localName === "signal";
+  const only = config.interfacesOnly;
+  const result = only ? [] : children(node).filter(isMember).map((member) => ({
+    member,
+    owner: name,
+  }));
+  const inherited = new Set<string>();
+  for (
+    const ancestor of girAncestors(namespaces, `${namespace.name}.${name}`)
+      .slice(1)
+  ) {
+    const [ns, local] = ancestor.split(".", 2);
+    const owner = namespaces.get(ns);
+    const ancestorNode = owner &&
+      children(owner.node).find((e) =>
+        isType(e) && e.getAttribute("name") === local
+      );
+    for (const entry of ancestorNode ? children(ancestorNode) : []) {
+      if (entry.localName === "implements") {
+        inherited.add(entry.getAttribute("name")!);
+      }
+    }
+  }
+  for (const entry of children(node)) {
+    const iface = entry.getAttribute("name");
+    if (
+      entry.localName !== "implements" || !iface || iface.includes(".") ||
+      inherited.has(iface) || only && !only.includes(iface)
+    ) continue;
+    const ifaceNode = children(namespace.node).find((e) =>
+      e.localName === "interface" && e.getAttribute("name") === iface
+    );
+    if (!ifaceNode) continue;
+    for (const member of children(ifaceNode).filter(isMember)) {
+      result.push({ member, owner: iface });
+    }
+  }
+  return result;
+}
+
+/** Find a class or interface in a namespace. */
 function classNode(namespace: Namespace, name: string): Element {
   const node = children(namespace.node).find((entry) =>
-    entry.localName === "class" && entry.getAttribute("name") === name
+    isType(entry) && entry.getAttribute("name") === name
   );
   if (!node) throw new Error(`${namespace.name}.${name}: no such class in GIR`);
   return node;
@@ -656,21 +897,23 @@ export function classSymbols(
   const namespace = namespaces.get(profile.namespace)!;
   const symbols: string[] = [];
   for (const [name, config] of Object.entries(profile.classes)) {
-    const node = classNode(namespace, name);
-    for (const method of children(node)) {
-      if (method.localName !== "method") continue;
-      if (config.skip?.[method.getAttribute("name")!]) continue;
+    for (
+      const { member, owner } of membersOf(namespaces, namespace, name, config)
+    ) {
+      if (member.localName !== "method") continue;
+      if (config.skip?.[member.getAttribute("name")!]) continue;
       const generator = new Generator(namespaces, profile, new Map());
       try {
-        if (generator.method(method, name)) {
-          symbols.push(method.getAttributeNS(C, "identifier")!);
+        if (generator.method(member, owner)) {
+          symbols.push(member.getAttributeNS(C, "identifier")!);
+          symbols.push(...generator.used);
         }
       } catch (error) {
         if (!(error instanceof Unsupported)) throw error;
       }
     }
   }
-  return symbols;
+  return [...new Set(symbols)];
 }
 
 /** Elements the snapshot must keep so the classes generate the same way. */
@@ -698,14 +941,13 @@ export function classMembers(
       }
     }
   };
-  for (const name of Object.keys(profile.classes)) {
-    const node = classNode(namespace, name);
+  for (const [name, config] of Object.entries(profile.classes)) {
     types.add(`${profile.namespace}.${name}`);
-    for (const member of children(node)) {
-      const isSignal = member.namespaceURI === GLIB &&
-        member.localName === "signal";
-      if (member.localName !== "method" && !isSignal) continue;
+    for (
+      const { member, owner } of membersOf(namespaces, namespace, name, config)
+    ) {
       members.push(member);
+      types.add(`${profile.namespace}.${owner}`);
       for (const arg of [...params(member), child(member, "return-value")]) {
         if (arg) {
           addType(
@@ -713,6 +955,20 @@ export function classMembers(
             profile.namespace,
           );
         }
+      }
+    }
+    // Which interfaces the class and its ancestors implement.
+    for (
+      const ancestor of girAncestors(namespaces, `${profile.namespace}.${name}`)
+    ) {
+      const [ns, local] = ancestor.split(".", 2);
+      const owner = namespaces.get(ns);
+      const ancestorNode = owner &&
+        children(owner.node).find((e) =>
+          isType(e) && e.getAttribute("name") === local
+        );
+      for (const entry of ancestorNode ? children(ancestorNode) : []) {
+        if (entry.localName === "implements") members.push(entry);
       }
     }
   }
@@ -744,7 +1000,7 @@ export function generateClasses(
       const owner = namespaces.get(ns);
       const ancestorNode = owner &&
         children(owner.node).find((entry) =>
-          entry.localName === "class" && entry.getAttribute("name") === name
+          isType(entry) && entry.getAttribute("name") === name
         );
       for (const entry of ancestorNode ? children(ancestorNode) : []) {
         const memberName = entry.getAttribute("name");
@@ -760,17 +1016,31 @@ export function generateClasses(
       }
     }
     const members = [];
-    for (const member of children(node)) {
-      const isSignal = member.namespaceURI === GLIB &&
-        member.localName === "signal";
-      if (member.localName !== "method" && !isSignal) continue;
+    const names = new Set<string>();
+    for (
+      const { member, owner } of membersOf(
+        namespaces,
+        namespace,
+        className,
+        config,
+      )
+    ) {
+      const isSignal = member.localName === "signal";
       const girName = member.getAttribute("name")!;
       if (config.skip?.[girName]) continue;
       try {
         const generated = isSignal
-          ? generator.signal(member, className)
-          : generator.method(member, className);
+          ? generator.signal(member, owner)
+          : generator.method(member, owner);
         if (!generated || taken.has(generated.name)) continue;
+        // The class's own member wins over an interface's of the same name.
+        if (names.has(generated.name)) {
+          generator.skipped.push(
+            `${className}.${girName} (${owner}): name taken by another member`,
+          );
+          continue;
+        }
+        names.add(generated.name);
         const shadowed = inherited.get(generated.name);
         if (shadowed) {
           generator.skipped.push(
@@ -781,7 +1051,11 @@ export function generateClasses(
         members.push(generated);
       } catch (error) {
         if (!(error instanceof Unsupported)) throw error;
-        generator.skipped.push(`${className}.${girName}: ${error.message}`);
+        generator.skipped.push(
+          `${className}.${girName}${
+            owner === className ? "" : ` (${owner})`
+          }: ${error.message}`,
+        );
       }
     }
     const typeName = node.getAttributeNS(GLIB, "type-name");

@@ -134,4 +134,5 @@ export const glibSymbols = {
   },
   // Since 2.24. Return transfer full.
   g_variant_print: { parameters: ["pointer", "gboolean"], result: "pointer" },
+  g_quark_to_string: { parameters: ["u32"], result: "pointer" },
 } as const;

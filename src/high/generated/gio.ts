@@ -5,14 +5,39 @@
 import { gio } from "../../low/gio.ts";
 import { cstr, readCStr } from "../../low/utils.ts";
 import {
+  asyncCall,
   borrowed,
   connectSignal,
   cstrOrNull,
+  ErrorSlot,
   missing,
+  owned,
   takeString,
 } from "../wrappers.ts";
-import type { Cancellable, InputStream, OutputStream } from "../gio.ts";
+import type {
+  AppInfo,
+  AppLaunchContext,
+  AsyncResult,
+  Cancellable,
+  File,
+  InputStream,
+  OutputStream,
+} from "../gio.ts";
 import type { GObject } from "../gobject.ts";
+
+/**
+ * Indicates the file's on-disk type.
+ */
+export const FileType = {
+  UNKNOWN: 0,
+  REGULAR: 1,
+  DIRECTORY: 2,
+  SYMBOLIC_LINK: 3,
+  SPECIAL: 4,
+  SHORTCUT: 5,
+  MOUNTABLE: 6,
+} as const;
+export type FileType = (typeof FileType)[keyof typeof FileType];
 
 /**
  * Priority levels for #GNotifications.
@@ -28,6 +53,12 @@ export type NotificationPriority =
 
 /** Methods generated for `GAppLaunchContext`. */
 export interface AppLaunchContextMethods {
+  /**
+   * Gets the display string for the `context`. This is used to ensure new
+   * applications are started on the same display as the launching
+   * application, by setting the `DISPLAY` environment variable.
+   */
+  getDisplay(info: AppInfo, files: Deno.PointerValue): string | null;
   /**
    * Called when an application has failed to launch, so that it can cancel
    * the application startup notification started in
@@ -50,12 +81,44 @@ export interface AppLaunchContextMethods {
    * so that the launcher can cancel the startup notification.
    */
   onLaunchFailed(callback: (startupNotifyId: string) => void): number;
+  /**
+   * The `launch-started` signal is emitted when a
+   * `AppInfo` is about to be launched. If non-null the
+   * `platformData` is an GVariant dictionary mapping strings to variants
+   * (ie `a{sv}`), which contains additional, platform-specific data about this
+   * launch. On UNIX, at least the `startup-notification-id` keys will be
+   * present.
+   */
+  onLaunchStarted(
+    callback: (info: AppInfo, platformData: Deno.PointerValue) => void,
+  ): number;
+  /**
+   * The `launched` signal is emitted when a
+   * `AppInfo` is successfully launched.
+   */
+  onLaunched(
+    callback: (info: AppInfo, platformData: Deno.PointerValue) => void,
+  ): number;
 }
 
 /** Implementations of {@linkcode AppLaunchContextMethods}. */
 export const appLaunchContextMethods:
   & AppLaunchContextMethods
   & ThisType<GObject> = {
+    getDisplay(
+      this: GObject,
+      info: AppInfo,
+      files: Deno.PointerValue,
+    ): string | null {
+      return takeString(
+        (gio.symbols.g_app_launch_context_get_display ??
+          missing("g_app_launch_context_get_display"))(
+            this.ptr,
+            info.ptr,
+            files,
+          ),
+      );
+    },
     launchFailed(this: GObject, startupNotifyId: string): void {
       (gio.symbols.g_app_launch_context_launch_failed ??
         missing("g_app_launch_context_launch_failed"))(
@@ -87,6 +150,24 @@ export const appLaunchContextMethods:
         result: "void",
       }, (a0: never) => callback(readCStr(a0)));
     },
+    onLaunchStarted(
+      this: GObject,
+      callback: (info: AppInfo, platformData: Deno.PointerValue) => void,
+    ): number {
+      return connectSignal(this, "launch-started", {
+        parameters: ["pointer", "pointer", "pointer", "pointer"],
+        result: "void",
+      }, (a0: never, a1: never) => callback(borrowed<AppInfo>(a0)!, a1));
+    },
+    onLaunched(
+      this: GObject,
+      callback: (info: AppInfo, platformData: Deno.PointerValue) => void,
+    ): number {
+      return connectSignal(this, "launched", {
+        parameters: ["pointer", "pointer", "pointer", "pointer"],
+        result: "void",
+      }, (a0: never, a1: never) => callback(borrowed<AppInfo>(a0)!, a1));
+    },
   };
 
 /** Methods generated for `GCancellable`. */
@@ -97,6 +178,13 @@ export interface CancellableMethods {
    * turn readable when `cancellable` is cancelled.
    */
   getFd(): number;
+  /**
+   * Creates a #GPollFD corresponding to `cancellable`; this can be passed
+   * to g_poll() and used to poll for cancellation. This is useful both
+   * for unix systems without a native poll and for portability to
+   * windows.
+   */
+  makePollfd(pollfd: Deno.PointerValue): boolean;
   /**
    * Pops `cancellable` off the cancellable stack (verifying that `cancellable`
    * is on the top of the stack).
@@ -117,6 +205,11 @@ export interface CancellableMethods {
    */
   reset(): void;
   /**
+   * If the `cancellable` is cancelled, sets the error to notify
+   * that the operation was cancelled.
+   */
+  setErrorIfCancelled(): boolean;
+  /**
    * Emitted when the operation has been cancelled.
    */
   onCancelled(callback: () => void): number;
@@ -127,6 +220,10 @@ export const cancellableMethods: CancellableMethods & ThisType<GObject> = {
   getFd(this: GObject): number {
     return (gio.symbols.g_cancellable_get_fd ??
       missing("g_cancellable_get_fd"))(this.ptr);
+  },
+  makePollfd(this: GObject, pollfd: Deno.PointerValue): boolean {
+    return (gio.symbols.g_cancellable_make_pollfd ??
+      missing("g_cancellable_make_pollfd", "2.22"))(this.ptr, pollfd);
   },
   popCurrent(this: GObject): void {
     (gio.symbols.g_cancellable_pop_current ??
@@ -144,6 +241,16 @@ export const cancellableMethods: CancellableMethods & ThisType<GObject> = {
     (gio.symbols.g_cancellable_reset ?? missing("g_cancellable_reset"))(
       this.ptr,
     );
+  },
+  setErrorIfCancelled(this: GObject): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_cancellable_set_error_if_cancelled ??
+      missing("g_cancellable_set_error_if_cancelled"))(
+        this.ptr,
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
   },
   onCancelled(this: GObject, callback: () => void): number {
     return connectSignal(this, "cancelled", {
@@ -170,6 +277,12 @@ export interface DBusProxyMethods {
    */
   getFlags(): number;
   /**
+   * Returns the #GDBusInterfaceInfo, if any, specifying the interface
+   * that `proxy` conforms to. See the #GDBusProxy:g-interface-info
+   * property for more details.
+   */
+  getInterfaceInfo(): Deno.PointerValue;
+  /**
    * Gets the D-Bus interface name `proxy` is for.
    */
   getInterfaceName(): string;
@@ -189,11 +302,64 @@ export interface DBusProxyMethods {
    */
   getObjectPath(): string;
   /**
+   * If `value` is not `null`, sets the cached value for the property with
+   * name `propertyName` to the value in `value`.
+   */
+  setCachedProperty(propertyName: string, value: Deno.PointerValue): void;
+  /**
    * Sets the timeout to use if -1 (specifying default timeout) is
    * passed as `timeoutMsec` in the g_dbus_proxy_call() and
    * g_dbus_proxy_call_sync() functions.
    */
   setDefaultTimeout(timeoutMsec: number): void;
+  /**
+   * Ensure that interactions with `proxy` conform to the given
+   * interface. See the #GDBusProxy:g-interface-info property for more
+   * details.
+   */
+  setInterfaceInfo(info: Deno.PointerValue): void;
+  /**
+   * Emitted when a signal from the remote object and interface that `proxy` is for, has been received.
+   */
+  onGSignal(
+    callback: (
+      senderName: string | null,
+      signalName: string,
+      parameters: Deno.PointerValue,
+    ) => void,
+  ): number;
+  /**
+   * Starts asynchronous initialization of the object implementing the
+   * interface. This must be done before any real use of the object after
+   * initial construction. If the object also implements #GInitable you can
+   * optionally call g_initable_init() instead.
+   */
+  initAsync(
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<boolean>;
+  /**
+   * Finishes the async construction for the various g_async_initable_new
+   * calls, returning the created object or `null` on error.
+   */
+  newFinish(res: AsyncResult): GObject;
+  /**
+   * Gets the #GDBusObject that `interface_` belongs to, if any.
+   */
+  dupObject(): GObject | null;
+  /**
+   * Gets D-Bus introspection information for the D-Bus interface
+   * implemented by `interface_`.
+   */
+  getInfo(): Deno.PointerValue;
+  /**
+   * Sets the #GDBusObject for `interface_` to `object`.
+   */
+  setObject(object: GObject | null): void;
+  /**
+   * Initializes the object implementing the interface.
+   */
+  init(cancellable: Cancellable | null): boolean;
 }
 
 /** Implementations of {@linkcode DBusProxyMethods}. */
@@ -211,6 +377,10 @@ export const dBusProxyMethods: DBusProxyMethods & ThisType<GObject> = {
   getFlags(this: GObject): number {
     return (gio.symbols.g_dbus_proxy_get_flags ??
       missing("g_dbus_proxy_get_flags", "2.26"))(this.ptr);
+  },
+  getInterfaceInfo(this: GObject): Deno.PointerValue {
+    return (gio.symbols.g_dbus_proxy_get_interface_info ??
+      missing("g_dbus_proxy_get_interface_info", "2.26"))(this.ptr);
   },
   getInterfaceName(this: GObject): string {
     return readCStr(
@@ -236,12 +406,111 @@ export const dBusProxyMethods: DBusProxyMethods & ThisType<GObject> = {
         missing("g_dbus_proxy_get_object_path", "2.26"))(this.ptr),
     );
   },
+  setCachedProperty(
+    this: GObject,
+    propertyName: string,
+    value: Deno.PointerValue,
+  ): void {
+    (gio.symbols.g_dbus_proxy_set_cached_property ??
+      missing("g_dbus_proxy_set_cached_property", "2.26"))(
+        this.ptr,
+        cstr(propertyName),
+        value,
+      );
+  },
   setDefaultTimeout(this: GObject, timeoutMsec: number): void {
     (gio.symbols.g_dbus_proxy_set_default_timeout ??
       missing("g_dbus_proxy_set_default_timeout", "2.26"))(
         this.ptr,
         timeoutMsec,
       );
+  },
+  setInterfaceInfo(this: GObject, info: Deno.PointerValue): void {
+    (gio.symbols.g_dbus_proxy_set_interface_info ??
+      missing("g_dbus_proxy_set_interface_info", "2.26"))(this.ptr, info);
+  },
+  onGSignal(
+    this: GObject,
+    callback: (
+      senderName: string | null,
+      signalName: string,
+      parameters: Deno.PointerValue,
+    ) => void,
+  ): number {
+    return connectSignal(
+      this,
+      "g-signal",
+      {
+        parameters: ["pointer", "pointer", "pointer", "pointer", "pointer"],
+        result: "void",
+      },
+      (a0: never, a1: never, a2: never) =>
+        callback(((p) => p ? readCStr(p) : null)(a0), readCStr(a1), a2),
+    );
+  },
+  initAsync(
+    this: GObject,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_async_initable_init_async ??
+          missing("g_async_initable_init_async", "2.22"))(
+            this.ptr,
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_async_initable_init_finish ??
+          missing("g_async_initable_init_finish", "2.22"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+    );
+  },
+  newFinish(this: GObject, res: AsyncResult): GObject {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_async_initable_new_finish ??
+      missing("g_async_initable_new_finish", "2.22"))(
+        this.ptr,
+        res.ptr,
+        __error.pointer,
+      );
+    __error.check();
+    return owned<GObject>(__value)!;
+  },
+  dupObject(this: GObject): GObject | null {
+    return owned<GObject>(
+      (gio.symbols.g_dbus_interface_dup_object ??
+        missing("g_dbus_interface_dup_object", "2.32"))(this.ptr),
+    );
+  },
+  getInfo(this: GObject): Deno.PointerValue {
+    return (gio.symbols.g_dbus_interface_get_info ??
+      missing("g_dbus_interface_get_info", "2.30"))(this.ptr);
+  },
+  setObject(this: GObject, object: GObject | null): void {
+    (gio.symbols.g_dbus_interface_set_object ??
+      missing("g_dbus_interface_set_object", "2.30"))(
+        this.ptr,
+        object?.ptr ?? null,
+      );
+  },
+  init(this: GObject, cancellable: Cancellable | null): boolean {
+    const __error = new ErrorSlot();
+    const __value =
+      (gio.symbols.g_initable_init ?? missing("g_initable_init", "2.22"))(
+        this.ptr,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
   },
 };
 
@@ -252,6 +521,16 @@ export interface InputStreamMethods {
    */
   clearPending(): void;
   /**
+   * Requests an asynchronous closes of the stream, releasing resources related to it.
+   * When the operation is finished `callback` will be called.
+   * You can then call g_input_stream_close_finish() to get the result of the
+   * operation.
+   */
+  closeAsync(
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<boolean>;
+  /**
    * Checks if an input stream has pending actions.
    */
   hasPending(): boolean;
@@ -259,6 +538,12 @@ export interface InputStreamMethods {
    * Checks if an input stream has been closed.
    */
   isClosed(): boolean;
+  /**
+   * Sets `stream` to have actions pending. If the pending flag is
+   * already set or `stream` is closed, it will return `false` and set
+   * `error`.
+   */
+  setPending(): boolean;
 }
 
 /** Implementations of {@linkcode InputStreamMethods}. */
@@ -267,6 +552,31 @@ export const inputStreamMethods: InputStreamMethods & ThisType<GObject> = {
     (gio.symbols.g_input_stream_clear_pending ??
       missing("g_input_stream_clear_pending"))(this.ptr);
   },
+  closeAsync(
+    this: GObject,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_input_stream_close_async ??
+          missing("g_input_stream_close_async"))(
+            this.ptr,
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_input_stream_close_finish ??
+          missing("g_input_stream_close_finish"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+    );
+  },
   hasPending(this: GObject): boolean {
     return (gio.symbols.g_input_stream_has_pending ??
       missing("g_input_stream_has_pending"))(this.ptr);
@@ -274,6 +584,13 @@ export const inputStreamMethods: InputStreamMethods & ThisType<GObject> = {
   isClosed(this: GObject): boolean {
     return (gio.symbols.g_input_stream_is_closed ??
       missing("g_input_stream_is_closed"))(this.ptr);
+  },
+  setPending(this: GObject): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_input_stream_set_pending ??
+      missing("g_input_stream_set_pending"))(this.ptr, __error.pointer);
+    __error.check();
+    return __value;
   },
 };
 
@@ -299,6 +616,26 @@ export interface ListStoreMethods {
    * Sort the items in `store` according to `compareFunc`.
    */
   sort(compareFunc: () => number): void;
+  /**
+   * Gets the number of items in `list`.
+   */
+  getNItems(): number;
+  /**
+   * Get the item at `position`.
+   */
+  getObject(position: number): GObject | null;
+  /**
+   * Emits the #GListModel::items-changed signal on `list`.
+   */
+  itemsChanged(position: number, removed: number, added: number): void;
+  /**
+   * This signal is emitted whenever items were added to or removed
+   * from `list`. At `position`, `removed` items were removed and `added`
+   * items were added in their place.
+   */
+  onItemsChanged(
+    callback: (position: number, removed: number, added: number) => void,
+  ): number;
 }
 
 /** Implementations of {@linkcode ListStoreMethods}. */
@@ -371,6 +708,39 @@ export const listStoreMethods: ListStoreMethods & ThisType<GObject> = {
       __0,
       __1,
     );
+  },
+  getNItems(this: GObject): number {
+    return (gio.symbols.g_list_model_get_n_items ??
+      missing("g_list_model_get_n_items", "2.44"))(this.ptr);
+  },
+  getObject(this: GObject, position: number): GObject | null {
+    return owned<GObject>(
+      (gio.symbols.g_list_model_get_object ??
+        missing("g_list_model_get_object", "2.44"))(this.ptr, position),
+    );
+  },
+  itemsChanged(
+    this: GObject,
+    position: number,
+    removed: number,
+    added: number,
+  ): void {
+    (gio.symbols.g_list_model_items_changed ??
+      missing("g_list_model_items_changed", "2.44"))(
+        this.ptr,
+        position,
+        removed,
+        added,
+      );
+  },
+  onItemsChanged(
+    this: GObject,
+    callback: (position: number, removed: number, added: number) => void,
+  ): number {
+    return connectSignal(this, "items-changed", {
+      parameters: ["pointer", "u32", "u32", "u32", "pointer"],
+      result: "void",
+    }, (a0: never, a1: never, a2: never) => callback(a0, a1, a2));
   },
 };
 
@@ -577,6 +947,15 @@ export interface NotificationMethods {
    */
   addButton(label: string, detailedAction: string): void;
   /**
+   * Adds a button to `notification` that activates `action` when clicked.
+   * `action` must be an application-wide action (it must start with "app.").
+   */
+  addButtonWithTargetValue(
+    label: string,
+    action: string,
+    target: Deno.PointerValue,
+  ): void;
+  /**
    * Sets the type of `notification` to `category`. Categories have a main
    * type like `email`, `im` or `device` and can have a detail separated
    * by a `.`, e.g. `im.received` or `email.arrived`. Setting the category
@@ -588,6 +967,15 @@ export interface NotificationMethods {
    * action is activated when the notification is clicked on.
    */
   setDefaultAction(detailedAction: string): void;
+  /**
+   * Sets the default action of `notification` to `action`. This action is
+   * activated when the notification is clicked on. It must be an
+   * application-wide action (start with "app.").
+   */
+  setDefaultActionAndTargetValue(
+    action: string,
+    target: Deno.PointerValue,
+  ): void;
   /**
    * Sets the icon of `notification` to `icon`.
    */
@@ -613,6 +1001,20 @@ export const notificationMethods: NotificationMethods & ThisType<GObject> = {
         cstr(detailedAction),
       );
   },
+  addButtonWithTargetValue(
+    this: GObject,
+    label: string,
+    action: string,
+    target: Deno.PointerValue,
+  ): void {
+    (gio.symbols.g_notification_add_button_with_target_value ??
+      missing("g_notification_add_button_with_target_value", "2.40"))(
+        this.ptr,
+        cstr(label),
+        cstr(action),
+        target,
+      );
+  },
   setCategory(this: GObject, category: string | null): void {
     (gio.symbols.g_notification_set_category ??
       missing("g_notification_set_category", "2.70"))(
@@ -625,6 +1027,18 @@ export const notificationMethods: NotificationMethods & ThisType<GObject> = {
       missing("g_notification_set_default_action", "2.40"))(
         this.ptr,
         cstr(detailedAction),
+      );
+  },
+  setDefaultActionAndTargetValue(
+    this: GObject,
+    action: string,
+    target: Deno.PointerValue,
+  ): void {
+    (gio.symbols.g_notification_set_default_action_and_target_value ??
+      missing("g_notification_set_default_action_and_target_value", "2.40"))(
+        this.ptr,
+        cstr(action),
+        target,
       );
   },
   setIcon(this: GObject, icon: GObject): void {
@@ -648,6 +1062,25 @@ export interface OutputStreamMethods {
    */
   clearPending(): void;
   /**
+   * Requests an asynchronous close of the stream, releasing resources
+   * related to it. When the operation is finished `callback` will be
+   * called. You can then call g_output_stream_close_finish() to get
+   * the result of the operation.
+   */
+  closeAsync(
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<boolean>;
+  /**
+   * Forces an asynchronous write of all user-space buffered data for
+   * the given `stream`.
+   * For behaviour details see g_output_stream_flush().
+   */
+  flushAsync(
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<boolean>;
+  /**
    * Checks if an output stream has pending actions.
    */
   hasPending(): boolean;
@@ -662,6 +1095,12 @@ export interface OutputStreamMethods {
    * the closing operation.
    */
   isClosing(): boolean;
+  /**
+   * Sets `stream` to have actions pending. If the pending flag is
+   * already set or `stream` is closed, it will return `false` and set
+   * `error`.
+   */
+  setPending(): boolean;
 }
 
 /** Implementations of {@linkcode OutputStreamMethods}. */
@@ -669,6 +1108,56 @@ export const outputStreamMethods: OutputStreamMethods & ThisType<GObject> = {
   clearPending(this: GObject): void {
     (gio.symbols.g_output_stream_clear_pending ??
       missing("g_output_stream_clear_pending"))(this.ptr);
+  },
+  closeAsync(
+    this: GObject,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_output_stream_close_async ??
+          missing("g_output_stream_close_async"))(
+            this.ptr,
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_output_stream_close_finish ??
+          missing("g_output_stream_close_finish"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+    );
+  },
+  flushAsync(
+    this: GObject,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_output_stream_flush_async ??
+          missing("g_output_stream_flush_async"))(
+            this.ptr,
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_output_stream_flush_finish ??
+          missing("g_output_stream_flush_finish"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+    );
   },
   hasPending(this: GObject): boolean {
     return (gio.symbols.g_output_stream_has_pending ??
@@ -682,6 +1171,13 @@ export const outputStreamMethods: OutputStreamMethods & ThisType<GObject> = {
     return (gio.symbols.g_output_stream_is_closing ??
       missing("g_output_stream_is_closing", "2.24"))(this.ptr);
   },
+  setPending(this: GObject): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_output_stream_set_pending ??
+      missing("g_output_stream_set_pending"))(this.ptr, __error.pointer);
+    __error.check();
+    return __value;
+  },
 };
 
 /** Methods generated for `GSimpleAction`. */
@@ -690,6 +1186,48 @@ export interface SimpleActionMethods {
    * Sets the action as enabled or not.
    */
   setEnabled(enabled: boolean): void;
+  /**
+   * Sets the state of the action.
+   */
+  setState(value: Deno.PointerValue): void;
+  /**
+   * Sets the state hint for the action.
+   */
+  setStateHint(stateHint: Deno.PointerValue): void;
+  /**
+   * Indicates that the action was just activated.
+   */
+  onActivate(callback: (parameter: Deno.PointerValue) => void): number;
+  /**
+   * Indicates that the action just received a request to change its
+   * state.
+   */
+  onChangeState(callback: (value: Deno.PointerValue) => void): number;
+  /**
+   * Activates the action.
+   */
+  activate(parameter: Deno.PointerValue): void;
+  /**
+   * Request for the state of `action` to be changed to `value`.
+   */
+  changeState(value: Deno.PointerValue): void;
+  /**
+   * Checks if `action` is currently enabled.
+   */
+  getEnabled(): boolean;
+  /**
+   * Queries the name of `action`.
+   */
+  getName(): string;
+  /**
+   * Queries the type of the parameter that must be given when activating
+   * `action`.
+   */
+  getParameterType(): Deno.PointerValue;
+  /**
+   * Queries the type of the state of `action`.
+   */
+  getStateType(): Deno.PointerValue;
 }
 
 /** Implementations of {@linkcode SimpleActionMethods}. */
@@ -697,6 +1235,61 @@ export const simpleActionMethods: SimpleActionMethods & ThisType<GObject> = {
   setEnabled(this: GObject, enabled: boolean): void {
     (gio.symbols.g_simple_action_set_enabled ??
       missing("g_simple_action_set_enabled", "2.28"))(this.ptr, enabled);
+  },
+  setState(this: GObject, value: Deno.PointerValue): void {
+    (gio.symbols.g_simple_action_set_state ??
+      missing("g_simple_action_set_state", "2.30"))(this.ptr, value);
+  },
+  setStateHint(this: GObject, stateHint: Deno.PointerValue): void {
+    (gio.symbols.g_simple_action_set_state_hint ??
+      missing("g_simple_action_set_state_hint", "2.44"))(this.ptr, stateHint);
+  },
+  onActivate(
+    this: GObject,
+    callback: (parameter: Deno.PointerValue) => void,
+  ): number {
+    return connectSignal(this, "activate", {
+      parameters: ["pointer", "pointer", "pointer"],
+      result: "void",
+    }, (a0: never) => callback(a0));
+  },
+  onChangeState(
+    this: GObject,
+    callback: (value: Deno.PointerValue) => void,
+  ): number {
+    return connectSignal(this, "change-state", {
+      parameters: ["pointer", "pointer", "pointer"],
+      result: "void",
+    }, (a0: never) => callback(a0));
+  },
+  activate(this: GObject, parameter: Deno.PointerValue): void {
+    (gio.symbols.g_action_activate ?? missing("g_action_activate", "2.28"))(
+      this.ptr,
+      parameter,
+    );
+  },
+  changeState(this: GObject, value: Deno.PointerValue): void {
+    (gio.symbols.g_action_change_state ??
+      missing("g_action_change_state", "2.30"))(this.ptr, value);
+  },
+  getEnabled(this: GObject): boolean {
+    return (gio.symbols.g_action_get_enabled ??
+      missing("g_action_get_enabled", "2.28"))(this.ptr);
+  },
+  getName(this: GObject): string {
+    return readCStr(
+      (gio.symbols.g_action_get_name ?? missing("g_action_get_name", "2.28"))(
+        this.ptr,
+      ),
+    );
+  },
+  getParameterType(this: GObject): Deno.PointerValue {
+    return (gio.symbols.g_action_get_parameter_type ??
+      missing("g_action_get_parameter_type", "2.28"))(this.ptr);
+  },
+  getStateType(this: GObject): Deno.PointerValue {
+    return (gio.symbols.g_action_get_state_type ??
+      missing("g_action_get_state_type", "2.28"))(this.ptr);
   },
 };
 
@@ -731,6 +1324,18 @@ export interface SubprocessMethods {
    * running.
    */
   sendSignal(signalNum: number): void;
+  /**
+   * Combines g_subprocess_wait() with g_spawn_check_wait_status().
+   */
+  waitCheck(cancellable: Cancellable | null): boolean;
+  /**
+   * Combines g_subprocess_wait_async() with g_spawn_check_wait_status().
+   */
+  waitCheckAsync(cancellable: Cancellable | null): Promise<boolean>;
+  /**
+   * Initializes the object implementing the interface.
+   */
+  init(cancellable: Cancellable | null): boolean;
 }
 
 /** Implementations of {@linkcode SubprocessMethods}. */
@@ -761,28 +1366,2113 @@ export const subprocessMethods: SubprocessMethods & ThisType<GObject> = {
     (gio.symbols.g_subprocess_send_signal ??
       missing("g_subprocess_send_signal", "2.40"))(this.ptr, signalNum);
   },
+  waitCheck(this: GObject, cancellable: Cancellable | null): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_subprocess_wait_check ??
+      missing("g_subprocess_wait_check", "2.40"))(
+        this.ptr,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  waitCheckAsync(
+    this: GObject,
+    cancellable: Cancellable | null,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_subprocess_wait_check_async ??
+          missing("g_subprocess_wait_check_async", "2.40"))(
+            this.ptr,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_subprocess_wait_check_finish ??
+          missing("g_subprocess_wait_check_finish", "2.40"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+    );
+  },
+  init(this: GObject, cancellable: Cancellable | null): boolean {
+    const __error = new ErrorSlot();
+    const __value =
+      (gio.symbols.g_initable_init ?? missing("g_initable_init", "2.22"))(
+        this.ptr,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+};
+
+/** Methods generated for `GFile`. */
+export interface FileMethods {
+  /**
+   * Gets an output stream for appending data to the file.
+   * If the file doesn't already exist it is created.
+   */
+  appendTo(flags: number, cancellable: Cancellable | null): OutputStream;
+  /**
+   * Asynchronously opens `file` for appending.
+   */
+  appendToAsync(
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<OutputStream>;
+  /**
+   * Prepares the file attribute query string for copying to `file`.
+   */
+  buildAttributeListForCopy(
+    flags: number,
+    cancellable: Cancellable | null,
+  ): string;
+  /**
+   * Version of `copyAsync()` using closures instead of callbacks for
+   * easier binding in other languages.
+   */
+  copyAsyncWithClosures(
+    destination: File,
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+    progressCallbackClosure: Deno.PointerValue,
+    readyCallbackClosure: Deno.PointerValue,
+  ): Promise<boolean>;
+  /**
+   * Copies the file attributes from `source` to `destination`.
+   */
+  copyAttributes(
+    destination: File,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): boolean;
+  /**
+   * Creates a new file and returns an output stream for writing to it.
+   * The file must not already exist.
+   */
+  create(flags: number, cancellable: Cancellable | null): OutputStream;
+  /**
+   * Asynchronously creates a new file and returns an output stream
+   * for writing to it. The file must not already exist.
+   */
+  createAsync(
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<OutputStream>;
+  /**
+   * Creates a new file and returns a stream for reading and
+   * writing to it. The file must not already exist.
+   */
+  createReadwrite(flags: number, cancellable: Cancellable | null): GObject;
+  /**
+   * Asynchronously creates a new file and returns a stream
+   * for reading and writing to it. The file must not already exist.
+   */
+  createReadwriteAsync(
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<GObject>;
+  /**
+   * Deletes a file. If the `file` is a directory, it will only be
+   * deleted if it is empty. This has the same semantics as g_unlink().
+   */
+  delete(cancellable: Cancellable | null): boolean;
+  /**
+   * Asynchronously delete a file. If the `file` is a directory, it will
+   * only be deleted if it is empty.  This has the same semantics as
+   * g_unlink().
+   */
+  deleteAsync(
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<boolean>;
+  /**
+   * Duplicates a #GFile handle. This operation does not duplicate
+   * the actual file or directory represented by the #GFile; see
+   * g_file_copy() if attempting to copy a file.
+   */
+  dup(): File;
+  /**
+   * Starts an asynchronous eject on a mountable.
+   * When this operation has completed, `callback` will be called with
+   * `userUser` data, and the operation can be finalized with
+   * g_file_eject_mountable_with_operation_finish().
+   */
+  ejectMountableWithOperation(
+    flags: number,
+    mountOperation: GObject | null,
+    cancellable: Cancellable | null,
+  ): Promise<boolean>;
+  /**
+   * Gets the requested information about the files in a directory.
+   * The result is a `FileEnumerator` object that will give out
+   * `FileInfo` objects for all the files in the directory.
+   */
+  enumerateChildren(
+    attributes: string,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): GObject;
+  /**
+   * Asynchronously gets the requested information about the files
+   * in a directory. The result is a #GFileEnumerator object that will
+   * give out #GFileInfo objects for all the files in the directory.
+   */
+  enumerateChildrenAsync(
+    attributes: string,
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<GObject>;
+  /**
+   * Checks if the two given #GFiles refer to the same file.
+   */
+  equal(file2: File): boolean;
+  /**
+   * Gets a #GMount for the #GFile.
+   */
+  findEnclosingMount(cancellable: Cancellable | null): GObject;
+  /**
+   * Asynchronously gets the mount for the file.
+   */
+  findEnclosingMountAsync(
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<GObject>;
+  /**
+   * Gets the base name (the last component of the path) for a given #GFile.
+   */
+  getBasename(): string | null;
+  /**
+   * Gets a child of `file` with basename equal to `name`.
+   */
+  getChild(name: string): File;
+  /**
+   * Gets the child of `file` for a given `displayName` (i.e. a UTF-8
+   * version of the name). If this function fails, it returns `null`
+   * and `error` will be set. This is very useful when constructing a
+   * #GFile for a new file and the user entered the filename in the
+   * user interface, for instance when you select a directory and
+   * type a filename in the file selector.
+   */
+  getChildForDisplayName(displayName: string): File;
+  /**
+   * Gets the parent directory for the `file`.
+   * If the `file` represents the root directory of the
+   * file system, then `null` will be returned.
+   */
+  getParent(): File | null;
+  /**
+   * Gets the parse name of the `file`.
+   * A parse name is a UTF-8 string that describes the
+   * file such that one can get the #GFile back using
+   * g_file_parse_name().
+   */
+  getParseName(): string;
+  /**
+   * Gets the path for `descendant` relative to `parent`.
+   */
+  getRelativePath(descendant: File): string | null;
+  /**
+   * Gets the URI scheme for a #GFile.
+   * RFC 3986 decodes the scheme as:
+   * |[
+   * URI = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+   * ]|
+   * Common schemes include "file", "http", "ftp", etc.
+   */
+  getUriScheme(): string | null;
+  /**
+   * Checks if `file` has a parent, and optionally, if it is `parent`.
+   */
+  hasParent(parent: File | null): boolean;
+  /**
+   * Checks whether `file` has the prefix specified by `prefix`.
+   */
+  hasPrefix(prefix: File): boolean;
+  /**
+   * Checks to see if a #GFile has a given URI scheme.
+   */
+  hasUriScheme(uriScheme: string): boolean;
+  /**
+   * Creates a hash value for a #GFile.
+   */
+  hash(): number;
+  /**
+   * Checks to see if a file is native to the platform.
+   */
+  isNative(): boolean;
+  /**
+   * Creates a directory.
+   */
+  makeDirectory(cancellable: Cancellable | null): boolean;
+  /**
+   * Asynchronously creates a directory.
+   */
+  makeDirectoryAsync(
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<boolean>;
+  /**
+   * Creates a directory and any parent directories that may not
+   * exist similar to 'mkdir -p'. If the file system does not support
+   * creating directories, this function will fail, setting `error` to
+   * %G_IO_ERROR_NOT_SUPPORTED. If the directory itself already exists,
+   * this function will fail setting `error` to %G_IO_ERROR_EXISTS, unlike
+   * the similar g_mkdir_with_parents().
+   */
+  makeDirectoryWithParents(cancellable: Cancellable | null): boolean;
+  /**
+   * Creates a symbolic link named `file` which contains the string
+   * `symlinkValue`.
+   */
+  makeSymbolicLink(
+    symlinkValue: string,
+    cancellable: Cancellable | null,
+  ): boolean;
+  /**
+   * Asynchronously creates a symbolic link named `file` which contains the
+   * string `symlinkValue`.
+   */
+  makeSymbolicLinkAsync(
+    symlinkValue: string,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<boolean>;
+  /**
+   * Obtains a file or directory monitor for the given file,
+   * depending on the type of the file.
+   */
+  monitor(flags: number, cancellable: Cancellable | null): GObject;
+  /**
+   * Obtains a directory monitor for the given file.
+   * This may fail if directory monitoring is not supported.
+   */
+  monitorDirectory(flags: number, cancellable: Cancellable | null): GObject;
+  /**
+   * Obtains a file monitor for the given file. If no file notification
+   * mechanism exists, then regular polling of the file is used.
+   */
+  monitorFile(flags: number, cancellable: Cancellable | null): GObject;
+  /**
+   * Starts a `mountOperation`, mounting the volume that contains
+   * the file `location`.
+   */
+  mountEnclosingVolume(
+    flags: number,
+    mountOperation: GObject | null,
+    cancellable: Cancellable | null,
+  ): Promise<boolean>;
+  /**
+   * Mounts a file of type G_FILE_TYPE_MOUNTABLE.
+   * Using `mountOperation`, you can request callbacks when, for instance,
+   * passwords are needed during authentication.
+   */
+  mountMountable(
+    flags: number,
+    mountOperation: GObject | null,
+    cancellable: Cancellable | null,
+  ): Promise<File>;
+  /**
+   * Version of `moveAsync()` using closures instead of callbacks for
+   * easier binding in other languages.
+   */
+  moveAsyncWithClosures(
+    destination: File,
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+    progressCallbackClosure: Deno.PointerValue,
+    readyCallbackClosure: Deno.PointerValue,
+  ): Promise<boolean>;
+  /**
+   * Opens an existing file for reading and writing. The result is
+   * a #GFileIOStream that can be used to read and write the contents
+   * of the file.
+   */
+  openReadwrite(cancellable: Cancellable | null): GObject;
+  /**
+   * Asynchronously opens `file` for reading and writing.
+   */
+  openReadwriteAsync(
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<GObject>;
+  /**
+   * Exactly like g_file_get_path(), but caches the result via
+   * g_object_set_qdata_full().  This is useful for example in C
+   * applications which mix `g_file_*` APIs with native ones.  It
+   * also avoids an extra duplicated string when possible, so will be
+   * generally more efficient.
+   */
+  peekPath(): string | null;
+  /**
+   * Polls a file of type %G_FILE_TYPE_MOUNTABLE.
+   */
+  pollMountable(cancellable: Cancellable | null): Promise<boolean>;
+  /**
+   * Returns the #GAppInfo that is registered as the default
+   * application to handle the file specified by `file`.
+   */
+  queryDefaultHandler(cancellable: Cancellable | null): AppInfo;
+  /**
+   * Async version of g_file_query_default_handler().
+   */
+  queryDefaultHandlerAsync(
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<AppInfo>;
+  /**
+   * Utility function to check if a particular file exists.
+   */
+  queryExists(cancellable: Cancellable | null): boolean;
+  /**
+   * Utility function to inspect the #GFileType of a file. This is
+   * implemented using g_file_query_info() and as such does blocking I/O.
+   */
+  queryFileType(flags: number, cancellable: Cancellable | null): FileType;
+  /**
+   * Similar to g_file_query_info(), but obtains information
+   * about the filesystem the `file` is on, rather than the file itself.
+   * For instance the amount of space available and the type of
+   * the filesystem.
+   */
+  queryFilesystemInfo(
+    attributes: string,
+    cancellable: Cancellable | null,
+  ): GObject;
+  /**
+   * Asynchronously gets the requested information about the filesystem
+   * that the specified `file` is on. The result is a #GFileInfo object
+   * that contains key-value attributes (such as type or size for the
+   * file).
+   */
+  queryFilesystemInfoAsync(
+    attributes: string,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<GObject>;
+  /**
+   * Gets the requested information about specified `file`.
+   */
+  queryInfo(
+    attributes: string,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): GObject;
+  /**
+   * Asynchronously gets the requested information about specified `file`.
+   * The result is a #GFileInfo object that contains key-value attributes
+   * (such as type or size for the file).
+   */
+  queryInfoAsync(
+    attributes: string,
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<GObject>;
+  /**
+   * Opens a file for reading. The result is a #GFileInputStream that
+   * can be used to read the contents of the file.
+   */
+  read(cancellable: Cancellable | null): InputStream;
+  /**
+   * Asynchronously opens `file` for reading.
+   */
+  readAsync(
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<InputStream>;
+  /**
+   * Returns an output stream for overwriting the file, possibly
+   * creating a backup copy of the file first. If the file doesn't exist,
+   * it will be created.
+   */
+  replace(
+    etag: string | null,
+    makeBackup: boolean,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): OutputStream;
+  /**
+   * Asynchronously overwrites the file, replacing the contents,
+   * possibly creating a backup copy of the file first.
+   */
+  replaceAsync(
+    etag: string | null,
+    makeBackup: boolean,
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<OutputStream>;
+  /**
+   * Returns an output stream for overwriting the file in readwrite mode,
+   * possibly creating a backup copy of the file first. If the file doesn't
+   * exist, it will be created.
+   */
+  replaceReadwrite(
+    etag: string | null,
+    makeBackup: boolean,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): GObject;
+  /**
+   * Asynchronously overwrites the file in read-write mode,
+   * replacing the contents, possibly creating a backup copy
+   * of the file first.
+   */
+  replaceReadwriteAsync(
+    etag: string | null,
+    makeBackup: boolean,
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<GObject>;
+  /**
+   * Resolves a relative path for `file` to an absolute path.
+   */
+  resolveRelativePath(relativePath: string): File;
+  /**
+   * Sets `attribute` of type %G_FILE_ATTRIBUTE_TYPE_BYTE_STRING to `value`.
+   * If `attribute` is of a different type, this operation will fail,
+   * returning `false`.
+   */
+  setAttributeByteString(
+    attribute: string,
+    value: string,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): boolean;
+  /**
+   * Sets `attribute` of type %G_FILE_ATTRIBUTE_TYPE_INT32 to `value`.
+   * If `attribute` is of a different type, this operation will fail.
+   */
+  setAttributeInt32(
+    attribute: string,
+    value: number,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): boolean;
+  /**
+   * Sets `attribute` of type %G_FILE_ATTRIBUTE_TYPE_STRING to `value`.
+   * If `attribute` is of a different type, this operation will fail.
+   */
+  setAttributeString(
+    attribute: string,
+    value: string,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): boolean;
+  /**
+   * Sets `attribute` of type %G_FILE_ATTRIBUTE_TYPE_UINT32 to `value`.
+   * If `attribute` is of a different type, this operation will fail.
+   */
+  setAttributeUint32(
+    attribute: string,
+    value: number,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): boolean;
+  /**
+   * Tries to set all attributes in the #GFileInfo on the target
+   * values, not stopping on the first error.
+   */
+  setAttributesFromInfo(
+    info: GObject,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): boolean;
+  /**
+   * Renames `file` to the specified display name.
+   */
+  setDisplayName(displayName: string, cancellable: Cancellable | null): File;
+  /**
+   * Asynchronously sets the display name for a given #GFile.
+   */
+  setDisplayNameAsync(
+    displayName: string,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<File>;
+  /**
+   * Starts a file of type %G_FILE_TYPE_MOUNTABLE.
+   * Using `startOperation`, you can request callbacks when, for instance,
+   * passwords are needed during authentication.
+   */
+  startMountable(
+    flags: number,
+    startOperation: GObject | null,
+    cancellable: Cancellable | null,
+  ): Promise<boolean>;
+  /**
+   * Stops a file of type %G_FILE_TYPE_MOUNTABLE.
+   */
+  stopMountable(
+    flags: number,
+    mountOperation: GObject | null,
+    cancellable: Cancellable | null,
+  ): Promise<boolean>;
+  /**
+   * Checks if `file` supports thread-default main contexts
+   * (see `pushThreadDefault()`)
+   * If this returns `false`, you cannot perform asynchronous operations on
+   * `file` in a thread that has a thread-default context.
+   */
+  supportsThreadContexts(): boolean;
+  /**
+   * Sends `file` to the "Trashcan", if possible. This is similar to
+   * deleting it, but the user can recover it before emptying the trashcan.
+   * Trashing is disabled for system mounts by default (see
+   * g_unix_mount_entry_is_system_internal()), so this call can return the
+   * %G_IO_ERROR_NOT_SUPPORTED error. Since GLib 2.66, the `x-gvfs-notrash` unix
+   * mount option can be used to disable g_file_trash() support for particular
+   * mounts, the %G_IO_ERROR_NOT_SUPPORTED error will be returned in that case.
+   * Since 2.82, the `x-gvfs-trash` unix mount option can be used to enable
+   * g_file_trash() support for particular system mounts.
+   */
+  trash(cancellable: Cancellable | null): boolean;
+  /**
+   * Asynchronously sends `file` to the Trash location, if possible.
+   */
+  trashAsync(
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<boolean>;
+  /**
+   * Unmounts a file of type %G_FILE_TYPE_MOUNTABLE.
+   */
+  unmountMountableWithOperation(
+    flags: number,
+    mountOperation: GObject | null,
+    cancellable: Cancellable | null,
+  ): Promise<boolean>;
+}
+
+/** Implementations of {@linkcode FileMethods}. */
+export const fileMethods: FileMethods & ThisType<GObject> = {
+  appendTo(
+    this: GObject,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): OutputStream {
+    const __error = new ErrorSlot();
+    const __value =
+      (gio.symbols.g_file_append_to ?? missing("g_file_append_to"))(
+        this.ptr,
+        flags,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return owned<OutputStream>(__value)!;
+  },
+  appendToAsync(
+    this: GObject,
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<OutputStream> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_append_to_async ??
+          missing("g_file_append_to_async"))(
+            this.ptr,
+            flags,
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        owned<OutputStream>(
+          (gio.symbols.g_file_append_to_finish ??
+            missing("g_file_append_to_finish"))(
+              this.ptr,
+              __result,
+              __error.pointer,
+            ),
+        )!,
+    );
+  },
+  buildAttributeListForCopy(
+    this: GObject,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): string {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_build_attribute_list_for_copy ??
+      missing("g_file_build_attribute_list_for_copy", "2.68"))(
+        this.ptr,
+        flags,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return takeString(__value) ?? "";
+  },
+  copyAsyncWithClosures(
+    this: GObject,
+    destination: File,
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+    progressCallbackClosure: Deno.PointerValue,
+    readyCallbackClosure: Deno.PointerValue,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_copy_async_with_closures ??
+          missing("g_file_copy_async_with_closures", "2.82"))(
+            this.ptr,
+            destination.ptr,
+            flags,
+            ioPriority,
+            cancellable?.ptr ?? null,
+            progressCallbackClosure,
+            readyCallbackClosure,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_file_copy_finish ?? missing("g_file_copy_finish"))(
+          this.ptr,
+          __result,
+          __error.pointer,
+        ),
+    );
+  },
+  copyAttributes(
+    this: GObject,
+    destination: File,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): boolean {
+    const __error = new ErrorSlot();
+    const __value =
+      (gio.symbols.g_file_copy_attributes ?? missing("g_file_copy_attributes"))(
+        this.ptr,
+        destination.ptr,
+        flags,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  create(
+    this: GObject,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): OutputStream {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_create ?? missing("g_file_create"))(
+      this.ptr,
+      flags,
+      cancellable?.ptr ?? null,
+      __error.pointer,
+    );
+    __error.check();
+    return owned<OutputStream>(__value)!;
+  },
+  createAsync(
+    this: GObject,
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<OutputStream> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_create_async ?? missing("g_file_create_async"))(
+          this.ptr,
+          flags,
+          ioPriority,
+          cancellable?.ptr ?? null,
+          __callback,
+          null,
+        );
+      },
+      (__result, __error) =>
+        owned<OutputStream>(
+          (gio.symbols.g_file_create_finish ?? missing("g_file_create_finish"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+        )!,
+    );
+  },
+  createReadwrite(
+    this: GObject,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): GObject {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_create_readwrite ??
+      missing("g_file_create_readwrite", "2.22"))(
+        this.ptr,
+        flags,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return owned<GObject>(__value)!;
+  },
+  createReadwriteAsync(
+    this: GObject,
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<GObject> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_create_readwrite_async ??
+          missing("g_file_create_readwrite_async", "2.22"))(
+            this.ptr,
+            flags,
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        owned<GObject>(
+          (gio.symbols.g_file_create_readwrite_finish ??
+            missing("g_file_create_readwrite_finish", "2.22"))(
+              this.ptr,
+              __result,
+              __error.pointer,
+            ),
+        )!,
+    );
+  },
+  delete(this: GObject, cancellable: Cancellable | null): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_delete ?? missing("g_file_delete"))(
+      this.ptr,
+      cancellable?.ptr ?? null,
+      __error.pointer,
+    );
+    __error.check();
+    return __value;
+  },
+  deleteAsync(
+    this: GObject,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_delete_async ??
+          missing("g_file_delete_async", "2.34"))(
+            this.ptr,
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_file_delete_finish ??
+          missing("g_file_delete_finish", "2.34"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+    );
+  },
+  dup(this: GObject): File {
+    return owned<File>(
+      (gio.symbols.g_file_dup ?? missing("g_file_dup"))(this.ptr),
+    )!;
+  },
+  ejectMountableWithOperation(
+    this: GObject,
+    flags: number,
+    mountOperation: GObject | null,
+    cancellable: Cancellable | null,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_eject_mountable_with_operation ??
+          missing("g_file_eject_mountable_with_operation", "2.22"))(
+            this.ptr,
+            flags,
+            mountOperation?.ptr ?? null,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_file_eject_mountable_with_operation_finish ??
+          missing("g_file_eject_mountable_with_operation_finish", "2.22"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+    );
+  },
+  enumerateChildren(
+    this: GObject,
+    attributes: string,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): GObject {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_enumerate_children ??
+      missing("g_file_enumerate_children"))(
+        this.ptr,
+        cstr(attributes),
+        flags,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return owned<GObject>(__value)!;
+  },
+  enumerateChildrenAsync(
+    this: GObject,
+    attributes: string,
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<GObject> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_enumerate_children_async ??
+          missing("g_file_enumerate_children_async"))(
+            this.ptr,
+            cstr(attributes),
+            flags,
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        owned<GObject>(
+          (gio.symbols.g_file_enumerate_children_finish ??
+            missing("g_file_enumerate_children_finish"))(
+              this.ptr,
+              __result,
+              __error.pointer,
+            ),
+        )!,
+    );
+  },
+  equal(this: GObject, file2: File): boolean {
+    return (gio.symbols.g_file_equal ?? missing("g_file_equal"))(
+      this.ptr,
+      file2.ptr,
+    );
+  },
+  findEnclosingMount(this: GObject, cancellable: Cancellable | null): GObject {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_find_enclosing_mount ??
+      missing("g_file_find_enclosing_mount"))(
+        this.ptr,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return owned<GObject>(__value)!;
+  },
+  findEnclosingMountAsync(
+    this: GObject,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<GObject> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_find_enclosing_mount_async ??
+          missing("g_file_find_enclosing_mount_async"))(
+            this.ptr,
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        owned<GObject>(
+          (gio.symbols.g_file_find_enclosing_mount_finish ??
+            missing("g_file_find_enclosing_mount_finish"))(
+              this.ptr,
+              __result,
+              __error.pointer,
+            ),
+        )!,
+    );
+  },
+  getBasename(this: GObject): string | null {
+    return takeString(
+      (gio.symbols.g_file_get_basename ?? missing("g_file_get_basename"))(
+        this.ptr,
+      ),
+    );
+  },
+  getChild(this: GObject, name: string): File {
+    return owned<File>(
+      (gio.symbols.g_file_get_child ?? missing("g_file_get_child"))(
+        this.ptr,
+        cstr(name),
+      ),
+    )!;
+  },
+  getChildForDisplayName(this: GObject, displayName: string): File {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_get_child_for_display_name ??
+      missing("g_file_get_child_for_display_name"))(
+        this.ptr,
+        cstr(displayName),
+        __error.pointer,
+      );
+    __error.check();
+    return owned<File>(__value)!;
+  },
+  getParent(this: GObject): File | null {
+    return owned<File>(
+      (gio.symbols.g_file_get_parent ?? missing("g_file_get_parent"))(this.ptr),
+    );
+  },
+  getParseName(this: GObject): string {
+    return takeString(
+      (gio.symbols.g_file_get_parse_name ?? missing("g_file_get_parse_name"))(
+        this.ptr,
+      ),
+    ) ?? "";
+  },
+  getRelativePath(this: GObject, descendant: File): string | null {
+    return takeString(
+      (gio.symbols.g_file_get_relative_path ??
+        missing("g_file_get_relative_path"))(this.ptr, descendant.ptr),
+    );
+  },
+  getUriScheme(this: GObject): string | null {
+    return takeString(
+      (gio.symbols.g_file_get_uri_scheme ?? missing("g_file_get_uri_scheme"))(
+        this.ptr,
+      ),
+    );
+  },
+  hasParent(this: GObject, parent: File | null): boolean {
+    return (gio.symbols.g_file_has_parent ??
+      missing("g_file_has_parent", "2.24"))(this.ptr, parent?.ptr ?? null);
+  },
+  hasPrefix(this: GObject, prefix: File): boolean {
+    return (gio.symbols.g_file_has_prefix ?? missing("g_file_has_prefix"))(
+      this.ptr,
+      prefix.ptr,
+    );
+  },
+  hasUriScheme(this: GObject, uriScheme: string): boolean {
+    return (gio.symbols.g_file_has_uri_scheme ??
+      missing("g_file_has_uri_scheme"))(this.ptr, cstr(uriScheme));
+  },
+  hash(this: GObject): number {
+    return (gio.symbols.g_file_hash ?? missing("g_file_hash"))(this.ptr);
+  },
+  isNative(this: GObject): boolean {
+    return (gio.symbols.g_file_is_native ?? missing("g_file_is_native"))(
+      this.ptr,
+    );
+  },
+  makeDirectory(this: GObject, cancellable: Cancellable | null): boolean {
+    const __error = new ErrorSlot();
+    const __value =
+      (gio.symbols.g_file_make_directory ?? missing("g_file_make_directory"))(
+        this.ptr,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  makeDirectoryAsync(
+    this: GObject,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_make_directory_async ??
+          missing("g_file_make_directory_async", "2.38"))(
+            this.ptr,
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_file_make_directory_finish ??
+          missing("g_file_make_directory_finish", "2.38"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+    );
+  },
+  makeDirectoryWithParents(
+    this: GObject,
+    cancellable: Cancellable | null,
+  ): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_make_directory_with_parents ??
+      missing("g_file_make_directory_with_parents", "2.18"))(
+        this.ptr,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  makeSymbolicLink(
+    this: GObject,
+    symlinkValue: string,
+    cancellable: Cancellable | null,
+  ): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_make_symbolic_link ??
+      missing("g_file_make_symbolic_link"))(
+        this.ptr,
+        cstr(symlinkValue),
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  makeSymbolicLinkAsync(
+    this: GObject,
+    symlinkValue: string,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_make_symbolic_link_async ??
+          missing("g_file_make_symbolic_link_async", "2.74"))(
+            this.ptr,
+            cstr(symlinkValue),
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_file_make_symbolic_link_finish ??
+          missing("g_file_make_symbolic_link_finish", "2.74"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+    );
+  },
+  monitor(
+    this: GObject,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): GObject {
+    const __error = new ErrorSlot();
+    const __value =
+      (gio.symbols.g_file_monitor ?? missing("g_file_monitor", "2.18"))(
+        this.ptr,
+        flags,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return owned<GObject>(__value)!;
+  },
+  monitorDirectory(
+    this: GObject,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): GObject {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_monitor_directory ??
+      missing("g_file_monitor_directory"))(
+        this.ptr,
+        flags,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return owned<GObject>(__value)!;
+  },
+  monitorFile(
+    this: GObject,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): GObject {
+    const __error = new ErrorSlot();
+    const __value =
+      (gio.symbols.g_file_monitor_file ?? missing("g_file_monitor_file"))(
+        this.ptr,
+        flags,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return owned<GObject>(__value)!;
+  },
+  mountEnclosingVolume(
+    this: GObject,
+    flags: number,
+    mountOperation: GObject | null,
+    cancellable: Cancellable | null,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_mount_enclosing_volume ??
+          missing("g_file_mount_enclosing_volume"))(
+            this.ptr,
+            flags,
+            mountOperation?.ptr ?? null,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_file_mount_enclosing_volume_finish ??
+          missing("g_file_mount_enclosing_volume_finish"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+    );
+  },
+  mountMountable(
+    this: GObject,
+    flags: number,
+    mountOperation: GObject | null,
+    cancellable: Cancellable | null,
+  ): Promise<File> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_mount_mountable ??
+          missing("g_file_mount_mountable"))(
+            this.ptr,
+            flags,
+            mountOperation?.ptr ?? null,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        owned<File>(
+          (gio.symbols.g_file_mount_mountable_finish ??
+            missing("g_file_mount_mountable_finish"))(
+              this.ptr,
+              __result,
+              __error.pointer,
+            ),
+        )!,
+    );
+  },
+  moveAsyncWithClosures(
+    this: GObject,
+    destination: File,
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+    progressCallbackClosure: Deno.PointerValue,
+    readyCallbackClosure: Deno.PointerValue,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_move_async_with_closures ??
+          missing("g_file_move_async_with_closures", "2.82"))(
+            this.ptr,
+            destination.ptr,
+            flags,
+            ioPriority,
+            cancellable?.ptr ?? null,
+            progressCallbackClosure,
+            readyCallbackClosure,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_file_move_finish ??
+          missing("g_file_move_finish", "2.72"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+    );
+  },
+  openReadwrite(this: GObject, cancellable: Cancellable | null): GObject {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_open_readwrite ??
+      missing("g_file_open_readwrite", "2.22"))(
+        this.ptr,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return owned<GObject>(__value)!;
+  },
+  openReadwriteAsync(
+    this: GObject,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<GObject> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_open_readwrite_async ??
+          missing("g_file_open_readwrite_async", "2.22"))(
+            this.ptr,
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        owned<GObject>(
+          (gio.symbols.g_file_open_readwrite_finish ??
+            missing("g_file_open_readwrite_finish", "2.22"))(
+              this.ptr,
+              __result,
+              __error.pointer,
+            ),
+        )!,
+    );
+  },
+  peekPath(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      (gio.symbols.g_file_peek_path ?? missing("g_file_peek_path", "2.56"))(
+        this.ptr,
+      ),
+    );
+  },
+  pollMountable(
+    this: GObject,
+    cancellable: Cancellable | null,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_poll_mountable ??
+          missing("g_file_poll_mountable", "2.22"))(
+            this.ptr,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_file_poll_mountable_finish ??
+          missing("g_file_poll_mountable_finish", "2.22"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+    );
+  },
+  queryDefaultHandler(this: GObject, cancellable: Cancellable | null): AppInfo {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_query_default_handler ??
+      missing("g_file_query_default_handler"))(
+        this.ptr,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return owned<AppInfo>(__value)!;
+  },
+  queryDefaultHandlerAsync(
+    this: GObject,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<AppInfo> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_query_default_handler_async ??
+          missing("g_file_query_default_handler_async", "2.60"))(
+            this.ptr,
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        owned<AppInfo>(
+          (gio.symbols.g_file_query_default_handler_finish ??
+            missing("g_file_query_default_handler_finish", "2.60"))(
+              this.ptr,
+              __result,
+              __error.pointer,
+            ),
+        )!,
+    );
+  },
+  queryExists(this: GObject, cancellable: Cancellable | null): boolean {
+    return (gio.symbols.g_file_query_exists ?? missing("g_file_query_exists"))(
+      this.ptr,
+      cancellable?.ptr ?? null,
+    );
+  },
+  queryFileType(
+    this: GObject,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): FileType {
+    return (gio.symbols.g_file_query_file_type ??
+      missing("g_file_query_file_type", "2.18"))(
+        this.ptr,
+        flags,
+        cancellable?.ptr ?? null,
+      ) as FileType;
+  },
+  queryFilesystemInfo(
+    this: GObject,
+    attributes: string,
+    cancellable: Cancellable | null,
+  ): GObject {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_query_filesystem_info ??
+      missing("g_file_query_filesystem_info"))(
+        this.ptr,
+        cstr(attributes),
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return owned<GObject>(__value)!;
+  },
+  queryFilesystemInfoAsync(
+    this: GObject,
+    attributes: string,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<GObject> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_query_filesystem_info_async ??
+          missing("g_file_query_filesystem_info_async"))(
+            this.ptr,
+            cstr(attributes),
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        owned<GObject>(
+          (gio.symbols.g_file_query_filesystem_info_finish ??
+            missing("g_file_query_filesystem_info_finish"))(
+              this.ptr,
+              __result,
+              __error.pointer,
+            ),
+        )!,
+    );
+  },
+  queryInfo(
+    this: GObject,
+    attributes: string,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): GObject {
+    const __error = new ErrorSlot();
+    const __value =
+      (gio.symbols.g_file_query_info ?? missing("g_file_query_info"))(
+        this.ptr,
+        cstr(attributes),
+        flags,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return owned<GObject>(__value)!;
+  },
+  queryInfoAsync(
+    this: GObject,
+    attributes: string,
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<GObject> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_query_info_async ??
+          missing("g_file_query_info_async"))(
+            this.ptr,
+            cstr(attributes),
+            flags,
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        owned<GObject>(
+          (gio.symbols.g_file_query_info_finish ??
+            missing("g_file_query_info_finish"))(
+              this.ptr,
+              __result,
+              __error.pointer,
+            ),
+        )!,
+    );
+  },
+  read(this: GObject, cancellable: Cancellable | null): InputStream {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_read ?? missing("g_file_read"))(
+      this.ptr,
+      cancellable?.ptr ?? null,
+      __error.pointer,
+    );
+    __error.check();
+    return owned<InputStream>(__value)!;
+  },
+  readAsync(
+    this: GObject,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<InputStream> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_read_async ?? missing("g_file_read_async"))(
+          this.ptr,
+          ioPriority,
+          cancellable?.ptr ?? null,
+          __callback,
+          null,
+        );
+      },
+      (__result, __error) =>
+        owned<InputStream>(
+          (gio.symbols.g_file_read_finish ?? missing("g_file_read_finish"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+        )!,
+    );
+  },
+  replace(
+    this: GObject,
+    etag: string | null,
+    makeBackup: boolean,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): OutputStream {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_replace ?? missing("g_file_replace"))(
+      this.ptr,
+      cstrOrNull(etag),
+      makeBackup,
+      flags,
+      cancellable?.ptr ?? null,
+      __error.pointer,
+    );
+    __error.check();
+    return owned<OutputStream>(__value)!;
+  },
+  replaceAsync(
+    this: GObject,
+    etag: string | null,
+    makeBackup: boolean,
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<OutputStream> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_replace_async ?? missing("g_file_replace_async"))(
+          this.ptr,
+          cstrOrNull(etag),
+          makeBackup,
+          flags,
+          ioPriority,
+          cancellable?.ptr ?? null,
+          __callback,
+          null,
+        );
+      },
+      (__result, __error) =>
+        owned<OutputStream>(
+          (gio.symbols.g_file_replace_finish ??
+            missing("g_file_replace_finish"))(
+              this.ptr,
+              __result,
+              __error.pointer,
+            ),
+        )!,
+    );
+  },
+  replaceReadwrite(
+    this: GObject,
+    etag: string | null,
+    makeBackup: boolean,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): GObject {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_replace_readwrite ??
+      missing("g_file_replace_readwrite", "2.22"))(
+        this.ptr,
+        cstrOrNull(etag),
+        makeBackup,
+        flags,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return owned<GObject>(__value)!;
+  },
+  replaceReadwriteAsync(
+    this: GObject,
+    etag: string | null,
+    makeBackup: boolean,
+    flags: number,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<GObject> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_replace_readwrite_async ??
+          missing("g_file_replace_readwrite_async", "2.22"))(
+            this.ptr,
+            cstrOrNull(etag),
+            makeBackup,
+            flags,
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        owned<GObject>(
+          (gio.symbols.g_file_replace_readwrite_finish ??
+            missing("g_file_replace_readwrite_finish", "2.22"))(
+              this.ptr,
+              __result,
+              __error.pointer,
+            ),
+        )!,
+    );
+  },
+  resolveRelativePath(this: GObject, relativePath: string): File {
+    return owned<File>(
+      (gio.symbols.g_file_resolve_relative_path ??
+        missing("g_file_resolve_relative_path"))(this.ptr, cstr(relativePath)),
+    )!;
+  },
+  setAttributeByteString(
+    this: GObject,
+    attribute: string,
+    value: string,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_set_attribute_byte_string ??
+      missing("g_file_set_attribute_byte_string"))(
+        this.ptr,
+        cstr(attribute),
+        cstr(value),
+        flags,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  setAttributeInt32(
+    this: GObject,
+    attribute: string,
+    value: number,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_set_attribute_int32 ??
+      missing("g_file_set_attribute_int32"))(
+        this.ptr,
+        cstr(attribute),
+        value,
+        flags,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  setAttributeString(
+    this: GObject,
+    attribute: string,
+    value: string,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_set_attribute_string ??
+      missing("g_file_set_attribute_string"))(
+        this.ptr,
+        cstr(attribute),
+        cstr(value),
+        flags,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  setAttributeUint32(
+    this: GObject,
+    attribute: string,
+    value: number,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_set_attribute_uint32 ??
+      missing("g_file_set_attribute_uint32"))(
+        this.ptr,
+        cstr(attribute),
+        value,
+        flags,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  setAttributesFromInfo(
+    this: GObject,
+    info: GObject,
+    flags: number,
+    cancellable: Cancellable | null,
+  ): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_set_attributes_from_info ??
+      missing("g_file_set_attributes_from_info"))(
+        this.ptr,
+        info.ptr,
+        flags,
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  setDisplayName(
+    this: GObject,
+    displayName: string,
+    cancellable: Cancellable | null,
+  ): File {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_set_display_name ??
+      missing("g_file_set_display_name"))(
+        this.ptr,
+        cstr(displayName),
+        cancellable?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return owned<File>(__value)!;
+  },
+  setDisplayNameAsync(
+    this: GObject,
+    displayName: string,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<File> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_set_display_name_async ??
+          missing("g_file_set_display_name_async"))(
+            this.ptr,
+            cstr(displayName),
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        owned<File>(
+          (gio.symbols.g_file_set_display_name_finish ??
+            missing("g_file_set_display_name_finish"))(
+              this.ptr,
+              __result,
+              __error.pointer,
+            ),
+        )!,
+    );
+  },
+  startMountable(
+    this: GObject,
+    flags: number,
+    startOperation: GObject | null,
+    cancellable: Cancellable | null,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_start_mountable ??
+          missing("g_file_start_mountable", "2.22"))(
+            this.ptr,
+            flags,
+            startOperation?.ptr ?? null,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_file_start_mountable_finish ??
+          missing("g_file_start_mountable_finish", "2.22"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+    );
+  },
+  stopMountable(
+    this: GObject,
+    flags: number,
+    mountOperation: GObject | null,
+    cancellable: Cancellable | null,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_stop_mountable ??
+          missing("g_file_stop_mountable", "2.22"))(
+            this.ptr,
+            flags,
+            mountOperation?.ptr ?? null,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_file_stop_mountable_finish ??
+          missing("g_file_stop_mountable_finish", "2.22"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+    );
+  },
+  supportsThreadContexts(this: GObject): boolean {
+    return (gio.symbols.g_file_supports_thread_contexts ??
+      missing("g_file_supports_thread_contexts", "2.22"))(this.ptr);
+  },
+  trash(this: GObject, cancellable: Cancellable | null): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_file_trash ?? missing("g_file_trash"))(
+      this.ptr,
+      cancellable?.ptr ?? null,
+      __error.pointer,
+    );
+    __error.check();
+    return __value;
+  },
+  trashAsync(
+    this: GObject,
+    ioPriority: number,
+    cancellable: Cancellable | null,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_trash_async ??
+          missing("g_file_trash_async", "2.38"))(
+            this.ptr,
+            ioPriority,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_file_trash_finish ??
+          missing("g_file_trash_finish", "2.38"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+    );
+  },
+  unmountMountableWithOperation(
+    this: GObject,
+    flags: number,
+    mountOperation: GObject | null,
+    cancellable: Cancellable | null,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_file_unmount_mountable_with_operation ??
+          missing("g_file_unmount_mountable_with_operation", "2.22"))(
+            this.ptr,
+            flags,
+            mountOperation?.ptr ?? null,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_file_unmount_mountable_with_operation_finish ??
+          missing("g_file_unmount_mountable_with_operation_finish", "2.22"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+    );
+  },
+};
+
+/** Methods generated for `GAppInfo`. */
+export interface AppInfoMethods {
+  /**
+   * Adds a content type to the application information to indicate the
+   * application is capable of opening files with the given content type.
+   */
+  addSupportsType(contentType: string): boolean;
+  /**
+   * Obtains the information whether the `AppInfo` can be deleted.
+   * See `delete()`.
+   */
+  canDelete(): boolean;
+  /**
+   * Checks if a supported content type can be removed from an application.
+   */
+  canRemoveSupportsType(): boolean;
+  /**
+   * Tries to delete a `AppInfo`.
+   */
+  delete(): boolean;
+  /**
+   * Creates a duplicate of a `AppInfo`.
+   */
+  dup(): AppInfo;
+  /**
+   * Checks if two `AppInfo`s are equal.
+   */
+  equal(appinfo2: AppInfo): boolean;
+  /**
+   * Gets the commandline with which the application will be
+   * started.
+   */
+  getCommandline(): string | null;
+  /**
+   * Launches the application. This passes the `uris` to the launched application
+   * as arguments, using the optional `context` to get information
+   * about the details of the launcher (like what screen it is on).
+   * On error, `error` will be set accordingly. If the application only supports
+   * one URI per invocation as part of their command-line, multiple instances
+   * of the application will be spawned.
+   */
+  launchUris(
+    uris: Deno.PointerValue,
+    context: AppLaunchContext | null,
+  ): boolean;
+  /**
+   * Async version of `launchUris()`.
+   */
+  launchUrisAsync(
+    uris: Deno.PointerValue,
+    context: AppLaunchContext | null,
+    cancellable: Cancellable | null,
+  ): Promise<boolean>;
+  /**
+   * Removes a supported type from an application, if possible.
+   */
+  removeSupportsType(contentType: string): boolean;
+  /**
+   * Sets the application as the default handler for the given file extension.
+   */
+  setAsDefaultForExtension(extension: string): boolean;
+  /**
+   * Sets the application as the default handler for a given type.
+   */
+  setAsDefaultForType(contentType: string): boolean;
+  /**
+   * Sets the application as the last used application for a given type. This
+   * will make the application appear as first in the list returned by
+   * `getRecommendedForType()`, regardless of the default
+   * application for that content type.
+   */
+  setAsLastUsedForType(contentType: string): boolean;
+  /**
+   * Checks if the application accepts files as arguments.
+   */
+  supportsFiles(): boolean;
+  /**
+   * Checks if the application supports reading files and directories from URIs.
+   */
+  supportsUris(): boolean;
+}
+
+/** Implementations of {@linkcode AppInfoMethods}. */
+export const appInfoMethods: AppInfoMethods & ThisType<GObject> = {
+  addSupportsType(this: GObject, contentType: string): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_app_info_add_supports_type ??
+      missing("g_app_info_add_supports_type"))(
+        this.ptr,
+        cstr(contentType),
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  canDelete(this: GObject): boolean {
+    return (gio.symbols.g_app_info_can_delete ??
+      missing("g_app_info_can_delete", "2.20"))(this.ptr);
+  },
+  canRemoveSupportsType(this: GObject): boolean {
+    return (gio.symbols.g_app_info_can_remove_supports_type ??
+      missing("g_app_info_can_remove_supports_type"))(this.ptr);
+  },
+  delete(this: GObject): boolean {
+    return (gio.symbols.g_app_info_delete ??
+      missing("g_app_info_delete", "2.20"))(this.ptr);
+  },
+  dup(this: GObject): AppInfo {
+    return owned<AppInfo>(
+      (gio.symbols.g_app_info_dup ?? missing("g_app_info_dup"))(this.ptr),
+    )!;
+  },
+  equal(this: GObject, appinfo2: AppInfo): boolean {
+    return (gio.symbols.g_app_info_equal ?? missing("g_app_info_equal"))(
+      this.ptr,
+      appinfo2.ptr,
+    );
+  },
+  getCommandline(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      (gio.symbols.g_app_info_get_commandline ??
+        missing("g_app_info_get_commandline", "2.20"))(this.ptr),
+    );
+  },
+  launchUris(
+    this: GObject,
+    uris: Deno.PointerValue,
+    context: AppLaunchContext | null,
+  ): boolean {
+    const __error = new ErrorSlot();
+    const __value =
+      (gio.symbols.g_app_info_launch_uris ?? missing("g_app_info_launch_uris"))(
+        this.ptr,
+        uris,
+        context?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  launchUrisAsync(
+    this: GObject,
+    uris: Deno.PointerValue,
+    context: AppLaunchContext | null,
+    cancellable: Cancellable | null,
+  ): Promise<boolean> {
+    return asyncCall(
+      (__callback) => {
+        (gio.symbols.g_app_info_launch_uris_async ??
+          missing("g_app_info_launch_uris_async", "2.60"))(
+            this.ptr,
+            uris,
+            context?.ptr ?? null,
+            cancellable?.ptr ?? null,
+            __callback,
+            null,
+          );
+      },
+      (__result, __error) =>
+        (gio.symbols.g_app_info_launch_uris_finish ??
+          missing("g_app_info_launch_uris_finish", "2.60"))(
+            this.ptr,
+            __result,
+            __error.pointer,
+          ),
+    );
+  },
+  removeSupportsType(this: GObject, contentType: string): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_app_info_remove_supports_type ??
+      missing("g_app_info_remove_supports_type"))(
+        this.ptr,
+        cstr(contentType),
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  setAsDefaultForExtension(this: GObject, extension: string): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_app_info_set_as_default_for_extension ??
+      missing("g_app_info_set_as_default_for_extension"))(
+        this.ptr,
+        cstr(extension),
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  setAsDefaultForType(this: GObject, contentType: string): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_app_info_set_as_default_for_type ??
+      missing("g_app_info_set_as_default_for_type"))(
+        this.ptr,
+        cstr(contentType),
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  setAsLastUsedForType(this: GObject, contentType: string): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gio.symbols.g_app_info_set_as_last_used_for_type ??
+      missing("g_app_info_set_as_last_used_for_type"))(
+        this.ptr,
+        cstr(contentType),
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  supportsFiles(this: GObject): boolean {
+    return (gio.symbols.g_app_info_supports_files ??
+      missing("g_app_info_supports_files"))(this.ptr);
+  },
+  supportsUris(this: GObject): boolean {
+    return (gio.symbols.g_app_info_supports_uris ??
+      missing("g_app_info_supports_uris"))(this.ptr);
+  },
 };
 
 // Not generated (unsupported shapes):
-// - AppLaunchContext.get_startup_notify_id: record GLib.List
-// - AppLaunchContext.launch-started: record GLib.Variant
-// - AppLaunchContext.launched: record GLib.Variant
-// - DBusProxy.call: record GLib.Variant
-// - DBusProxy.call_finish: GError
-// - DBusProxy.call_sync: GError
-// - DBusProxy.g-properties-changed: record GLib.Variant
-// - DBusProxy.g-signal: record GLib.Variant
-// - InputStream.close: GError
-// - InputStream.read: GError
+// - DBusProxy.call: struct ownership
+// - DBusProxy.call_sync: struct ownership
+// - DBusProxy.g-properties-changed: arrays and varargs
+// - File.load_contents: out parameter
+// - InputStream.read: out parameter
 // - InputStream.read_bytes_async: unknown type gsize
-// - InputStream.read_bytes_finish: GError
-// - OutputStream.close: GError
-// - OutputStream.flush: GError
-// - OutputStream.write: GError
+// - OutputStream.write: arrays and varargs
 // - OutputStream.write_all_async: arrays and varargs
-// - OutputStream.write_all_finish: GError
-// - SimpleAction.activate: record GLib.Variant
-// - SimpleAction.change-state: record GLib.Variant
-// - Subprocess.wait: GError
-// - Subprocess.wait_async: callback scope async
-// - Subprocess.wait_finish: GError

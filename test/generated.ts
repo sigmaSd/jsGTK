@@ -1,10 +1,23 @@
 /**
  * Tests for the methods generated from GIR (src/high/generated): enums,
- * nullable strings, borrowed objects, callbacks and version-guarded symbols.
+ * nullable strings, borrowed objects, callbacks, interfaces, signals with a
+ * result, GError and async methods.
  */
 
-import { Justification, Label, ListBox, ListBoxRow } from "../src/high/gtk4.ts";
+import {
+  Box,
+  Entry,
+  Justification,
+  Label,
+  ListBox,
+  ListBoxRow,
+  Orientation,
+  Switch,
+} from "../src/high/gtk4.ts";
 import { Toast, ToastPriority } from "../src/high/adw.ts";
+import { File } from "../src/high/gio.ts";
+import { EventLoop } from "../src/high/eventloop.ts";
+import { GError } from "../src/high/wrappers.ts";
 
 function assert(condition: boolean, message: string) {
   if (!condition) throw new Error(message);
@@ -85,3 +98,62 @@ Deno.test(
     assertEquals(selected, 3, "Every selected row is visited");
   },
 );
+
+Deno.test(
+  "Interfaces add their methods to implementing classes",
+  testOptions,
+  () => {
+    const entry = new Entry();
+    entry.setEditable(false);
+    assertEquals(entry.getEditable(), false, "Editable via the interface");
+    const box = new Box(Orientation.VERTICAL, 0);
+    assertEquals(box.getOrientation(), Orientation.VERTICAL, "Orientable");
+  },
+);
+
+Deno.test("Signals can return a value to GTK", testOptions, () => {
+  const toggle = new Switch();
+  let calls = 0;
+  toggle.onStateSet(() => {
+    calls++;
+    return true; // Handled: GTK leaves the state alone.
+  });
+  toggle.setActive(true);
+  assertEquals(calls, 1, "The handler ran");
+  assertEquals(toggle.getState(), false, "Returning true kept the old state");
+});
+
+Deno.test("GError becomes a thrown GError", testOptions, () => {
+  let error: unknown;
+  try {
+    File.newForPath("/").makeDirectory(null);
+  } catch (e) {
+    error = e;
+  }
+  assert(error instanceof GError, "A GError is thrown");
+  const gerror = error as GError;
+  assertEquals(gerror.domain, "g-io-error-quark", "Error domain");
+  assertEquals(gerror.code, 2, "G_IO_ERROR_EXISTS");
+  assert(gerror.message.length > 0, "GLib's message");
+});
+
+Deno.test("Async methods return promises", testOptions, async () => {
+  const loop = new EventLoop();
+  const running = loop.start();
+  try {
+    const root = File.newForPath("/");
+    const info = await root.queryInfoAsync("standard::type", 0, 0, null);
+    assert(info !== null && info.ptr !== null, "Resolves with a new object");
+    info!.unref();
+    let error: unknown;
+    try {
+      await root.makeDirectoryAsync(0, null);
+    } catch (e) {
+      error = e;
+    }
+    assert(error instanceof GError, "Rejects with a GError");
+  } finally {
+    loop.stop();
+    await running;
+  }
+});

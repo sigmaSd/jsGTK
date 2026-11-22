@@ -830,6 +830,10 @@ to call [func@Gtk.show_uri].
           </parameter>
         </parameters>
       </glib:signal>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
+      <implements name="Gtk.ShortcutManager"/>
     </class>
     <class name="AboutWindow" c:symbol-prefix="about_window" c:type="AdwAboutWindow" version="1.2" deprecated="1" deprecated-version="1.6" parent="Window" final="1" glib:type-name="AdwAboutWindow" glib:get-type="adw_about_window_get_type" glib:type-struct="AboutWindowClass">
       <constructor name="new" c:identifier="adw_about_window_new" version="1.2" deprecated="1" deprecated-version="1.6">
@@ -1101,6 +1105,12 @@ to call [func@Gtk.show_uri].
           </parameter>
         </parameters>
       </glib:signal>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
+      <implements name="Gtk.Native"/>
+      <implements name="Gtk.Root"/>
+      <implements name="Gtk.ShortcutManager"/>
     </class>
     <class name="ActionRow" c:symbol-prefix="action_row" c:type="AdwActionRow" parent="PreferencesRow" glib:type-name="AdwActionRow" glib:get-type="adw_action_row_get_type" glib:type-struct="ActionRowClass">
       <constructor name="new" c:identifier="adw_action_row_new">
@@ -1342,6 +1352,10 @@ If the value is 0, the number of lines won't be limited.
           <type name="none" c:type="void"/>
         </return-value>
       </glib:signal>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Actionable"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="AlertDialog" c:symbol-prefix="alert_dialog" c:type="AdwAlertDialog" version="1.5" parent="Dialog" glib:type-name="AdwAlertDialog" glib:get-type="adw_alert_dialog_get_type" glib:type-struct="AlertDialogClass">
       <constructor name="new" c:identifier="adw_alert_dialog_new" version="1.5">
@@ -1460,6 +1474,21 @@ This method should always be used instead of [method@Gtk.Window.get_child].
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_dialogs" c:identifier="adw_application_window_get_dialogs" glib:get-property="dialogs" version="1.5">
+        <doc xml:space="preserve" filename="src/adw-application-window.c" line="453">
+          Returns a [iface@Gio.ListModel] that contains the open dialogs of @self.
+
+This can be used to keep an up-to-date view.
+        </doc>
+        <return-value transfer-ownership="full">
+          <type name="Gio.ListModel" c:type="GListModel*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="ApplicationWindow" c:type="AdwApplicationWindow*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_visible_dialog" c:identifier="adw_application_window_get_visible_dialog" glib:get-property="visible-dialog" version="1.5">
         <doc xml:space="preserve" filename="src/adw-application-window.c" line="477">
           Returns the currently visible dialog in @self, if there's one.
@@ -1515,6 +1544,14 @@ This method should always be used instead of [method@Gtk.Window.set_child].
           </parameter>
         </parameters>
       </method>
+      <implements name="Gio.ActionGroup"/>
+      <implements name="Gio.ActionMap"/>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
+      <implements name="Gtk.Native"/>
+      <implements name="Gtk.Root"/>
+      <implements name="Gtk.ShortcutManager"/>
     </class>
     <class name="ButtonContent" c:symbol-prefix="button_content" c:type="AdwButtonContent" parent="Gtk.Widget" final="1" glib:type-name="AdwButtonContent" glib:get-type="adw_button_content_get_type" glib:type-struct="ButtonContentClass">
       <constructor name="new" c:identifier="adw_button_content_new">
@@ -1648,6 +1685,9 @@ See [property@ButtonContent:label].
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="Carousel" c:symbol-prefix="carousel" c:type="AdwCarousel" parent="Gtk.Widget" final="1" glib:type-name="AdwCarousel" glib:get-type="adw_carousel_get_type" glib:type-struct="CarouselClass">
       <constructor name="new" c:identifier="adw_carousel_new">
@@ -2052,6 +2092,11 @@ after every scroll.
           </parameter>
         </parameters>
       </glib:signal>
+      <implements name="Swipeable"/>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
+      <implements name="Gtk.Orientable"/>
     </class>
     <class name="CarouselIndicatorDots" c:symbol-prefix="carousel_indicator_dots" c:type="AdwCarouselIndicatorDots" parent="Gtk.Widget" final="1" glib:type-name="AdwCarouselIndicatorDots" glib:get-type="adw_carousel_indicator_dots_get_type" glib:type-struct="CarouselIndicatorDotsClass">
       <constructor name="new" c:identifier="adw_carousel_indicator_dots_new">
@@ -2088,6 +2133,10 @@ after every scroll.
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
+      <implements name="Gtk.Orientable"/>
     </class>
     <class name="CarouselIndicatorLines" c:symbol-prefix="carousel_indicator_lines" c:type="AdwCarouselIndicatorLines" parent="Gtk.Widget" final="1" glib:type-name="AdwCarouselIndicatorLines" glib:get-type="adw_carousel_indicator_lines_get_type" glib:type-struct="CarouselIndicatorLinesClass">
       <constructor name="new" c:identifier="adw_carousel_indicator_lines_new">
@@ -2124,6 +2173,10 @@ after every scroll.
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
+      <implements name="Gtk.Orientable"/>
     </class>
     <class name="Clamp" c:symbol-prefix="clamp" c:type="AdwClamp" parent="Gtk.Widget" final="1" glib:type-name="AdwClamp" glib:get-type="adw_clamp_get_type" glib:type-struct="ClampClass">
       <constructor name="new" c:identifier="adw_clamp_new">
@@ -2264,6 +2317,10 @@ Allows the sizes to vary depending on the text scale factor.
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
+      <implements name="Gtk.Orientable"/>
     </class>
     <class name="ComboRow" c:symbol-prefix="combo_row" c:type="AdwComboRow" parent="ActionRow" glib:type-name="AdwComboRow" glib:get-type="adw_combo_row_get_type" glib:type-struct="ComboRowClass">
       <constructor name="new" c:identifier="adw_combo_row_new">
@@ -2539,6 +2596,10 @@ The subtitle is interpreted as Pango markup if
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Actionable"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="Dialog" c:symbol-prefix="dialog" c:type="AdwDialog" version="1.5" parent="Gtk.Widget" glib:type-name="AdwDialog" glib:get-type="adw_dialog_get_type" glib:type-struct="DialogClass">
       <method name="close" c:identifier="adw_dialog_close" version="1.5">
@@ -2908,6 +2969,10 @@ Presentation mode does nothing for dialogs presented as a window.
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
+      <implements name="Gtk.ShortcutManager"/>
       <glib:signal name="close-attempt" when="last" version="1.5">
         <doc xml:space="preserve" filename="src/adw-dialog.c" line="1212">
           Emitted when the close button or shortcut is used, or
@@ -2969,6 +3034,10 @@ Presentation mode does nothing for dialogs presented as a window.
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Actionable"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="HeaderBar" c:symbol-prefix="header_bar" c:type="AdwHeaderBar" parent="Gtk.Widget" final="1" glib:type-name="AdwHeaderBar" glib:get-type="adw_header_bar_get_type" glib:type-struct="HeaderBarClass">
       <constructor name="new" c:identifier="adw_header_bar_new">
@@ -3271,6 +3340,9 @@ To use a different title, use [class@WindowTitle]:
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="MessageDialog" c:symbol-prefix="message_dialog" c:type="AdwMessageDialog" version="1.2" deprecated="1" deprecated-version="1.6" parent="Gtk.Window" glib:type-name="AdwMessageDialog" glib:get-type="adw_message_dialog_get_type" glib:type-struct="MessageDialogClass">
       <constructor name="new" c:identifier="adw_message_dialog_new" version="1.2" deprecated="1" deprecated-version="1.6">
@@ -3448,6 +3520,12 @@ action, @response will be set to the value of
           </parameter>
         </parameters>
       </glib:signal>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
+      <implements name="Gtk.Native"/>
+      <implements name="Gtk.Root"/>
+      <implements name="Gtk.ShortcutManager"/>
     </class>
     <class name="NavigationPage" c:symbol-prefix="navigation_page" c:type="AdwNavigationPage" version="1.4" parent="Gtk.Widget" glib:type-name="AdwNavigationPage" glib:get-type="adw_navigation_page_get_type" glib:type-struct="NavigationPageClass">
       <constructor name="new" c:identifier="adw_navigation_page_new" version="1.4">
@@ -3648,6 +3726,9 @@ It will always be preceded by [signal@NavigationPage::showing] or
           <type name="none" c:type="void"/>
         </return-value>
       </glib:signal>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="NavigationView" c:symbol-prefix="navigation_view" c:type="AdwNavigationView" version="1.4" parent="Gtk.Widget" final="1" glib:type-name="AdwNavigationView" glib:get-type="adw_navigation_view_get_type" glib:type-struct="NavigationViewClass">
       <constructor name="new" c:identifier="adw_navigation_view_new" version="1.4">
@@ -3716,6 +3797,23 @@ See [property@NavigationPage:tag].
         </doc>
         <return-value transfer-ownership="none">
           <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="NavigationView" c:type="AdwNavigationView*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_navigation_stack" c:identifier="adw_navigation_view_get_navigation_stack" glib:get-property="navigation-stack" version="1.4">
+        <doc xml:space="preserve" filename="src/adw-navigation-view.c" line="3444">
+          Returns a [iface@Gio.ListModel] that contains the pages in navigation stack.
+
+The pages are sorted from root page to visible page.
+
+This can be used to keep an up-to-date view.
+        </doc>
+        <return-value transfer-ownership="full">
+          <type name="Gio.ListModel" c:type="GListModel*"/>
         </return-value>
         <parameters>
           <instance-parameter name="self" transfer-ownership="none">
@@ -4074,6 +4172,10 @@ See [method@NavigationView.replace].
           <type name="none" c:type="void"/>
         </return-value>
       </glib:signal>
+      <implements name="Swipeable"/>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="OverlaySplitView" c:symbol-prefix="overlay_split_view" c:type="AdwOverlaySplitView" version="1.4" parent="Gtk.Widget" final="1" glib:type-name="AdwOverlaySplitView" glib:get-type="adw_overlay_split_view_get_type" glib:type-struct="OverlaySplitViewClass">
       <constructor name="new" c:identifier="adw_overlay_split_view_new" version="1.4">
@@ -4463,6 +4565,10 @@ See [property@OverlaySplitView:min-sidebar-width] and
           </parameter>
         </parameters>
       </method>
+      <implements name="Swipeable"/>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="PreferencesDialog" c:symbol-prefix="preferences_dialog" c:type="AdwPreferencesDialog" version="1.5" parent="Dialog" glib:type-name="AdwPreferencesDialog" glib:get-type="adw_preferences_dialog_get_type" glib:type-struct="PreferencesDialogClass">
       <constructor name="new" c:identifier="adw_preferences_dialog_new" version="1.5">
@@ -4622,6 +4728,10 @@ See [property@PreferencesDialog:visible-page].
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
+      <implements name="Gtk.ShortcutManager"/>
     </class>
     <class name="PreferencesGroup" c:symbol-prefix="preferences_group" c:type="AdwPreferencesGroup" parent="Gtk.Widget" glib:type-name="AdwPreferencesGroup" glib:get-type="adw_preferences_group_get_type" glib:type-struct="PreferencesGroupClass">
       <constructor name="new" c:identifier="adw_preferences_group_new">
@@ -4803,6 +4913,9 @@ on a [class@Gtk.ListBox] instead of `.boxed-list`.
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="PreferencesPage" c:symbol-prefix="preferences_page" c:type="AdwPreferencesPage" parent="Gtk.Widget" glib:type-name="AdwPreferencesPage" glib:get-type="adw_preferences_page_get_type" glib:type-struct="PreferencesPageClass">
       <constructor name="new" c:identifier="adw_preferences_page_new">
@@ -5100,6 +5213,9 @@ The description is displayed at the top of the page.
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="PreferencesRow" c:symbol-prefix="preferences_row" c:type="AdwPreferencesRow" parent="Gtk.ListBoxRow" glib:type-name="AdwPreferencesRow" glib:get-type="adw_preferences_row_get_type" glib:type-struct="PreferencesRowClass">
       <method name="get_title" c:identifier="adw_preferences_row_get_title" glib:get-property="title">
@@ -5138,6 +5254,10 @@ The description is displayed at the top of the page.
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Actionable"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="PreferencesWindow" c:symbol-prefix="preferences_window" c:type="AdwPreferencesWindow" deprecated="1" deprecated-version="1.6" parent="Window" glib:type-name="AdwPreferencesWindow" glib:get-type="adw_preferences_window_get_type" glib:type-struct="PreferencesWindowClass">
       <constructor name="new" c:identifier="adw_preferences_window_new" deprecated="1" deprecated-version="1.6">
@@ -5177,6 +5297,12 @@ The description is displayed at the top of the page.
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
+      <implements name="Gtk.Native"/>
+      <implements name="Gtk.Root"/>
+      <implements name="Gtk.ShortcutManager"/>
     </class>
     <class name="SpinRow" c:symbol-prefix="spin_row" c:type="AdwSpinRow" version="1.4" parent="ActionRow" final="1" glib:type-name="AdwSpinRow" glib:get-type="adw_spin_row_get_type" glib:type-struct="SpinRowClass">
       <constructor name="new_with_range" c:identifier="adw_spin_row_new_with_range" version="1.4">
@@ -5529,6 +5655,11 @@ See [signal@Gtk.SpinButton::wrapped].
           <type name="none" c:type="void"/>
         </return-value>
       </glib:signal>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Actionable"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
+      <implements name="Gtk.Editable"/>
     </class>
     <class name="Spinner" c:symbol-prefix="spinner" c:type="AdwSpinner" version="1.6" parent="Gtk.Widget" final="1" glib:type-name="AdwSpinner" glib:get-type="adw_spinner_get_type" glib:type-struct="SpinnerClass">
       <constructor name="new" c:identifier="adw_spinner_new" version="1.6">
@@ -5536,6 +5667,9 @@ See [signal@Gtk.SpinButton::wrapped].
           <type name="Gtk.Widget" c:type="GtkWidget*"/>
         </return-value>
       </constructor>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="SpinnerPaintable" c:symbol-prefix="spinner_paintable" c:type="AdwSpinnerPaintable" version="1.6" parent="GObject.Object" final="1" glib:type-name="AdwSpinnerPaintable" glib:get-type="adw_spinner_paintable_get_type" glib:type-struct="SpinnerPaintableClass">
       <constructor name="new" c:identifier="adw_spinner_paintable_new" version="1.6">
@@ -5731,6 +5865,9 @@ The title is displayed below the icon. It is not parsed as Pango markup.
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="StyleManager" c:symbol-prefix="style_manager" c:type="AdwStyleManager" parent="GObject.Object" final="1" glib:type-name="AdwStyleManager" glib:get-type="adw_style_manager_get_type" glib:type-struct="StyleManagerClass">
       <function name="get_default" c:identifier="adw_style_manager_get_default">
@@ -5932,6 +6069,49 @@ preference.
         </parameters>
       </method>
     </class>
+    <interface name="Swipeable" c:symbol-prefix="swipeable" c:type="AdwSwipeable" glib:type-name="AdwSwipeable" glib:get-type="adw_swipeable_get_type" glib:type-struct="SwipeableInterface">
+      <method name="get_cancel_progress" c:identifier="adw_swipeable_get_cancel_progress">
+        <doc xml:space="preserve" filename="src/adw-swipeable.c" line="111">
+          Gets the progress @self will snap back to after the gesture is canceled.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gdouble" c:type="double"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Swipeable" c:type="AdwSwipeable*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_distance" c:identifier="adw_swipeable_get_distance">
+        <doc xml:space="preserve" filename="src/adw-swipeable.c" line="41">
+          Gets the swipe distance of @self.
+
+This corresponds to how many pixels 1 unit represents.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gdouble" c:type="double"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Swipeable" c:type="AdwSwipeable*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_progress" c:identifier="adw_swipeable_get_progress">
+        <doc xml:space="preserve" filename="src/adw-swipeable.c" line="90">
+          Gets the current progress of @self.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gdouble" c:type="double"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Swipeable" c:type="AdwSwipeable*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </interface>
     <class name="SwitchRow" c:symbol-prefix="switch_row" c:type="AdwSwitchRow" version="1.4" parent="ActionRow" final="1" glib:type-name="AdwSwitchRow" glib:get-type="adw_switch_row_get_type" glib:type-struct="SwitchRowClass">
       <constructor name="new" c:identifier="adw_switch_row_new" version="1.4">
         <return-value transfer-ownership="none">
@@ -5967,6 +6147,10 @@ preference.
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Actionable"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="Toast" c:symbol-prefix="toast" c:type="AdwToast" parent="GObject.Object" final="1" glib:type-name="AdwToast" glib:get-type="adw_toast_get_type" glib:type-struct="ToastClass">
       <constructor name="new" c:identifier="adw_toast_new">
@@ -6001,6 +6185,19 @@ Does nothing if @self has already been dismissed, or hasn't been added to an
         </doc>
         <return-value transfer-ownership="none" nullable="1">
           <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_action_target_value" c:identifier="adw_toast_get_action_target_value" glib:get-property="action-target">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="676">
+          Gets the parameter for action invocations.
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="GLib.Variant" c:type="GVariant*"/>
         </return-value>
         <parameters>
           <instance-parameter name="self" transfer-ownership="none">
@@ -6106,6 +6303,25 @@ See [property@Toast:action-target].
           </instance-parameter>
           <parameter name="action_name" transfer-ownership="none" nullable="1" allow-none="1">
             <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_action_target_value" c:identifier="adw_toast_set_action_target_value" glib:set-property="action-target">
+        <doc xml:space="preserve" filename="src/adw-toast.c" line="692">
+          Sets the parameter for action invocations.
+
+If the @action_target variant has a floating reference this function
+will sink it.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Toast" c:type="AdwToast*"/>
+          </instance-parameter>
+          <parameter name="action_target" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="GLib.Variant" c:type="GVariant*"/>
           </parameter>
         </parameters>
       </method>
@@ -6351,6 +6567,9 @@ Use [method@Toast.dismiss] to dismiss a single toast.
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="ToolbarView" c:symbol-prefix="toolbar_view" c:type="AdwToolbarView" version="1.4" parent="Gtk.Widget" final="1" glib:type-name="AdwToolbarView" glib:get-type="adw_toolbar_view_get_type" glib:type-struct="ToolbarViewClass">
       <constructor name="new" c:identifier="adw_toolbar_view_new" version="1.4">
@@ -6717,6 +6936,9 @@ See also [method@ToolbarView.set_bottom_bar_style].
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="ViewStack" c:symbol-prefix="view_stack" c:type="AdwViewStack" parent="Gtk.Widget" final="1" glib:type-name="AdwViewStack" glib:get-type="adw_view_stack_get_type" glib:type-struct="ViewStackClass">
       <constructor name="new" c:identifier="adw_view_stack_new">
@@ -6747,6 +6969,9 @@ See also [method@ToolbarView.set_bottom_bar_style].
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="ViewSwitcher" c:symbol-prefix="view_switcher" c:type="AdwViewSwitcher" parent="Gtk.Widget" final="1" glib:type-name="AdwViewSwitcher" glib:get-type="adw_view_switcher_get_type" glib:type-struct="ViewSwitcherClass">
       <constructor name="new" c:identifier="adw_view_switcher_new">
@@ -6767,6 +6992,9 @@ See also [method@ToolbarView.set_bottom_bar_style].
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <class name="Window" c:symbol-prefix="window" c:type="AdwWindow" parent="Gtk.Window" glib:type-name="AdwWindow" glib:get-type="adw_window_get_type" glib:type-struct="WindowClass">
       <constructor name="new" c:identifier="adw_window_new">
@@ -6787,6 +7015,12 @@ See also [method@ToolbarView.set_bottom_bar_style].
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
+      <implements name="Gtk.Native"/>
+      <implements name="Gtk.Root"/>
+      <implements name="Gtk.ShortcutManager"/>
     </class>
     <class name="WindowTitle" c:symbol-prefix="window_title" c:type="AdwWindowTitle" parent="Gtk.Widget" final="1" glib:type-name="AdwWindowTitle" glib:get-type="adw_window_title_get_type" glib:type-struct="WindowTitleClass">
       <constructor name="new" c:identifier="adw_window_title_new">
@@ -6865,6 +7099,9 @@ generally does not use the application name.
           </parameter>
         </parameters>
       </method>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
     </class>
     <function name="init" c:identifier="adw_init">
       <return-value transfer-ownership="none">
@@ -6936,6 +7173,13 @@ New values may be added to this enumeration over time.
       <member name="px" value="0" c:identifier="ADW_LENGTH_UNIT_PX" glib:nick="px" glib:name="ADW_LENGTH_UNIT_PX"/>
       <member name="pt" value="1" c:identifier="ADW_LENGTH_UNIT_PT" glib:nick="pt" glib:name="ADW_LENGTH_UNIT_PT"/>
       <member name="sp" value="2" c:identifier="ADW_LENGTH_UNIT_SP" glib:nick="sp" glib:name="ADW_LENGTH_UNIT_SP"/>
+    </enumeration>
+    <enumeration name="NavigationDirection" glib:type-name="AdwNavigationDirection" glib:get-type="adw_navigation_direction_get_type" c:type="AdwNavigationDirection">
+      <doc xml:space="preserve" filename="src/adw-navigation-direction.c" line="10">
+        Describes the direction of a swipe navigation gesture.
+      </doc>
+      <member name="back" value="0" c:identifier="ADW_NAVIGATION_DIRECTION_BACK" glib:nick="back" glib:name="ADW_NAVIGATION_DIRECTION_BACK"/>
+      <member name="forward" value="1" c:identifier="ADW_NAVIGATION_DIRECTION_FORWARD" glib:nick="forward" glib:name="ADW_NAVIGATION_DIRECTION_FORWARD"/>
     </enumeration>
     <enumeration name="ResponseAppearance" version="1.2" glib:type-name="AdwResponseAppearance" glib:get-type="adw_response_appearance_get_type" c:type="AdwResponseAppearance">
       <doc xml:space="preserve" filename="src/adw-alert-dialog.c" line="159">

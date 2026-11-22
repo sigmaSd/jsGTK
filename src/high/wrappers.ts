@@ -12,7 +12,8 @@ import { glib } from "../low/glib.ts";
 import { GObject } from "./gobject.ts";
 
 /** A class whose prototype wraps a GType; its constructor may be private. */
-type WrapperClass = { prototype: GObject };
+// deno-lint-ignore ban-types
+type WrapperClass = { prototype: GObject } & Function;
 
 /** Wrapper classes by GType name, e.g. `GtkListBoxRow`. */
 const wrappers = new Map<string, WrapperClass>();
@@ -55,6 +56,24 @@ export function borrowed<T extends GObject>(ptr: Deno.PointerValue): T | null {
   return wrapper;
 }
 
+/**
+ * Wrap an object GLib hands over with `transfer full`: the wrapper owns that
+ * reference, as a constructed one does, and `unref()` releases it. If the
+ * object already has a wrapper, the extra reference is dropped and the
+ * existing wrapper returned.
+ */
+export function owned<T extends GObject>(ptr: Deno.PointerValue): T | null {
+  if (!ptr) return null;
+  const existing = GObject.lookup<T>(ptr);
+  if (existing) {
+    gobject.symbols.g_object_unref(ptr);
+    return existing;
+  }
+  // GObject's constructor registers the wrapper; the object's own class
+  // gives it the right methods without running that class's constructor.
+  return Reflect.construct(GObject, [ptr], wrapperFor(ptr)) as T;
+}
+
 /** Read a string GLib returns with `transfer full`, then free it. */
 export function takeString(ptr: Deno.PointerValue): string | null {
   if (!ptr) return null;
@@ -66,6 +85,87 @@ export function takeString(ptr: Deno.PointerValue): string | null {
 /** A C string argument, or NULL. */
 export function cstrOrNull(text: string | null): Uint8Array | null {
   return text === null ? null : cstr(text);
+}
+
+/** An error GLib reported through a `GError`. */
+export class GError extends Error {
+  /** The error domain, e.g. `g-io-error-quark`. */
+  readonly domain: string;
+  /** The domain-specific code, e.g. a `Gio.IOErrorEnum` value. */
+  readonly code: number;
+
+  constructor(message: string, domain: string, code: number) {
+    super(message);
+    this.name = "GError";
+    this.domain = domain;
+    this.code = code;
+  }
+}
+
+/**
+ * A `GError**` out argument: pass `pointer`, then call `check()` after the
+ * call to throw what GLib reported, if anything.
+ */
+export class ErrorSlot {
+  // At least 128 bytes, so the engine keeps it at a fixed address.
+  #slot = new BigUint64Array(16);
+  readonly pointer: Deno.PointerObject = Deno.UnsafePointer.of(this.#slot)!;
+
+  check(): void {
+    const address = this.#slot[0];
+    if (!address) return;
+    this.#slot[0] = 0n;
+    const error = Deno.UnsafePointer.create(address)!;
+    // struct GError { GQuark domain; gint code; gchar *message; }
+    const view = new Deno.UnsafePointerView(error);
+    const domain = readCStr(glib.symbols.g_quark_to_string(view.getUint32(0)));
+    const code = view.getInt32(4);
+    const message = readCStr(
+      Deno.UnsafePointer.create(view.getBigUint64(8)),
+    );
+    glib.symbols.g_error_free(error);
+    throw new GError(message, domain, code);
+  }
+}
+
+/** Async callbacks GLib hasn't called yet; kept so they aren't collected. */
+const pendingAsync = new Set<{ close(): void }>();
+
+/**
+ * Run a GIO-style async call and resolve with its finish function's result.
+ * `start` receives the GAsyncReadyCallback to pass; `finish` receives the
+ * GAsyncResult and an error slot, and its result is the promise's value.
+ */
+export function asyncCall<T>(
+  start: (callback: Deno.PointerObject) => void,
+  finish: (result: Deno.PointerValue, error: ErrorSlot) => T,
+): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const callback = new Deno.UnsafeCallback(
+      { parameters: ["pointer", "pointer", "pointer"], result: "void" },
+      (_source, result) => {
+        pendingAsync.delete(callback);
+        // Not closed from inside its own call.
+        queueMicrotask(() => callback.close());
+        try {
+          const error = new ErrorSlot();
+          const value = finish(result, error);
+          error.check();
+          resolve(value);
+        } catch (e) {
+          reject(e);
+        }
+      },
+    );
+    pendingAsync.add(callback);
+    try {
+      start(callback.pointer);
+    } catch (e) {
+      pendingAsync.delete(callback);
+      callback.close();
+      reject(e);
+    }
+  });
 }
 
 /** Callbacks GLib still holds, by the user data passed with them. */

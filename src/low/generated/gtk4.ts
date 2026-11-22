@@ -868,6 +868,18 @@ export const gtk4Symbols = {
     result: "void",
     optional: true,
   },
+  // Since 4.10. callback has async scope.
+  gtk_alert_dialog_choose: {
+    parameters: ["pointer", "pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.10. Trailing GError**.
+  gtk_alert_dialog_choose_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "i32",
+    optional: true,
+  },
   // Since 4.10.
   gtk_alert_dialog_get_cancel_button: {
     parameters: ["pointer"],
@@ -954,6 +966,11 @@ export const gtk4Symbols = {
     result: "pointer",
     optional: true,
   },
+  gtk_application_get_windows: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
   gtk_application_remove_window: {
     parameters: ["pointer", "pointer"],
     result: "void",
@@ -1031,6 +1048,28 @@ export const gtk4Symbols = {
     result: "void",
     optional: true,
   },
+  gtk_orientable_get_orientation: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  gtk_orientable_set_orientation: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  // Trailing GError**.
+  gtk_builder_add_from_resource: {
+    parameters: ["pointer", "buffer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**.
+  gtk_builder_create_closure: {
+    parameters: ["pointer", "buffer", "i32", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
   gtk_builder_expose_object: {
     parameters: ["pointer", "buffer", "pointer"],
     result: "void",
@@ -1105,6 +1144,31 @@ export const gtk4Symbols = {
   },
   gtk_button_set_use_underline: {
     parameters: ["pointer", "gboolean"],
+    result: "void",
+    optional: true,
+  },
+  gtk_actionable_get_action_name: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gtk_actionable_get_action_target_value: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gtk_actionable_set_action_name: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_actionable_set_action_target_value: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_actionable_set_detailed_action_name: {
+    parameters: ["pointer", "buffer"],
     result: "void",
     optional: true,
   },
@@ -1246,6 +1310,46 @@ export const gtk4Symbols = {
     result: "void",
     optional: true,
   },
+  gtk_scrollable_get_hadjustment: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gtk_scrollable_get_hscroll_policy: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  gtk_scrollable_get_vadjustment: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gtk_scrollable_get_vscroll_policy: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  gtk_scrollable_set_hadjustment: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_scrollable_set_hscroll_policy: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_scrollable_set_vadjustment: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_scrollable_set_vscroll_policy: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
   gtk_column_view_column_get_column_view: {
     parameters: ["pointer"],
     result: "pointer",
@@ -1325,6 +1429,12 @@ export const gtk4Symbols = {
   },
   gtk_column_view_column_set_visible: {
     parameters: ["pointer", "gboolean"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.12.
+  gtk_css_provider_load_from_bytes: {
+    parameters: ["pointer", "pointer"],
     result: "void",
     optional: true,
   },
@@ -1457,9 +1567,19 @@ export const gtk4Symbols = {
     result: "pointer",
     optional: true,
   },
+  gtk_drop_target_get_formats: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
   gtk_drop_target_get_preload: {
     parameters: ["pointer"],
     result: "gboolean",
+    optional: true,
+  },
+  gtk_drop_target_get_value: {
+    parameters: ["pointer"],
+    result: "pointer",
     optional: true,
   },
   gtk_drop_target_reject: {
@@ -1606,6 +1726,42 @@ export const gtk4Symbols = {
     result: "pointer",
     optional: true,
   },
+  // Since 4.10. callback has async scope.
+  gtk_file_dialog_open_multiple: {
+    parameters: ["pointer", "pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.10. Trailing GError**. Return transfer full.
+  gtk_file_dialog_open_multiple_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 4.10. callback has async scope.
+  gtk_file_dialog_save: {
+    parameters: ["pointer", "pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.10. Trailing GError**. Return transfer full.
+  gtk_file_dialog_save_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 4.10. callback has async scope.
+  gtk_file_dialog_select_multiple_folders: {
+    parameters: ["pointer", "pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.10. Trailing GError**. Return transfer full.
+  gtk_file_dialog_select_multiple_folders_finish: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
   // Since 4.10.
   gtk_file_dialog_set_accept_label: {
     parameters: ["pointer", "buffer"],
@@ -1643,6 +1799,16 @@ export const gtk4Symbols = {
     optional: true,
   },
   gtk_file_filter_get_name: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gtk_file_filter_to_gvariant: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gtk_buildable_get_buildable_id: {
     parameters: ["pointer"],
     result: "pointer",
     optional: true,
@@ -1846,6 +2012,12 @@ export const gtk4Symbols = {
     result: "gboolean",
     optional: true,
   },
+  // Return transfer full.
+  gtk_icon_theme_lookup_by_gicon: {
+    parameters: ["pointer", "pointer", "i32", "i32", "i32", "i32"],
+    result: "pointer",
+    optional: true,
+  },
   gtk_icon_theme_set_theme_name: {
     parameters: ["pointer", "buffer"],
     result: "void",
@@ -1900,6 +2072,11 @@ export const gtk4Symbols = {
   gtk_image_set_icon_size: {
     parameters: ["pointer", "i32"],
     result: "void",
+    optional: true,
+  },
+  gtk_label_get_attributes: {
+    parameters: ["pointer"],
+    result: "pointer",
     optional: true,
   },
   gtk_label_get_current_uri: {
@@ -2008,6 +2185,11 @@ export const gtk4Symbols = {
     result: "void",
     optional: true,
   },
+  gtk_label_set_attributes: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
   gtk_label_set_extra_menu: {
     parameters: ["pointer", "pointer"],
     result: "void",
@@ -2054,6 +2236,12 @@ export const gtk4Symbols = {
     result: "void",
     optional: true,
   },
+  // Since 4.8.
+  gtk_label_set_tabs: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
   gtk_label_set_text_with_mnemonic: {
     parameters: ["pointer", "buffer"],
     result: "void",
@@ -2071,6 +2259,24 @@ export const gtk4Symbols = {
   },
   gtk_label_set_yalign: {
     parameters: ["pointer", "f32"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.14.
+  gtk_accessible_text_update_caret_position: {
+    parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.14.
+  gtk_accessible_text_update_contents: {
+    parameters: ["pointer", "i32", "u32", "u32"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.14.
+  gtk_accessible_text_update_selection_bound: {
+    parameters: ["pointer"],
     result: "void",
     optional: true,
   },
@@ -2576,8 +2782,28 @@ export const gtk4Symbols = {
     result: "void",
     optional: true,
   },
+  gtk_popover_set_pointing_to: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
   gtk_popover_set_position: {
     parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_native_get_surface: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gtk_native_realize: {
+    parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_native_unrealize: {
+    parameters: ["pointer"],
     result: "void",
     optional: true,
   },
@@ -2921,6 +3147,121 @@ export const gtk4Symbols = {
     result: "void",
     optional: true,
   },
+  // Since 4.10.
+  gtk_editable_delegate_get_accessible_platform_state: {
+    parameters: ["pointer", "i32"],
+    result: "gboolean",
+    optional: true,
+  },
+  gtk_editable_delete_selection: {
+    parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_editable_delete_text: {
+    parameters: ["pointer", "i32", "i32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_editable_finish_delegate: {
+    parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_editable_get_alignment: {
+    parameters: ["pointer"],
+    result: "f32",
+    optional: true,
+  },
+  // Return transfer full.
+  gtk_editable_get_chars: {
+    parameters: ["pointer", "i32", "i32"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 4.24. Return transfer full.
+  gtk_editable_get_complete_text: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gtk_editable_get_delegate: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gtk_editable_get_editable: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  gtk_editable_get_enable_undo: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 4.24. Return transfer full.
+  gtk_editable_get_input_interceptor: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gtk_editable_get_max_width_chars: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  gtk_editable_get_position: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  gtk_editable_get_width_chars: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  gtk_editable_init_delegate: {
+    parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_editable_set_alignment: {
+    parameters: ["pointer", "f32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_editable_set_editable: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+    optional: true,
+  },
+  gtk_editable_set_enable_undo: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.24.
+  gtk_editable_set_input_interceptor: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_editable_set_max_width_chars: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_editable_set_position: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_editable_set_width_chars: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
   gtk_single_selection_get_autoselect: {
     parameters: ["pointer"],
     result: "gboolean",
@@ -2966,9 +3307,65 @@ export const gtk4Symbols = {
     result: "void",
     optional: true,
   },
+  // Since 4.12.
+  gtk_section_model_sections_changed: {
+    parameters: ["pointer", "u32", "u32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_selection_model_is_selected: {
+    parameters: ["pointer", "u32"],
+    result: "gboolean",
+    optional: true,
+  },
+  gtk_selection_model_select_all: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  gtk_selection_model_select_item: {
+    parameters: ["pointer", "u32", "gboolean"],
+    result: "gboolean",
+    optional: true,
+  },
+  gtk_selection_model_select_range: {
+    parameters: ["pointer", "u32", "u32", "gboolean"],
+    result: "gboolean",
+    optional: true,
+  },
+  gtk_selection_model_selection_changed: {
+    parameters: ["pointer", "u32", "u32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_selection_model_set_selection: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  gtk_selection_model_unselect_all: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  gtk_selection_model_unselect_item: {
+    parameters: ["pointer", "u32"],
+    result: "gboolean",
+    optional: true,
+  },
+  gtk_selection_model_unselect_range: {
+    parameters: ["pointer", "u32", "u32"],
+    result: "gboolean",
+    optional: true,
+  },
   gtk_size_group_get_mode: {
     parameters: ["pointer"],
     result: "i32",
+    optional: true,
+  },
+  gtk_size_group_get_widgets: {
+    parameters: ["pointer"],
+    result: "pointer",
     optional: true,
   },
   gtk_size_group_remove_widget: {
@@ -3018,9 +3415,24 @@ export const gtk4Symbols = {
     result: "u32",
     optional: true,
   },
+  gtk_text_buffer_add_mark: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
   gtk_text_buffer_add_selection_clipboard: {
     parameters: ["pointer", "pointer"],
     result: "void",
+    optional: true,
+  },
+  gtk_text_buffer_apply_tag: {
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_text_buffer_backspace: {
+    parameters: ["pointer", "pointer", "gboolean", "gboolean"],
+    result: "gboolean",
     optional: true,
   },
   gtk_text_buffer_begin_irreversible_action: {
@@ -3033,9 +3445,19 @@ export const gtk4Symbols = {
     result: "void",
     optional: true,
   },
+  gtk_text_buffer_create_child_anchor: {
+    parameters: ["pointer", "pointer"],
+    result: "pointer",
+    optional: true,
+  },
   gtk_text_buffer_cut_clipboard: {
     parameters: ["pointer", "pointer", "gboolean"],
     result: "void",
+    optional: true,
+  },
+  gtk_text_buffer_delete_interactive: {
+    parameters: ["pointer", "pointer", "pointer", "gboolean"],
+    result: "gboolean",
     optional: true,
   },
   gtk_text_buffer_delete_mark: {
@@ -3108,6 +3530,18 @@ export const gtk4Symbols = {
     result: "pointer",
     optional: true,
   },
+  // Return transfer full.
+  gtk_text_buffer_get_selection_content: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Return transfer full.
+  gtk_text_buffer_get_slice: {
+    parameters: ["pointer", "pointer", "pointer", "gboolean"],
+    result: "pointer",
+    optional: true,
+  },
   gtk_text_buffer_get_tag_table: {
     parameters: ["pointer"],
     result: "pointer",
@@ -3118,9 +3552,59 @@ export const gtk4Symbols = {
     result: "void",
     optional: true,
   },
+  gtk_text_buffer_insert_child_anchor: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_text_buffer_insert_interactive: {
+    parameters: ["pointer", "pointer", "buffer", "i32", "gboolean"],
+    result: "gboolean",
+    optional: true,
+  },
   gtk_text_buffer_insert_interactive_at_cursor: {
     parameters: ["pointer", "buffer", "i32", "gboolean"],
     result: "gboolean",
+    optional: true,
+  },
+  gtk_text_buffer_insert_markup: {
+    parameters: ["pointer", "pointer", "buffer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_text_buffer_insert_paintable: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_text_buffer_insert_range: {
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_text_buffer_insert_range_interactive: {
+    parameters: ["pointer", "pointer", "pointer", "pointer", "gboolean"],
+    result: "gboolean",
+    optional: true,
+  },
+  gtk_text_buffer_move_mark: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_text_buffer_move_mark_by_name: {
+    parameters: ["pointer", "buffer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_text_buffer_paste_clipboard: {
+    parameters: ["pointer", "pointer", "pointer", "gboolean"],
+    result: "void",
+    optional: true,
+  },
+  gtk_text_buffer_place_cursor: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
     optional: true,
   },
   gtk_text_buffer_redo: {
@@ -3136,6 +3620,16 @@ export const gtk4Symbols = {
   },
   gtk_text_buffer_remove_selection_clipboard: {
     parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_text_buffer_remove_tag: {
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_text_buffer_select_range: {
+    parameters: ["pointer", "pointer", "pointer"],
     result: "void",
     optional: true,
   },
@@ -3167,6 +3661,26 @@ export const gtk4Symbols = {
   gtk_text_view_add_overlay: {
     parameters: ["pointer", "pointer", "i32", "i32"],
     result: "void",
+    optional: true,
+  },
+  gtk_text_view_backward_display_line: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  gtk_text_view_backward_display_line_start: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  gtk_text_view_forward_display_line: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  gtk_text_view_forward_display_line_end: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
     optional: true,
   },
   gtk_text_view_get_accepts_tab: {
@@ -3286,6 +3800,11 @@ export const gtk4Symbols = {
     result: "void",
     optional: true,
   },
+  gtk_text_view_move_visually: {
+    parameters: ["pointer", "pointer", "i32"],
+    result: "gboolean",
+    optional: true,
+  },
   gtk_text_view_place_cursor_onscreen: {
     parameters: ["pointer"],
     result: "gboolean",
@@ -3386,6 +3905,11 @@ export const gtk4Symbols = {
     result: "void",
     optional: true,
   },
+  gtk_text_view_set_tabs: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
   gtk_text_view_set_top_margin: {
     parameters: ["pointer", "i32"],
     result: "void",
@@ -3396,9 +3920,19 @@ export const gtk4Symbols = {
     result: "void",
     optional: true,
   },
+  gtk_text_view_starts_display_line: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
   gtk_widget_action_set_enabled: {
     parameters: ["pointer", "buffer", "gboolean"],
     result: "void",
+    optional: true,
+  },
+  gtk_widget_activate_action_variant: {
+    parameters: ["pointer", "buffer", "pointer"],
+    result: "gboolean",
     optional: true,
   },
   gtk_widget_activate_default: {
@@ -3430,6 +3964,18 @@ export const gtk4Symbols = {
   gtk_widget_contains: {
     parameters: ["pointer", "f64", "f64"],
     result: "gboolean",
+    optional: true,
+  },
+  // Return transfer full.
+  gtk_widget_create_pango_context: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Return transfer full.
+  gtk_widget_create_pango_layout: {
+    parameters: ["pointer", "buffer"],
+    result: "pointer",
     optional: true,
   },
   gtk_drag_check_threshold: {
@@ -3750,6 +4296,18 @@ export const gtk4Symbols = {
     result: "gboolean",
     optional: true,
   },
+  // Return transfer full.
+  gtk_widget_observe_children: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Return transfer full.
+  gtk_widget_observe_controllers: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
   gtk_widget_pick: {
     parameters: ["pointer", "f64", "f64", "i32"],
     result: "pointer",
@@ -3883,6 +4441,90 @@ export const gtk4Symbols = {
     optional: true,
   },
   gtk_widget_unset_state_flags: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.14.
+  gtk_accessible_announce: {
+    parameters: ["pointer", "buffer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.22. Return transfer full.
+  gtk_accessible_get_accessible_id: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 4.10. Return transfer full.
+  gtk_accessible_get_accessible_parent: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 4.10.
+  gtk_accessible_get_accessible_role: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  // Since 4.10. Return transfer full.
+  gtk_accessible_get_at_context: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 4.10. Return transfer full.
+  gtk_accessible_get_first_accessible_child: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 4.10. Return transfer full.
+  gtk_accessible_get_next_accessible_sibling: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 4.10.
+  gtk_accessible_get_platform_state: {
+    parameters: ["pointer", "i32"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 4.10.
+  gtk_accessible_reset_property: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.10.
+  gtk_accessible_reset_relation: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.10.
+  gtk_accessible_reset_state: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.10.
+  gtk_accessible_set_accessible_parent: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.10.
+  gtk_accessible_update_next_accessible_sibling: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.18.
+  gtk_accessible_update_platform_state: {
     parameters: ["pointer", "i32"],
     result: "void",
     optional: true,
@@ -4089,6 +4731,21 @@ export const gtk4Symbols = {
   },
   gtk_window_unminimize: {
     parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_root_get_display: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gtk_root_get_focus: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gtk_root_set_focus: {
+    parameters: ["pointer", "pointer"],
     result: "void",
     optional: true,
   },

@@ -4,12 +4,16 @@ import { gobject } from "../low/gobject.ts";
 import { cstr, readCStr } from "../low/utils.ts";
 import { GObject } from "./gobject.ts";
 import {
+  type AppInfoMethods,
+  appInfoMethods,
   type AppLaunchContextMethods,
   appLaunchContextMethods,
   type CancellableMethods,
   cancellableMethods,
   type DBusProxyMethods,
   dBusProxyMethods,
+  type FileMethods,
+  fileMethods,
   type InputStreamMethods,
   inputStreamMethods,
   type ListStoreMethods,
@@ -409,6 +413,10 @@ export class AppInfo extends GObject {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface AppInfo extends AppInfoMethods {}
+applyGenerated(AppInfo, appInfoMethods, "GAppInfo");
+
 /** Application backed by a Freedesktop .desktop entry on a supported GIO build. */
 export class DesktopAppInfo extends AppInfo {
   static isSupported(): boolean {
@@ -498,6 +506,10 @@ export class File extends GObject {
     return [false, new Uint8Array(0)];
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface File extends FileMethods {}
+applyGenerated(File, fileMethods, "GFile");
 
 export class AsyncResult extends GObject {}
 

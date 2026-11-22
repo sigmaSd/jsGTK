@@ -15,6 +15,7 @@ import {
   girAncestors,
   girClasses,
   type HandWritten,
+  implementsOf,
   type Namespace,
 } from "./generate_classes.ts";
 
@@ -47,6 +48,12 @@ const scalars = new Map<string, FfiParameter | "void">([
   ["gboolean", "gboolean"],
   ["gint", "i32"],
   ["int", "i32"],
+  ["unsigned int", "u32"],
+  ["unsigned", "u32"],
+  ["short", "i16"],
+  ["unsigned short", "u16"],
+  ["char", "i8"],
+  ["unsigned char", "u8"],
   ["guint", "u32"],
   ["gint8", "i8"],
   ["guint8", "u8"],
@@ -542,6 +549,8 @@ async function snapshots(
     const namespaces = namespacesFor(withClasses, inputs);
     for (const gir of girClasses(namespaces, handWritten).values()) {
       classTypes.add(gir);
+      // What each wrapped type implements, for the hierarchy check.
+      for (const entry of implementsOf(namespaces, gir)) classNodes.add(entry);
     }
     for (const type of [...classTypes]) {
       for (const ancestor of girAncestors(namespaces, type)) {
@@ -626,11 +635,23 @@ async function snapshots(
     if (file !== "Gtk-3.0.gir") {
       for (const node of classNodes) {
         if (
-          node.localName !== "signal" ||
+          node.localName !== "signal" && node.localName !== "implements" ||
           node.ownerDocument !== namespace.ownerDocument
         ) continue;
-        copyContainer(node.parentNode as Element).appendChild(
-          doc.importNode(copySignature(node, true), true),
+        const container = copyContainer(node.parentNode as Element);
+        // A class implements an interface once, however many lists say so.
+        if (
+          node.localName === "implements" &&
+          children(container).some((e) =>
+            e.localName === "implements" &&
+            e.getAttribute("name") === node.getAttribute("name")
+          )
+        ) continue;
+        container.appendChild(
+          doc.importNode(
+            copySignature(node, node.localName === "signal"),
+            true,
+          ),
         );
       }
       for (const entry of children(namespace)) {
@@ -746,7 +767,18 @@ async function generate(
   return await format(lines.join("\n") + "\n");
 }
 
+/** deno fmt, run until stable: one pass doesn't always settle long lines. */
 async function format(text: string): Promise<string> {
+  let current = text;
+  for (let pass = 0; pass < 3; pass++) {
+    const next = await formatOnce(current);
+    if (next === current) return next;
+    current = next;
+  }
+  return current;
+}
+
+async function formatOnce(text: string): Promise<string> {
   const formatter = new Deno.Command(Deno.execPath(), {
     args: ["fmt", "--ext", "ts", "-"],
     cwd: ROOT,
@@ -866,17 +898,34 @@ async function main(args: string[]) {
   }));
   const classInputs = pinnedInputs ?? inputs;
   if (withClasses.length) {
+    // Classes whose own methods are generated; interface-only ones add
+    // methods every subclass implementing the interface may call.
     const generatedClasses = new Set(
       withClasses.flatMap(([, profile]) =>
-        Object.keys(profile.highLevel!.classes).map((name) =>
-          `${profile.highLevel!.namespace}.${name}`
-        )
+        Object.entries(profile.highLevel!.classes)
+          .filter(([, config]) => !config.interfacesOnly)
+          .map(([name]) => `${profile.highLevel!.namespace}.${name}`)
+      ),
+    );
+    const interfaceOnly = new Map(
+      withClasses.flatMap(([, profile]) =>
+        Object.entries(profile.highLevel!.classes)
+          .filter(([, config]) => config.interfacesOnly)
+          .map(([name, config]) =>
+            [
+              `${profile.highLevel!.namespace}.${name}`,
+              config.interfacesOnly!.map((i) =>
+                `${profile.highLevel!.namespace}.${i}`
+              ),
+            ] as const
+          )
       ),
     );
     checkHierarchy(
       namespacesFor(withClasses[0][1], classInputs),
       generatedClasses,
       handWritten,
+      interfaceOnly,
     );
   }
   const classModules = await Promise.all(
