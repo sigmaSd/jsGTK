@@ -154,6 +154,8 @@ export const Key = {
   F: 70,
   l: 108,
   L: 76,
+  n: 110,
+  N: 78,
   p: 112,
   P: 80,
   r: 114,
@@ -171,6 +173,10 @@ export const Key = {
   Escape: 65307,
   Return: 65293,
   KP_Enter: 65421,
+  Up: 65362,
+  Down: 65364,
+  KP_Up: 65431,
+  KP_Down: 65433,
 } as const;
 
 // GTK Align enum
@@ -3171,4 +3177,5 @@ export {
   NaturalWrapMode,
   PangoEllipsizeMode,
   PangoWrapMode,
+  PropagationPhase,
 } from "./generated/gtk4.ts";
