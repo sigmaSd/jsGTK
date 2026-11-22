@@ -32,7 +32,7 @@ For bun you need to install it first using `bunx jsr add @sigmasd/gtk`
 
 For Node.js you need to install it using `npx jsr add @sigmasd/gtk`.
 Additionally, you must install **koffi** as it is used for FFI in Node.js:
-`npm install koffi@2`
+`npm install koffi@3`
 
 Import from JSR in your project:
 

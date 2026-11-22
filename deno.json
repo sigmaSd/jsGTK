@@ -20,7 +20,7 @@
     ]
   },
   "imports": {
-    "@sigma/deno-compat": "jsr:@sigma/deno-compat@0.23.0",
+    "@sigma/deno-compat": "jsr:@sigma/deno-compat@0.24.0",
     "@xmldom/xmldom": "npm:@xmldom/xmldom@0.9.12"
   },
   "tasks": {
