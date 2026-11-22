@@ -484,27 +484,30 @@ gtk/
 │   │   ├── gtk4.ts        # GTK4 wrapper classes
 │   │   ├── gtk3.ts        # GTK3 wrapper classes
 │   │   ├── adw.ts         # Libadwaita wrappers
-│   │   ├── gio.ts         # GIO wrappers (Menu, SimpleAction)
-│   │   ├── glib.ts        # GLib wrappers (MainLoop)
+│   │   ├── gio.ts         # GIO wrappers (files, menus, actions, D-Bus)
+│   │   ├── glib.ts        # GLib wrappers (MainLoop, GError)
 │   │   ├── gobject.ts     # GObject base class
 │   │   ├── cairo.ts       # Cairo graphics wrapper
+│   │   ├── wrappers.ts    # Runtime support for generated methods
 │   │   ├── eventloop.ts   # Event loop for async/await
-│   │   └── app_indicator.ts # App indicator wrapper
+│   │   ├── eventloop_worker.ts # Bun's g_poll worker for the event loop
+│   │   ├── app_indicator.ts # App indicator wrapper
+│   │   └── generated/     # Methods and signal helpers generated from GIR
 │   ├── low/               # Low-level FFI layer (Internal)
-│   │   ├── gtk4.ts        # GTK4 FFI bindings
-│   │   ├── gtk3.ts        # GTK3 FFI bindings
-│   │   ├── adw.ts         # Libadwaita FFI bindings
-│   │   ├── gio.ts         # GIO FFI bindings
-│   │   ├── glib.ts        # GLib FFI bindings
-│   │   ├── gobject.ts     # GObject FFI bindings
-│   │   ├── cairo.ts       # Cairo FFI bindings
-│   │   ├── app_indicator.ts # App indicator FFI
+│   │   ├── gtk4.ts, adw.ts, gio.ts, … # One loader per library
+│   │   ├── gobject-library.ts # Opens a library, mapping gboolean to boolean
+│   │   ├── generated/     # FFI signatures generated from GIR
+│   │   ├── cairo.ts       # Cairo FFI bindings (not from GIR)
 │   │   ├── utils.ts       # Utility functions (cstr, readCStr)
 │   │   └── paths/         # Platform-specific library loading
 │   │       ├── mod.ts     # Main export
 │   │       ├── findLib.ts # Library search utility
 │   │       ├── types.ts   # Type definitions
 │   │       └── platform/  # Linux, macOS, Windows paths
+├── tools/
+│   ├── generate_gir.ts    # Writes src/low/generated and src/high/generated
+│   ├── generate_classes.ts # GIR methods and signals to TypeScript
+│   └── gir/               # bindings.json and the pinned GIR snapshots
 ├── examples/
 │   ├── simple.ts          # Simple hello world
 │   ├── widgets-demo.ts    # Comprehensive widget demo
@@ -633,12 +636,15 @@ commit any changes to `package-lock.json`.
 
 ## Known Limitations
 
-- **Limited widgets**: Not all GTK widgets are wrapped yet
-- **No CSS provider**: Custom styling via CSS not yet supported
-- **Signal lifetime**: Callbacks remain valid for process lifetime (no explicit
-  disconnect/cleanup yet)
-- **Platform testing**: While cross-platform library loading is implemented,
-  primary testing has been on Linux
+- **Not every class is wrapped:** a GTK class gets generated methods once it has
+  a hand-written wrapper listed in `tools/gir/bindings.json` (95 classes so
+  far). See [Adding New Widgets](#adding-new-widgets).
+- **Some methods aren't generated yet:** methods with out parameters, arrays or
+  varargs, and a few signals that return a result. Each file in
+  `src/high/generated/` lists the ones it leaves out, with the reason.
+- **Platform testing:** the test suite runs on Linux, macOS and Windows in CI.
+  The Wayland focus test (`deno task test:wayland`) needs Mutter and isn't run
+  in CI.
 
 ## License
 
