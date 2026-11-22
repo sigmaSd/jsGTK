@@ -545,24 +545,31 @@ export interface ActionRowMethods {
 export const actionRowMethods: ActionRowMethods & ThisType<GObject> = {
   getActivatableWidget(this: GObject): Widget | null {
     return borrowed<Widget>(
-      adw.symbols.adw_action_row_get_activatable_widget(this.ptr),
+      (adw.symbols.adw_action_row_get_activatable_widget ??
+        missing("adw_action_row_get_activatable_widget"))(this.ptr),
     );
   },
   getSubtitleLines(this: GObject): number {
-    return adw.symbols.adw_action_row_get_subtitle_lines(this.ptr);
+    return (adw.symbols.adw_action_row_get_subtitle_lines ??
+      missing("adw_action_row_get_subtitle_lines"))(this.ptr);
   },
   getSubtitleSelectable(this: GObject): boolean {
     return (adw.symbols.adw_action_row_get_subtitle_selectable ??
       missing("adw_action_row_get_subtitle_selectable", "1.3"))(this.ptr);
   },
   getTitleLines(this: GObject): number {
-    return adw.symbols.adw_action_row_get_title_lines(this.ptr);
+    return (adw.symbols.adw_action_row_get_title_lines ??
+      missing("adw_action_row_get_title_lines"))(this.ptr);
   },
   remove(this: GObject, widget: Widget): void {
-    adw.symbols.adw_action_row_remove(this.ptr, widget.ptr);
+    (adw.symbols.adw_action_row_remove ?? missing("adw_action_row_remove"))(
+      this.ptr,
+      widget.ptr,
+    );
   },
   setSubtitleLines(this: GObject, subtitleLines: number): void {
-    adw.symbols.adw_action_row_set_subtitle_lines(this.ptr, subtitleLines);
+    (adw.symbols.adw_action_row_set_subtitle_lines ??
+      missing("adw_action_row_set_subtitle_lines"))(this.ptr, subtitleLines);
   },
   setSubtitleSelectable(this: GObject, subtitleSelectable: boolean): void {
     (adw.symbols.adw_action_row_set_subtitle_selectable ??
@@ -572,7 +579,8 @@ export const actionRowMethods: ActionRowMethods & ThisType<GObject> = {
       );
   },
   setTitleLines(this: GObject, titleLines: number): void {
-    adw.symbols.adw_action_row_set_title_lines(this.ptr, titleLines);
+    (adw.symbols.adw_action_row_set_title_lines ??
+      missing("adw_action_row_set_title_lines"))(this.ptr, titleLines);
   },
   onActivated(this: GObject, callback: () => void): number {
     return connectSignal(this, "activated", {
@@ -618,7 +626,8 @@ export const applicationWindowMethods:
     },
     getContent(this: GObject): Widget | null {
       return borrowed<Widget>(
-        adw.symbols.adw_application_window_get_content(this.ptr),
+        (adw.symbols.adw_application_window_get_content ??
+          missing("adw_application_window_get_content"))(this.ptr),
       );
     },
     getCurrentBreakpoint(this: GObject): GObject | null {
@@ -681,20 +690,28 @@ export const buttonContentMethods: ButtonContentMethods & ThisType<GObject> = {
       missing("adw_button_content_get_can_shrink", "1.4"))(this.ptr);
   },
   getIconName(this: GObject): string {
-    return readCStr(adw.symbols.adw_button_content_get_icon_name(this.ptr));
+    return readCStr(
+      (adw.symbols.adw_button_content_get_icon_name ??
+        missing("adw_button_content_get_icon_name"))(this.ptr),
+    );
   },
   getLabel(this: GObject): string {
-    return readCStr(adw.symbols.adw_button_content_get_label(this.ptr));
+    return readCStr(
+      (adw.symbols.adw_button_content_get_label ??
+        missing("adw_button_content_get_label"))(this.ptr),
+    );
   },
   getUseUnderline(this: GObject): boolean {
-    return adw.symbols.adw_button_content_get_use_underline(this.ptr);
+    return (adw.symbols.adw_button_content_get_use_underline ??
+      missing("adw_button_content_get_use_underline"))(this.ptr);
   },
   setCanShrink(this: GObject, canShrink: boolean): void {
     (adw.symbols.adw_button_content_set_can_shrink ??
       missing("adw_button_content_set_can_shrink", "1.4"))(this.ptr, canShrink);
   },
   setUseUnderline(this: GObject, useUnderline: boolean): void {
-    adw.symbols.adw_button_content_set_use_underline(this.ptr, useUnderline);
+    (adw.symbols.adw_button_content_set_use_underline ??
+      missing("adw_button_content_set_use_underline"))(this.ptr, useUnderline);
   },
 };
 
@@ -786,7 +803,8 @@ export const carouselMethods: CarouselMethods & ThisType<GObject> = {
     return adw.symbols.adw_carousel_get_reveal_duration(this.ptr);
   },
   getSpacing(this: GObject): number {
-    return adw.symbols.adw_carousel_get_spacing(this.ptr);
+    return (adw.symbols.adw_carousel_get_spacing ??
+      missing("adw_carousel_get_spacing"))(this.ptr);
   },
   setAllowLongSwipes(this: GObject, allowLongSwipes: boolean): void {
     adw.symbols.adw_carousel_set_allow_long_swipes(this.ptr, allowLongSwipes);
@@ -804,7 +822,8 @@ export const carouselMethods: CarouselMethods & ThisType<GObject> = {
     adw.symbols.adw_carousel_set_reveal_duration(this.ptr, revealDuration);
   },
   setSpacing(this: GObject, spacing: number): void {
-    adw.symbols.adw_carousel_set_spacing(this.ptr, spacing);
+    (adw.symbols.adw_carousel_set_spacing ??
+      missing("adw_carousel_set_spacing"))(this.ptr, spacing);
   },
   onPageChanged(this: GObject, callback: (index: number) => void): number {
     return connectSignal(this, "page-changed", {
@@ -903,23 +922,30 @@ export interface ClampMethods {
 /** Implementations of {@linkcode ClampMethods}. */
 export const clampMethods: ClampMethods & ThisType<GObject> = {
   getChild(this: GObject): Widget | null {
-    return borrowed<Widget>(adw.symbols.adw_clamp_get_child(this.ptr));
+    return borrowed<Widget>(
+      (adw.symbols.adw_clamp_get_child ?? missing("adw_clamp_get_child"))(
+        this.ptr,
+      ),
+    );
   },
   getMaximumSize(this: GObject): number {
-    return adw.symbols.adw_clamp_get_maximum_size(this.ptr);
+    return (adw.symbols.adw_clamp_get_maximum_size ??
+      missing("adw_clamp_get_maximum_size"))(this.ptr);
   },
   getTighteningThreshold(this: GObject): number {
-    return adw.symbols.adw_clamp_get_tightening_threshold(this.ptr);
+    return (adw.symbols.adw_clamp_get_tightening_threshold ??
+      missing("adw_clamp_get_tightening_threshold"))(this.ptr);
   },
   getUnit(this: GObject): LengthUnit {
     return (adw.symbols.adw_clamp_get_unit ??
       missing("adw_clamp_get_unit", "1.4"))(this.ptr) as LengthUnit;
   },
   setTighteningThreshold(this: GObject, tighteningThreshold: number): void {
-    adw.symbols.adw_clamp_set_tightening_threshold(
-      this.ptr,
-      tighteningThreshold,
-    );
+    (adw.symbols.adw_clamp_set_tightening_threshold ??
+      missing("adw_clamp_set_tightening_threshold"))(
+        this.ptr,
+        tighteningThreshold,
+      );
   },
   setUnit(this: GObject, unit: LengthUnit): void {
     (adw.symbols.adw_clamp_set_unit ?? missing("adw_clamp_set_unit", "1.4"))(
@@ -992,7 +1018,10 @@ export const comboRowMethods: ComboRowMethods & ThisType<GObject> = {
       missing("adw_combo_row_get_enable_search", "1.4"))(this.ptr);
   },
   getFactory(this: GObject): GObject | null {
-    return borrowed<GObject>(adw.symbols.adw_combo_row_get_factory(this.ptr));
+    return borrowed<GObject>(
+      (adw.symbols.adw_combo_row_get_factory ??
+        missing("adw_combo_row_get_factory"))(this.ptr),
+    );
   },
   getHeaderFactory(this: GObject): GObject | null {
     return borrowed<GObject>(
@@ -1002,7 +1031,8 @@ export const comboRowMethods: ComboRowMethods & ThisType<GObject> = {
   },
   getListFactory(this: GObject): GObject | null {
     return borrowed<GObject>(
-      adw.symbols.adw_combo_row_get_list_factory(this.ptr),
+      (adw.symbols.adw_combo_row_get_list_factory ??
+        missing("adw_combo_row_get_list_factory"))(this.ptr),
     );
   },
   getSearchMatchMode(this: GObject): GtkStringFilterMatchMode {
@@ -1013,11 +1043,13 @@ export const comboRowMethods: ComboRowMethods & ThisType<GObject> = {
   },
   getSelectedItem(this: GObject): GObject | null {
     return borrowed<GObject>(
-      adw.symbols.adw_combo_row_get_selected_item(this.ptr),
+      (adw.symbols.adw_combo_row_get_selected_item ??
+        missing("adw_combo_row_get_selected_item"))(this.ptr),
     );
   },
   getUseSubtitle(this: GObject): boolean {
-    return adw.symbols.adw_combo_row_get_use_subtitle(this.ptr);
+    return (adw.symbols.adw_combo_row_get_use_subtitle ??
+      missing("adw_combo_row_get_use_subtitle"))(this.ptr);
   },
   setEnableSearch(this: GObject, enableSearch: boolean): void {
     (adw.symbols.adw_combo_row_set_enable_search ??
@@ -1027,7 +1059,8 @@ export const comboRowMethods: ComboRowMethods & ThisType<GObject> = {
       );
   },
   setFactory(this: GObject, factory: GObject | null): void {
-    adw.symbols.adw_combo_row_set_factory(this.ptr, factory?.ptr ?? null);
+    (adw.symbols.adw_combo_row_set_factory ??
+      missing("adw_combo_row_set_factory"))(this.ptr, factory?.ptr ?? null);
   },
   setHeaderFactory(this: GObject, factory: GObject | null): void {
     (adw.symbols.adw_combo_row_set_header_factory ??
@@ -1037,7 +1070,11 @@ export const comboRowMethods: ComboRowMethods & ThisType<GObject> = {
       );
   },
   setListFactory(this: GObject, factory: GObject | null): void {
-    adw.symbols.adw_combo_row_set_list_factory(this.ptr, factory?.ptr ?? null);
+    (adw.symbols.adw_combo_row_set_list_factory ??
+      missing("adw_combo_row_set_list_factory"))(
+        this.ptr,
+        factory?.ptr ?? null,
+      );
   },
   setSearchMatchMode(
     this: GObject,
@@ -1050,7 +1087,8 @@ export const comboRowMethods: ComboRowMethods & ThisType<GObject> = {
       );
   },
   setUseSubtitle(this: GObject, useSubtitle: boolean): void {
-    adw.symbols.adw_combo_row_set_use_subtitle(this.ptr, useSubtitle);
+    (adw.symbols.adw_combo_row_set_use_subtitle ??
+      missing("adw_combo_row_set_use_subtitle"))(this.ptr, useSubtitle);
   },
 };
 
@@ -1321,13 +1359,15 @@ export interface HeaderBarMethods {
 /** Implementations of {@linkcode HeaderBarMethods}. */
 export const headerBarMethods: HeaderBarMethods & ThisType<GObject> = {
   getCenteringPolicy(this: GObject): CenteringPolicy {
-    return adw.symbols.adw_header_bar_get_centering_policy(
-      this.ptr,
-    ) as CenteringPolicy;
+    return (adw.symbols.adw_header_bar_get_centering_policy ??
+      missing("adw_header_bar_get_centering_policy"))(
+        this.ptr,
+      ) as CenteringPolicy;
   },
   getDecorationLayout(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      adw.symbols.adw_header_bar_get_decoration_layout(this.ptr),
+      (adw.symbols.adw_header_bar_get_decoration_layout ??
+        missing("adw_header_bar_get_decoration_layout"))(this.ptr),
     );
   },
   getShowBackButton(this: GObject): boolean {
@@ -1335,10 +1375,12 @@ export const headerBarMethods: HeaderBarMethods & ThisType<GObject> = {
       missing("adw_header_bar_get_show_back_button", "1.4"))(this.ptr);
   },
   getShowEndTitleButtons(this: GObject): boolean {
-    return adw.symbols.adw_header_bar_get_show_end_title_buttons(this.ptr);
+    return (adw.symbols.adw_header_bar_get_show_end_title_buttons ??
+      missing("adw_header_bar_get_show_end_title_buttons"))(this.ptr);
   },
   getShowStartTitleButtons(this: GObject): boolean {
-    return adw.symbols.adw_header_bar_get_show_start_title_buttons(this.ptr);
+    return (adw.symbols.adw_header_bar_get_show_start_title_buttons ??
+      missing("adw_header_bar_get_show_start_title_buttons"))(this.ptr);
   },
   getShowTitle(this: GObject): boolean {
     return (adw.symbols.adw_header_bar_get_show_title ??
@@ -1346,20 +1388,29 @@ export const headerBarMethods: HeaderBarMethods & ThisType<GObject> = {
   },
   getTitleWidget(this: GObject): Widget | null {
     return borrowed<Widget>(
-      adw.symbols.adw_header_bar_get_title_widget(this.ptr),
+      (adw.symbols.adw_header_bar_get_title_widget ??
+        missing("adw_header_bar_get_title_widget"))(this.ptr),
     );
   },
   remove(this: GObject, child: Widget): void {
-    adw.symbols.adw_header_bar_remove(this.ptr, child.ptr);
+    (adw.symbols.adw_header_bar_remove ?? missing("adw_header_bar_remove"))(
+      this.ptr,
+      child.ptr,
+    );
   },
   setCenteringPolicy(this: GObject, centeringPolicy: CenteringPolicy): void {
-    adw.symbols.adw_header_bar_set_centering_policy(this.ptr, centeringPolicy);
+    (adw.symbols.adw_header_bar_set_centering_policy ??
+      missing("adw_header_bar_set_centering_policy"))(
+        this.ptr,
+        centeringPolicy,
+      );
   },
   setDecorationLayout(this: GObject, layout: string | null): void {
-    adw.symbols.adw_header_bar_set_decoration_layout(
-      this.ptr,
-      cstrOrNull(layout),
-    );
+    (adw.symbols.adw_header_bar_set_decoration_layout ??
+      missing("adw_header_bar_set_decoration_layout"))(
+        this.ptr,
+        cstrOrNull(layout),
+      );
   },
   setShowBackButton(this: GObject, showBackButton: boolean): void {
     (adw.symbols.adw_header_bar_set_show_back_button ??
@@ -1369,10 +1420,15 @@ export const headerBarMethods: HeaderBarMethods & ThisType<GObject> = {
       );
   },
   setShowEndTitleButtons(this: GObject, setting: boolean): void {
-    adw.symbols.adw_header_bar_set_show_end_title_buttons(this.ptr, setting);
+    (adw.symbols.adw_header_bar_set_show_end_title_buttons ??
+      missing("adw_header_bar_set_show_end_title_buttons"))(this.ptr, setting);
   },
   setShowStartTitleButtons(this: GObject, setting: boolean): void {
-    adw.symbols.adw_header_bar_set_show_start_title_buttons(this.ptr, setting);
+    (adw.symbols.adw_header_bar_set_show_start_title_buttons ??
+      missing("adw_header_bar_set_show_start_title_buttons"))(
+        this.ptr,
+        setting,
+      );
   },
   setShowTitle(this: GObject, showTitle: boolean): void {
     (adw.symbols.adw_header_bar_set_show_title ??
@@ -1949,7 +2005,8 @@ export const preferencesGroupMethods:
   & ThisType<GObject> = {
     getDescription(this: GObject): string | null {
       return ((p) => p ? readCStr(p) : null)(
-        adw.symbols.adw_preferences_group_get_description(this.ptr),
+        (adw.symbols.adw_preferences_group_get_description ??
+          missing("adw_preferences_group_get_description"))(this.ptr),
       );
     },
     getHeaderSuffix(this: GObject): Widget | null {
@@ -1969,10 +2026,14 @@ export const preferencesGroupMethods:
         missing("adw_preferences_group_get_separate_rows", "1.6"))(this.ptr);
     },
     getTitle(this: GObject): string {
-      return readCStr(adw.symbols.adw_preferences_group_get_title(this.ptr));
+      return readCStr(
+        (adw.symbols.adw_preferences_group_get_title ??
+          missing("adw_preferences_group_get_title"))(this.ptr),
+      );
     },
     remove(this: GObject, child: Widget): void {
-      adw.symbols.adw_preferences_group_remove(this.ptr, child.ptr);
+      (adw.symbols.adw_preferences_group_remove ??
+        missing("adw_preferences_group_remove"))(this.ptr, child.ptr);
     },
     setSeparateRows(this: GObject, separateRows: boolean): void {
       (adw.symbols.adw_preferences_group_set_separate_rows ??
@@ -2081,14 +2142,19 @@ export const preferencesPageMethods:
     },
     getIconName(this: GObject): string | null {
       return ((p) => p ? readCStr(p) : null)(
-        adw.symbols.adw_preferences_page_get_icon_name(this.ptr),
+        (adw.symbols.adw_preferences_page_get_icon_name ??
+          missing("adw_preferences_page_get_icon_name"))(this.ptr),
       );
     },
     getTitle(this: GObject): string {
-      return readCStr(adw.symbols.adw_preferences_page_get_title(this.ptr));
+      return readCStr(
+        (adw.symbols.adw_preferences_page_get_title ??
+          missing("adw_preferences_page_get_title"))(this.ptr),
+      );
     },
     getUseUnderline(this: GObject): boolean {
-      return adw.symbols.adw_preferences_page_get_use_underline(this.ptr);
+      return (adw.symbols.adw_preferences_page_get_use_underline ??
+        missing("adw_preferences_page_get_use_underline"))(this.ptr);
     },
     insert(this: GObject, group: PreferencesGroup, index: number): void {
       (adw.symbols.adw_preferences_page_insert ??
@@ -2099,7 +2165,8 @@ export const preferencesPageMethods:
         );
     },
     remove(this: GObject, group: PreferencesGroup): void {
-      adw.symbols.adw_preferences_page_remove(this.ptr, group.ptr);
+      (adw.symbols.adw_preferences_page_remove ??
+        missing("adw_preferences_page_remove"))(this.ptr, group.ptr);
     },
     scrollToTop(this: GObject): void {
       (adw.symbols.adw_preferences_page_scroll_to_top ??
@@ -2127,19 +2194,22 @@ export const preferencesPageMethods:
         );
     },
     setIconName(this: GObject, iconName: string | null): void {
-      adw.symbols.adw_preferences_page_set_icon_name(
-        this.ptr,
-        cstrOrNull(iconName),
-      );
+      (adw.symbols.adw_preferences_page_set_icon_name ??
+        missing("adw_preferences_page_set_icon_name"))(
+          this.ptr,
+          cstrOrNull(iconName),
+        );
     },
     setTitle(this: GObject, title: string): void {
-      adw.symbols.adw_preferences_page_set_title(this.ptr, cstr(title));
+      (adw.symbols.adw_preferences_page_set_title ??
+        missing("adw_preferences_page_set_title"))(this.ptr, cstr(title));
     },
     setUseUnderline(this: GObject, useUnderline: boolean): void {
-      adw.symbols.adw_preferences_page_set_use_underline(
-        this.ptr,
-        useUnderline,
-      );
+      (adw.symbols.adw_preferences_page_set_use_underline ??
+        missing("adw_preferences_page_set_use_underline"))(
+          this.ptr,
+          useUnderline,
+        );
     },
   };
 
@@ -2350,28 +2420,41 @@ export interface StatusPageMethods {
 /** Implementations of {@linkcode StatusPageMethods}. */
 export const statusPageMethods: StatusPageMethods & ThisType<GObject> = {
   getChild(this: GObject): Widget | null {
-    return borrowed<Widget>(adw.symbols.adw_status_page_get_child(this.ptr));
+    return borrowed<Widget>(
+      (adw.symbols.adw_status_page_get_child ??
+        missing("adw_status_page_get_child"))(this.ptr),
+    );
   },
   getDescription(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      adw.symbols.adw_status_page_get_description(this.ptr),
+      (adw.symbols.adw_status_page_get_description ??
+        missing("adw_status_page_get_description"))(this.ptr),
     );
   },
   getIconName(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      adw.symbols.adw_status_page_get_icon_name(this.ptr),
+      (adw.symbols.adw_status_page_get_icon_name ??
+        missing("adw_status_page_get_icon_name"))(this.ptr),
     );
   },
   getPaintable(this: GObject): GObject | null {
     return borrowed<GObject>(
-      adw.symbols.adw_status_page_get_paintable(this.ptr),
+      (adw.symbols.adw_status_page_get_paintable ??
+        missing("adw_status_page_get_paintable"))(this.ptr),
     );
   },
   getTitle(this: GObject): string {
-    return readCStr(adw.symbols.adw_status_page_get_title(this.ptr));
+    return readCStr(
+      (adw.symbols.adw_status_page_get_title ??
+        missing("adw_status_page_get_title"))(this.ptr),
+    );
   },
   setPaintable(this: GObject, paintable: GObject | null): void {
-    adw.symbols.adw_status_page_set_paintable(this.ptr, paintable?.ptr ?? null);
+    (adw.symbols.adw_status_page_set_paintable ??
+      missing("adw_status_page_set_paintable"))(
+        this.ptr,
+        paintable?.ptr ?? null,
+      );
   },
 };
 
@@ -2417,7 +2500,8 @@ export const styleManagerMethods: StyleManagerMethods & ThisType<GObject> = {
   },
   getDisplay(this: GObject): Display | null {
     return borrowed<Display>(
-      adw.symbols.adw_style_manager_get_display(this.ptr),
+      (adw.symbols.adw_style_manager_get_display ??
+        missing("adw_style_manager_get_display"))(this.ptr),
     );
   },
   getDocumentFontName(this: GObject): string {
@@ -2427,7 +2511,8 @@ export const styleManagerMethods: StyleManagerMethods & ThisType<GObject> = {
     );
   },
   getHighContrast(this: GObject): boolean {
-    return adw.symbols.adw_style_manager_get_high_contrast(this.ptr);
+    return (adw.symbols.adw_style_manager_get_high_contrast ??
+      missing("adw_style_manager_get_high_contrast"))(this.ptr);
   },
   getMonospaceFontName(this: GObject): string {
     return readCStr(
@@ -2442,9 +2527,8 @@ export const styleManagerMethods: StyleManagerMethods & ThisType<GObject> = {
       );
   },
   getSystemSupportsColorSchemes(this: GObject): boolean {
-    return adw.symbols.adw_style_manager_get_system_supports_color_schemes(
-      this.ptr,
-    );
+    return (adw.symbols.adw_style_manager_get_system_supports_color_schemes ??
+      missing("adw_style_manager_get_system_supports_color_schemes"))(this.ptr);
   },
 };
 
@@ -2507,12 +2591,14 @@ export interface ToastMethods {
 export const toastMethods: ToastMethods & ThisType<GObject> = {
   getActionName(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      adw.symbols.adw_toast_get_action_name(this.ptr),
+      (adw.symbols.adw_toast_get_action_name ??
+        missing("adw_toast_get_action_name"))(this.ptr),
     );
   },
   getButtonLabel(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      adw.symbols.adw_toast_get_button_label(this.ptr),
+      (adw.symbols.adw_toast_get_button_label ??
+        missing("adw_toast_get_button_label"))(this.ptr),
     );
   },
   getCustomTitle(this: GObject): Widget | null {
@@ -2522,14 +2608,18 @@ export const toastMethods: ToastMethods & ThisType<GObject> = {
     );
   },
   getPriority(this: GObject): ToastPriority {
-    return adw.symbols.adw_toast_get_priority(this.ptr) as ToastPriority;
+    return (adw.symbols.adw_toast_get_priority ??
+      missing("adw_toast_get_priority"))(this.ptr) as ToastPriority;
   },
   getTimeout(this: GObject): number {
-    return adw.symbols.adw_toast_get_timeout(this.ptr);
+    return (adw.symbols.adw_toast_get_timeout ??
+      missing("adw_toast_get_timeout"))(this.ptr);
   },
   getTitle(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      adw.symbols.adw_toast_get_title(this.ptr),
+      (adw.symbols.adw_toast_get_title ?? missing("adw_toast_get_title"))(
+        this.ptr,
+      ),
     );
   },
   getUseMarkup(this: GObject): boolean {
@@ -2537,7 +2627,8 @@ export const toastMethods: ToastMethods & ThisType<GObject> = {
       missing("adw_toast_get_use_markup", "1.4"))(this.ptr);
   },
   setActionName(this: GObject, actionName: string | null): void {
-    adw.symbols.adw_toast_set_action_name(this.ptr, cstrOrNull(actionName));
+    (adw.symbols.adw_toast_set_action_name ??
+      missing("adw_toast_set_action_name"))(this.ptr, cstrOrNull(actionName));
   },
   setCustomTitle(this: GObject, widget: Widget | null): void {
     (adw.symbols.adw_toast_set_custom_title ??
@@ -2550,10 +2641,11 @@ export const toastMethods: ToastMethods & ThisType<GObject> = {
     this: GObject,
     detailedActionName: string | null,
   ): void {
-    adw.symbols.adw_toast_set_detailed_action_name(
-      this.ptr,
-      cstrOrNull(detailedActionName),
-    );
+    (adw.symbols.adw_toast_set_detailed_action_name ??
+      missing("adw_toast_set_detailed_action_name"))(
+        this.ptr,
+        cstrOrNull(detailedActionName),
+      );
   },
   setUseMarkup(this: GObject, useMarkup: boolean): void {
     (adw.symbols.adw_toast_set_use_markup ??
@@ -2580,7 +2672,10 @@ export const toastOverlayMethods: ToastOverlayMethods & ThisType<GObject> = {
       missing("adw_toast_overlay_dismiss_all", "1.7"))(this.ptr);
   },
   getChild(this: GObject): Widget | null {
-    return borrowed<Widget>(adw.symbols.adw_toast_overlay_get_child(this.ptr));
+    return borrowed<Widget>(
+      (adw.symbols.adw_toast_overlay_get_child ??
+        missing("adw_toast_overlay_get_child"))(this.ptr),
+    );
   },
 };
 
@@ -2754,10 +2849,16 @@ export interface WindowTitleMethods {
 /** Implementations of {@linkcode WindowTitleMethods}. */
 export const windowTitleMethods: WindowTitleMethods & ThisType<GObject> = {
   getSubtitle(this: GObject): string {
-    return readCStr(adw.symbols.adw_window_title_get_subtitle(this.ptr));
+    return readCStr(
+      (adw.symbols.adw_window_title_get_subtitle ??
+        missing("adw_window_title_get_subtitle"))(this.ptr),
+    );
   },
   getTitle(this: GObject): string {
-    return readCStr(adw.symbols.adw_window_title_get_title(this.ptr));
+    return readCStr(
+      (adw.symbols.adw_window_title_get_title ??
+        missing("adw_window_title_get_title"))(this.ptr),
+    );
   },
 };
 

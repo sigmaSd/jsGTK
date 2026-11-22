@@ -28,6 +28,8 @@ export type ClassProfile = {
   /** Low-level module, relative to `src/high/generated`. */
   libraryModule: string;
   classes: Record<string, ClassConfig>;
+  /** Symbols the library lists explicitly; set by the GIR tool. */
+  listed?: Set<string>;
 };
 
 /** Hand-written classes: TS class name -> methods it defines, and parent. */
@@ -445,12 +447,16 @@ class Generator {
       nativeArgs.push(value.toNative!(name));
     }
     // Callback arguments filled in by the prelude.
-    // Symbols newer than the library's minimum version may be missing.
+    // Symbols only generated methods use are optional in the FFI table:
+    // newer than the library's minimum version, or missing on a platform.
     const version = node.getAttribute("version") ??
       (node.parentNode as Element).getAttribute("version");
-    if (version) this.runtime.add("missing");
-    const fn = version
-      ? `(${this.profile.library}.symbols.${symbol} ?? missing("${symbol}", "${version}"))`
+    const optional = !this.profile.listed?.has(symbol);
+    if (optional || version) this.runtime.add("missing");
+    const fn = optional || version
+      ? `(${this.profile.library}.symbols.${symbol} ?? missing("${symbol}"${
+        version ? `, "${version}"` : ""
+      }))`
       : `${this.profile.library}.symbols.${symbol}`;
     const call = `${fn}(${nativeArgs.join(", ")})`;
     const returned = this.value(

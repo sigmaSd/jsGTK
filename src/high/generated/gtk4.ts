@@ -532,7 +532,8 @@ export interface AdjustmentMethods {
 /** Implementations of {@linkcode AdjustmentMethods}. */
 export const adjustmentMethods: AdjustmentMethods & ThisType<GObject> = {
   clampPage(this: GObject, lower: number, upper: number): void {
-    gtk4.symbols.gtk_adjustment_clamp_page(this.ptr, lower, upper);
+    (gtk4.symbols.gtk_adjustment_clamp_page ??
+      missing("gtk_adjustment_clamp_page"))(this.ptr, lower, upper);
   },
   configure(
     this: GObject,
@@ -543,42 +544,52 @@ export const adjustmentMethods: AdjustmentMethods & ThisType<GObject> = {
     pageIncrement: number,
     pageSize: number,
   ): void {
-    gtk4.symbols.gtk_adjustment_configure(
-      this.ptr,
-      value,
-      lower,
-      upper,
-      stepIncrement,
-      pageIncrement,
-      pageSize,
-    );
+    (gtk4.symbols.gtk_adjustment_configure ??
+      missing("gtk_adjustment_configure"))(
+        this.ptr,
+        value,
+        lower,
+        upper,
+        stepIncrement,
+        pageIncrement,
+        pageSize,
+      );
   },
   getLower(this: GObject): number {
-    return gtk4.symbols.gtk_adjustment_get_lower(this.ptr);
+    return (gtk4.symbols.gtk_adjustment_get_lower ??
+      missing("gtk_adjustment_get_lower"))(this.ptr);
   },
   getMinimumIncrement(this: GObject): number {
-    return gtk4.symbols.gtk_adjustment_get_minimum_increment(this.ptr);
+    return (gtk4.symbols.gtk_adjustment_get_minimum_increment ??
+      missing("gtk_adjustment_get_minimum_increment"))(this.ptr);
   },
   getPageIncrement(this: GObject): number {
-    return gtk4.symbols.gtk_adjustment_get_page_increment(this.ptr);
+    return (gtk4.symbols.gtk_adjustment_get_page_increment ??
+      missing("gtk_adjustment_get_page_increment"))(this.ptr);
   },
   getStepIncrement(this: GObject): number {
-    return gtk4.symbols.gtk_adjustment_get_step_increment(this.ptr);
+    return (gtk4.symbols.gtk_adjustment_get_step_increment ??
+      missing("gtk_adjustment_get_step_increment"))(this.ptr);
   },
   setLower(this: GObject, lower: number): void {
-    gtk4.symbols.gtk_adjustment_set_lower(this.ptr, lower);
+    (gtk4.symbols.gtk_adjustment_set_lower ??
+      missing("gtk_adjustment_set_lower"))(this.ptr, lower);
   },
   setPageIncrement(this: GObject, pageIncrement: number): void {
-    gtk4.symbols.gtk_adjustment_set_page_increment(this.ptr, pageIncrement);
+    (gtk4.symbols.gtk_adjustment_set_page_increment ??
+      missing("gtk_adjustment_set_page_increment"))(this.ptr, pageIncrement);
   },
   setPageSize(this: GObject, pageSize: number): void {
-    gtk4.symbols.gtk_adjustment_set_page_size(this.ptr, pageSize);
+    (gtk4.symbols.gtk_adjustment_set_page_size ??
+      missing("gtk_adjustment_set_page_size"))(this.ptr, pageSize);
   },
   setStepIncrement(this: GObject, stepIncrement: number): void {
-    gtk4.symbols.gtk_adjustment_set_step_increment(this.ptr, stepIncrement);
+    (gtk4.symbols.gtk_adjustment_set_step_increment ??
+      missing("gtk_adjustment_set_step_increment"))(this.ptr, stepIncrement);
   },
   setUpper(this: GObject, upper: number): void {
-    gtk4.symbols.gtk_adjustment_set_upper(this.ptr, upper);
+    (gtk4.symbols.gtk_adjustment_set_upper ??
+      missing("gtk_adjustment_set_upper"))(this.ptr, upper);
   },
   onChanged(this: GObject, callback: () => void): number {
     return connectSignal(this, "changed", {
@@ -739,28 +750,34 @@ export interface ApplicationMethods {
 /** Implementations of {@linkcode ApplicationMethods}. */
 export const applicationMethods: ApplicationMethods & ThisType<GObject> = {
   addWindow(this: GObject, window: Window): void {
-    gtk4.symbols.gtk_application_add_window(this.ptr, window.ptr);
+    (gtk4.symbols.gtk_application_add_window ??
+      missing("gtk_application_add_window"))(this.ptr, window.ptr);
   },
   getMenuById(this: GObject, id: string): Menu | null {
     return borrowed<Menu>(
-      gtk4.symbols.gtk_application_get_menu_by_id(this.ptr, cstr(id)),
+      (gtk4.symbols.gtk_application_get_menu_by_id ??
+        missing("gtk_application_get_menu_by_id"))(this.ptr, cstr(id)),
     );
   },
   getMenubar(this: GObject): GObject | null {
     return borrowed<GObject>(
-      gtk4.symbols.gtk_application_get_menubar(this.ptr),
+      (gtk4.symbols.gtk_application_get_menubar ??
+        missing("gtk_application_get_menubar"))(this.ptr),
     );
   },
   getWindowById(this: GObject, id: number): Window | null {
     return borrowed<Window>(
-      gtk4.symbols.gtk_application_get_window_by_id(this.ptr, id),
+      (gtk4.symbols.gtk_application_get_window_by_id ??
+        missing("gtk_application_get_window_by_id"))(this.ptr, id),
     );
   },
   removeWindow(this: GObject, window: Window): void {
-    gtk4.symbols.gtk_application_remove_window(this.ptr, window.ptr);
+    (gtk4.symbols.gtk_application_remove_window ??
+      missing("gtk_application_remove_window"))(this.ptr, window.ptr);
   },
   setMenubar(this: GObject, menubar: GObject | null): void {
-    gtk4.symbols.gtk_application_set_menubar(this.ptr, menubar?.ptr ?? null);
+    (gtk4.symbols.gtk_application_set_menubar ??
+      missing("gtk_application_set_menubar"))(this.ptr, menubar?.ptr ?? null);
   },
   onQueryEnd(this: GObject, callback: () => void): number {
     return connectSignal(this, "query-end", {
@@ -805,16 +822,19 @@ export const applicationWindowMethods:
   & ApplicationWindowMethods
   & ThisType<GObject> = {
     getId(this: GObject): number {
-      return gtk4.symbols.gtk_application_window_get_id(this.ptr);
+      return (gtk4.symbols.gtk_application_window_get_id ??
+        missing("gtk_application_window_get_id"))(this.ptr);
     },
     getShowMenubar(this: GObject): boolean {
-      return gtk4.symbols.gtk_application_window_get_show_menubar(this.ptr);
+      return (gtk4.symbols.gtk_application_window_get_show_menubar ??
+        missing("gtk_application_window_get_show_menubar"))(this.ptr);
     },
     setShowMenubar(this: GObject, showMenubar: boolean): void {
-      gtk4.symbols.gtk_application_window_set_show_menubar(
-        this.ptr,
-        showMenubar,
-      );
+      (gtk4.symbols.gtk_application_window_set_show_menubar ??
+        missing("gtk_application_window_set_show_menubar"))(
+          this.ptr,
+          showMenubar,
+        );
     },
   };
 
@@ -870,46 +890,55 @@ export const boxMethods: BoxMethods & ThisType<GObject> = {
       missing("gtk_box_get_baseline_child", "4.12"))(this.ptr);
   },
   getBaselinePosition(this: GObject): BaselinePosition {
-    return gtk4.symbols.gtk_box_get_baseline_position(
-      this.ptr,
-    ) as BaselinePosition;
+    return (gtk4.symbols.gtk_box_get_baseline_position ??
+      missing("gtk_box_get_baseline_position"))(this.ptr) as BaselinePosition;
   },
   getHomogeneous(this: GObject): boolean {
-    return gtk4.symbols.gtk_box_get_homogeneous(this.ptr);
+    return (gtk4.symbols.gtk_box_get_homogeneous ??
+      missing("gtk_box_get_homogeneous"))(this.ptr);
   },
   getSpacing(this: GObject): number {
-    return gtk4.symbols.gtk_box_get_spacing(this.ptr);
-  },
-  insertChildAfter(this: GObject, child: Widget, sibling: Widget | null): void {
-    gtk4.symbols.gtk_box_insert_child_after(
+    return (gtk4.symbols.gtk_box_get_spacing ?? missing("gtk_box_get_spacing"))(
       this.ptr,
-      child.ptr,
-      sibling?.ptr ?? null,
     );
   },
+  insertChildAfter(this: GObject, child: Widget, sibling: Widget | null): void {
+    (gtk4.symbols.gtk_box_insert_child_after ??
+      missing("gtk_box_insert_child_after"))(
+        this.ptr,
+        child.ptr,
+        sibling?.ptr ?? null,
+      );
+  },
   prepend(this: GObject, child: Widget): void {
-    gtk4.symbols.gtk_box_prepend(this.ptr, child.ptr);
+    (gtk4.symbols.gtk_box_prepend ?? missing("gtk_box_prepend"))(
+      this.ptr,
+      child.ptr,
+    );
   },
   reorderChildAfter(
     this: GObject,
     child: Widget,
     sibling: Widget | null,
   ): void {
-    gtk4.symbols.gtk_box_reorder_child_after(
-      this.ptr,
-      child.ptr,
-      sibling?.ptr ?? null,
-    );
+    (gtk4.symbols.gtk_box_reorder_child_after ??
+      missing("gtk_box_reorder_child_after"))(
+        this.ptr,
+        child.ptr,
+        sibling?.ptr ?? null,
+      );
   },
   setBaselineChild(this: GObject, child: number): void {
     (gtk4.symbols.gtk_box_set_baseline_child ??
       missing("gtk_box_set_baseline_child", "4.12"))(this.ptr, child);
   },
   setBaselinePosition(this: GObject, position: BaselinePosition): void {
-    gtk4.symbols.gtk_box_set_baseline_position(this.ptr, position);
+    (gtk4.symbols.gtk_box_set_baseline_position ??
+      missing("gtk_box_set_baseline_position"))(this.ptr, position);
   },
   setHomogeneous(this: GObject, homogeneous: boolean): void {
-    gtk4.symbols.gtk_box_set_homogeneous(this.ptr, homogeneous);
+    (gtk4.symbols.gtk_box_set_homogeneous ??
+      missing("gtk_box_set_homogeneous"))(this.ptr, homogeneous);
   },
 };
 
@@ -949,35 +978,47 @@ export interface BuilderMethods {
 /** Implementations of {@linkcode BuilderMethods}. */
 export const builderMethods: BuilderMethods & ThisType<GObject> = {
   exposeObject(this: GObject, name: string, object: GObject): void {
-    gtk4.symbols.gtk_builder_expose_object(this.ptr, cstr(name), object.ptr);
+    (gtk4.symbols.gtk_builder_expose_object ??
+      missing("gtk_builder_expose_object"))(this.ptr, cstr(name), object.ptr);
   },
   getCurrentObject(this: GObject): GObject | null {
     return borrowed<GObject>(
-      gtk4.symbols.gtk_builder_get_current_object(this.ptr),
+      (gtk4.symbols.gtk_builder_get_current_object ??
+        missing("gtk_builder_get_current_object"))(this.ptr),
     );
   },
   getScope(this: GObject): GObject {
-    return borrowed<GObject>(gtk4.symbols.gtk_builder_get_scope(this.ptr))!;
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_builder_get_scope ?? missing("gtk_builder_get_scope"))(
+        this.ptr,
+      ),
+    )!;
   },
   getTranslationDomain(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      gtk4.symbols.gtk_builder_get_translation_domain(this.ptr),
+      (gtk4.symbols.gtk_builder_get_translation_domain ??
+        missing("gtk_builder_get_translation_domain"))(this.ptr),
     );
   },
   setCurrentObject(this: GObject, currentObject: GObject | null): void {
-    gtk4.symbols.gtk_builder_set_current_object(
-      this.ptr,
-      currentObject?.ptr ?? null,
-    );
+    (gtk4.symbols.gtk_builder_set_current_object ??
+      missing("gtk_builder_set_current_object"))(
+        this.ptr,
+        currentObject?.ptr ?? null,
+      );
   },
   setScope(this: GObject, scope: GObject | null): void {
-    gtk4.symbols.gtk_builder_set_scope(this.ptr, scope?.ptr ?? null);
+    (gtk4.symbols.gtk_builder_set_scope ?? missing("gtk_builder_set_scope"))(
+      this.ptr,
+      scope?.ptr ?? null,
+    );
   },
   setTranslationDomain(this: GObject, domain: string | null): void {
-    gtk4.symbols.gtk_builder_set_translation_domain(
-      this.ptr,
-      cstrOrNull(domain),
-    );
+    (gtk4.symbols.gtk_builder_set_translation_domain ??
+      missing("gtk_builder_set_translation_domain"))(
+        this.ptr,
+        cstrOrNull(domain),
+      );
   },
 };
 
@@ -1034,28 +1075,37 @@ export const buttonMethods: ButtonMethods & ThisType<GObject> = {
       missing("gtk_button_get_can_shrink", "4.12"))(this.ptr);
   },
   getChild(this: GObject): Widget | null {
-    return borrowed<Widget>(gtk4.symbols.gtk_button_get_child(this.ptr));
+    return borrowed<Widget>(
+      (gtk4.symbols.gtk_button_get_child ?? missing("gtk_button_get_child"))(
+        this.ptr,
+      ),
+    );
   },
   getHasFrame(this: GObject): boolean {
-    return gtk4.symbols.gtk_button_get_has_frame(this.ptr);
+    return (gtk4.symbols.gtk_button_get_has_frame ??
+      missing("gtk_button_get_has_frame"))(this.ptr);
   },
   getIconName(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      gtk4.symbols.gtk_button_get_icon_name(this.ptr),
+      (gtk4.symbols.gtk_button_get_icon_name ??
+        missing("gtk_button_get_icon_name"))(this.ptr),
     );
   },
   getUseUnderline(this: GObject): boolean {
-    return gtk4.symbols.gtk_button_get_use_underline(this.ptr);
+    return (gtk4.symbols.gtk_button_get_use_underline ??
+      missing("gtk_button_get_use_underline"))(this.ptr);
   },
   setCanShrink(this: GObject, canShrink: boolean): void {
     (gtk4.symbols.gtk_button_set_can_shrink ??
       missing("gtk_button_set_can_shrink", "4.12"))(this.ptr, canShrink);
   },
   setHasFrame(this: GObject, hasFrame: boolean): void {
-    gtk4.symbols.gtk_button_set_has_frame(this.ptr, hasFrame);
+    (gtk4.symbols.gtk_button_set_has_frame ??
+      missing("gtk_button_set_has_frame"))(this.ptr, hasFrame);
   },
   setUseUnderline(this: GObject, useUnderline: boolean): void {
-    gtk4.symbols.gtk_button_set_use_underline(this.ptr, useUnderline);
+    (gtk4.symbols.gtk_button_set_use_underline ??
+      missing("gtk_button_set_use_underline"))(this.ptr, useUnderline);
   },
   onActivate(this: GObject, callback: () => void): number {
     return connectSignal(this, "activate", {
@@ -1104,7 +1154,8 @@ export const checkButtonMethods: CheckButtonMethods & ThisType<GObject> = {
     );
   },
   getUseUnderline(this: GObject): boolean {
-    return gtk4.symbols.gtk_check_button_get_use_underline(this.ptr);
+    return (gtk4.symbols.gtk_check_button_get_use_underline ??
+      missing("gtk_check_button_get_use_underline"))(this.ptr);
   },
   setChild(this: GObject, child: Widget | null): void {
     (gtk4.symbols.gtk_check_button_set_child ??
@@ -1114,7 +1165,8 @@ export const checkButtonMethods: CheckButtonMethods & ThisType<GObject> = {
       );
   },
   setUseUnderline(this: GObject, setting: boolean): void {
-    gtk4.symbols.gtk_check_button_set_use_underline(this.ptr, setting);
+    (gtk4.symbols.gtk_check_button_set_use_underline ??
+      missing("gtk_check_button_set_use_underline"))(this.ptr, setting);
   },
   onActivate(this: GObject, callback: () => void): number {
     return connectSignal(this, "activate", {
@@ -1229,11 +1281,13 @@ export interface ColumnViewMethods {
 export const columnViewMethods: ColumnViewMethods & ThisType<GObject> = {
   getColumns(this: GObject): GObject {
     return borrowed<GObject>(
-      gtk4.symbols.gtk_column_view_get_columns(this.ptr),
+      (gtk4.symbols.gtk_column_view_get_columns ??
+        missing("gtk_column_view_get_columns"))(this.ptr),
     )!;
   },
   getEnableRubberband(this: GObject): boolean {
-    return gtk4.symbols.gtk_column_view_get_enable_rubberband(this.ptr);
+    return (gtk4.symbols.gtk_column_view_get_enable_rubberband ??
+      missing("gtk_column_view_get_enable_rubberband"))(this.ptr);
   },
   getHeaderFactory(this: GObject): GObject | null {
     return borrowed<GObject>(
@@ -1242,10 +1296,14 @@ export const columnViewMethods: ColumnViewMethods & ThisType<GObject> = {
     );
   },
   getModel(this: GObject): GObject | null {
-    return borrowed<GObject>(gtk4.symbols.gtk_column_view_get_model(this.ptr));
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_column_view_get_model ??
+        missing("gtk_column_view_get_model"))(this.ptr),
+    );
   },
   getReorderable(this: GObject): boolean {
-    return gtk4.symbols.gtk_column_view_get_reorderable(this.ptr);
+    return (gtk4.symbols.gtk_column_view_get_reorderable ??
+      missing("gtk_column_view_get_reorderable"))(this.ptr);
   },
   getRowFactory(this: GObject): GObject | null {
     return borrowed<GObject>(
@@ -1254,16 +1312,22 @@ export const columnViewMethods: ColumnViewMethods & ThisType<GObject> = {
     );
   },
   getShowColumnSeparators(this: GObject): boolean {
-    return gtk4.symbols.gtk_column_view_get_show_column_separators(this.ptr);
+    return (gtk4.symbols.gtk_column_view_get_show_column_separators ??
+      missing("gtk_column_view_get_show_column_separators"))(this.ptr);
   },
   getShowRowSeparators(this: GObject): boolean {
-    return gtk4.symbols.gtk_column_view_get_show_row_separators(this.ptr);
+    return (gtk4.symbols.gtk_column_view_get_show_row_separators ??
+      missing("gtk_column_view_get_show_row_separators"))(this.ptr);
   },
   getSingleClickActivate(this: GObject): boolean {
-    return gtk4.symbols.gtk_column_view_get_single_click_activate(this.ptr);
+    return (gtk4.symbols.gtk_column_view_get_single_click_activate ??
+      missing("gtk_column_view_get_single_click_activate"))(this.ptr);
   },
   getSorter(this: GObject): GObject | null {
-    return borrowed<GObject>(gtk4.symbols.gtk_column_view_get_sorter(this.ptr));
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_column_view_get_sorter ??
+        missing("gtk_column_view_get_sorter"))(this.ptr),
+    );
   },
   getTabBehavior(this: GObject): ListTabBehavior {
     return (gtk4.symbols.gtk_column_view_get_tab_behavior ??
@@ -1276,16 +1340,19 @@ export const columnViewMethods: ColumnViewMethods & ThisType<GObject> = {
     position: number,
     column: ColumnViewColumn,
   ): void {
-    gtk4.symbols.gtk_column_view_insert_column(this.ptr, position, column.ptr);
+    (gtk4.symbols.gtk_column_view_insert_column ??
+      missing("gtk_column_view_insert_column"))(this.ptr, position, column.ptr);
   },
   removeColumn(this: GObject, column: ColumnViewColumn): void {
-    gtk4.symbols.gtk_column_view_remove_column(this.ptr, column.ptr);
+    (gtk4.symbols.gtk_column_view_remove_column ??
+      missing("gtk_column_view_remove_column"))(this.ptr, column.ptr);
   },
   setEnableRubberband(this: GObject, enableRubberband: boolean): void {
-    gtk4.symbols.gtk_column_view_set_enable_rubberband(
-      this.ptr,
-      enableRubberband,
-    );
+    (gtk4.symbols.gtk_column_view_set_enable_rubberband ??
+      missing("gtk_column_view_set_enable_rubberband"))(
+        this.ptr,
+        enableRubberband,
+      );
   },
   setHeaderFactory(this: GObject, factory: GObject | null): void {
     (gtk4.symbols.gtk_column_view_set_header_factory ??
@@ -1295,7 +1362,8 @@ export const columnViewMethods: ColumnViewMethods & ThisType<GObject> = {
       );
   },
   setReorderable(this: GObject, reorderable: boolean): void {
-    gtk4.symbols.gtk_column_view_set_reorderable(this.ptr, reorderable);
+    (gtk4.symbols.gtk_column_view_set_reorderable ??
+      missing("gtk_column_view_set_reorderable"))(this.ptr, reorderable);
   },
   setRowFactory(this: GObject, factory: GObject | null): void {
     (gtk4.symbols.gtk_column_view_set_row_factory ??
@@ -1305,22 +1373,25 @@ export const columnViewMethods: ColumnViewMethods & ThisType<GObject> = {
       );
   },
   setShowColumnSeparators(this: GObject, showColumnSeparators: boolean): void {
-    gtk4.symbols.gtk_column_view_set_show_column_separators(
-      this.ptr,
-      showColumnSeparators,
-    );
+    (gtk4.symbols.gtk_column_view_set_show_column_separators ??
+      missing("gtk_column_view_set_show_column_separators"))(
+        this.ptr,
+        showColumnSeparators,
+      );
   },
   setShowRowSeparators(this: GObject, showRowSeparators: boolean): void {
-    gtk4.symbols.gtk_column_view_set_show_row_separators(
-      this.ptr,
-      showRowSeparators,
-    );
+    (gtk4.symbols.gtk_column_view_set_show_row_separators ??
+      missing("gtk_column_view_set_show_row_separators"))(
+        this.ptr,
+        showRowSeparators,
+      );
   },
   setSingleClickActivate(this: GObject, singleClickActivate: boolean): void {
-    gtk4.symbols.gtk_column_view_set_single_click_activate(
-      this.ptr,
-      singleClickActivate,
-    );
+    (gtk4.symbols.gtk_column_view_set_single_click_activate ??
+      missing("gtk_column_view_set_single_click_activate"))(
+        this.ptr,
+        singleClickActivate,
+      );
   },
   setTabBehavior(this: GObject, tabBehavior: ListTabBehavior): void {
     (gtk4.symbols.gtk_column_view_set_tab_behavior ??
@@ -1334,11 +1405,12 @@ export const columnViewMethods: ColumnViewMethods & ThisType<GObject> = {
     column: ColumnViewColumn | null,
     direction: SortType,
   ): void {
-    gtk4.symbols.gtk_column_view_sort_by_column(
-      this.ptr,
-      column?.ptr ?? null,
-      direction,
-    );
+    (gtk4.symbols.gtk_column_view_sort_by_column ??
+      missing("gtk_column_view_sort_by_column"))(
+        this.ptr,
+        column?.ptr ?? null,
+        direction,
+      );
   },
   onActivate(this: GObject, callback: (position: number) => void): number {
     return connectSignal(this, "activate", {
@@ -1438,23 +1510,28 @@ export const columnViewColumnMethods:
   & ThisType<GObject> = {
     getColumnView(this: GObject): ColumnView | null {
       return borrowed<ColumnView>(
-        gtk4.symbols.gtk_column_view_column_get_column_view(this.ptr),
+        (gtk4.symbols.gtk_column_view_column_get_column_view ??
+          missing("gtk_column_view_column_get_column_view"))(this.ptr),
       );
     },
     getExpand(this: GObject): boolean {
-      return gtk4.symbols.gtk_column_view_column_get_expand(this.ptr);
+      return (gtk4.symbols.gtk_column_view_column_get_expand ??
+        missing("gtk_column_view_column_get_expand"))(this.ptr);
     },
     getFactory(this: GObject): GObject | null {
       return borrowed<GObject>(
-        gtk4.symbols.gtk_column_view_column_get_factory(this.ptr),
+        (gtk4.symbols.gtk_column_view_column_get_factory ??
+          missing("gtk_column_view_column_get_factory"))(this.ptr),
       );
     },
     getFixedWidth(this: GObject): number {
-      return gtk4.symbols.gtk_column_view_column_get_fixed_width(this.ptr);
+      return (gtk4.symbols.gtk_column_view_column_get_fixed_width ??
+        missing("gtk_column_view_column_get_fixed_width"))(this.ptr);
     },
     getHeaderMenu(this: GObject): GObject | null {
       return borrowed<GObject>(
-        gtk4.symbols.gtk_column_view_column_get_header_menu(this.ptr),
+        (gtk4.symbols.gtk_column_view_column_get_header_menu ??
+          missing("gtk_column_view_column_get_header_menu"))(this.ptr),
       );
     },
     getId(this: GObject): string | null {
@@ -1464,20 +1541,24 @@ export const columnViewColumnMethods:
       );
     },
     getResizable(this: GObject): boolean {
-      return gtk4.symbols.gtk_column_view_column_get_resizable(this.ptr);
+      return (gtk4.symbols.gtk_column_view_column_get_resizable ??
+        missing("gtk_column_view_column_get_resizable"))(this.ptr);
     },
     getSorter(this: GObject): GObject | null {
       return borrowed<GObject>(
-        gtk4.symbols.gtk_column_view_column_get_sorter(this.ptr),
+        (gtk4.symbols.gtk_column_view_column_get_sorter ??
+          missing("gtk_column_view_column_get_sorter"))(this.ptr),
       );
     },
     getTitle(this: GObject): string | null {
       return ((p) => p ? readCStr(p) : null)(
-        gtk4.symbols.gtk_column_view_column_get_title(this.ptr),
+        (gtk4.symbols.gtk_column_view_column_get_title ??
+          missing("gtk_column_view_column_get_title"))(this.ptr),
       );
     },
     getVisible(this: GObject): boolean {
-      return gtk4.symbols.gtk_column_view_column_get_visible(this.ptr);
+      return (gtk4.symbols.gtk_column_view_column_get_visible ??
+        missing("gtk_column_view_column_get_visible"))(this.ptr);
     },
     setExpand(this: GObject, expand: boolean): void {
       gtk4.symbols.gtk_column_view_column_set_expand(this.ptr, expand);
@@ -1489,13 +1570,18 @@ export const columnViewColumnMethods:
       );
     },
     setFixedWidth(this: GObject, fixedWidth: number): void {
-      gtk4.symbols.gtk_column_view_column_set_fixed_width(this.ptr, fixedWidth);
+      (gtk4.symbols.gtk_column_view_column_set_fixed_width ??
+        missing("gtk_column_view_column_set_fixed_width"))(
+          this.ptr,
+          fixedWidth,
+        );
     },
     setHeaderMenu(this: GObject, menu: GObject | null): void {
-      gtk4.symbols.gtk_column_view_column_set_header_menu(
-        this.ptr,
-        menu?.ptr ?? null,
-      );
+      (gtk4.symbols.gtk_column_view_column_set_header_menu ??
+        missing("gtk_column_view_column_set_header_menu"))(
+          this.ptr,
+          menu?.ptr ?? null,
+        );
     },
     setId(this: GObject, id: string | null): void {
       (gtk4.symbols.gtk_column_view_column_set_id ??
@@ -1505,13 +1591,15 @@ export const columnViewColumnMethods:
         );
     },
     setResizable(this: GObject, resizable: boolean): void {
-      gtk4.symbols.gtk_column_view_column_set_resizable(this.ptr, resizable);
+      (gtk4.symbols.gtk_column_view_column_set_resizable ??
+        missing("gtk_column_view_column_set_resizable"))(this.ptr, resizable);
     },
     setSorter(this: GObject, sorter: GObject | null): void {
-      gtk4.symbols.gtk_column_view_column_set_sorter(
-        this.ptr,
-        sorter?.ptr ?? null,
-      );
+      (gtk4.symbols.gtk_column_view_column_set_sorter ??
+        missing("gtk_column_view_column_set_sorter"))(
+          this.ptr,
+          sorter?.ptr ?? null,
+        );
     },
     setTitle(this: GObject, title: string | null): void {
       gtk4.symbols.gtk_column_view_column_set_title(
@@ -1520,7 +1608,8 @@ export const columnViewColumnMethods:
       );
     },
     setVisible(this: GObject, visible: boolean): void {
-      gtk4.symbols.gtk_column_view_column_set_visible(this.ptr, visible);
+      (gtk4.symbols.gtk_column_view_column_set_visible ??
+        missing("gtk_column_view_column_set_visible"))(this.ptr, visible);
     },
   };
 
@@ -1553,16 +1642,19 @@ export interface CssProviderMethods {
 /** Implementations of {@linkcode CssProviderMethods}. */
 export const cssProviderMethods: CssProviderMethods & ThisType<GObject> = {
   loadFromFile(this: GObject, file: GObject): void {
-    gtk4.symbols.gtk_css_provider_load_from_file(this.ptr, file.ptr);
+    (gtk4.symbols.gtk_css_provider_load_from_file ??
+      missing("gtk_css_provider_load_from_file"))(this.ptr, file.ptr);
   },
   loadFromPath(this: GObject, path: string): void {
-    gtk4.symbols.gtk_css_provider_load_from_path(this.ptr, cstr(path));
+    (gtk4.symbols.gtk_css_provider_load_from_path ??
+      missing("gtk_css_provider_load_from_path"))(this.ptr, cstr(path));
   },
   loadFromResource(this: GObject, resourcePath: string): void {
-    gtk4.symbols.gtk_css_provider_load_from_resource(
-      this.ptr,
-      cstr(resourcePath),
-    );
+    (gtk4.symbols.gtk_css_provider_load_from_resource ??
+      missing("gtk_css_provider_load_from_resource"))(
+        this.ptr,
+        cstr(resourcePath),
+      );
   },
   loadFromString(this: GObject, string: string): void {
     (gtk4.symbols.gtk_css_provider_load_from_string ??
@@ -1572,7 +1664,10 @@ export const cssProviderMethods: CssProviderMethods & ThisType<GObject> = {
       );
   },
   toString(this: GObject): string {
-    return takeString(gtk4.symbols.gtk_css_provider_to_string(this.ptr)) ?? "";
+    return takeString(
+      (gtk4.symbols.gtk_css_provider_to_string ??
+        missing("gtk_css_provider_to_string"))(this.ptr),
+    ) ?? "";
   },
 };
 
@@ -1596,10 +1691,12 @@ export interface DrawingAreaMethods {
 /** Implementations of {@linkcode DrawingAreaMethods}. */
 export const drawingAreaMethods: DrawingAreaMethods & ThisType<GObject> = {
   getContentHeight(this: GObject): number {
-    return gtk4.symbols.gtk_drawing_area_get_content_height(this.ptr);
+    return (gtk4.symbols.gtk_drawing_area_get_content_height ??
+      missing("gtk_drawing_area_get_content_height"))(this.ptr);
   },
   getContentWidth(this: GObject): number {
-    return gtk4.symbols.gtk_drawing_area_get_content_width(this.ptr);
+    return (gtk4.symbols.gtk_drawing_area_get_content_width ??
+      missing("gtk_drawing_area_get_content_width"))(this.ptr);
   },
   onResize(
     this: GObject,
@@ -1680,10 +1777,14 @@ export interface DropDownMethods {
 /** Implementations of {@linkcode DropDownMethods}. */
 export const dropDownMethods: DropDownMethods & ThisType<GObject> = {
   getEnableSearch(this: GObject): boolean {
-    return gtk4.symbols.gtk_drop_down_get_enable_search(this.ptr);
+    return (gtk4.symbols.gtk_drop_down_get_enable_search ??
+      missing("gtk_drop_down_get_enable_search"))(this.ptr);
   },
   getFactory(this: GObject): GObject | null {
-    return borrowed<GObject>(gtk4.symbols.gtk_drop_down_get_factory(this.ptr));
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_drop_down_get_factory ??
+        missing("gtk_drop_down_get_factory"))(this.ptr),
+    );
   },
   getHeaderFactory(this: GObject): GObject | null {
     return borrowed<GObject>(
@@ -1693,11 +1794,15 @@ export const dropDownMethods: DropDownMethods & ThisType<GObject> = {
   },
   getListFactory(this: GObject): GObject | null {
     return borrowed<GObject>(
-      gtk4.symbols.gtk_drop_down_get_list_factory(this.ptr),
+      (gtk4.symbols.gtk_drop_down_get_list_factory ??
+        missing("gtk_drop_down_get_list_factory"))(this.ptr),
     );
   },
   getModel(this: GObject): GObject | null {
-    return borrowed<GObject>(gtk4.symbols.gtk_drop_down_get_model(this.ptr));
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_drop_down_get_model ??
+        missing("gtk_drop_down_get_model"))(this.ptr),
+    );
   },
   getSearchMatchMode(this: GObject): StringFilterMatchMode {
     return (gtk4.symbols.gtk_drop_down_get_search_match_mode ??
@@ -1707,7 +1812,8 @@ export const dropDownMethods: DropDownMethods & ThisType<GObject> = {
   },
   getSelectedItem(this: GObject): GObject | null {
     return borrowed<GObject>(
-      gtk4.symbols.gtk_drop_down_get_selected_item(this.ptr),
+      (gtk4.symbols.gtk_drop_down_get_selected_item ??
+        missing("gtk_drop_down_get_selected_item"))(this.ptr),
     );
   },
   getShowArrow(this: GObject): boolean {
@@ -1715,10 +1821,12 @@ export const dropDownMethods: DropDownMethods & ThisType<GObject> = {
       missing("gtk_drop_down_get_show_arrow", "4.6"))(this.ptr);
   },
   setEnableSearch(this: GObject, enableSearch: boolean): void {
-    gtk4.symbols.gtk_drop_down_set_enable_search(this.ptr, enableSearch);
+    (gtk4.symbols.gtk_drop_down_set_enable_search ??
+      missing("gtk_drop_down_set_enable_search"))(this.ptr, enableSearch);
   },
   setFactory(this: GObject, factory: GObject | null): void {
-    gtk4.symbols.gtk_drop_down_set_factory(this.ptr, factory?.ptr ?? null);
+    (gtk4.symbols.gtk_drop_down_set_factory ??
+      missing("gtk_drop_down_set_factory"))(this.ptr, factory?.ptr ?? null);
   },
   setHeaderFactory(this: GObject, factory: GObject | null): void {
     (gtk4.symbols.gtk_drop_down_set_header_factory ??
@@ -1728,7 +1836,11 @@ export const dropDownMethods: DropDownMethods & ThisType<GObject> = {
       );
   },
   setListFactory(this: GObject, factory: GObject | null): void {
-    gtk4.symbols.gtk_drop_down_set_list_factory(this.ptr, factory?.ptr ?? null);
+    (gtk4.symbols.gtk_drop_down_set_list_factory ??
+      missing("gtk_drop_down_set_list_factory"))(
+        this.ptr,
+        factory?.ptr ?? null,
+      );
   },
   setSearchMatchMode(
     this: GObject,
@@ -1787,7 +1899,8 @@ export interface DropTargetMethods {
 /** Implementations of {@linkcode DropTargetMethods}. */
 export const dropTargetMethods: DropTargetMethods & ThisType<GObject> = {
   getActions(this: GObject): number {
-    return gtk4.symbols.gtk_drop_target_get_actions(this.ptr);
+    return (gtk4.symbols.gtk_drop_target_get_actions ??
+      missing("gtk_drop_target_get_actions"))(this.ptr);
   },
   getCurrentDrop(this: GObject): GObject | null {
     return borrowed<GObject>(
@@ -1796,16 +1909,21 @@ export const dropTargetMethods: DropTargetMethods & ThisType<GObject> = {
     );
   },
   getPreload(this: GObject): boolean {
-    return gtk4.symbols.gtk_drop_target_get_preload(this.ptr);
+    return (gtk4.symbols.gtk_drop_target_get_preload ??
+      missing("gtk_drop_target_get_preload"))(this.ptr);
   },
   reject(this: GObject): void {
-    gtk4.symbols.gtk_drop_target_reject(this.ptr);
+    (gtk4.symbols.gtk_drop_target_reject ?? missing("gtk_drop_target_reject"))(
+      this.ptr,
+    );
   },
   setActions(this: GObject, actions: number): void {
-    gtk4.symbols.gtk_drop_target_set_actions(this.ptr, actions);
+    (gtk4.symbols.gtk_drop_target_set_actions ??
+      missing("gtk_drop_target_set_actions"))(this.ptr, actions);
   },
   setPreload(this: GObject, preload: boolean): void {
-    gtk4.symbols.gtk_drop_target_set_preload(this.ptr, preload);
+    (gtk4.symbols.gtk_drop_target_set_preload ??
+      missing("gtk_drop_target_set_preload"))(this.ptr, preload);
   },
   onLeave(this: GObject, callback: () => void): number {
     return connectSignal(this, "leave", {
@@ -1876,48 +1994,57 @@ export const eventControllerMethods:
   & ThisType<GObject> = {
     getCurrentEventDevice(this: GObject): GObject | null {
       return borrowed<GObject>(
-        gtk4.symbols.gtk_event_controller_get_current_event_device(this.ptr),
+        (gtk4.symbols.gtk_event_controller_get_current_event_device ??
+          missing("gtk_event_controller_get_current_event_device"))(this.ptr),
       );
     },
     getCurrentEventState(this: GObject): number {
-      return gtk4.symbols.gtk_event_controller_get_current_event_state(
-        this.ptr,
-      );
+      return (gtk4.symbols.gtk_event_controller_get_current_event_state ??
+        missing("gtk_event_controller_get_current_event_state"))(this.ptr);
     },
     getCurrentEventTime(this: GObject): number {
-      return gtk4.symbols.gtk_event_controller_get_current_event_time(this.ptr);
+      return (gtk4.symbols.gtk_event_controller_get_current_event_time ??
+        missing("gtk_event_controller_get_current_event_time"))(this.ptr);
     },
     getName(this: GObject): string | null {
       return ((p) => p ? readCStr(p) : null)(
-        gtk4.symbols.gtk_event_controller_get_name(this.ptr),
+        (gtk4.symbols.gtk_event_controller_get_name ??
+          missing("gtk_event_controller_get_name"))(this.ptr),
       );
     },
     getPropagationLimit(this: GObject): PropagationLimit {
-      return gtk4.symbols.gtk_event_controller_get_propagation_limit(
-        this.ptr,
-      ) as PropagationLimit;
+      return (gtk4.symbols.gtk_event_controller_get_propagation_limit ??
+        missing("gtk_event_controller_get_propagation_limit"))(
+          this.ptr,
+        ) as PropagationLimit;
     },
     getPropagationPhase(this: GObject): PropagationPhase {
-      return gtk4.symbols.gtk_event_controller_get_propagation_phase(
-        this.ptr,
-      ) as PropagationPhase;
+      return (gtk4.symbols.gtk_event_controller_get_propagation_phase ??
+        missing("gtk_event_controller_get_propagation_phase"))(
+          this.ptr,
+        ) as PropagationPhase;
     },
     getWidget(this: GObject): Widget | null {
       return borrowed<Widget>(
-        gtk4.symbols.gtk_event_controller_get_widget(this.ptr),
+        (gtk4.symbols.gtk_event_controller_get_widget ??
+          missing("gtk_event_controller_get_widget"))(this.ptr),
       );
     },
     reset(this: GObject): void {
-      gtk4.symbols.gtk_event_controller_reset(this.ptr);
+      (gtk4.symbols.gtk_event_controller_reset ??
+        missing("gtk_event_controller_reset"))(this.ptr);
     },
     setName(this: GObject, name: string | null): void {
-      gtk4.symbols.gtk_event_controller_set_name(this.ptr, cstrOrNull(name));
+      (gtk4.symbols.gtk_event_controller_set_name ??
+        missing("gtk_event_controller_set_name"))(this.ptr, cstrOrNull(name));
     },
     setPropagationLimit(this: GObject, limit: PropagationLimit): void {
-      gtk4.symbols.gtk_event_controller_set_propagation_limit(this.ptr, limit);
+      (gtk4.symbols.gtk_event_controller_set_propagation_limit ??
+        missing("gtk_event_controller_set_propagation_limit"))(this.ptr, limit);
     },
     setPropagationPhase(this: GObject, phase: PropagationPhase): void {
-      gtk4.symbols.gtk_event_controller_set_propagation_phase(this.ptr, phase);
+      (gtk4.symbols.gtk_event_controller_set_propagation_phase ??
+        missing("gtk_event_controller_set_propagation_phase"))(this.ptr, phase);
     },
     setStaticName(this: GObject, name: string | null): void {
       (gtk4.symbols.gtk_event_controller_set_static_name ??
@@ -1960,18 +2087,21 @@ export const eventControllerKeyMethods:
   & EventControllerKeyMethods
   & ThisType<GObject> = {
     getGroup(this: GObject): number {
-      return gtk4.symbols.gtk_event_controller_key_get_group(this.ptr);
+      return (gtk4.symbols.gtk_event_controller_key_get_group ??
+        missing("gtk_event_controller_key_get_group"))(this.ptr);
     },
     getImContext(this: GObject): GObject | null {
       return borrowed<GObject>(
-        gtk4.symbols.gtk_event_controller_key_get_im_context(this.ptr),
+        (gtk4.symbols.gtk_event_controller_key_get_im_context ??
+          missing("gtk_event_controller_key_get_im_context"))(this.ptr),
       );
     },
     setImContext(this: GObject, imContext: GObject | null): void {
-      gtk4.symbols.gtk_event_controller_key_set_im_context(
-        this.ptr,
-        imContext?.ptr ?? null,
-      );
+      (gtk4.symbols.gtk_event_controller_key_set_im_context ??
+        missing("gtk_event_controller_key_set_im_context"))(
+          this.ptr,
+          imContext?.ptr ?? null,
+        );
     },
     onImUpdate(this: GObject, callback: () => void): number {
       return connectSignal(this, "im-update", {
@@ -2007,7 +2137,8 @@ export const eventControllerMotionMethods:
   & EventControllerMotionMethods
   & ThisType<GObject> = {
     isPointer(this: GObject): boolean {
-      return gtk4.symbols.gtk_event_controller_motion_is_pointer(this.ptr);
+      return (gtk4.symbols.gtk_event_controller_motion_is_pointer ??
+        missing("gtk_event_controller_motion_is_pointer"))(this.ptr);
     },
     onMotion(this: GObject, callback: (x: number, y: number) => void): number {
       return connectSignal(this, "motion", {
@@ -2183,7 +2314,8 @@ export const fileFilterMethods: FileFilterMethods & ThisType<GObject> = {
   },
   getName(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      gtk4.symbols.gtk_file_filter_get_name(this.ptr),
+      (gtk4.symbols.gtk_file_filter_get_name ??
+        missing("gtk_file_filter_get_name"))(this.ptr),
     );
   },
 };
@@ -2224,27 +2356,45 @@ export interface FrameMethods {
 /** Implementations of {@linkcode FrameMethods}. */
 export const frameMethods: FrameMethods & ThisType<GObject> = {
   getChild(this: GObject): Widget | null {
-    return borrowed<Widget>(gtk4.symbols.gtk_frame_get_child(this.ptr));
+    return borrowed<Widget>(
+      (gtk4.symbols.gtk_frame_get_child ?? missing("gtk_frame_get_child"))(
+        this.ptr,
+      ),
+    );
   },
   getLabel(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      gtk4.symbols.gtk_frame_get_label(this.ptr),
+      (gtk4.symbols.gtk_frame_get_label ?? missing("gtk_frame_get_label"))(
+        this.ptr,
+      ),
     );
   },
   getLabelAlign(this: GObject): number {
-    return gtk4.symbols.gtk_frame_get_label_align(this.ptr);
+    return (gtk4.symbols.gtk_frame_get_label_align ??
+      missing("gtk_frame_get_label_align"))(this.ptr);
   },
   getLabelWidget(this: GObject): Widget | null {
-    return borrowed<Widget>(gtk4.symbols.gtk_frame_get_label_widget(this.ptr));
+    return borrowed<Widget>(
+      (gtk4.symbols.gtk_frame_get_label_widget ??
+        missing("gtk_frame_get_label_widget"))(this.ptr),
+    );
   },
   setLabel(this: GObject, label: string | null): void {
-    gtk4.symbols.gtk_frame_set_label(this.ptr, cstrOrNull(label));
+    (gtk4.symbols.gtk_frame_set_label ?? missing("gtk_frame_set_label"))(
+      this.ptr,
+      cstrOrNull(label),
+    );
   },
   setLabelAlign(this: GObject, xalign: number): void {
-    gtk4.symbols.gtk_frame_set_label_align(this.ptr, xalign);
+    (gtk4.symbols.gtk_frame_set_label_align ??
+      missing("gtk_frame_set_label_align"))(this.ptr, xalign);
   },
   setLabelWidget(this: GObject, labelWidget: Widget | null): void {
-    gtk4.symbols.gtk_frame_set_label_widget(this.ptr, labelWidget?.ptr ?? null);
+    (gtk4.symbols.gtk_frame_set_label_widget ??
+      missing("gtk_frame_set_label_widget"))(
+        this.ptr,
+        labelWidget?.ptr ?? null,
+      );
   },
 };
 
@@ -2373,74 +2523,105 @@ export const gridMethods: GridMethods & ThisType<GObject> = {
     width: number,
     height: number,
   ): void {
-    gtk4.symbols.gtk_grid_attach_next_to(
-      this.ptr,
-      child.ptr,
-      sibling?.ptr ?? null,
-      side,
-      width,
-      height,
-    );
+    (gtk4.symbols.gtk_grid_attach_next_to ??
+      missing("gtk_grid_attach_next_to"))(
+        this.ptr,
+        child.ptr,
+        sibling?.ptr ?? null,
+        side,
+        width,
+        height,
+      );
   },
   getBaselineRow(this: GObject): number {
-    return gtk4.symbols.gtk_grid_get_baseline_row(this.ptr);
+    return (gtk4.symbols.gtk_grid_get_baseline_row ??
+      missing("gtk_grid_get_baseline_row"))(this.ptr);
   },
   getChildAt(this: GObject, column: number, row: number): Widget | null {
     return borrowed<Widget>(
-      gtk4.symbols.gtk_grid_get_child_at(this.ptr, column, row),
+      (gtk4.symbols.gtk_grid_get_child_at ?? missing("gtk_grid_get_child_at"))(
+        this.ptr,
+        column,
+        row,
+      ),
     );
   },
   getColumnHomogeneous(this: GObject): boolean {
-    return gtk4.symbols.gtk_grid_get_column_homogeneous(this.ptr);
+    return (gtk4.symbols.gtk_grid_get_column_homogeneous ??
+      missing("gtk_grid_get_column_homogeneous"))(this.ptr);
   },
   getColumnSpacing(this: GObject): number {
-    return gtk4.symbols.gtk_grid_get_column_spacing(this.ptr);
+    return (gtk4.symbols.gtk_grid_get_column_spacing ??
+      missing("gtk_grid_get_column_spacing"))(this.ptr);
   },
   getRowBaselinePosition(this: GObject, row: number): BaselinePosition {
-    return gtk4.symbols.gtk_grid_get_row_baseline_position(
-      this.ptr,
-      row,
-    ) as BaselinePosition;
+    return (gtk4.symbols.gtk_grid_get_row_baseline_position ??
+      missing("gtk_grid_get_row_baseline_position"))(
+        this.ptr,
+        row,
+      ) as BaselinePosition;
   },
   getRowHomogeneous(this: GObject): boolean {
-    return gtk4.symbols.gtk_grid_get_row_homogeneous(this.ptr);
+    return (gtk4.symbols.gtk_grid_get_row_homogeneous ??
+      missing("gtk_grid_get_row_homogeneous"))(this.ptr);
   },
   getRowSpacing(this: GObject): number {
-    return gtk4.symbols.gtk_grid_get_row_spacing(this.ptr);
+    return (gtk4.symbols.gtk_grid_get_row_spacing ??
+      missing("gtk_grid_get_row_spacing"))(this.ptr);
   },
   insertColumn(this: GObject, position: number): void {
-    gtk4.symbols.gtk_grid_insert_column(this.ptr, position);
+    (gtk4.symbols.gtk_grid_insert_column ?? missing("gtk_grid_insert_column"))(
+      this.ptr,
+      position,
+    );
   },
   insertNextTo(this: GObject, sibling: Widget, side: PositionType): void {
-    gtk4.symbols.gtk_grid_insert_next_to(this.ptr, sibling.ptr, side);
+    (gtk4.symbols.gtk_grid_insert_next_to ??
+      missing("gtk_grid_insert_next_to"))(this.ptr, sibling.ptr, side);
   },
   insertRow(this: GObject, position: number): void {
-    gtk4.symbols.gtk_grid_insert_row(this.ptr, position);
+    (gtk4.symbols.gtk_grid_insert_row ?? missing("gtk_grid_insert_row"))(
+      this.ptr,
+      position,
+    );
   },
   remove(this: GObject, child: Widget): void {
-    gtk4.symbols.gtk_grid_remove(this.ptr, child.ptr);
+    (gtk4.symbols.gtk_grid_remove ?? missing("gtk_grid_remove"))(
+      this.ptr,
+      child.ptr,
+    );
   },
   removeColumn(this: GObject, position: number): void {
-    gtk4.symbols.gtk_grid_remove_column(this.ptr, position);
+    (gtk4.symbols.gtk_grid_remove_column ?? missing("gtk_grid_remove_column"))(
+      this.ptr,
+      position,
+    );
   },
   removeRow(this: GObject, position: number): void {
-    gtk4.symbols.gtk_grid_remove_row(this.ptr, position);
+    (gtk4.symbols.gtk_grid_remove_row ?? missing("gtk_grid_remove_row"))(
+      this.ptr,
+      position,
+    );
   },
   setBaselineRow(this: GObject, row: number): void {
-    gtk4.symbols.gtk_grid_set_baseline_row(this.ptr, row);
+    (gtk4.symbols.gtk_grid_set_baseline_row ??
+      missing("gtk_grid_set_baseline_row"))(this.ptr, row);
   },
   setColumnHomogeneous(this: GObject, homogeneous: boolean): void {
-    gtk4.symbols.gtk_grid_set_column_homogeneous(this.ptr, homogeneous);
+    (gtk4.symbols.gtk_grid_set_column_homogeneous ??
+      missing("gtk_grid_set_column_homogeneous"))(this.ptr, homogeneous);
   },
   setRowBaselinePosition(
     this: GObject,
     row: number,
     pos: BaselinePosition,
   ): void {
-    gtk4.symbols.gtk_grid_set_row_baseline_position(this.ptr, row, pos);
+    (gtk4.symbols.gtk_grid_set_row_baseline_position ??
+      missing("gtk_grid_set_row_baseline_position"))(this.ptr, row, pos);
   },
   setRowHomogeneous(this: GObject, homogeneous: boolean): void {
-    gtk4.symbols.gtk_grid_set_row_homogeneous(this.ptr, homogeneous);
+    (gtk4.symbols.gtk_grid_set_row_homogeneous ??
+      missing("gtk_grid_set_row_homogeneous"))(this.ptr, homogeneous);
   },
 };
 
@@ -2491,15 +2672,18 @@ export interface HeaderBarMethods {
 export const headerBarMethods: HeaderBarMethods & ThisType<GObject> = {
   getDecorationLayout(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      gtk4.symbols.gtk_header_bar_get_decoration_layout(this.ptr),
+      (gtk4.symbols.gtk_header_bar_get_decoration_layout ??
+        missing("gtk_header_bar_get_decoration_layout"))(this.ptr),
     );
   },
   getShowTitleButtons(this: GObject): boolean {
-    return gtk4.symbols.gtk_header_bar_get_show_title_buttons(this.ptr);
+    return (gtk4.symbols.gtk_header_bar_get_show_title_buttons ??
+      missing("gtk_header_bar_get_show_title_buttons"))(this.ptr);
   },
   getTitleWidget(this: GObject): Widget | null {
     return borrowed<Widget>(
-      gtk4.symbols.gtk_header_bar_get_title_widget(this.ptr),
+      (gtk4.symbols.gtk_header_bar_get_title_widget ??
+        missing("gtk_header_bar_get_title_widget"))(this.ptr),
     );
   },
   getUseNativeControls(this: GObject): boolean {
@@ -2507,22 +2691,28 @@ export const headerBarMethods: HeaderBarMethods & ThisType<GObject> = {
       missing("gtk_header_bar_get_use_native_controls", "4.18"))(this.ptr);
   },
   remove(this: GObject, child: Widget): void {
-    gtk4.symbols.gtk_header_bar_remove(this.ptr, child.ptr);
+    (gtk4.symbols.gtk_header_bar_remove ?? missing("gtk_header_bar_remove"))(
+      this.ptr,
+      child.ptr,
+    );
   },
   setDecorationLayout(this: GObject, layout: string | null): void {
-    gtk4.symbols.gtk_header_bar_set_decoration_layout(
-      this.ptr,
-      cstrOrNull(layout),
-    );
+    (gtk4.symbols.gtk_header_bar_set_decoration_layout ??
+      missing("gtk_header_bar_set_decoration_layout"))(
+        this.ptr,
+        cstrOrNull(layout),
+      );
   },
   setShowTitleButtons(this: GObject, setting: boolean): void {
-    gtk4.symbols.gtk_header_bar_set_show_title_buttons(this.ptr, setting);
+    (gtk4.symbols.gtk_header_bar_set_show_title_buttons ??
+      missing("gtk_header_bar_set_show_title_buttons"))(this.ptr, setting);
   },
   setTitleWidget(this: GObject, titleWidget: Widget | null): void {
-    gtk4.symbols.gtk_header_bar_set_title_widget(
-      this.ptr,
-      titleWidget?.ptr ?? null,
-    );
+    (gtk4.symbols.gtk_header_bar_set_title_widget ??
+      missing("gtk_header_bar_set_title_widget"))(
+        this.ptr,
+        titleWidget?.ptr ?? null,
+      );
   },
   setUseNativeControls(this: GObject, setting: boolean): void {
     (gtk4.symbols.gtk_header_bar_set_use_native_controls ??
@@ -2572,24 +2762,35 @@ export interface IconThemeMethods {
 /** Implementations of {@linkcode IconThemeMethods}. */
 export const iconThemeMethods: IconThemeMethods & ThisType<GObject> = {
   addResourcePath(this: GObject, path: string): void {
-    gtk4.symbols.gtk_icon_theme_add_resource_path(this.ptr, cstr(path));
+    (gtk4.symbols.gtk_icon_theme_add_resource_path ??
+      missing("gtk_icon_theme_add_resource_path"))(this.ptr, cstr(path));
   },
   addSearchPath(this: GObject, path: string): void {
-    gtk4.symbols.gtk_icon_theme_add_search_path(this.ptr, cstr(path));
+    (gtk4.symbols.gtk_icon_theme_add_search_path ??
+      missing("gtk_icon_theme_add_search_path"))(this.ptr, cstr(path));
   },
   getDisplay(this: GObject): Display | null {
-    return borrowed<Display>(gtk4.symbols.gtk_icon_theme_get_display(this.ptr));
+    return borrowed<Display>(
+      (gtk4.symbols.gtk_icon_theme_get_display ??
+        missing("gtk_icon_theme_get_display"))(this.ptr),
+    );
   },
   getThemeName(this: GObject): string {
-    return takeString(gtk4.symbols.gtk_icon_theme_get_theme_name(this.ptr)) ??
-      "";
+    return takeString(
+      (gtk4.symbols.gtk_icon_theme_get_theme_name ??
+        missing("gtk_icon_theme_get_theme_name"))(this.ptr),
+    ) ?? "";
   },
   hasGicon(this: GObject, gicon: GObject): boolean {
     return (gtk4.symbols.gtk_icon_theme_has_gicon ??
       missing("gtk_icon_theme_has_gicon", "4.2"))(this.ptr, gicon.ptr);
   },
   setThemeName(this: GObject, themeName: string | null): void {
-    gtk4.symbols.gtk_icon_theme_set_theme_name(this.ptr, cstrOrNull(themeName));
+    (gtk4.symbols.gtk_icon_theme_set_theme_name ??
+      missing("gtk_icon_theme_set_theme_name"))(
+        this.ptr,
+        cstrOrNull(themeName),
+      );
   },
   onChanged(this: GObject, callback: () => void): number {
     return connectSignal(this, "changed", {
@@ -2655,45 +2856,63 @@ export interface ImageMethods {
 /** Implementations of {@linkcode ImageMethods}. */
 export const imageMethods: ImageMethods & ThisType<GObject> = {
   clear(this: GObject): void {
-    gtk4.symbols.gtk_image_clear(this.ptr);
+    (gtk4.symbols.gtk_image_clear ?? missing("gtk_image_clear"))(this.ptr);
   },
   getGicon(this: GObject): GObject | null {
-    return borrowed<GObject>(gtk4.symbols.gtk_image_get_gicon(this.ptr));
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_image_get_gicon ?? missing("gtk_image_get_gicon"))(
+        this.ptr,
+      ),
+    );
   },
   getIconName(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      gtk4.symbols.gtk_image_get_icon_name(this.ptr),
+      (gtk4.symbols.gtk_image_get_icon_name ??
+        missing("gtk_image_get_icon_name"))(this.ptr),
     );
   },
   getIconSize(this: GObject): IconSize {
-    return gtk4.symbols.gtk_image_get_icon_size(this.ptr) as IconSize;
+    return (gtk4.symbols.gtk_image_get_icon_size ??
+      missing("gtk_image_get_icon_size"))(this.ptr) as IconSize;
   },
   getPaintable(this: GObject): GObject | null {
-    return borrowed<GObject>(gtk4.symbols.gtk_image_get_paintable(this.ptr));
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_image_get_paintable ??
+        missing("gtk_image_get_paintable"))(this.ptr),
+    );
   },
   getPixelSize(this: GObject): number {
-    return gtk4.symbols.gtk_image_get_pixel_size(this.ptr);
+    return (gtk4.symbols.gtk_image_get_pixel_size ??
+      missing("gtk_image_get_pixel_size"))(this.ptr);
   },
   getStorageType(this: GObject): ImageType {
-    return gtk4.symbols.gtk_image_get_storage_type(this.ptr) as ImageType;
+    return (gtk4.symbols.gtk_image_get_storage_type ??
+      missing("gtk_image_get_storage_type"))(this.ptr) as ImageType;
   },
   setFromFile(this: GObject, filename: string | null): void {
     gtk4.symbols.gtk_image_set_from_file(this.ptr, cstrOrNull(filename));
   },
   setFromGicon(this: GObject, icon: GObject): void {
-    gtk4.symbols.gtk_image_set_from_gicon(this.ptr, icon.ptr);
+    (gtk4.symbols.gtk_image_set_from_gicon ??
+      missing("gtk_image_set_from_gicon"))(this.ptr, icon.ptr);
   },
   setFromPaintable(this: GObject, paintable: GObject | null): void {
-    gtk4.symbols.gtk_image_set_from_paintable(this.ptr, paintable?.ptr ?? null);
+    (gtk4.symbols.gtk_image_set_from_paintable ??
+      missing("gtk_image_set_from_paintable"))(
+        this.ptr,
+        paintable?.ptr ?? null,
+      );
   },
   setFromResource(this: GObject, resourcePath: string | null): void {
-    gtk4.symbols.gtk_image_set_from_resource(
-      this.ptr,
-      cstrOrNull(resourcePath),
-    );
+    (gtk4.symbols.gtk_image_set_from_resource ??
+      missing("gtk_image_set_from_resource"))(
+        this.ptr,
+        cstrOrNull(resourcePath),
+      );
   },
   setIconSize(this: GObject, iconSize: IconSize): void {
-    gtk4.symbols.gtk_image_set_icon_size(this.ptr, iconSize);
+    (gtk4.symbols.gtk_image_set_icon_size ??
+      missing("gtk_image_set_icon_size"))(this.ptr, iconSize);
   },
 };
 
@@ -2861,36 +3080,55 @@ export interface LabelMethods {
 export const labelMethods: LabelMethods & ThisType<GObject> = {
   getCurrentUri(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      gtk4.symbols.gtk_label_get_current_uri(this.ptr),
+      (gtk4.symbols.gtk_label_get_current_uri ??
+        missing("gtk_label_get_current_uri"))(this.ptr),
     );
   },
   getEllipsize(this: GObject): PangoEllipsizeMode {
-    return gtk4.symbols.gtk_label_get_ellipsize(this.ptr) as PangoEllipsizeMode;
+    return (gtk4.symbols.gtk_label_get_ellipsize ??
+      missing("gtk_label_get_ellipsize"))(this.ptr) as PangoEllipsizeMode;
   },
   getExtraMenu(this: GObject): GObject | null {
-    return borrowed<GObject>(gtk4.symbols.gtk_label_get_extra_menu(this.ptr));
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_label_get_extra_menu ??
+        missing("gtk_label_get_extra_menu"))(this.ptr),
+    );
   },
   getJustify(this: GObject): Justification {
-    return gtk4.symbols.gtk_label_get_justify(this.ptr) as Justification;
+    return (gtk4.symbols.gtk_label_get_justify ??
+      missing("gtk_label_get_justify"))(this.ptr) as Justification;
   },
   getLabel(this: GObject): string {
-    return readCStr(gtk4.symbols.gtk_label_get_label(this.ptr));
+    return readCStr(
+      (gtk4.symbols.gtk_label_get_label ?? missing("gtk_label_get_label"))(
+        this.ptr,
+      ),
+    );
   },
   getLayout(this: GObject): GObject {
-    return borrowed<GObject>(gtk4.symbols.gtk_label_get_layout(this.ptr))!;
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_label_get_layout ?? missing("gtk_label_get_layout"))(
+        this.ptr,
+      ),
+    )!;
   },
   getLines(this: GObject): number {
-    return gtk4.symbols.gtk_label_get_lines(this.ptr);
+    return (gtk4.symbols.gtk_label_get_lines ?? missing("gtk_label_get_lines"))(
+      this.ptr,
+    );
   },
   getMaxWidthChars(this: GObject): number {
-    return gtk4.symbols.gtk_label_get_max_width_chars(this.ptr);
+    return (gtk4.symbols.gtk_label_get_max_width_chars ??
+      missing("gtk_label_get_max_width_chars"))(this.ptr);
   },
   getMnemonicKeyval(this: GObject): number {
-    return gtk4.symbols.gtk_label_get_mnemonic_keyval(this.ptr);
+    return (gtk4.symbols.gtk_label_get_mnemonic_keyval ??
+      missing("gtk_label_get_mnemonic_keyval"))(this.ptr);
   },
   getMnemonicWidget(this: GObject): Widget | null {
     return borrowed<Widget>(
-      gtk4.symbols.gtk_label_get_mnemonic_widget(this.ptr),
+      (gtk4.symbols.gtk_label_get_mnemonic_widget ??
+        missing("gtk_label_get_mnemonic_widget"))(this.ptr),
     );
   },
   getNaturalWrapMode(this: GObject): NaturalWrapMode {
@@ -2900,74 +3138,105 @@ export const labelMethods: LabelMethods & ThisType<GObject> = {
       ) as NaturalWrapMode;
   },
   getSelectable(this: GObject): boolean {
-    return gtk4.symbols.gtk_label_get_selectable(this.ptr);
+    return (gtk4.symbols.gtk_label_get_selectable ??
+      missing("gtk_label_get_selectable"))(this.ptr);
   },
   getSingleLineMode(this: GObject): boolean {
-    return gtk4.symbols.gtk_label_get_single_line_mode(this.ptr);
+    return (gtk4.symbols.gtk_label_get_single_line_mode ??
+      missing("gtk_label_get_single_line_mode"))(this.ptr);
   },
   getUseMarkup(this: GObject): boolean {
-    return gtk4.symbols.gtk_label_get_use_markup(this.ptr);
+    return (gtk4.symbols.gtk_label_get_use_markup ??
+      missing("gtk_label_get_use_markup"))(this.ptr);
   },
   getUseUnderline(this: GObject): boolean {
-    return gtk4.symbols.gtk_label_get_use_underline(this.ptr);
+    return (gtk4.symbols.gtk_label_get_use_underline ??
+      missing("gtk_label_get_use_underline"))(this.ptr);
   },
   getWidthChars(this: GObject): number {
-    return gtk4.symbols.gtk_label_get_width_chars(this.ptr);
+    return (gtk4.symbols.gtk_label_get_width_chars ??
+      missing("gtk_label_get_width_chars"))(this.ptr);
   },
   getWrap(this: GObject): boolean {
-    return gtk4.symbols.gtk_label_get_wrap(this.ptr);
+    return (gtk4.symbols.gtk_label_get_wrap ?? missing("gtk_label_get_wrap"))(
+      this.ptr,
+    );
   },
   getWrapMode(this: GObject): PangoWrapMode {
-    return gtk4.symbols.gtk_label_get_wrap_mode(this.ptr) as PangoWrapMode;
+    return (gtk4.symbols.gtk_label_get_wrap_mode ??
+      missing("gtk_label_get_wrap_mode"))(this.ptr) as PangoWrapMode;
   },
   getXalign(this: GObject): number {
-    return gtk4.symbols.gtk_label_get_xalign(this.ptr);
+    return (gtk4.symbols.gtk_label_get_xalign ??
+      missing("gtk_label_get_xalign"))(this.ptr);
   },
   getYalign(this: GObject): number {
-    return gtk4.symbols.gtk_label_get_yalign(this.ptr);
+    return (gtk4.symbols.gtk_label_get_yalign ??
+      missing("gtk_label_get_yalign"))(this.ptr);
   },
   selectRegion(this: GObject, startOffset: number, endOffset: number): void {
-    gtk4.symbols.gtk_label_select_region(this.ptr, startOffset, endOffset);
+    (gtk4.symbols.gtk_label_select_region ??
+      missing("gtk_label_select_region"))(this.ptr, startOffset, endOffset);
   },
   setExtraMenu(this: GObject, model: GObject | null): void {
-    gtk4.symbols.gtk_label_set_extra_menu(this.ptr, model?.ptr ?? null);
+    (gtk4.symbols.gtk_label_set_extra_menu ??
+      missing("gtk_label_set_extra_menu"))(this.ptr, model?.ptr ?? null);
   },
   setJustify(this: GObject, jtype: Justification): void {
-    gtk4.symbols.gtk_label_set_justify(this.ptr, jtype);
+    (gtk4.symbols.gtk_label_set_justify ?? missing("gtk_label_set_justify"))(
+      this.ptr,
+      jtype,
+    );
   },
   setLabel(this: GObject, str: string): void {
-    gtk4.symbols.gtk_label_set_label(this.ptr, cstr(str));
+    (gtk4.symbols.gtk_label_set_label ?? missing("gtk_label_set_label"))(
+      this.ptr,
+      cstr(str),
+    );
   },
   setLines(this: GObject, lines: number): void {
-    gtk4.symbols.gtk_label_set_lines(this.ptr, lines);
+    (gtk4.symbols.gtk_label_set_lines ?? missing("gtk_label_set_lines"))(
+      this.ptr,
+      lines,
+    );
   },
   setMarkupWithMnemonic(this: GObject, str: string): void {
-    gtk4.symbols.gtk_label_set_markup_with_mnemonic(this.ptr, cstr(str));
+    (gtk4.symbols.gtk_label_set_markup_with_mnemonic ??
+      missing("gtk_label_set_markup_with_mnemonic"))(this.ptr, cstr(str));
   },
   setMaxWidthChars(this: GObject, nChars: number): void {
-    gtk4.symbols.gtk_label_set_max_width_chars(this.ptr, nChars);
+    (gtk4.symbols.gtk_label_set_max_width_chars ??
+      missing("gtk_label_set_max_width_chars"))(this.ptr, nChars);
   },
   setMnemonicWidget(this: GObject, widget: Widget | null): void {
-    gtk4.symbols.gtk_label_set_mnemonic_widget(this.ptr, widget?.ptr ?? null);
+    (gtk4.symbols.gtk_label_set_mnemonic_widget ??
+      missing("gtk_label_set_mnemonic_widget"))(this.ptr, widget?.ptr ?? null);
   },
   setNaturalWrapMode(this: GObject, wrapMode: NaturalWrapMode): void {
     (gtk4.symbols.gtk_label_set_natural_wrap_mode ??
       missing("gtk_label_set_natural_wrap_mode", "4.6"))(this.ptr, wrapMode);
   },
   setSingleLineMode(this: GObject, singleLineMode: boolean): void {
-    gtk4.symbols.gtk_label_set_single_line_mode(this.ptr, singleLineMode);
+    (gtk4.symbols.gtk_label_set_single_line_mode ??
+      missing("gtk_label_set_single_line_mode"))(this.ptr, singleLineMode);
   },
   setTextWithMnemonic(this: GObject, str: string): void {
-    gtk4.symbols.gtk_label_set_text_with_mnemonic(this.ptr, cstr(str));
+    (gtk4.symbols.gtk_label_set_text_with_mnemonic ??
+      missing("gtk_label_set_text_with_mnemonic"))(this.ptr, cstr(str));
   },
   setUseUnderline(this: GObject, setting: boolean): void {
-    gtk4.symbols.gtk_label_set_use_underline(this.ptr, setting);
+    (gtk4.symbols.gtk_label_set_use_underline ??
+      missing("gtk_label_set_use_underline"))(this.ptr, setting);
   },
   setWrapMode(this: GObject, wrapMode: PangoWrapMode): void {
-    gtk4.symbols.gtk_label_set_wrap_mode(this.ptr, wrapMode);
+    (gtk4.symbols.gtk_label_set_wrap_mode ??
+      missing("gtk_label_set_wrap_mode"))(this.ptr, wrapMode);
   },
   setYalign(this: GObject, yalign: number): void {
-    gtk4.symbols.gtk_label_set_yalign(this.ptr, yalign);
+    (gtk4.symbols.gtk_label_set_yalign ?? missing("gtk_label_set_yalign"))(
+      this.ptr,
+      yalign,
+    );
   },
   onActivateCurrentLink(this: GObject, callback: () => void): number {
     return connectSignal(this, "activate-current-link", {
@@ -3049,31 +3318,42 @@ export interface LevelBarMethods {
 /** Implementations of {@linkcode LevelBarMethods}. */
 export const levelBarMethods: LevelBarMethods & ThisType<GObject> = {
   addOffsetValue(this: GObject, name: string, value: number): void {
-    gtk4.symbols.gtk_level_bar_add_offset_value(this.ptr, cstr(name), value);
+    (gtk4.symbols.gtk_level_bar_add_offset_value ??
+      missing("gtk_level_bar_add_offset_value"))(this.ptr, cstr(name), value);
   },
   getInverted(this: GObject): boolean {
-    return gtk4.symbols.gtk_level_bar_get_inverted(this.ptr);
+    return (gtk4.symbols.gtk_level_bar_get_inverted ??
+      missing("gtk_level_bar_get_inverted"))(this.ptr);
   },
   getMaxValue(this: GObject): number {
-    return gtk4.symbols.gtk_level_bar_get_max_value(this.ptr);
+    return (gtk4.symbols.gtk_level_bar_get_max_value ??
+      missing("gtk_level_bar_get_max_value"))(this.ptr);
   },
   getMinValue(this: GObject): number {
-    return gtk4.symbols.gtk_level_bar_get_min_value(this.ptr);
+    return (gtk4.symbols.gtk_level_bar_get_min_value ??
+      missing("gtk_level_bar_get_min_value"))(this.ptr);
   },
   getMode(this: GObject): LevelBarMode {
-    return gtk4.symbols.gtk_level_bar_get_mode(this.ptr) as LevelBarMode;
+    return (gtk4.symbols.gtk_level_bar_get_mode ??
+      missing("gtk_level_bar_get_mode"))(this.ptr) as LevelBarMode;
   },
   getValue(this: GObject): number {
-    return gtk4.symbols.gtk_level_bar_get_value(this.ptr);
+    return (gtk4.symbols.gtk_level_bar_get_value ??
+      missing("gtk_level_bar_get_value"))(this.ptr);
   },
   removeOffsetValue(this: GObject, name: string | null): void {
-    gtk4.symbols.gtk_level_bar_remove_offset_value(this.ptr, cstrOrNull(name));
+    (gtk4.symbols.gtk_level_bar_remove_offset_value ??
+      missing("gtk_level_bar_remove_offset_value"))(this.ptr, cstrOrNull(name));
   },
   setInverted(this: GObject, inverted: boolean): void {
-    gtk4.symbols.gtk_level_bar_set_inverted(this.ptr, inverted);
+    (gtk4.symbols.gtk_level_bar_set_inverted ??
+      missing("gtk_level_bar_set_inverted"))(this.ptr, inverted);
   },
   setMode(this: GObject, mode: LevelBarMode): void {
-    gtk4.symbols.gtk_level_bar_set_mode(this.ptr, mode);
+    (gtk4.symbols.gtk_level_bar_set_mode ?? missing("gtk_level_bar_set_mode"))(
+      this.ptr,
+      mode,
+    );
   },
   onOffsetChanged(this: GObject, callback: (name: string) => void): number {
     return connectSignal(this, "offset-changed", {
@@ -3211,36 +3491,42 @@ export interface ListBoxMethods {
 /** Implementations of {@linkcode ListBoxMethods}. */
 export const listBoxMethods: ListBoxMethods & ThisType<GObject> = {
   dragHighlightRow(this: GObject, row: ListBoxRow): void {
-    gtk4.symbols.gtk_list_box_drag_highlight_row(this.ptr, row.ptr);
+    (gtk4.symbols.gtk_list_box_drag_highlight_row ??
+      missing("gtk_list_box_drag_highlight_row"))(this.ptr, row.ptr);
   },
   dragUnhighlightRow(this: GObject): void {
-    gtk4.symbols.gtk_list_box_drag_unhighlight_row(this.ptr);
+    (gtk4.symbols.gtk_list_box_drag_unhighlight_row ??
+      missing("gtk_list_box_drag_unhighlight_row"))(this.ptr);
   },
   getActivateOnSingleClick(this: GObject): boolean {
-    return gtk4.symbols.gtk_list_box_get_activate_on_single_click(this.ptr);
+    return (gtk4.symbols.gtk_list_box_get_activate_on_single_click ??
+      missing("gtk_list_box_get_activate_on_single_click"))(this.ptr);
   },
   getAdjustment(this: GObject): Adjustment | null {
     return borrowed<Adjustment>(
-      gtk4.symbols.gtk_list_box_get_adjustment(this.ptr),
+      (gtk4.symbols.gtk_list_box_get_adjustment ??
+        missing("gtk_list_box_get_adjustment"))(this.ptr),
     );
   },
   getRowAtIndex(this: GObject, index_: number): ListBoxRow | null {
     return borrowed<ListBoxRow>(
-      gtk4.symbols.gtk_list_box_get_row_at_index(this.ptr, index_),
+      (gtk4.symbols.gtk_list_box_get_row_at_index ??
+        missing("gtk_list_box_get_row_at_index"))(this.ptr, index_),
     );
   },
   getRowAtY(this: GObject, y: number): ListBoxRow | null {
     return borrowed<ListBoxRow>(
-      gtk4.symbols.gtk_list_box_get_row_at_y(this.ptr, y),
+      (gtk4.symbols.gtk_list_box_get_row_at_y ??
+        missing("gtk_list_box_get_row_at_y"))(this.ptr, y),
     );
   },
   getSelectionMode(this: GObject): SelectionMode {
-    return gtk4.symbols.gtk_list_box_get_selection_mode(
-      this.ptr,
-    ) as SelectionMode;
+    return (gtk4.symbols.gtk_list_box_get_selection_mode ??
+      missing("gtk_list_box_get_selection_mode"))(this.ptr) as SelectionMode;
   },
   getShowSeparators(this: GObject): boolean {
-    return gtk4.symbols.gtk_list_box_get_show_separators(this.ptr);
+    return (gtk4.symbols.gtk_list_box_get_show_separators ??
+      missing("gtk_list_box_get_show_separators"))(this.ptr);
   },
   getTabBehavior(this: GObject): ListTabBehavior {
     return (gtk4.symbols.gtk_list_box_get_tab_behavior ??
@@ -3249,13 +3535,19 @@ export const listBoxMethods: ListBoxMethods & ThisType<GObject> = {
       ) as ListTabBehavior;
   },
   insert(this: GObject, child: Widget, position: number): void {
-    gtk4.symbols.gtk_list_box_insert(this.ptr, child.ptr, position);
+    (gtk4.symbols.gtk_list_box_insert ?? missing("gtk_list_box_insert"))(
+      this.ptr,
+      child.ptr,
+      position,
+    );
   },
   invalidateHeaders(this: GObject): void {
-    gtk4.symbols.gtk_list_box_invalidate_headers(this.ptr);
+    (gtk4.symbols.gtk_list_box_invalidate_headers ??
+      missing("gtk_list_box_invalidate_headers"))(this.ptr);
   },
   selectAll(this: GObject): void {
-    gtk4.symbols.gtk_list_box_select_all(this.ptr);
+    (gtk4.symbols.gtk_list_box_select_all ??
+      missing("gtk_list_box_select_all"))(this.ptr);
   },
   selectedForeach(
     this: GObject,
@@ -3276,13 +3568,19 @@ export const listBoxMethods: ListBoxMethods & ThisType<GObject> = {
       __0 = cb.pointer;
       queueMicrotask(() => cb.close());
     }
-    gtk4.symbols.gtk_list_box_selected_foreach(this.ptr, __0, __1);
+    (gtk4.symbols.gtk_list_box_selected_foreach ??
+      missing("gtk_list_box_selected_foreach"))(this.ptr, __0, __1);
   },
   setActivateOnSingleClick(this: GObject, single: boolean): void {
-    gtk4.symbols.gtk_list_box_set_activate_on_single_click(this.ptr, single);
+    (gtk4.symbols.gtk_list_box_set_activate_on_single_click ??
+      missing("gtk_list_box_set_activate_on_single_click"))(this.ptr, single);
   },
   setAdjustment(this: GObject, adjustment: Adjustment | null): void {
-    gtk4.symbols.gtk_list_box_set_adjustment(this.ptr, adjustment?.ptr ?? null);
+    (gtk4.symbols.gtk_list_box_set_adjustment ??
+      missing("gtk_list_box_set_adjustment"))(
+        this.ptr,
+        adjustment?.ptr ?? null,
+      );
   },
   setHeaderFunc(
     this: GObject,
@@ -3303,17 +3601,20 @@ export const listBoxMethods: ListBoxMethods & ThisType<GObject> = {
       );
       [__0, __1, __2] = notifiedCallback(cb);
     }
-    gtk4.symbols.gtk_list_box_set_header_func(this.ptr, __0, __1, __2);
+    (gtk4.symbols.gtk_list_box_set_header_func ??
+      missing("gtk_list_box_set_header_func"))(this.ptr, __0, __1, __2);
   },
   setTabBehavior(this: GObject, behavior: ListTabBehavior): void {
     (gtk4.symbols.gtk_list_box_set_tab_behavior ??
       missing("gtk_list_box_set_tab_behavior", "4.18"))(this.ptr, behavior);
   },
   unselectAll(this: GObject): void {
-    gtk4.symbols.gtk_list_box_unselect_all(this.ptr);
+    (gtk4.symbols.gtk_list_box_unselect_all ??
+      missing("gtk_list_box_unselect_all"))(this.ptr);
   },
   unselectRow(this: GObject, row: ListBoxRow): void {
-    gtk4.symbols.gtk_list_box_unselect_row(this.ptr, row.ptr);
+    (gtk4.symbols.gtk_list_box_unselect_row ??
+      missing("gtk_list_box_unselect_row"))(this.ptr, row.ptr);
   },
   onActivateCursorRow(this: GObject, callback: () => void): number {
     return connectSignal(this, "activate-cursor-row", {
@@ -3412,22 +3713,30 @@ export interface ListBoxRowMethods {
 /** Implementations of {@linkcode ListBoxRowMethods}. */
 export const listBoxRowMethods: ListBoxRowMethods & ThisType<GObject> = {
   getActivatable(this: GObject): boolean {
-    return gtk4.symbols.gtk_list_box_row_get_activatable(this.ptr);
+    return (gtk4.symbols.gtk_list_box_row_get_activatable ??
+      missing("gtk_list_box_row_get_activatable"))(this.ptr);
   },
   getHeader(this: GObject): Widget | null {
-    return borrowed<Widget>(gtk4.symbols.gtk_list_box_row_get_header(this.ptr));
+    return borrowed<Widget>(
+      (gtk4.symbols.gtk_list_box_row_get_header ??
+        missing("gtk_list_box_row_get_header"))(this.ptr),
+    );
   },
   getSelectable(this: GObject): boolean {
-    return gtk4.symbols.gtk_list_box_row_get_selectable(this.ptr);
+    return (gtk4.symbols.gtk_list_box_row_get_selectable ??
+      missing("gtk_list_box_row_get_selectable"))(this.ptr);
   },
   isSelected(this: GObject): boolean {
-    return gtk4.symbols.gtk_list_box_row_is_selected(this.ptr);
+    return (gtk4.symbols.gtk_list_box_row_is_selected ??
+      missing("gtk_list_box_row_is_selected"))(this.ptr);
   },
   setHeader(this: GObject, header: Widget | null): void {
-    gtk4.symbols.gtk_list_box_row_set_header(this.ptr, header?.ptr ?? null);
+    (gtk4.symbols.gtk_list_box_row_set_header ??
+      missing("gtk_list_box_row_set_header"))(this.ptr, header?.ptr ?? null);
   },
   setSelectable(this: GObject, selectable: boolean): void {
-    gtk4.symbols.gtk_list_box_row_set_selectable(this.ptr, selectable);
+    (gtk4.symbols.gtk_list_box_row_set_selectable ??
+      missing("gtk_list_box_row_set_selectable"))(this.ptr, selectable);
   },
   onActivate(this: GObject, callback: () => void): number {
     return connectSignal(this, "activate", {
@@ -3520,7 +3829,8 @@ export const listItemMethods: ListItemMethods & ThisType<GObject> = {
     );
   },
   getActivatable(this: GObject): boolean {
-    return gtk4.symbols.gtk_list_item_get_activatable(this.ptr);
+    return (gtk4.symbols.gtk_list_item_get_activatable ??
+      missing("gtk_list_item_get_activatable"))(this.ptr);
   },
   getChild(this: GObject): Widget | null {
     return borrowed<Widget>(gtk4.symbols.gtk_list_item_get_child(this.ptr));
@@ -3533,13 +3843,16 @@ export const listItemMethods: ListItemMethods & ThisType<GObject> = {
     return borrowed<GObject>(gtk4.symbols.gtk_list_item_get_item(this.ptr));
   },
   getPosition(this: GObject): number {
-    return gtk4.symbols.gtk_list_item_get_position(this.ptr);
+    return (gtk4.symbols.gtk_list_item_get_position ??
+      missing("gtk_list_item_get_position"))(this.ptr);
   },
   getSelectable(this: GObject): boolean {
-    return gtk4.symbols.gtk_list_item_get_selectable(this.ptr);
+    return (gtk4.symbols.gtk_list_item_get_selectable ??
+      missing("gtk_list_item_get_selectable"))(this.ptr);
   },
   getSelected(this: GObject): boolean {
-    return gtk4.symbols.gtk_list_item_get_selected(this.ptr);
+    return (gtk4.symbols.gtk_list_item_get_selected ??
+      missing("gtk_list_item_get_selected"))(this.ptr);
   },
   setAccessibleDescription(this: GObject, description: string): void {
     (gtk4.symbols.gtk_list_item_set_accessible_description ??
@@ -3556,7 +3869,8 @@ export const listItemMethods: ListItemMethods & ThisType<GObject> = {
       );
   },
   setActivatable(this: GObject, activatable: boolean): void {
-    gtk4.symbols.gtk_list_item_set_activatable(this.ptr, activatable);
+    (gtk4.symbols.gtk_list_item_set_activatable ??
+      missing("gtk_list_item_set_activatable"))(this.ptr, activatable);
   },
   setChild(this: GObject, child: Widget | null): void {
     gtk4.symbols.gtk_list_item_set_child(this.ptr, child?.ptr ?? null);
@@ -3566,7 +3880,8 @@ export const listItemMethods: ListItemMethods & ThisType<GObject> = {
       missing("gtk_list_item_set_focusable", "4.12"))(this.ptr, focusable);
   },
   setSelectable(this: GObject, selectable: boolean): void {
-    gtk4.symbols.gtk_list_item_set_selectable(this.ptr, selectable);
+    (gtk4.symbols.gtk_list_item_set_selectable ??
+      missing("gtk_list_item_set_selectable"))(this.ptr, selectable);
   },
 };
 
@@ -3667,21 +3982,25 @@ export const menuButtonMethods: MenuButtonMethods & ThisType<GObject> = {
     );
   },
   getHasFrame(this: GObject): boolean {
-    return gtk4.symbols.gtk_menu_button_get_has_frame(this.ptr);
+    return (gtk4.symbols.gtk_menu_button_get_has_frame ??
+      missing("gtk_menu_button_get_has_frame"))(this.ptr);
   },
   getIconName(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      gtk4.symbols.gtk_menu_button_get_icon_name(this.ptr),
+      (gtk4.symbols.gtk_menu_button_get_icon_name ??
+        missing("gtk_menu_button_get_icon_name"))(this.ptr),
     );
   },
   getMenuModel(this: GObject): GObject | null {
     return borrowed<GObject>(
-      gtk4.symbols.gtk_menu_button_get_menu_model(this.ptr),
+      (gtk4.symbols.gtk_menu_button_get_menu_model ??
+        missing("gtk_menu_button_get_menu_model"))(this.ptr),
     );
   },
   getPopover(this: GObject): Popover | null {
     return borrowed<Popover>(
-      gtk4.symbols.gtk_menu_button_get_popover(this.ptr),
+      (gtk4.symbols.gtk_menu_button_get_popover ??
+        missing("gtk_menu_button_get_popover"))(this.ptr),
     );
   },
   getPrimary(this: GObject): boolean {
@@ -3689,10 +4008,13 @@ export const menuButtonMethods: MenuButtonMethods & ThisType<GObject> = {
       missing("gtk_menu_button_get_primary", "4.4"))(this.ptr);
   },
   getUseUnderline(this: GObject): boolean {
-    return gtk4.symbols.gtk_menu_button_get_use_underline(this.ptr);
+    return (gtk4.symbols.gtk_menu_button_get_use_underline ??
+      missing("gtk_menu_button_get_use_underline"))(this.ptr);
   },
   popup(this: GObject): void {
-    gtk4.symbols.gtk_menu_button_popup(this.ptr);
+    (gtk4.symbols.gtk_menu_button_popup ?? missing("gtk_menu_button_popup"))(
+      this.ptr,
+    );
   },
   setActive(this: GObject, active: boolean): void {
     (gtk4.symbols.gtk_menu_button_set_active ??
@@ -3718,13 +4040,21 @@ export const menuButtonMethods: MenuButtonMethods & ThisType<GObject> = {
       );
       [__0, __1, __2] = notifiedCallback(cb);
     }
-    gtk4.symbols.gtk_menu_button_set_create_popup_func(this.ptr, __0, __1, __2);
+    (gtk4.symbols.gtk_menu_button_set_create_popup_func ??
+      missing("gtk_menu_button_set_create_popup_func"))(
+        this.ptr,
+        __0,
+        __1,
+        __2,
+      );
   },
   setHasFrame(this: GObject, hasFrame: boolean): void {
-    gtk4.symbols.gtk_menu_button_set_has_frame(this.ptr, hasFrame);
+    (gtk4.symbols.gtk_menu_button_set_has_frame ??
+      missing("gtk_menu_button_set_has_frame"))(this.ptr, hasFrame);
   },
   setUseUnderline(this: GObject, useUnderline: boolean): void {
-    gtk4.symbols.gtk_menu_button_set_use_underline(this.ptr, useUnderline);
+    (gtk4.symbols.gtk_menu_button_set_use_underline ??
+      missing("gtk_menu_button_set_use_underline"))(this.ptr, useUnderline);
   },
   onActivate(this: GObject, callback: () => void): number {
     return connectSignal(this, "activate", {
@@ -3766,26 +4096,39 @@ export interface OverlayMethods {
 /** Implementations of {@linkcode OverlayMethods}. */
 export const overlayMethods: OverlayMethods & ThisType<GObject> = {
   getChild(this: GObject): Widget | null {
-    return borrowed<Widget>(gtk4.symbols.gtk_overlay_get_child(this.ptr));
-  },
-  getClipOverlay(this: GObject, widget: Widget): boolean {
-    return gtk4.symbols.gtk_overlay_get_clip_overlay(this.ptr, widget.ptr);
-  },
-  getMeasureOverlay(this: GObject, widget: Widget): boolean {
-    return gtk4.symbols.gtk_overlay_get_measure_overlay(this.ptr, widget.ptr);
-  },
-  removeOverlay(this: GObject, widget: Widget): void {
-    gtk4.symbols.gtk_overlay_remove_overlay(this.ptr, widget.ptr);
-  },
-  setClipOverlay(this: GObject, widget: Widget, clipOverlay: boolean): void {
-    gtk4.symbols.gtk_overlay_set_clip_overlay(
-      this.ptr,
-      widget.ptr,
-      clipOverlay,
+    return borrowed<Widget>(
+      (gtk4.symbols.gtk_overlay_get_child ?? missing("gtk_overlay_get_child"))(
+        this.ptr,
+      ),
     );
   },
+  getClipOverlay(this: GObject, widget: Widget): boolean {
+    return (gtk4.symbols.gtk_overlay_get_clip_overlay ??
+      missing("gtk_overlay_get_clip_overlay"))(this.ptr, widget.ptr);
+  },
+  getMeasureOverlay(this: GObject, widget: Widget): boolean {
+    return (gtk4.symbols.gtk_overlay_get_measure_overlay ??
+      missing("gtk_overlay_get_measure_overlay"))(this.ptr, widget.ptr);
+  },
+  removeOverlay(this: GObject, widget: Widget): void {
+    (gtk4.symbols.gtk_overlay_remove_overlay ??
+      missing("gtk_overlay_remove_overlay"))(this.ptr, widget.ptr);
+  },
+  setClipOverlay(this: GObject, widget: Widget, clipOverlay: boolean): void {
+    (gtk4.symbols.gtk_overlay_set_clip_overlay ??
+      missing("gtk_overlay_set_clip_overlay"))(
+        this.ptr,
+        widget.ptr,
+        clipOverlay,
+      );
+  },
   setMeasureOverlay(this: GObject, widget: Widget, measure: boolean): void {
-    gtk4.symbols.gtk_overlay_set_measure_overlay(this.ptr, widget.ptr, measure);
+    (gtk4.symbols.gtk_overlay_set_measure_overlay ??
+      missing("gtk_overlay_set_measure_overlay"))(
+        this.ptr,
+        widget.ptr,
+        measure,
+      );
   },
 };
 
@@ -3846,38 +4189,51 @@ export interface PictureMethods {
 export const pictureMethods: PictureMethods & ThisType<GObject> = {
   getAlternativeText(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      gtk4.symbols.gtk_picture_get_alternative_text(this.ptr),
+      (gtk4.symbols.gtk_picture_get_alternative_text ??
+        missing("gtk_picture_get_alternative_text"))(this.ptr),
     );
   },
   getCanShrink(this: GObject): boolean {
-    return gtk4.symbols.gtk_picture_get_can_shrink(this.ptr);
+    return (gtk4.symbols.gtk_picture_get_can_shrink ??
+      missing("gtk_picture_get_can_shrink"))(this.ptr);
   },
   getContentFit(this: GObject): ContentFit {
     return (gtk4.symbols.gtk_picture_get_content_fit ??
       missing("gtk_picture_get_content_fit", "4.8"))(this.ptr) as ContentFit;
   },
   getFile(this: GObject): GObject | null {
-    return borrowed<GObject>(gtk4.symbols.gtk_picture_get_file(this.ptr));
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_picture_get_file ?? missing("gtk_picture_get_file"))(
+        this.ptr,
+      ),
+    );
   },
   getIsolateContents(this: GObject): boolean {
     return (gtk4.symbols.gtk_picture_get_isolate_contents ??
       missing("gtk_picture_get_isolate_contents", "4.22"))(this.ptr);
   },
   getPaintable(this: GObject): GObject | null {
-    return borrowed<GObject>(gtk4.symbols.gtk_picture_get_paintable(this.ptr));
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_picture_get_paintable ??
+        missing("gtk_picture_get_paintable"))(this.ptr),
+    );
   },
   setAlternativeText(this: GObject, alternativeText: string | null): void {
-    gtk4.symbols.gtk_picture_set_alternative_text(
-      this.ptr,
-      cstrOrNull(alternativeText),
-    );
+    (gtk4.symbols.gtk_picture_set_alternative_text ??
+      missing("gtk_picture_set_alternative_text"))(
+        this.ptr,
+        cstrOrNull(alternativeText),
+      );
   },
   setContentFit(this: GObject, contentFit: ContentFit): void {
     (gtk4.symbols.gtk_picture_set_content_fit ??
       missing("gtk_picture_set_content_fit", "4.8"))(this.ptr, contentFit);
   },
   setFile(this: GObject, file: GObject | null): void {
-    gtk4.symbols.gtk_picture_set_file(this.ptr, file?.ptr ?? null);
+    (gtk4.symbols.gtk_picture_set_file ?? missing("gtk_picture_set_file"))(
+      this.ptr,
+      file?.ptr ?? null,
+    );
   },
   setIsolateContents(this: GObject, isolateContents: boolean): void {
     (gtk4.symbols.gtk_picture_set_isolate_contents ??
@@ -3887,10 +4243,12 @@ export const pictureMethods: PictureMethods & ThisType<GObject> = {
       );
   },
   setPaintable(this: GObject, paintable: GObject | null): void {
-    gtk4.symbols.gtk_picture_set_paintable(this.ptr, paintable?.ptr ?? null);
+    (gtk4.symbols.gtk_picture_set_paintable ??
+      missing("gtk_picture_set_paintable"))(this.ptr, paintable?.ptr ?? null);
   },
   setResource(this: GObject, resourcePath: string | null): void {
-    gtk4.symbols.gtk_picture_set_resource(this.ptr, cstrOrNull(resourcePath));
+    (gtk4.symbols.gtk_picture_set_resource ??
+      missing("gtk_picture_set_resource"))(this.ptr, cstrOrNull(resourcePath));
   },
 };
 
@@ -3969,46 +4327,67 @@ export interface PopoverMethods {
 /** Implementations of {@linkcode PopoverMethods}. */
 export const popoverMethods: PopoverMethods & ThisType<GObject> = {
   getAutohide(this: GObject): boolean {
-    return gtk4.symbols.gtk_popover_get_autohide(this.ptr);
+    return (gtk4.symbols.gtk_popover_get_autohide ??
+      missing("gtk_popover_get_autohide"))(this.ptr);
   },
   getCascadePopdown(this: GObject): boolean {
-    return gtk4.symbols.gtk_popover_get_cascade_popdown(this.ptr);
+    return (gtk4.symbols.gtk_popover_get_cascade_popdown ??
+      missing("gtk_popover_get_cascade_popdown"))(this.ptr);
   },
   getChild(this: GObject): Widget | null {
-    return borrowed<Widget>(gtk4.symbols.gtk_popover_get_child(this.ptr));
+    return borrowed<Widget>(
+      (gtk4.symbols.gtk_popover_get_child ?? missing("gtk_popover_get_child"))(
+        this.ptr,
+      ),
+    );
   },
   getHasArrow(this: GObject): boolean {
-    return gtk4.symbols.gtk_popover_get_has_arrow(this.ptr);
+    return (gtk4.symbols.gtk_popover_get_has_arrow ??
+      missing("gtk_popover_get_has_arrow"))(this.ptr);
   },
   getMnemonicsVisible(this: GObject): boolean {
-    return gtk4.symbols.gtk_popover_get_mnemonics_visible(this.ptr);
+    return (gtk4.symbols.gtk_popover_get_mnemonics_visible ??
+      missing("gtk_popover_get_mnemonics_visible"))(this.ptr);
   },
   getPosition(this: GObject): PositionType {
-    return gtk4.symbols.gtk_popover_get_position(this.ptr) as PositionType;
+    return (gtk4.symbols.gtk_popover_get_position ??
+      missing("gtk_popover_get_position"))(this.ptr) as PositionType;
   },
   present(this: GObject): void {
-    gtk4.symbols.gtk_popover_present(this.ptr);
+    (gtk4.symbols.gtk_popover_present ?? missing("gtk_popover_present"))(
+      this.ptr,
+    );
   },
   setAutohide(this: GObject, autohide: boolean): void {
-    gtk4.symbols.gtk_popover_set_autohide(this.ptr, autohide);
+    (gtk4.symbols.gtk_popover_set_autohide ??
+      missing("gtk_popover_set_autohide"))(this.ptr, autohide);
   },
   setCascadePopdown(this: GObject, cascadePopdown: boolean): void {
-    gtk4.symbols.gtk_popover_set_cascade_popdown(this.ptr, cascadePopdown);
+    (gtk4.symbols.gtk_popover_set_cascade_popdown ??
+      missing("gtk_popover_set_cascade_popdown"))(this.ptr, cascadePopdown);
   },
   setDefaultWidget(this: GObject, widget: Widget | null): void {
-    gtk4.symbols.gtk_popover_set_default_widget(this.ptr, widget?.ptr ?? null);
+    (gtk4.symbols.gtk_popover_set_default_widget ??
+      missing("gtk_popover_set_default_widget"))(this.ptr, widget?.ptr ?? null);
   },
   setHasArrow(this: GObject, hasArrow: boolean): void {
-    gtk4.symbols.gtk_popover_set_has_arrow(this.ptr, hasArrow);
+    (gtk4.symbols.gtk_popover_set_has_arrow ??
+      missing("gtk_popover_set_has_arrow"))(this.ptr, hasArrow);
   },
   setMnemonicsVisible(this: GObject, mnemonicsVisible: boolean): void {
-    gtk4.symbols.gtk_popover_set_mnemonics_visible(this.ptr, mnemonicsVisible);
+    (gtk4.symbols.gtk_popover_set_mnemonics_visible ??
+      missing("gtk_popover_set_mnemonics_visible"))(this.ptr, mnemonicsVisible);
   },
   setOffset(this: GObject, xOffset: number, yOffset: number): void {
-    gtk4.symbols.gtk_popover_set_offset(this.ptr, xOffset, yOffset);
+    (gtk4.symbols.gtk_popover_set_offset ?? missing("gtk_popover_set_offset"))(
+      this.ptr,
+      xOffset,
+      yOffset,
+    );
   },
   setPosition(this: GObject, position: PositionType): void {
-    gtk4.symbols.gtk_popover_set_position(this.ptr, position);
+    (gtk4.symbols.gtk_popover_set_position ??
+      missing("gtk_popover_set_position"))(this.ptr, position);
   },
   onActivateDefault(this: GObject, callback: () => void): number {
     return connectSignal(this, "activate-default", {
@@ -4052,11 +4431,8 @@ export interface PopoverMenuMethods {
 /** Implementations of {@linkcode PopoverMenuMethods}. */
 export const popoverMenuMethods: PopoverMenuMethods & ThisType<GObject> = {
   addChild(this: GObject, child: Widget, id: string): boolean {
-    return gtk4.symbols.gtk_popover_menu_add_child(
-      this.ptr,
-      child.ptr,
-      cstr(id),
-    );
+    return (gtk4.symbols.gtk_popover_menu_add_child ??
+      missing("gtk_popover_menu_add_child"))(this.ptr, child.ptr, cstr(id));
   },
   getFlags(this: GObject): number {
     return (gtk4.symbols.gtk_popover_menu_get_flags ??
@@ -4064,11 +4440,13 @@ export const popoverMenuMethods: PopoverMenuMethods & ThisType<GObject> = {
   },
   getMenuModel(this: GObject): GObject | null {
     return borrowed<GObject>(
-      gtk4.symbols.gtk_popover_menu_get_menu_model(this.ptr),
+      (gtk4.symbols.gtk_popover_menu_get_menu_model ??
+        missing("gtk_popover_menu_get_menu_model"))(this.ptr),
     );
   },
   removeChild(this: GObject, child: Widget): boolean {
-    return gtk4.symbols.gtk_popover_menu_remove_child(this.ptr, child.ptr);
+    return (gtk4.symbols.gtk_popover_menu_remove_child ??
+      missing("gtk_popover_menu_remove_child"))(this.ptr, child.ptr);
   },
   setFlags(this: GObject, flags: number): void {
     (gtk4.symbols.gtk_popover_menu_set_flags ??
@@ -4116,32 +4494,40 @@ export interface ProgressBarMethods {
 /** Implementations of {@linkcode ProgressBarMethods}. */
 export const progressBarMethods: ProgressBarMethods & ThisType<GObject> = {
   getEllipsize(this: GObject): PangoEllipsizeMode {
-    return gtk4.symbols.gtk_progress_bar_get_ellipsize(
-      this.ptr,
-    ) as PangoEllipsizeMode;
+    return (gtk4.symbols.gtk_progress_bar_get_ellipsize ??
+      missing("gtk_progress_bar_get_ellipsize"))(
+        this.ptr,
+      ) as PangoEllipsizeMode;
   },
   getInverted(this: GObject): boolean {
-    return gtk4.symbols.gtk_progress_bar_get_inverted(this.ptr);
+    return (gtk4.symbols.gtk_progress_bar_get_inverted ??
+      missing("gtk_progress_bar_get_inverted"))(this.ptr);
   },
   getPulseStep(this: GObject): number {
-    return gtk4.symbols.gtk_progress_bar_get_pulse_step(this.ptr);
+    return (gtk4.symbols.gtk_progress_bar_get_pulse_step ??
+      missing("gtk_progress_bar_get_pulse_step"))(this.ptr);
   },
   getShowText(this: GObject): boolean {
-    return gtk4.symbols.gtk_progress_bar_get_show_text(this.ptr);
+    return (gtk4.symbols.gtk_progress_bar_get_show_text ??
+      missing("gtk_progress_bar_get_show_text"))(this.ptr);
   },
   getText(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      gtk4.symbols.gtk_progress_bar_get_text(this.ptr),
+      (gtk4.symbols.gtk_progress_bar_get_text ??
+        missing("gtk_progress_bar_get_text"))(this.ptr),
     );
   },
   setEllipsize(this: GObject, mode: PangoEllipsizeMode): void {
-    gtk4.symbols.gtk_progress_bar_set_ellipsize(this.ptr, mode);
+    (gtk4.symbols.gtk_progress_bar_set_ellipsize ??
+      missing("gtk_progress_bar_set_ellipsize"))(this.ptr, mode);
   },
   setInverted(this: GObject, inverted: boolean): void {
-    gtk4.symbols.gtk_progress_bar_set_inverted(this.ptr, inverted);
+    (gtk4.symbols.gtk_progress_bar_set_inverted ??
+      missing("gtk_progress_bar_set_inverted"))(this.ptr, inverted);
   },
   setPulseStep(this: GObject, fraction: number): void {
-    gtk4.symbols.gtk_progress_bar_set_pulse_step(this.ptr, fraction);
+    (gtk4.symbols.gtk_progress_bar_set_pulse_step ??
+      missing("gtk_progress_bar_set_pulse_step"))(this.ptr, fraction);
   },
 };
 
@@ -4170,18 +4556,24 @@ export interface RevealerMethods {
 /** Implementations of {@linkcode RevealerMethods}. */
 export const revealerMethods: RevealerMethods & ThisType<GObject> = {
   getChild(this: GObject): Widget | null {
-    return borrowed<Widget>(gtk4.symbols.gtk_revealer_get_child(this.ptr));
+    return borrowed<Widget>(
+      (gtk4.symbols.gtk_revealer_get_child ??
+        missing("gtk_revealer_get_child"))(this.ptr),
+    );
   },
   getChildRevealed(this: GObject): boolean {
-    return gtk4.symbols.gtk_revealer_get_child_revealed(this.ptr);
+    return (gtk4.symbols.gtk_revealer_get_child_revealed ??
+      missing("gtk_revealer_get_child_revealed"))(this.ptr);
   },
   getTransitionDuration(this: GObject): number {
-    return gtk4.symbols.gtk_revealer_get_transition_duration(this.ptr);
+    return (gtk4.symbols.gtk_revealer_get_transition_duration ??
+      missing("gtk_revealer_get_transition_duration"))(this.ptr);
   },
   getTransitionType(this: GObject): RevealerTransitionType {
-    return gtk4.symbols.gtk_revealer_get_transition_type(
-      this.ptr,
-    ) as RevealerTransitionType;
+    return (gtk4.symbols.gtk_revealer_get_transition_type ??
+      missing("gtk_revealer_get_transition_type"))(
+        this.ptr,
+      ) as RevealerTransitionType;
   },
 };
 
@@ -4234,7 +4626,7 @@ export const scaleMethods: ScaleMethods & ThisType<GObject> = {
     position: PositionType,
     markup: string | null,
   ): void {
-    gtk4.symbols.gtk_scale_add_mark(
+    (gtk4.symbols.gtk_scale_add_mark ?? missing("gtk_scale_add_mark"))(
       this.ptr,
       value,
       position,
@@ -4242,28 +4634,40 @@ export const scaleMethods: ScaleMethods & ThisType<GObject> = {
     );
   },
   clearMarks(this: GObject): void {
-    gtk4.symbols.gtk_scale_clear_marks(this.ptr);
+    (gtk4.symbols.gtk_scale_clear_marks ?? missing("gtk_scale_clear_marks"))(
+      this.ptr,
+    );
   },
   getDigits(this: GObject): number {
-    return gtk4.symbols.gtk_scale_get_digits(this.ptr);
+    return (gtk4.symbols.gtk_scale_get_digits ??
+      missing("gtk_scale_get_digits"))(this.ptr);
   },
   getDrawValue(this: GObject): boolean {
-    return gtk4.symbols.gtk_scale_get_draw_value(this.ptr);
+    return (gtk4.symbols.gtk_scale_get_draw_value ??
+      missing("gtk_scale_get_draw_value"))(this.ptr);
   },
   getHasOrigin(this: GObject): boolean {
-    return gtk4.symbols.gtk_scale_get_has_origin(this.ptr);
+    return (gtk4.symbols.gtk_scale_get_has_origin ??
+      missing("gtk_scale_get_has_origin"))(this.ptr);
   },
   getLayout(this: GObject): GObject | null {
-    return borrowed<GObject>(gtk4.symbols.gtk_scale_get_layout(this.ptr));
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_scale_get_layout ?? missing("gtk_scale_get_layout"))(
+        this.ptr,
+      ),
+    );
   },
   getValuePos(this: GObject): PositionType {
-    return gtk4.symbols.gtk_scale_get_value_pos(this.ptr) as PositionType;
+    return (gtk4.symbols.gtk_scale_get_value_pos ??
+      missing("gtk_scale_get_value_pos"))(this.ptr) as PositionType;
   },
   setHasOrigin(this: GObject, hasOrigin: boolean): void {
-    gtk4.symbols.gtk_scale_set_has_origin(this.ptr, hasOrigin);
+    (gtk4.symbols.gtk_scale_set_has_origin ??
+      missing("gtk_scale_set_has_origin"))(this.ptr, hasOrigin);
   },
   setValuePos(this: GObject, pos: PositionType): void {
-    gtk4.symbols.gtk_scale_set_value_pos(this.ptr, pos);
+    (gtk4.symbols.gtk_scale_set_value_pos ??
+      missing("gtk_scale_set_value_pos"))(this.ptr, pos);
   },
 };
 
@@ -4402,113 +4806,139 @@ export const scrolledWindowMethods: ScrolledWindowMethods & ThisType<GObject> =
   {
     getChild(this: GObject): Widget | null {
       return borrowed<Widget>(
-        gtk4.symbols.gtk_scrolled_window_get_child(this.ptr),
+        (gtk4.symbols.gtk_scrolled_window_get_child ??
+          missing("gtk_scrolled_window_get_child"))(this.ptr),
       );
     },
     getHadjustment(this: GObject): Adjustment {
       return borrowed<Adjustment>(
-        gtk4.symbols.gtk_scrolled_window_get_hadjustment(this.ptr),
+        (gtk4.symbols.gtk_scrolled_window_get_hadjustment ??
+          missing("gtk_scrolled_window_get_hadjustment"))(this.ptr),
       )!;
     },
     getHasFrame(this: GObject): boolean {
-      return gtk4.symbols.gtk_scrolled_window_get_has_frame(this.ptr);
+      return (gtk4.symbols.gtk_scrolled_window_get_has_frame ??
+        missing("gtk_scrolled_window_get_has_frame"))(this.ptr);
     },
     getHscrollbar(this: GObject): Widget {
       return borrowed<Widget>(
-        gtk4.symbols.gtk_scrolled_window_get_hscrollbar(this.ptr),
+        (gtk4.symbols.gtk_scrolled_window_get_hscrollbar ??
+          missing("gtk_scrolled_window_get_hscrollbar"))(this.ptr),
       )!;
     },
     getKineticScrolling(this: GObject): boolean {
-      return gtk4.symbols.gtk_scrolled_window_get_kinetic_scrolling(this.ptr);
+      return (gtk4.symbols.gtk_scrolled_window_get_kinetic_scrolling ??
+        missing("gtk_scrolled_window_get_kinetic_scrolling"))(this.ptr);
     },
     getMaxContentHeight(this: GObject): number {
-      return gtk4.symbols.gtk_scrolled_window_get_max_content_height(this.ptr);
+      return (gtk4.symbols.gtk_scrolled_window_get_max_content_height ??
+        missing("gtk_scrolled_window_get_max_content_height"))(this.ptr);
     },
     getMaxContentWidth(this: GObject): number {
-      return gtk4.symbols.gtk_scrolled_window_get_max_content_width(this.ptr);
+      return (gtk4.symbols.gtk_scrolled_window_get_max_content_width ??
+        missing("gtk_scrolled_window_get_max_content_width"))(this.ptr);
     },
     getMinContentHeight(this: GObject): number {
-      return gtk4.symbols.gtk_scrolled_window_get_min_content_height(this.ptr);
+      return (gtk4.symbols.gtk_scrolled_window_get_min_content_height ??
+        missing("gtk_scrolled_window_get_min_content_height"))(this.ptr);
     },
     getMinContentWidth(this: GObject): number {
-      return gtk4.symbols.gtk_scrolled_window_get_min_content_width(this.ptr);
+      return (gtk4.symbols.gtk_scrolled_window_get_min_content_width ??
+        missing("gtk_scrolled_window_get_min_content_width"))(this.ptr);
     },
     getOverlayScrolling(this: GObject): boolean {
-      return gtk4.symbols.gtk_scrolled_window_get_overlay_scrolling(this.ptr);
+      return (gtk4.symbols.gtk_scrolled_window_get_overlay_scrolling ??
+        missing("gtk_scrolled_window_get_overlay_scrolling"))(this.ptr);
     },
     getPlacement(this: GObject): CornerType {
-      return gtk4.symbols.gtk_scrolled_window_get_placement(
-        this.ptr,
-      ) as CornerType;
+      return (gtk4.symbols.gtk_scrolled_window_get_placement ??
+        missing("gtk_scrolled_window_get_placement"))(this.ptr) as CornerType;
     },
     getPropagateNaturalHeight(this: GObject): boolean {
-      return gtk4.symbols.gtk_scrolled_window_get_propagate_natural_height(
-        this.ptr,
-      );
+      return (gtk4.symbols.gtk_scrolled_window_get_propagate_natural_height ??
+        missing("gtk_scrolled_window_get_propagate_natural_height"))(this.ptr);
     },
     getPropagateNaturalWidth(this: GObject): boolean {
-      return gtk4.symbols.gtk_scrolled_window_get_propagate_natural_width(
-        this.ptr,
-      );
+      return (gtk4.symbols.gtk_scrolled_window_get_propagate_natural_width ??
+        missing("gtk_scrolled_window_get_propagate_natural_width"))(this.ptr);
     },
     getVscrollbar(this: GObject): Widget {
       return borrowed<Widget>(
-        gtk4.symbols.gtk_scrolled_window_get_vscrollbar(this.ptr),
+        (gtk4.symbols.gtk_scrolled_window_get_vscrollbar ??
+          missing("gtk_scrolled_window_get_vscrollbar"))(this.ptr),
       )!;
     },
     setHadjustment(this: GObject, hadjustment: Adjustment | null): void {
-      gtk4.symbols.gtk_scrolled_window_set_hadjustment(
-        this.ptr,
-        hadjustment?.ptr ?? null,
-      );
+      (gtk4.symbols.gtk_scrolled_window_set_hadjustment ??
+        missing("gtk_scrolled_window_set_hadjustment"))(
+          this.ptr,
+          hadjustment?.ptr ?? null,
+        );
     },
     setHasFrame(this: GObject, hasFrame: boolean): void {
-      gtk4.symbols.gtk_scrolled_window_set_has_frame(this.ptr, hasFrame);
+      (gtk4.symbols.gtk_scrolled_window_set_has_frame ??
+        missing("gtk_scrolled_window_set_has_frame"))(this.ptr, hasFrame);
     },
     setKineticScrolling(this: GObject, kineticScrolling: boolean): void {
-      gtk4.symbols.gtk_scrolled_window_set_kinetic_scrolling(
-        this.ptr,
-        kineticScrolling,
-      );
+      (gtk4.symbols.gtk_scrolled_window_set_kinetic_scrolling ??
+        missing("gtk_scrolled_window_set_kinetic_scrolling"))(
+          this.ptr,
+          kineticScrolling,
+        );
     },
     setMaxContentHeight(this: GObject, height: number): void {
-      gtk4.symbols.gtk_scrolled_window_set_max_content_height(this.ptr, height);
+      (gtk4.symbols.gtk_scrolled_window_set_max_content_height ??
+        missing("gtk_scrolled_window_set_max_content_height"))(
+          this.ptr,
+          height,
+        );
     },
     setMaxContentWidth(this: GObject, width: number): void {
-      gtk4.symbols.gtk_scrolled_window_set_max_content_width(this.ptr, width);
+      (gtk4.symbols.gtk_scrolled_window_set_max_content_width ??
+        missing("gtk_scrolled_window_set_max_content_width"))(this.ptr, width);
     },
     setMinContentWidth(this: GObject, width: number): void {
-      gtk4.symbols.gtk_scrolled_window_set_min_content_width(this.ptr, width);
+      (gtk4.symbols.gtk_scrolled_window_set_min_content_width ??
+        missing("gtk_scrolled_window_set_min_content_width"))(this.ptr, width);
     },
     setOverlayScrolling(this: GObject, overlayScrolling: boolean): void {
-      gtk4.symbols.gtk_scrolled_window_set_overlay_scrolling(
-        this.ptr,
-        overlayScrolling,
-      );
+      (gtk4.symbols.gtk_scrolled_window_set_overlay_scrolling ??
+        missing("gtk_scrolled_window_set_overlay_scrolling"))(
+          this.ptr,
+          overlayScrolling,
+        );
     },
     setPlacement(this: GObject, windowPlacement: CornerType): void {
-      gtk4.symbols.gtk_scrolled_window_set_placement(this.ptr, windowPlacement);
+      (gtk4.symbols.gtk_scrolled_window_set_placement ??
+        missing("gtk_scrolled_window_set_placement"))(
+          this.ptr,
+          windowPlacement,
+        );
     },
     setPropagateNaturalHeight(this: GObject, propagate: boolean): void {
-      gtk4.symbols.gtk_scrolled_window_set_propagate_natural_height(
-        this.ptr,
-        propagate,
-      );
+      (gtk4.symbols.gtk_scrolled_window_set_propagate_natural_height ??
+        missing("gtk_scrolled_window_set_propagate_natural_height"))(
+          this.ptr,
+          propagate,
+        );
     },
     setPropagateNaturalWidth(this: GObject, propagate: boolean): void {
-      gtk4.symbols.gtk_scrolled_window_set_propagate_natural_width(
-        this.ptr,
-        propagate,
-      );
+      (gtk4.symbols.gtk_scrolled_window_set_propagate_natural_width ??
+        missing("gtk_scrolled_window_set_propagate_natural_width"))(
+          this.ptr,
+          propagate,
+        );
     },
     setVadjustment(this: GObject, vadjustment: Adjustment | null): void {
-      gtk4.symbols.gtk_scrolled_window_set_vadjustment(
-        this.ptr,
-        vadjustment?.ptr ?? null,
-      );
+      (gtk4.symbols.gtk_scrolled_window_set_vadjustment ??
+        missing("gtk_scrolled_window_set_vadjustment"))(
+          this.ptr,
+          vadjustment?.ptr ?? null,
+        );
     },
     unsetPlacement(this: GObject): void {
-      gtk4.symbols.gtk_scrolled_window_unset_placement(this.ptr);
+      (gtk4.symbols.gtk_scrolled_window_unset_placement ??
+        missing("gtk_scrolled_window_unset_placement"))(this.ptr);
     },
     onEdgeOvershot(
       this: GObject,
@@ -4562,18 +4992,24 @@ export interface SearchBarMethods {
 /** Implementations of {@linkcode SearchBarMethods}. */
 export const searchBarMethods: SearchBarMethods & ThisType<GObject> = {
   getChild(this: GObject): Widget | null {
-    return borrowed<Widget>(gtk4.symbols.gtk_search_bar_get_child(this.ptr));
+    return borrowed<Widget>(
+      (gtk4.symbols.gtk_search_bar_get_child ??
+        missing("gtk_search_bar_get_child"))(this.ptr),
+    );
   },
   getKeyCaptureWidget(this: GObject): Widget | null {
     return borrowed<Widget>(
-      gtk4.symbols.gtk_search_bar_get_key_capture_widget(this.ptr),
+      (gtk4.symbols.gtk_search_bar_get_key_capture_widget ??
+        missing("gtk_search_bar_get_key_capture_widget"))(this.ptr),
     );
   },
   getShowCloseButton(this: GObject): boolean {
-    return gtk4.symbols.gtk_search_bar_get_show_close_button(this.ptr);
+    return (gtk4.symbols.gtk_search_bar_get_show_close_button ??
+      missing("gtk_search_bar_get_show_close_button"))(this.ptr);
   },
   setShowCloseButton(this: GObject, visible: boolean): void {
-    gtk4.symbols.gtk_search_bar_set_show_close_button(this.ptr, visible);
+    (gtk4.symbols.gtk_search_bar_set_show_close_button ??
+      missing("gtk_search_bar_set_show_close_button"))(this.ptr, visible);
   },
 };
 
@@ -4652,7 +5088,8 @@ export const searchEntryMethods: SearchEntryMethods & ThisType<GObject> = {
   },
   getKeyCaptureWidget(this: GObject): Widget | null {
     return borrowed<Widget>(
-      gtk4.symbols.gtk_search_entry_get_key_capture_widget(this.ptr),
+      (gtk4.symbols.gtk_search_entry_get_key_capture_widget ??
+        missing("gtk_search_entry_get_key_capture_widget"))(this.ptr),
     );
   },
   getPlaceholderText(this: GObject): string | null {
@@ -4674,10 +5111,11 @@ export const searchEntryMethods: SearchEntryMethods & ThisType<GObject> = {
       missing("gtk_search_entry_set_input_purpose", "4.14"))(this.ptr, purpose);
   },
   setKeyCaptureWidget(this: GObject, widget: Widget | null): void {
-    gtk4.symbols.gtk_search_entry_set_key_capture_widget(
-      this.ptr,
-      widget?.ptr ?? null,
-    );
+    (gtk4.symbols.gtk_search_entry_set_key_capture_widget ??
+      missing("gtk_search_entry_set_key_capture_widget"))(
+        this.ptr,
+        widget?.ptr ?? null,
+      );
   },
   setSearchDelay(this: GObject, delay: number): void {
     (gtk4.symbols.gtk_search_entry_set_search_delay ??
@@ -4773,35 +5211,50 @@ export const singleSelectionMethods:
   & SingleSelectionMethods
   & ThisType<GObject> = {
     getAutoselect(this: GObject): boolean {
-      return gtk4.symbols.gtk_single_selection_get_autoselect(this.ptr);
+      return (gtk4.symbols.gtk_single_selection_get_autoselect ??
+        missing("gtk_single_selection_get_autoselect"))(this.ptr);
     },
     getCanUnselect(this: GObject): boolean {
-      return gtk4.symbols.gtk_single_selection_get_can_unselect(this.ptr);
+      return (gtk4.symbols.gtk_single_selection_get_can_unselect ??
+        missing("gtk_single_selection_get_can_unselect"))(this.ptr);
     },
     getModel(this: GObject): GObject | null {
       return borrowed<GObject>(
-        gtk4.symbols.gtk_single_selection_get_model(this.ptr),
+        (gtk4.symbols.gtk_single_selection_get_model ??
+          missing("gtk_single_selection_get_model"))(this.ptr),
       );
     },
     getSelected(this: GObject): number {
-      return gtk4.symbols.gtk_single_selection_get_selected(this.ptr);
+      return (gtk4.symbols.gtk_single_selection_get_selected ??
+        missing("gtk_single_selection_get_selected"))(this.ptr);
     },
     getSelectedItem(this: GObject): GObject | null {
       return borrowed<GObject>(
-        gtk4.symbols.gtk_single_selection_get_selected_item(this.ptr),
+        (gtk4.symbols.gtk_single_selection_get_selected_item ??
+          missing("gtk_single_selection_get_selected_item"))(this.ptr),
       );
     },
     setAutoselect(this: GObject, autoselect: boolean): void {
-      gtk4.symbols.gtk_single_selection_set_autoselect(this.ptr, autoselect);
+      (gtk4.symbols.gtk_single_selection_set_autoselect ??
+        missing("gtk_single_selection_set_autoselect"))(this.ptr, autoselect);
     },
     setCanUnselect(this: GObject, canUnselect: boolean): void {
-      gtk4.symbols.gtk_single_selection_set_can_unselect(this.ptr, canUnselect);
+      (gtk4.symbols.gtk_single_selection_set_can_unselect ??
+        missing("gtk_single_selection_set_can_unselect"))(
+          this.ptr,
+          canUnselect,
+        );
     },
     setModel(this: GObject, model: GObject | null): void {
-      gtk4.symbols.gtk_single_selection_set_model(this.ptr, model?.ptr ?? null);
+      (gtk4.symbols.gtk_single_selection_set_model ??
+        missing("gtk_single_selection_set_model"))(
+          this.ptr,
+          model?.ptr ?? null,
+        );
     },
     setSelected(this: GObject, position: number): void {
-      gtk4.symbols.gtk_single_selection_set_selected(this.ptr, position);
+      (gtk4.symbols.gtk_single_selection_set_selected ??
+        missing("gtk_single_selection_set_selected"))(this.ptr, position);
     },
   };
 
@@ -4824,13 +5277,16 @@ export interface SizeGroupMethods {
 /** Implementations of {@linkcode SizeGroupMethods}. */
 export const sizeGroupMethods: SizeGroupMethods & ThisType<GObject> = {
   getMode(this: GObject): SizeGroupMode {
-    return gtk4.symbols.gtk_size_group_get_mode(this.ptr) as SizeGroupMode;
+    return (gtk4.symbols.gtk_size_group_get_mode ??
+      missing("gtk_size_group_get_mode"))(this.ptr) as SizeGroupMode;
   },
   removeWidget(this: GObject, widget: Widget): void {
-    gtk4.symbols.gtk_size_group_remove_widget(this.ptr, widget.ptr);
+    (gtk4.symbols.gtk_size_group_remove_widget ??
+      missing("gtk_size_group_remove_widget"))(this.ptr, widget.ptr);
   },
   setMode(this: GObject, mode: SizeGroupMode): void {
-    gtk4.symbols.gtk_size_group_set_mode(this.ptr, mode);
+    (gtk4.symbols.gtk_size_group_set_mode ??
+      missing("gtk_size_group_set_mode"))(this.ptr, mode);
   },
 };
 
@@ -4849,10 +5305,12 @@ export interface SpinnerMethods {
 /** Implementations of {@linkcode SpinnerMethods}. */
 export const spinnerMethods: SpinnerMethods & ThisType<GObject> = {
   getSpinning(this: GObject): boolean {
-    return gtk4.symbols.gtk_spinner_get_spinning(this.ptr);
+    return (gtk4.symbols.gtk_spinner_get_spinning ??
+      missing("gtk_spinner_get_spinning"))(this.ptr);
   },
   setSpinning(this: GObject, spinning: boolean): void {
-    gtk4.symbols.gtk_spinner_set_spinning(this.ptr, spinning);
+    (gtk4.symbols.gtk_spinner_set_spinning ??
+      missing("gtk_spinner_set_spinning"))(this.ptr, spinning);
   },
 };
 
@@ -4875,7 +5333,10 @@ export const stringListMethods: StringListMethods & ThisType<GObject> = {
       missing("gtk_string_list_find", "4.18"))(this.ptr, cstr(string));
   },
   remove(this: GObject, position: number): void {
-    gtk4.symbols.gtk_string_list_remove(this.ptr, position);
+    (gtk4.symbols.gtk_string_list_remove ?? missing("gtk_string_list_remove"))(
+      this.ptr,
+      position,
+    );
   },
 };
 
@@ -4894,10 +5355,14 @@ export interface SwitchMethods {
 /** Implementations of {@linkcode SwitchMethods}. */
 export const switchMethods: SwitchMethods & ThisType<GObject> = {
   getState(this: GObject): boolean {
-    return gtk4.symbols.gtk_switch_get_state(this.ptr);
+    return (gtk4.symbols.gtk_switch_get_state ??
+      missing("gtk_switch_get_state"))(this.ptr);
   },
   setState(this: GObject, state: boolean): void {
-    gtk4.symbols.gtk_switch_set_state(this.ptr, state);
+    (gtk4.symbols.gtk_switch_set_state ?? missing("gtk_switch_set_state"))(
+      this.ptr,
+      state,
+    );
   },
 };
 
@@ -5123,66 +5588,80 @@ export const textBufferMethods: TextBufferMethods & ThisType<GObject> = {
       );
   },
   addSelectionClipboard(this: GObject, clipboard: Clipboard): void {
-    gtk4.symbols.gtk_text_buffer_add_selection_clipboard(
-      this.ptr,
-      clipboard.ptr,
-    );
+    (gtk4.symbols.gtk_text_buffer_add_selection_clipboard ??
+      missing("gtk_text_buffer_add_selection_clipboard"))(
+        this.ptr,
+        clipboard.ptr,
+      );
   },
   beginIrreversibleAction(this: GObject): void {
-    gtk4.symbols.gtk_text_buffer_begin_irreversible_action(this.ptr);
+    (gtk4.symbols.gtk_text_buffer_begin_irreversible_action ??
+      missing("gtk_text_buffer_begin_irreversible_action"))(this.ptr);
   },
   copyClipboard(this: GObject, clipboard: Clipboard): void {
-    gtk4.symbols.gtk_text_buffer_copy_clipboard(this.ptr, clipboard.ptr);
+    (gtk4.symbols.gtk_text_buffer_copy_clipboard ??
+      missing("gtk_text_buffer_copy_clipboard"))(this.ptr, clipboard.ptr);
   },
   cutClipboard(
     this: GObject,
     clipboard: Clipboard,
     defaultEditable: boolean,
   ): void {
-    gtk4.symbols.gtk_text_buffer_cut_clipboard(
-      this.ptr,
-      clipboard.ptr,
-      defaultEditable,
-    );
+    (gtk4.symbols.gtk_text_buffer_cut_clipboard ??
+      missing("gtk_text_buffer_cut_clipboard"))(
+        this.ptr,
+        clipboard.ptr,
+        defaultEditable,
+      );
   },
   deleteMark(this: GObject, mark: GObject): void {
-    gtk4.symbols.gtk_text_buffer_delete_mark(this.ptr, mark.ptr);
+    (gtk4.symbols.gtk_text_buffer_delete_mark ??
+      missing("gtk_text_buffer_delete_mark"))(this.ptr, mark.ptr);
   },
   deleteMarkByName(this: GObject, name: string): void {
-    gtk4.symbols.gtk_text_buffer_delete_mark_by_name(this.ptr, cstr(name));
+    (gtk4.symbols.gtk_text_buffer_delete_mark_by_name ??
+      missing("gtk_text_buffer_delete_mark_by_name"))(this.ptr, cstr(name));
   },
   deleteSelection(
     this: GObject,
     interactive: boolean,
     defaultEditable: boolean,
   ): boolean {
-    return gtk4.symbols.gtk_text_buffer_delete_selection(
-      this.ptr,
-      interactive,
-      defaultEditable,
-    );
+    return (gtk4.symbols.gtk_text_buffer_delete_selection ??
+      missing("gtk_text_buffer_delete_selection"))(
+        this.ptr,
+        interactive,
+        defaultEditable,
+      );
   },
   endIrreversibleAction(this: GObject): void {
-    gtk4.symbols.gtk_text_buffer_end_irreversible_action(this.ptr);
+    (gtk4.symbols.gtk_text_buffer_end_irreversible_action ??
+      missing("gtk_text_buffer_end_irreversible_action"))(this.ptr);
   },
   getCanRedo(this: GObject): boolean {
-    return gtk4.symbols.gtk_text_buffer_get_can_redo(this.ptr);
+    return (gtk4.symbols.gtk_text_buffer_get_can_redo ??
+      missing("gtk_text_buffer_get_can_redo"))(this.ptr);
   },
   getCanUndo(this: GObject): boolean {
-    return gtk4.symbols.gtk_text_buffer_get_can_undo(this.ptr);
+    return (gtk4.symbols.gtk_text_buffer_get_can_undo ??
+      missing("gtk_text_buffer_get_can_undo"))(this.ptr);
   },
   getCharCount(this: GObject): number {
-    return gtk4.symbols.gtk_text_buffer_get_char_count(this.ptr);
+    return (gtk4.symbols.gtk_text_buffer_get_char_count ??
+      missing("gtk_text_buffer_get_char_count"))(this.ptr);
   },
   getEnableUndo(this: GObject): boolean {
-    return gtk4.symbols.gtk_text_buffer_get_enable_undo(this.ptr);
+    return (gtk4.symbols.gtk_text_buffer_get_enable_undo ??
+      missing("gtk_text_buffer_get_enable_undo"))(this.ptr);
   },
   getHasSelection(this: GObject): boolean {
-    return gtk4.symbols.gtk_text_buffer_get_has_selection(this.ptr);
+    return (gtk4.symbols.gtk_text_buffer_get_has_selection ??
+      missing("gtk_text_buffer_get_has_selection"))(this.ptr);
   },
   getInsert(this: GObject): GObject {
     return borrowed<GObject>(
-      gtk4.symbols.gtk_text_buffer_get_insert(this.ptr),
+      (gtk4.symbols.gtk_text_buffer_get_insert ??
+        missing("gtk_text_buffer_get_insert"))(this.ptr),
     )!;
   },
   getLineCount(this: GObject): number {
@@ -5190,27 +5669,33 @@ export const textBufferMethods: TextBufferMethods & ThisType<GObject> = {
   },
   getMark(this: GObject, name: string): GObject | null {
     return borrowed<GObject>(
-      gtk4.symbols.gtk_text_buffer_get_mark(this.ptr, cstr(name)),
+      (gtk4.symbols.gtk_text_buffer_get_mark ??
+        missing("gtk_text_buffer_get_mark"))(this.ptr, cstr(name)),
     );
   },
   getMaxUndoLevels(this: GObject): number {
-    return gtk4.symbols.gtk_text_buffer_get_max_undo_levels(this.ptr);
+    return (gtk4.symbols.gtk_text_buffer_get_max_undo_levels ??
+      missing("gtk_text_buffer_get_max_undo_levels"))(this.ptr);
   },
   getModified(this: GObject): boolean {
-    return gtk4.symbols.gtk_text_buffer_get_modified(this.ptr);
+    return (gtk4.symbols.gtk_text_buffer_get_modified ??
+      missing("gtk_text_buffer_get_modified"))(this.ptr);
   },
   getSelectionBound(this: GObject): GObject {
     return borrowed<GObject>(
-      gtk4.symbols.gtk_text_buffer_get_selection_bound(this.ptr),
+      (gtk4.symbols.gtk_text_buffer_get_selection_bound ??
+        missing("gtk_text_buffer_get_selection_bound"))(this.ptr),
     )!;
   },
   getTagTable(this: GObject): GObject {
     return borrowed<GObject>(
-      gtk4.symbols.gtk_text_buffer_get_tag_table(this.ptr),
+      (gtk4.symbols.gtk_text_buffer_get_tag_table ??
+        missing("gtk_text_buffer_get_tag_table"))(this.ptr),
     )!;
   },
   insertAtCursor(this: GObject, text: string, len: number): void {
-    gtk4.symbols.gtk_text_buffer_insert_at_cursor(this.ptr, cstr(text), len);
+    (gtk4.symbols.gtk_text_buffer_insert_at_cursor ??
+      missing("gtk_text_buffer_insert_at_cursor"))(this.ptr, cstr(text), len);
   },
   insertInteractiveAtCursor(
     this: GObject,
@@ -5218,15 +5703,18 @@ export const textBufferMethods: TextBufferMethods & ThisType<GObject> = {
     len: number,
     defaultEditable: boolean,
   ): boolean {
-    return gtk4.symbols.gtk_text_buffer_insert_interactive_at_cursor(
-      this.ptr,
-      cstr(text),
-      len,
-      defaultEditable,
-    );
+    return (gtk4.symbols.gtk_text_buffer_insert_interactive_at_cursor ??
+      missing("gtk_text_buffer_insert_interactive_at_cursor"))(
+        this.ptr,
+        cstr(text),
+        len,
+        defaultEditable,
+      );
   },
   redo(this: GObject): void {
-    gtk4.symbols.gtk_text_buffer_redo(this.ptr);
+    (gtk4.symbols.gtk_text_buffer_redo ?? missing("gtk_text_buffer_redo"))(
+      this.ptr,
+    );
   },
   removeCommitNotify(this: GObject, commitNotifyHandler: number): void {
     (gtk4.symbols.gtk_text_buffer_remove_commit_notify ??
@@ -5236,22 +5724,28 @@ export const textBufferMethods: TextBufferMethods & ThisType<GObject> = {
       );
   },
   removeSelectionClipboard(this: GObject, clipboard: Clipboard): void {
-    gtk4.symbols.gtk_text_buffer_remove_selection_clipboard(
-      this.ptr,
-      clipboard.ptr,
-    );
+    (gtk4.symbols.gtk_text_buffer_remove_selection_clipboard ??
+      missing("gtk_text_buffer_remove_selection_clipboard"))(
+        this.ptr,
+        clipboard.ptr,
+      );
   },
   setEnableUndo(this: GObject, enableUndo: boolean): void {
-    gtk4.symbols.gtk_text_buffer_set_enable_undo(this.ptr, enableUndo);
+    (gtk4.symbols.gtk_text_buffer_set_enable_undo ??
+      missing("gtk_text_buffer_set_enable_undo"))(this.ptr, enableUndo);
   },
   setMaxUndoLevels(this: GObject, maxUndoLevels: number): void {
-    gtk4.symbols.gtk_text_buffer_set_max_undo_levels(this.ptr, maxUndoLevels);
+    (gtk4.symbols.gtk_text_buffer_set_max_undo_levels ??
+      missing("gtk_text_buffer_set_max_undo_levels"))(this.ptr, maxUndoLevels);
   },
   setModified(this: GObject, setting: boolean): void {
-    gtk4.symbols.gtk_text_buffer_set_modified(this.ptr, setting);
+    (gtk4.symbols.gtk_text_buffer_set_modified ??
+      missing("gtk_text_buffer_set_modified"))(this.ptr, setting);
   },
   undo(this: GObject): void {
-    gtk4.symbols.gtk_text_buffer_undo(this.ptr);
+    (gtk4.symbols.gtk_text_buffer_undo ?? missing("gtk_text_buffer_undo"))(
+      this.ptr,
+    );
   },
   onBeginUserAction(this: GObject, callback: () => void): number {
     return connectSignal(this, "begin-user-action", {
@@ -5574,55 +6068,64 @@ export interface TextViewMethods {
 /** Implementations of {@linkcode TextViewMethods}. */
 export const textViewMethods: TextViewMethods & ThisType<GObject> = {
   addChildAtAnchor(this: GObject, child: Widget, anchor: GObject): void {
-    gtk4.symbols.gtk_text_view_add_child_at_anchor(
-      this.ptr,
-      child.ptr,
-      anchor.ptr,
-    );
+    (gtk4.symbols.gtk_text_view_add_child_at_anchor ??
+      missing("gtk_text_view_add_child_at_anchor"))(
+        this.ptr,
+        child.ptr,
+        anchor.ptr,
+      );
   },
   addOverlay(this: GObject, child: Widget, xpos: number, ypos: number): void {
-    gtk4.symbols.gtk_text_view_add_overlay(this.ptr, child.ptr, xpos, ypos);
+    (gtk4.symbols.gtk_text_view_add_overlay ??
+      missing("gtk_text_view_add_overlay"))(this.ptr, child.ptr, xpos, ypos);
   },
   getAcceptsTab(this: GObject): boolean {
-    return gtk4.symbols.gtk_text_view_get_accepts_tab(this.ptr);
+    return (gtk4.symbols.gtk_text_view_get_accepts_tab ??
+      missing("gtk_text_view_get_accepts_tab"))(this.ptr);
   },
   getBottomMargin(this: GObject): number {
-    return gtk4.symbols.gtk_text_view_get_bottom_margin(this.ptr);
+    return (gtk4.symbols.gtk_text_view_get_bottom_margin ??
+      missing("gtk_text_view_get_bottom_margin"))(this.ptr);
   },
   getCursorVisible(this: GObject): boolean {
-    return gtk4.symbols.gtk_text_view_get_cursor_visible(this.ptr);
+    return (gtk4.symbols.gtk_text_view_get_cursor_visible ??
+      missing("gtk_text_view_get_cursor_visible"))(this.ptr);
   },
   getEditable(this: GObject): boolean {
-    return gtk4.symbols.gtk_text_view_get_editable(this.ptr);
+    return (gtk4.symbols.gtk_text_view_get_editable ??
+      missing("gtk_text_view_get_editable"))(this.ptr);
   },
   getExtraMenu(this: GObject): GObject | null {
     return borrowed<GObject>(
-      gtk4.symbols.gtk_text_view_get_extra_menu(this.ptr),
+      (gtk4.symbols.gtk_text_view_get_extra_menu ??
+        missing("gtk_text_view_get_extra_menu"))(this.ptr),
     );
   },
   getGutter(this: GObject, win: TextWindowType): Widget | null {
     return borrowed<Widget>(
-      gtk4.symbols.gtk_text_view_get_gutter(this.ptr, win),
+      (gtk4.symbols.gtk_text_view_get_gutter ??
+        missing("gtk_text_view_get_gutter"))(this.ptr, win),
     );
   },
   getIndent(this: GObject): number {
-    return gtk4.symbols.gtk_text_view_get_indent(this.ptr);
+    return (gtk4.symbols.gtk_text_view_get_indent ??
+      missing("gtk_text_view_get_indent"))(this.ptr);
   },
   getInputHints(this: GObject): number {
-    return gtk4.symbols.gtk_text_view_get_input_hints(this.ptr);
+    return (gtk4.symbols.gtk_text_view_get_input_hints ??
+      missing("gtk_text_view_get_input_hints"))(this.ptr);
   },
   getInputPurpose(this: GObject): InputPurpose {
-    return gtk4.symbols.gtk_text_view_get_input_purpose(
-      this.ptr,
-    ) as InputPurpose;
+    return (gtk4.symbols.gtk_text_view_get_input_purpose ??
+      missing("gtk_text_view_get_input_purpose"))(this.ptr) as InputPurpose;
   },
   getJustification(this: GObject): Justification {
-    return gtk4.symbols.gtk_text_view_get_justification(
-      this.ptr,
-    ) as Justification;
+    return (gtk4.symbols.gtk_text_view_get_justification ??
+      missing("gtk_text_view_get_justification"))(this.ptr) as Justification;
   },
   getLeftMargin(this: GObject): number {
-    return gtk4.symbols.gtk_text_view_get_left_margin(this.ptr);
+    return (gtk4.symbols.gtk_text_view_get_left_margin ??
+      missing("gtk_text_view_get_left_margin"))(this.ptr);
   },
   getLtrContext(this: GObject): GObject {
     return borrowed<GObject>(
@@ -5631,22 +6134,28 @@ export const textViewMethods: TextViewMethods & ThisType<GObject> = {
     )!;
   },
   getMonospace(this: GObject): boolean {
-    return gtk4.symbols.gtk_text_view_get_monospace(this.ptr);
+    return (gtk4.symbols.gtk_text_view_get_monospace ??
+      missing("gtk_text_view_get_monospace"))(this.ptr);
   },
   getOverwrite(this: GObject): boolean {
-    return gtk4.symbols.gtk_text_view_get_overwrite(this.ptr);
+    return (gtk4.symbols.gtk_text_view_get_overwrite ??
+      missing("gtk_text_view_get_overwrite"))(this.ptr);
   },
   getPixelsAboveLines(this: GObject): number {
-    return gtk4.symbols.gtk_text_view_get_pixels_above_lines(this.ptr);
+    return (gtk4.symbols.gtk_text_view_get_pixels_above_lines ??
+      missing("gtk_text_view_get_pixels_above_lines"))(this.ptr);
   },
   getPixelsBelowLines(this: GObject): number {
-    return gtk4.symbols.gtk_text_view_get_pixels_below_lines(this.ptr);
+    return (gtk4.symbols.gtk_text_view_get_pixels_below_lines ??
+      missing("gtk_text_view_get_pixels_below_lines"))(this.ptr);
   },
   getPixelsInsideWrap(this: GObject): number {
-    return gtk4.symbols.gtk_text_view_get_pixels_inside_wrap(this.ptr);
+    return (gtk4.symbols.gtk_text_view_get_pixels_inside_wrap ??
+      missing("gtk_text_view_get_pixels_inside_wrap"))(this.ptr);
   },
   getRightMargin(this: GObject): number {
-    return gtk4.symbols.gtk_text_view_get_right_margin(this.ptr);
+    return (gtk4.symbols.gtk_text_view_get_right_margin ??
+      missing("gtk_text_view_get_right_margin"))(this.ptr);
   },
   getRtlContext(this: GObject): GObject {
     return borrowed<GObject>(
@@ -5655,91 +6164,119 @@ export const textViewMethods: TextViewMethods & ThisType<GObject> = {
     )!;
   },
   getTopMargin(this: GObject): number {
-    return gtk4.symbols.gtk_text_view_get_top_margin(this.ptr);
+    return (gtk4.symbols.gtk_text_view_get_top_margin ??
+      missing("gtk_text_view_get_top_margin"))(this.ptr);
   },
   getWrapMode(this: GObject): WrapMode {
-    return gtk4.symbols.gtk_text_view_get_wrap_mode(this.ptr) as WrapMode;
+    return (gtk4.symbols.gtk_text_view_get_wrap_mode ??
+      missing("gtk_text_view_get_wrap_mode"))(this.ptr) as WrapMode;
   },
   moveMarkOnscreen(this: GObject, mark: GObject): boolean {
-    return gtk4.symbols.gtk_text_view_move_mark_onscreen(this.ptr, mark.ptr);
+    return (gtk4.symbols.gtk_text_view_move_mark_onscreen ??
+      missing("gtk_text_view_move_mark_onscreen"))(this.ptr, mark.ptr);
   },
   moveOverlay(this: GObject, child: Widget, xpos: number, ypos: number): void {
-    gtk4.symbols.gtk_text_view_move_overlay(this.ptr, child.ptr, xpos, ypos);
+    (gtk4.symbols.gtk_text_view_move_overlay ??
+      missing("gtk_text_view_move_overlay"))(this.ptr, child.ptr, xpos, ypos);
   },
   placeCursorOnscreen(this: GObject): boolean {
-    return gtk4.symbols.gtk_text_view_place_cursor_onscreen(this.ptr);
+    return (gtk4.symbols.gtk_text_view_place_cursor_onscreen ??
+      missing("gtk_text_view_place_cursor_onscreen"))(this.ptr);
   },
   remove(this: GObject, child: Widget): void {
-    gtk4.symbols.gtk_text_view_remove(this.ptr, child.ptr);
+    (gtk4.symbols.gtk_text_view_remove ?? missing("gtk_text_view_remove"))(
+      this.ptr,
+      child.ptr,
+    );
   },
   resetCursorBlink(this: GObject): void {
-    gtk4.symbols.gtk_text_view_reset_cursor_blink(this.ptr);
+    (gtk4.symbols.gtk_text_view_reset_cursor_blink ??
+      missing("gtk_text_view_reset_cursor_blink"))(this.ptr);
   },
   resetImContext(this: GObject): void {
-    gtk4.symbols.gtk_text_view_reset_im_context(this.ptr);
+    (gtk4.symbols.gtk_text_view_reset_im_context ??
+      missing("gtk_text_view_reset_im_context"))(this.ptr);
   },
   scrollMarkOnscreen(this: GObject, mark: GObject): void {
-    gtk4.symbols.gtk_text_view_scroll_mark_onscreen(this.ptr, mark.ptr);
+    (gtk4.symbols.gtk_text_view_scroll_mark_onscreen ??
+      missing("gtk_text_view_scroll_mark_onscreen"))(this.ptr, mark.ptr);
   },
   setAcceptsTab(this: GObject, acceptsTab: boolean): void {
-    gtk4.symbols.gtk_text_view_set_accepts_tab(this.ptr, acceptsTab);
+    (gtk4.symbols.gtk_text_view_set_accepts_tab ??
+      missing("gtk_text_view_set_accepts_tab"))(this.ptr, acceptsTab);
   },
   setBottomMargin(this: GObject, bottomMargin: number): void {
-    gtk4.symbols.gtk_text_view_set_bottom_margin(this.ptr, bottomMargin);
+    (gtk4.symbols.gtk_text_view_set_bottom_margin ??
+      missing("gtk_text_view_set_bottom_margin"))(this.ptr, bottomMargin);
   },
   setBuffer(this: GObject, buffer: TextBuffer | null): void {
-    gtk4.symbols.gtk_text_view_set_buffer(this.ptr, buffer?.ptr ?? null);
+    (gtk4.symbols.gtk_text_view_set_buffer ??
+      missing("gtk_text_view_set_buffer"))(this.ptr, buffer?.ptr ?? null);
   },
   setExtraMenu(this: GObject, model: GObject | null): void {
-    gtk4.symbols.gtk_text_view_set_extra_menu(this.ptr, model?.ptr ?? null);
+    (gtk4.symbols.gtk_text_view_set_extra_menu ??
+      missing("gtk_text_view_set_extra_menu"))(this.ptr, model?.ptr ?? null);
   },
   setGutter(this: GObject, win: TextWindowType, widget: Widget | null): void {
-    gtk4.symbols.gtk_text_view_set_gutter(this.ptr, win, widget?.ptr ?? null);
+    (gtk4.symbols.gtk_text_view_set_gutter ??
+      missing("gtk_text_view_set_gutter"))(this.ptr, win, widget?.ptr ?? null);
   },
   setIndent(this: GObject, indent: number): void {
-    gtk4.symbols.gtk_text_view_set_indent(this.ptr, indent);
+    (gtk4.symbols.gtk_text_view_set_indent ??
+      missing("gtk_text_view_set_indent"))(this.ptr, indent);
   },
   setInputHints(this: GObject, hints: number): void {
-    gtk4.symbols.gtk_text_view_set_input_hints(this.ptr, hints);
+    (gtk4.symbols.gtk_text_view_set_input_hints ??
+      missing("gtk_text_view_set_input_hints"))(this.ptr, hints);
   },
   setInputPurpose(this: GObject, purpose: InputPurpose): void {
-    gtk4.symbols.gtk_text_view_set_input_purpose(this.ptr, purpose);
+    (gtk4.symbols.gtk_text_view_set_input_purpose ??
+      missing("gtk_text_view_set_input_purpose"))(this.ptr, purpose);
   },
   setJustification(this: GObject, justification: Justification): void {
-    gtk4.symbols.gtk_text_view_set_justification(this.ptr, justification);
+    (gtk4.symbols.gtk_text_view_set_justification ??
+      missing("gtk_text_view_set_justification"))(this.ptr, justification);
   },
   setLeftMargin(this: GObject, leftMargin: number): void {
-    gtk4.symbols.gtk_text_view_set_left_margin(this.ptr, leftMargin);
+    (gtk4.symbols.gtk_text_view_set_left_margin ??
+      missing("gtk_text_view_set_left_margin"))(this.ptr, leftMargin);
   },
   setOverwrite(this: GObject, overwrite: boolean): void {
-    gtk4.symbols.gtk_text_view_set_overwrite(this.ptr, overwrite);
+    (gtk4.symbols.gtk_text_view_set_overwrite ??
+      missing("gtk_text_view_set_overwrite"))(this.ptr, overwrite);
   },
   setPixelsAboveLines(this: GObject, pixelsAboveLines: number): void {
-    gtk4.symbols.gtk_text_view_set_pixels_above_lines(
-      this.ptr,
-      pixelsAboveLines,
-    );
+    (gtk4.symbols.gtk_text_view_set_pixels_above_lines ??
+      missing("gtk_text_view_set_pixels_above_lines"))(
+        this.ptr,
+        pixelsAboveLines,
+      );
   },
   setPixelsBelowLines(this: GObject, pixelsBelowLines: number): void {
-    gtk4.symbols.gtk_text_view_set_pixels_below_lines(
-      this.ptr,
-      pixelsBelowLines,
-    );
+    (gtk4.symbols.gtk_text_view_set_pixels_below_lines ??
+      missing("gtk_text_view_set_pixels_below_lines"))(
+        this.ptr,
+        pixelsBelowLines,
+      );
   },
   setPixelsInsideWrap(this: GObject, pixelsInsideWrap: number): void {
-    gtk4.symbols.gtk_text_view_set_pixels_inside_wrap(
-      this.ptr,
-      pixelsInsideWrap,
-    );
+    (gtk4.symbols.gtk_text_view_set_pixels_inside_wrap ??
+      missing("gtk_text_view_set_pixels_inside_wrap"))(
+        this.ptr,
+        pixelsInsideWrap,
+      );
   },
   setRightMargin(this: GObject, rightMargin: number): void {
-    gtk4.symbols.gtk_text_view_set_right_margin(this.ptr, rightMargin);
+    (gtk4.symbols.gtk_text_view_set_right_margin ??
+      missing("gtk_text_view_set_right_margin"))(this.ptr, rightMargin);
   },
   setTopMargin(this: GObject, topMargin: number): void {
-    gtk4.symbols.gtk_text_view_set_top_margin(this.ptr, topMargin);
+    (gtk4.symbols.gtk_text_view_set_top_margin ??
+      missing("gtk_text_view_set_top_margin"))(this.ptr, topMargin);
   },
   setWrapMode(this: GObject, wrapMode: WrapMode): void {
-    gtk4.symbols.gtk_text_view_set_wrap_mode(this.ptr, wrapMode);
+    (gtk4.symbols.gtk_text_view_set_wrap_mode ??
+      missing("gtk_text_view_set_wrap_mode"))(this.ptr, wrapMode);
   },
   onBackspace(this: GObject, callback: () => void): number {
     return connectSignal(this, "backspace", {
@@ -6339,17 +6876,20 @@ export interface WidgetMethods {
 /** Implementations of {@linkcode WidgetMethods}. */
 export const widgetMethods: WidgetMethods & ThisType<GObject> = {
   actionSetEnabled(this: GObject, actionName: string, enabled: boolean): void {
-    gtk4.symbols.gtk_widget_action_set_enabled(
-      this.ptr,
-      cstr(actionName),
-      enabled,
-    );
+    (gtk4.symbols.gtk_widget_action_set_enabled ??
+      missing("gtk_widget_action_set_enabled"))(
+        this.ptr,
+        cstr(actionName),
+        enabled,
+      );
   },
   activateDefault(this: GObject): void {
-    gtk4.symbols.gtk_widget_activate_default(this.ptr);
+    (gtk4.symbols.gtk_widget_activate_default ??
+      missing("gtk_widget_activate_default"))(this.ptr);
   },
   addMnemonicLabel(this: GObject, label: Widget): void {
-    gtk4.symbols.gtk_widget_add_mnemonic_label(this.ptr, label.ptr);
+    (gtk4.symbols.gtk_widget_add_mnemonic_label ??
+      missing("gtk_widget_add_mnemonic_label"))(this.ptr, label.ptr);
   },
   addTickCallback(
     this: GObject,
@@ -6372,16 +6912,23 @@ export const widgetMethods: WidgetMethods & ThisType<GObject> = {
       );
       [__0, __1, __2] = notifiedCallback(cb);
     }
-    return gtk4.symbols.gtk_widget_add_tick_callback(this.ptr, __0, __1, __2);
+    return (gtk4.symbols.gtk_widget_add_tick_callback ??
+      missing("gtk_widget_add_tick_callback"))(this.ptr, __0, __1, __2);
   },
   childFocus(this: GObject, direction: DirectionType): boolean {
-    return gtk4.symbols.gtk_widget_child_focus(this.ptr, direction);
+    return (gtk4.symbols.gtk_widget_child_focus ??
+      missing("gtk_widget_child_focus"))(this.ptr, direction);
   },
   computeExpand(this: GObject, orientation: Orientation): boolean {
-    return gtk4.symbols.gtk_widget_compute_expand(this.ptr, orientation);
+    return (gtk4.symbols.gtk_widget_compute_expand ??
+      missing("gtk_widget_compute_expand"))(this.ptr, orientation);
   },
   contains(this: GObject, x: number, y: number): boolean {
-    return gtk4.symbols.gtk_widget_contains(this.ptr, x, y);
+    return (gtk4.symbols.gtk_widget_contains ?? missing("gtk_widget_contains"))(
+      this.ptr,
+      x,
+      y,
+    );
   },
   dragCheckThreshold(
     this: GObject,
@@ -6390,77 +6937,109 @@ export const widgetMethods: WidgetMethods & ThisType<GObject> = {
     currentX: number,
     currentY: number,
   ): boolean {
-    return gtk4.symbols.gtk_drag_check_threshold(
-      this.ptr,
-      startX,
-      startY,
-      currentX,
-      currentY,
-    );
+    return (gtk4.symbols.gtk_drag_check_threshold ??
+      missing("gtk_drag_check_threshold"))(
+        this.ptr,
+        startX,
+        startY,
+        currentX,
+        currentY,
+      );
   },
   errorBell(this: GObject): void {
-    gtk4.symbols.gtk_widget_error_bell(this.ptr);
+    (gtk4.symbols.gtk_widget_error_bell ?? missing("gtk_widget_error_bell"))(
+      this.ptr,
+    );
   },
   getBaseline(this: GObject): number {
     return (gtk4.symbols.gtk_widget_get_baseline ??
       missing("gtk_widget_get_baseline", "4.12"))(this.ptr);
   },
   getCanFocus(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_get_can_focus(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_can_focus ??
+      missing("gtk_widget_get_can_focus"))(this.ptr);
   },
   getCanTarget(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_get_can_target(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_can_target ??
+      missing("gtk_widget_get_can_target"))(this.ptr);
   },
   getChildVisible(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_get_child_visible(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_child_visible ??
+      missing("gtk_widget_get_child_visible"))(this.ptr);
   },
   getClipboard(this: GObject): Clipboard {
     return borrowed<Clipboard>(
-      gtk4.symbols.gtk_widget_get_clipboard(this.ptr),
+      (gtk4.symbols.gtk_widget_get_clipboard ??
+        missing("gtk_widget_get_clipboard"))(this.ptr),
     )!;
   },
   getCssName(this: GObject): string {
-    return readCStr(gtk4.symbols.gtk_widget_get_css_name(this.ptr));
+    return readCStr(
+      (gtk4.symbols.gtk_widget_get_css_name ??
+        missing("gtk_widget_get_css_name"))(this.ptr),
+    );
   },
   getCursor(this: GObject): Cursor | null {
-    return borrowed<Cursor>(gtk4.symbols.gtk_widget_get_cursor(this.ptr));
+    return borrowed<Cursor>(
+      (gtk4.symbols.gtk_widget_get_cursor ?? missing("gtk_widget_get_cursor"))(
+        this.ptr,
+      ),
+    );
   },
   getDirection(this: GObject): TextDirection {
-    return gtk4.symbols.gtk_widget_get_direction(this.ptr) as TextDirection;
+    return (gtk4.symbols.gtk_widget_get_direction ??
+      missing("gtk_widget_get_direction"))(this.ptr) as TextDirection;
   },
   getFocusChild(this: GObject): Widget | null {
-    return borrowed<Widget>(gtk4.symbols.gtk_widget_get_focus_child(this.ptr));
+    return borrowed<Widget>(
+      (gtk4.symbols.gtk_widget_get_focus_child ??
+        missing("gtk_widget_get_focus_child"))(this.ptr),
+    );
   },
   getFocusOnClick(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_get_focus_on_click(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_focus_on_click ??
+      missing("gtk_widget_get_focus_on_click"))(this.ptr);
   },
   getFocusable(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_get_focusable(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_focusable ??
+      missing("gtk_widget_get_focusable"))(this.ptr);
   },
   getFontMap(this: GObject): GObject | null {
-    return borrowed<GObject>(gtk4.symbols.gtk_widget_get_font_map(this.ptr));
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_widget_get_font_map ??
+        missing("gtk_widget_get_font_map"))(this.ptr),
+    );
   },
   getFrameClock(this: GObject): GObject | null {
-    return borrowed<GObject>(gtk4.symbols.gtk_widget_get_frame_clock(this.ptr));
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_widget_get_frame_clock ??
+        missing("gtk_widget_get_frame_clock"))(this.ptr),
+    );
   },
   getHalign(this: GObject): Align {
-    return gtk4.symbols.gtk_widget_get_halign(this.ptr) as Align;
+    return (gtk4.symbols.gtk_widget_get_halign ??
+      missing("gtk_widget_get_halign"))(this.ptr) as Align;
   },
   getHasTooltip(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_get_has_tooltip(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_has_tooltip ??
+      missing("gtk_widget_get_has_tooltip"))(this.ptr);
   },
   getHeight(this: GObject): number {
-    return gtk4.symbols.gtk_widget_get_height(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_height ??
+      missing("gtk_widget_get_height"))(this.ptr);
   },
   getHexpand(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_get_hexpand(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_hexpand ??
+      missing("gtk_widget_get_hexpand"))(this.ptr);
   },
   getHexpandSet(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_get_hexpand_set(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_hexpand_set ??
+      missing("gtk_widget_get_hexpand_set"))(this.ptr);
   },
   getLayoutManager(this: GObject): GObject | null {
     return borrowed<GObject>(
-      gtk4.symbols.gtk_widget_get_layout_manager(this.ptr),
+      (gtk4.symbols.gtk_widget_get_layout_manager ??
+        missing("gtk_widget_get_layout_manager"))(this.ptr),
     );
   },
   getLimitEvents(this: GObject): boolean {
@@ -6468,253 +7047,345 @@ export const widgetMethods: WidgetMethods & ThisType<GObject> = {
       missing("gtk_widget_get_limit_events", "4.18"))(this.ptr);
   },
   getMapped(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_get_mapped(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_mapped ??
+      missing("gtk_widget_get_mapped"))(this.ptr);
   },
   getMarginBottom(this: GObject): number {
-    return gtk4.symbols.gtk_widget_get_margin_bottom(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_margin_bottom ??
+      missing("gtk_widget_get_margin_bottom"))(this.ptr);
   },
   getMarginEnd(this: GObject): number {
-    return gtk4.symbols.gtk_widget_get_margin_end(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_margin_end ??
+      missing("gtk_widget_get_margin_end"))(this.ptr);
   },
   getMarginStart(this: GObject): number {
-    return gtk4.symbols.gtk_widget_get_margin_start(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_margin_start ??
+      missing("gtk_widget_get_margin_start"))(this.ptr);
   },
   getMarginTop(this: GObject): number {
-    return gtk4.symbols.gtk_widget_get_margin_top(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_margin_top ??
+      missing("gtk_widget_get_margin_top"))(this.ptr);
   },
   getName(this: GObject): string {
-    return readCStr(gtk4.symbols.gtk_widget_get_name(this.ptr));
+    return readCStr(
+      (gtk4.symbols.gtk_widget_get_name ?? missing("gtk_widget_get_name"))(
+        this.ptr,
+      ),
+    );
   },
   getNative(this: GObject): GObject | null {
-    return borrowed<GObject>(gtk4.symbols.gtk_widget_get_native(this.ptr));
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_widget_get_native ?? missing("gtk_widget_get_native"))(
+        this.ptr,
+      ),
+    );
   },
   getOpacity(this: GObject): number {
-    return gtk4.symbols.gtk_widget_get_opacity(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_opacity ??
+      missing("gtk_widget_get_opacity"))(this.ptr);
   },
   getOverflow(this: GObject): Overflow {
-    return gtk4.symbols.gtk_widget_get_overflow(this.ptr) as Overflow;
+    return (gtk4.symbols.gtk_widget_get_overflow ??
+      missing("gtk_widget_get_overflow"))(this.ptr) as Overflow;
   },
   getPangoContext(this: GObject): GObject {
     return borrowed<GObject>(
-      gtk4.symbols.gtk_widget_get_pango_context(this.ptr),
+      (gtk4.symbols.gtk_widget_get_pango_context ??
+        missing("gtk_widget_get_pango_context"))(this.ptr),
     )!;
   },
   getParent(this: GObject): Widget | null {
-    return borrowed<Widget>(gtk4.symbols.gtk_widget_get_parent(this.ptr));
+    return borrowed<Widget>(
+      (gtk4.symbols.gtk_widget_get_parent ?? missing("gtk_widget_get_parent"))(
+        this.ptr,
+      ),
+    );
   },
   getPrevSibling(this: GObject): Widget | null {
-    return borrowed<Widget>(gtk4.symbols.gtk_widget_get_prev_sibling(this.ptr));
+    return borrowed<Widget>(
+      (gtk4.symbols.gtk_widget_get_prev_sibling ??
+        missing("gtk_widget_get_prev_sibling"))(this.ptr),
+    );
   },
   getPrimaryClipboard(this: GObject): Clipboard {
     return borrowed<Clipboard>(
-      gtk4.symbols.gtk_widget_get_primary_clipboard(this.ptr),
+      (gtk4.symbols.gtk_widget_get_primary_clipboard ??
+        missing("gtk_widget_get_primary_clipboard"))(this.ptr),
     )!;
   },
   getRealized(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_get_realized(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_realized ??
+      missing("gtk_widget_get_realized"))(this.ptr);
   },
   getReceivesDefault(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_get_receives_default(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_receives_default ??
+      missing("gtk_widget_get_receives_default"))(this.ptr);
   },
   getRequestMode(this: GObject): SizeRequestMode {
-    return gtk4.symbols.gtk_widget_get_request_mode(
-      this.ptr,
-    ) as SizeRequestMode;
+    return (gtk4.symbols.gtk_widget_get_request_mode ??
+      missing("gtk_widget_get_request_mode"))(this.ptr) as SizeRequestMode;
   },
   getRoot(this: GObject): GObject | null {
-    return borrowed<GObject>(gtk4.symbols.gtk_widget_get_root(this.ptr));
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_widget_get_root ?? missing("gtk_widget_get_root"))(
+        this.ptr,
+      ),
+    );
   },
   getScaleFactor(this: GObject): number {
-    return gtk4.symbols.gtk_widget_get_scale_factor(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_scale_factor ??
+      missing("gtk_widget_get_scale_factor"))(this.ptr);
   },
   getSettings(this: GObject): GObject {
-    return borrowed<GObject>(gtk4.symbols.gtk_widget_get_settings(this.ptr))!;
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_widget_get_settings ??
+        missing("gtk_widget_get_settings"))(this.ptr),
+    )!;
   },
   getSize(this: GObject, orientation: Orientation): number {
-    return gtk4.symbols.gtk_widget_get_size(this.ptr, orientation);
+    return (gtk4.symbols.gtk_widget_get_size ?? missing("gtk_widget_get_size"))(
+      this.ptr,
+      orientation,
+    );
   },
   getStateFlags(this: GObject): number {
-    return gtk4.symbols.gtk_widget_get_state_flags(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_state_flags ??
+      missing("gtk_widget_get_state_flags"))(this.ptr);
   },
   getTooltipMarkup(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      gtk4.symbols.gtk_widget_get_tooltip_markup(this.ptr),
+      (gtk4.symbols.gtk_widget_get_tooltip_markup ??
+        missing("gtk_widget_get_tooltip_markup"))(this.ptr),
     );
   },
   getTooltipText(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      gtk4.symbols.gtk_widget_get_tooltip_text(this.ptr),
+      (gtk4.symbols.gtk_widget_get_tooltip_text ??
+        missing("gtk_widget_get_tooltip_text"))(this.ptr),
     );
   },
   getValign(this: GObject): Align {
-    return gtk4.symbols.gtk_widget_get_valign(this.ptr) as Align;
+    return (gtk4.symbols.gtk_widget_get_valign ??
+      missing("gtk_widget_get_valign"))(this.ptr) as Align;
   },
   getVexpand(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_get_vexpand(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_vexpand ??
+      missing("gtk_widget_get_vexpand"))(this.ptr);
   },
   getVexpandSet(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_get_vexpand_set(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_vexpand_set ??
+      missing("gtk_widget_get_vexpand_set"))(this.ptr);
   },
   getWidth(this: GObject): number {
-    return gtk4.symbols.gtk_widget_get_width(this.ptr);
+    return (gtk4.symbols.gtk_widget_get_width ??
+      missing("gtk_widget_get_width"))(this.ptr);
   },
   hasCssClass(this: GObject, cssClass: string): boolean {
-    return gtk4.symbols.gtk_widget_has_css_class(this.ptr, cstr(cssClass));
+    return (gtk4.symbols.gtk_widget_has_css_class ??
+      missing("gtk_widget_has_css_class"))(this.ptr, cstr(cssClass));
   },
   hasDefault(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_has_default(this.ptr);
+    return (gtk4.symbols.gtk_widget_has_default ??
+      missing("gtk_widget_has_default"))(this.ptr);
   },
   hasFocus(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_has_focus(this.ptr);
+    return (gtk4.symbols.gtk_widget_has_focus ??
+      missing("gtk_widget_has_focus"))(this.ptr);
   },
   hasVisibleFocus(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_has_visible_focus(this.ptr);
+    return (gtk4.symbols.gtk_widget_has_visible_focus ??
+      missing("gtk_widget_has_visible_focus"))(this.ptr);
   },
   inDestruction(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_in_destruction(this.ptr);
+    return (gtk4.symbols.gtk_widget_in_destruction ??
+      missing("gtk_widget_in_destruction"))(this.ptr);
   },
   initTemplate(this: GObject): void {
-    gtk4.symbols.gtk_widget_init_template(this.ptr);
+    (gtk4.symbols.gtk_widget_init_template ??
+      missing("gtk_widget_init_template"))(this.ptr);
   },
   insertActionGroup(this: GObject, name: string, group: GObject | null): void {
-    gtk4.symbols.gtk_widget_insert_action_group(
-      this.ptr,
-      cstr(name),
-      group?.ptr ?? null,
-    );
+    (gtk4.symbols.gtk_widget_insert_action_group ??
+      missing("gtk_widget_insert_action_group"))(
+        this.ptr,
+        cstr(name),
+        group?.ptr ?? null,
+      );
   },
   insertAfter(
     this: GObject,
     parent: Widget,
     previousSibling: Widget | null,
   ): void {
-    gtk4.symbols.gtk_widget_insert_after(
-      this.ptr,
-      parent.ptr,
-      previousSibling?.ptr ?? null,
-    );
+    (gtk4.symbols.gtk_widget_insert_after ??
+      missing("gtk_widget_insert_after"))(
+        this.ptr,
+        parent.ptr,
+        previousSibling?.ptr ?? null,
+      );
   },
   insertBefore(
     this: GObject,
     parent: Widget,
     nextSibling: Widget | null,
   ): void {
-    gtk4.symbols.gtk_widget_insert_before(
-      this.ptr,
-      parent.ptr,
-      nextSibling?.ptr ?? null,
-    );
+    (gtk4.symbols.gtk_widget_insert_before ??
+      missing("gtk_widget_insert_before"))(
+        this.ptr,
+        parent.ptr,
+        nextSibling?.ptr ?? null,
+      );
   },
   isAncestor(this: GObject, ancestor: Widget): boolean {
-    return gtk4.symbols.gtk_widget_is_ancestor(this.ptr, ancestor.ptr);
+    return (gtk4.symbols.gtk_widget_is_ancestor ??
+      missing("gtk_widget_is_ancestor"))(this.ptr, ancestor.ptr);
   },
   isDrawable(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_is_drawable(this.ptr);
+    return (gtk4.symbols.gtk_widget_is_drawable ??
+      missing("gtk_widget_is_drawable"))(this.ptr);
   },
   isFocus(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_is_focus(this.ptr);
+    return (gtk4.symbols.gtk_widget_is_focus ?? missing("gtk_widget_is_focus"))(
+      this.ptr,
+    );
   },
   keynavFailed(this: GObject, direction: DirectionType): boolean {
-    return gtk4.symbols.gtk_widget_keynav_failed(this.ptr, direction);
+    return (gtk4.symbols.gtk_widget_keynav_failed ??
+      missing("gtk_widget_keynav_failed"))(this.ptr, direction);
   },
   map(this: GObject): void {
-    gtk4.symbols.gtk_widget_map(this.ptr);
+    (gtk4.symbols.gtk_widget_map ?? missing("gtk_widget_map"))(this.ptr);
   },
   mnemonicActivate(this: GObject, groupCycling: boolean): boolean {
-    return gtk4.symbols.gtk_widget_mnemonic_activate(this.ptr, groupCycling);
+    return (gtk4.symbols.gtk_widget_mnemonic_activate ??
+      missing("gtk_widget_mnemonic_activate"))(this.ptr, groupCycling);
   },
   pick(this: GObject, x: number, y: number, flags: number): Widget | null {
     return borrowed<Widget>(
-      gtk4.symbols.gtk_widget_pick(this.ptr, x, y, flags),
+      (gtk4.symbols.gtk_widget_pick ?? missing("gtk_widget_pick"))(
+        this.ptr,
+        x,
+        y,
+        flags,
+      ),
     );
   },
   queueAllocate(this: GObject): void {
-    gtk4.symbols.gtk_widget_queue_allocate(this.ptr);
+    (gtk4.symbols.gtk_widget_queue_allocate ??
+      missing("gtk_widget_queue_allocate"))(this.ptr);
   },
   queueResize(this: GObject): void {
-    gtk4.symbols.gtk_widget_queue_resize(this.ptr);
+    (gtk4.symbols.gtk_widget_queue_resize ??
+      missing("gtk_widget_queue_resize"))(this.ptr);
   },
   realize(this: GObject): void {
-    gtk4.symbols.gtk_widget_realize(this.ptr);
+    (gtk4.symbols.gtk_widget_realize ?? missing("gtk_widget_realize"))(
+      this.ptr,
+    );
   },
   removeController(this: GObject, controller: EventController): void {
-    gtk4.symbols.gtk_widget_remove_controller(this.ptr, controller.ptr);
+    (gtk4.symbols.gtk_widget_remove_controller ??
+      missing("gtk_widget_remove_controller"))(this.ptr, controller.ptr);
   },
   removeMnemonicLabel(this: GObject, label: Widget): void {
-    gtk4.symbols.gtk_widget_remove_mnemonic_label(this.ptr, label.ptr);
+    (gtk4.symbols.gtk_widget_remove_mnemonic_label ??
+      missing("gtk_widget_remove_mnemonic_label"))(this.ptr, label.ptr);
   },
   removeTickCallback(this: GObject, id: number): void {
-    gtk4.symbols.gtk_widget_remove_tick_callback(this.ptr, id);
+    (gtk4.symbols.gtk_widget_remove_tick_callback ??
+      missing("gtk_widget_remove_tick_callback"))(this.ptr, id);
   },
   setCanFocus(this: GObject, canFocus: boolean): void {
-    gtk4.symbols.gtk_widget_set_can_focus(this.ptr, canFocus);
+    (gtk4.symbols.gtk_widget_set_can_focus ??
+      missing("gtk_widget_set_can_focus"))(this.ptr, canFocus);
   },
   setChildVisible(this: GObject, childVisible: boolean): void {
-    gtk4.symbols.gtk_widget_set_child_visible(this.ptr, childVisible);
+    (gtk4.symbols.gtk_widget_set_child_visible ??
+      missing("gtk_widget_set_child_visible"))(this.ptr, childVisible);
   },
   setCursorFromName(this: GObject, name: string | null): void {
     gtk4.symbols.gtk_widget_set_cursor_from_name(this.ptr, cstrOrNull(name));
   },
   setDirection(this: GObject, dir: TextDirection): void {
-    gtk4.symbols.gtk_widget_set_direction(this.ptr, dir);
+    (gtk4.symbols.gtk_widget_set_direction ??
+      missing("gtk_widget_set_direction"))(this.ptr, dir);
   },
   setFocusChild(this: GObject, child: Widget | null): void {
-    gtk4.symbols.gtk_widget_set_focus_child(this.ptr, child?.ptr ?? null);
+    (gtk4.symbols.gtk_widget_set_focus_child ??
+      missing("gtk_widget_set_focus_child"))(this.ptr, child?.ptr ?? null);
   },
   setFocusOnClick(this: GObject, focusOnClick: boolean): void {
-    gtk4.symbols.gtk_widget_set_focus_on_click(this.ptr, focusOnClick);
+    (gtk4.symbols.gtk_widget_set_focus_on_click ??
+      missing("gtk_widget_set_focus_on_click"))(this.ptr, focusOnClick);
   },
   setFontMap(this: GObject, fontMap: GObject | null): void {
-    gtk4.symbols.gtk_widget_set_font_map(this.ptr, fontMap?.ptr ?? null);
+    (gtk4.symbols.gtk_widget_set_font_map ??
+      missing("gtk_widget_set_font_map"))(this.ptr, fontMap?.ptr ?? null);
   },
   setHasTooltip(this: GObject, hasTooltip: boolean): void {
-    gtk4.symbols.gtk_widget_set_has_tooltip(this.ptr, hasTooltip);
+    (gtk4.symbols.gtk_widget_set_has_tooltip ??
+      missing("gtk_widget_set_has_tooltip"))(this.ptr, hasTooltip);
   },
   setHexpandSet(this: GObject, set: boolean): void {
-    gtk4.symbols.gtk_widget_set_hexpand_set(this.ptr, set);
+    (gtk4.symbols.gtk_widget_set_hexpand_set ??
+      missing("gtk_widget_set_hexpand_set"))(this.ptr, set);
   },
   setLimitEvents(this: GObject, limitEvents: boolean): void {
     (gtk4.symbols.gtk_widget_set_limit_events ??
       missing("gtk_widget_set_limit_events", "4.18"))(this.ptr, limitEvents);
   },
   setName(this: GObject, name: string): void {
-    gtk4.symbols.gtk_widget_set_name(this.ptr, cstr(name));
+    (gtk4.symbols.gtk_widget_set_name ?? missing("gtk_widget_set_name"))(
+      this.ptr,
+      cstr(name),
+    );
   },
   setOverflow(this: GObject, overflow: Overflow): void {
-    gtk4.symbols.gtk_widget_set_overflow(this.ptr, overflow);
+    (gtk4.symbols.gtk_widget_set_overflow ??
+      missing("gtk_widget_set_overflow"))(this.ptr, overflow);
   },
   setParent(this: GObject, parent: Widget): void {
     gtk4.symbols.gtk_widget_set_parent(this.ptr, parent.ptr);
   },
   setReceivesDefault(this: GObject, receivesDefault: boolean): void {
-    gtk4.symbols.gtk_widget_set_receives_default(this.ptr, receivesDefault);
+    (gtk4.symbols.gtk_widget_set_receives_default ??
+      missing("gtk_widget_set_receives_default"))(this.ptr, receivesDefault);
   },
   setStateFlags(this: GObject, flags: number, clear: boolean): void {
-    gtk4.symbols.gtk_widget_set_state_flags(this.ptr, flags, clear);
+    (gtk4.symbols.gtk_widget_set_state_flags ??
+      missing("gtk_widget_set_state_flags"))(this.ptr, flags, clear);
   },
   setTooltipMarkup(this: GObject, markup: string | null): void {
-    gtk4.symbols.gtk_widget_set_tooltip_markup(this.ptr, cstrOrNull(markup));
+    (gtk4.symbols.gtk_widget_set_tooltip_markup ??
+      missing("gtk_widget_set_tooltip_markup"))(this.ptr, cstrOrNull(markup));
   },
   setVexpandSet(this: GObject, set: boolean): void {
-    gtk4.symbols.gtk_widget_set_vexpand_set(this.ptr, set);
+    (gtk4.symbols.gtk_widget_set_vexpand_set ??
+      missing("gtk_widget_set_vexpand_set"))(this.ptr, set);
   },
   shouldLayout(this: GObject): boolean {
-    return gtk4.symbols.gtk_widget_should_layout(this.ptr);
+    return (gtk4.symbols.gtk_widget_should_layout ??
+      missing("gtk_widget_should_layout"))(this.ptr);
   },
   snapshotChild(this: GObject, child: Widget, snapshot: GObject): void {
-    gtk4.symbols.gtk_widget_snapshot_child(this.ptr, child.ptr, snapshot.ptr);
+    (gtk4.symbols.gtk_widget_snapshot_child ??
+      missing("gtk_widget_snapshot_child"))(this.ptr, child.ptr, snapshot.ptr);
   },
   triggerTooltipQuery(this: GObject): void {
-    gtk4.symbols.gtk_widget_trigger_tooltip_query(this.ptr);
+    (gtk4.symbols.gtk_widget_trigger_tooltip_query ??
+      missing("gtk_widget_trigger_tooltip_query"))(this.ptr);
   },
   unmap(this: GObject): void {
-    gtk4.symbols.gtk_widget_unmap(this.ptr);
+    (gtk4.symbols.gtk_widget_unmap ?? missing("gtk_widget_unmap"))(this.ptr);
   },
   unrealize(this: GObject): void {
-    gtk4.symbols.gtk_widget_unrealize(this.ptr);
+    (gtk4.symbols.gtk_widget_unrealize ?? missing("gtk_widget_unrealize"))(
+      this.ptr,
+    );
   },
   unsetStateFlags(this: GObject, flags: number): void {
-    gtk4.symbols.gtk_widget_unset_state_flags(this.ptr, flags);
+    (gtk4.symbols.gtk_widget_unset_state_flags ??
+      missing("gtk_widget_unset_state_flags"))(this.ptr, flags);
   },
   onDestroy(this: GObject, callback: () => void): number {
     return connectSignal(this, "destroy", {
@@ -6963,42 +7634,59 @@ export interface WindowMethods {
 /** Implementations of {@linkcode WindowMethods}. */
 export const windowMethods: WindowMethods & ThisType<GObject> = {
   fullscreen(this: GObject): void {
-    gtk4.symbols.gtk_window_fullscreen(this.ptr);
+    (gtk4.symbols.gtk_window_fullscreen ?? missing("gtk_window_fullscreen"))(
+      this.ptr,
+    );
   },
   fullscreenOnMonitor(this: GObject, monitor: GObject): void {
-    gtk4.symbols.gtk_window_fullscreen_on_monitor(this.ptr, monitor.ptr);
+    (gtk4.symbols.gtk_window_fullscreen_on_monitor ??
+      missing("gtk_window_fullscreen_on_monitor"))(this.ptr, monitor.ptr);
   },
   getApplication(this: GObject): Application | null {
     return borrowed<Application>(
-      gtk4.symbols.gtk_window_get_application(this.ptr),
+      (gtk4.symbols.gtk_window_get_application ??
+        missing("gtk_window_get_application"))(this.ptr),
     );
   },
   getDecorated(this: GObject): boolean {
-    return gtk4.symbols.gtk_window_get_decorated(this.ptr);
+    return (gtk4.symbols.gtk_window_get_decorated ??
+      missing("gtk_window_get_decorated"))(this.ptr);
   },
   getDefaultWidget(this: GObject): Widget | null {
     return borrowed<Widget>(
-      gtk4.symbols.gtk_window_get_default_widget(this.ptr),
+      (gtk4.symbols.gtk_window_get_default_widget ??
+        missing("gtk_window_get_default_widget"))(this.ptr),
     );
   },
   getDeletable(this: GObject): boolean {
-    return gtk4.symbols.gtk_window_get_deletable(this.ptr);
+    return (gtk4.symbols.gtk_window_get_deletable ??
+      missing("gtk_window_get_deletable"))(this.ptr);
   },
   getDestroyWithParent(this: GObject): boolean {
-    return gtk4.symbols.gtk_window_get_destroy_with_parent(this.ptr);
+    return (gtk4.symbols.gtk_window_get_destroy_with_parent ??
+      missing("gtk_window_get_destroy_with_parent"))(this.ptr);
   },
   getFocus(this: GObject): Widget | null {
-    return borrowed<Widget>(gtk4.symbols.gtk_window_get_focus(this.ptr));
+    return borrowed<Widget>(
+      (gtk4.symbols.gtk_window_get_focus ?? missing("gtk_window_get_focus"))(
+        this.ptr,
+      ),
+    );
   },
   getFocusVisible(this: GObject): boolean {
-    return gtk4.symbols.gtk_window_get_focus_visible(this.ptr);
+    return (gtk4.symbols.gtk_window_get_focus_visible ??
+      missing("gtk_window_get_focus_visible"))(this.ptr);
   },
   getGravity(this: GObject): WindowGravity {
     return (gtk4.symbols.gtk_window_get_gravity ??
       missing("gtk_window_get_gravity", "4.20"))(this.ptr) as WindowGravity;
   },
   getGroup(this: GObject): GObject {
-    return borrowed<GObject>(gtk4.symbols.gtk_window_get_group(this.ptr))!;
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_window_get_group ?? missing("gtk_window_get_group"))(
+        this.ptr,
+      ),
+    )!;
   },
   getHandleMenubarAccel(this: GObject): boolean {
     return (gtk4.symbols.gtk_window_get_handle_menubar_accel ??
@@ -7006,67 +7694,92 @@ export const windowMethods: WindowMethods & ThisType<GObject> = {
   },
   getIconName(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      gtk4.symbols.gtk_window_get_icon_name(this.ptr),
+      (gtk4.symbols.gtk_window_get_icon_name ??
+        missing("gtk_window_get_icon_name"))(this.ptr),
     );
   },
   getMnemonicsVisible(this: GObject): boolean {
-    return gtk4.symbols.gtk_window_get_mnemonics_visible(this.ptr);
+    return (gtk4.symbols.gtk_window_get_mnemonics_visible ??
+      missing("gtk_window_get_mnemonics_visible"))(this.ptr);
   },
   getModal(this: GObject): boolean {
-    return gtk4.symbols.gtk_window_get_modal(this.ptr);
+    return (gtk4.symbols.gtk_window_get_modal ??
+      missing("gtk_window_get_modal"))(this.ptr);
   },
   getResizable(this: GObject): boolean {
-    return gtk4.symbols.gtk_window_get_resizable(this.ptr);
+    return (gtk4.symbols.gtk_window_get_resizable ??
+      missing("gtk_window_get_resizable"))(this.ptr);
   },
   getTitle(this: GObject): string | null {
     return ((p) => p ? readCStr(p) : null)(
-      gtk4.symbols.gtk_window_get_title(this.ptr),
+      (gtk4.symbols.gtk_window_get_title ?? missing("gtk_window_get_title"))(
+        this.ptr,
+      ),
     );
   },
   getTitlebar(this: GObject): Widget | null {
-    return borrowed<Widget>(gtk4.symbols.gtk_window_get_titlebar(this.ptr));
+    return borrowed<Widget>(
+      (gtk4.symbols.gtk_window_get_titlebar ??
+        missing("gtk_window_get_titlebar"))(this.ptr),
+    );
   },
   getTransientFor(this: GObject): Window | null {
     return borrowed<Window>(
-      gtk4.symbols.gtk_window_get_transient_for(this.ptr),
+      (gtk4.symbols.gtk_window_get_transient_for ??
+        missing("gtk_window_get_transient_for"))(this.ptr),
     );
   },
   hasGroup(this: GObject): boolean {
-    return gtk4.symbols.gtk_window_has_group(this.ptr);
+    return (gtk4.symbols.gtk_window_has_group ??
+      missing("gtk_window_has_group"))(this.ptr);
   },
   isFullscreen(this: GObject): boolean {
-    return gtk4.symbols.gtk_window_is_fullscreen(this.ptr);
+    return (gtk4.symbols.gtk_window_is_fullscreen ??
+      missing("gtk_window_is_fullscreen"))(this.ptr);
   },
   isMaximized(this: GObject): boolean {
-    return gtk4.symbols.gtk_window_is_maximized(this.ptr);
+    return (gtk4.symbols.gtk_window_is_maximized ??
+      missing("gtk_window_is_maximized"))(this.ptr);
   },
   isSuspended(this: GObject): boolean {
     return (gtk4.symbols.gtk_window_is_suspended ??
       missing("gtk_window_is_suspended", "4.12"))(this.ptr);
   },
   minimize(this: GObject): void {
-    gtk4.symbols.gtk_window_minimize(this.ptr);
-  },
-  setDefaultWidget(this: GObject, defaultWidget: Widget | null): void {
-    gtk4.symbols.gtk_window_set_default_widget(
+    (gtk4.symbols.gtk_window_minimize ?? missing("gtk_window_minimize"))(
       this.ptr,
-      defaultWidget?.ptr ?? null,
     );
   },
+  setDefaultWidget(this: GObject, defaultWidget: Widget | null): void {
+    (gtk4.symbols.gtk_window_set_default_widget ??
+      missing("gtk_window_set_default_widget"))(
+        this.ptr,
+        defaultWidget?.ptr ?? null,
+      );
+  },
   setDeletable(this: GObject, setting: boolean): void {
-    gtk4.symbols.gtk_window_set_deletable(this.ptr, setting);
+    (gtk4.symbols.gtk_window_set_deletable ??
+      missing("gtk_window_set_deletable"))(this.ptr, setting);
   },
   setDestroyWithParent(this: GObject, setting: boolean): void {
-    gtk4.symbols.gtk_window_set_destroy_with_parent(this.ptr, setting);
+    (gtk4.symbols.gtk_window_set_destroy_with_parent ??
+      missing("gtk_window_set_destroy_with_parent"))(this.ptr, setting);
   },
   setDisplay(this: GObject, display: Display): void {
-    gtk4.symbols.gtk_window_set_display(this.ptr, display.ptr);
+    (gtk4.symbols.gtk_window_set_display ?? missing("gtk_window_set_display"))(
+      this.ptr,
+      display.ptr,
+    );
   },
   setFocus(this: GObject, focus: Widget | null): void {
-    gtk4.symbols.gtk_window_set_focus(this.ptr, focus?.ptr ?? null);
+    (gtk4.symbols.gtk_window_set_focus ?? missing("gtk_window_set_focus"))(
+      this.ptr,
+      focus?.ptr ?? null,
+    );
   },
   setFocusVisible(this: GObject, setting: boolean): void {
-    gtk4.symbols.gtk_window_set_focus_visible(this.ptr, setting);
+    (gtk4.symbols.gtk_window_set_focus_visible ??
+      missing("gtk_window_set_focus_visible"))(this.ptr, setting);
   },
   setGravity(this: GObject, gravity: WindowGravity): void {
     (gtk4.symbols.gtk_window_set_gravity ??
@@ -7080,22 +7793,30 @@ export const windowMethods: WindowMethods & ThisType<GObject> = {
       );
   },
   setIconName(this: GObject, name: string | null): void {
-    gtk4.symbols.gtk_window_set_icon_name(this.ptr, cstrOrNull(name));
+    (gtk4.symbols.gtk_window_set_icon_name ??
+      missing("gtk_window_set_icon_name"))(this.ptr, cstrOrNull(name));
   },
   setMnemonicsVisible(this: GObject, setting: boolean): void {
-    gtk4.symbols.gtk_window_set_mnemonics_visible(this.ptr, setting);
+    (gtk4.symbols.gtk_window_set_mnemonics_visible ??
+      missing("gtk_window_set_mnemonics_visible"))(this.ptr, setting);
   },
   setStartupId(this: GObject, startupId: string): void {
-    gtk4.symbols.gtk_window_set_startup_id(this.ptr, cstr(startupId));
+    (gtk4.symbols.gtk_window_set_startup_id ??
+      missing("gtk_window_set_startup_id"))(this.ptr, cstr(startupId));
   },
   unfullscreen(this: GObject): void {
-    gtk4.symbols.gtk_window_unfullscreen(this.ptr);
+    (gtk4.symbols.gtk_window_unfullscreen ??
+      missing("gtk_window_unfullscreen"))(this.ptr);
   },
   unmaximize(this: GObject): void {
-    gtk4.symbols.gtk_window_unmaximize(this.ptr);
+    (gtk4.symbols.gtk_window_unmaximize ?? missing("gtk_window_unmaximize"))(
+      this.ptr,
+    );
   },
   unminimize(this: GObject): void {
-    gtk4.symbols.gtk_window_unminimize(this.ptr);
+    (gtk4.symbols.gtk_window_unminimize ?? missing("gtk_window_unminimize"))(
+      this.ptr,
+    );
   },
   onActivateDefault(this: GObject, callback: () => void): number {
     return connectSignal(this, "activate-default", {

@@ -322,6 +322,7 @@ export function build(profile: Profile, inputs: Map<string, Input>) {
     throw new Error("Duplicate symbol in the allowlist");
   }
   const symbols = profileSymbols(profile, inputs);
+  const listed = new Set(profile.symbols);
   const requested = new Set(symbols);
   const declarations = new Map<
     string,
@@ -365,7 +366,10 @@ export function build(profile: Profile, inputs: Map<string, Input>) {
     const { declaration, source } = declarations.get(symbol)!;
     const override = overrides[symbol];
     const binding = signature(symbol, declaration, known, override);
+    // Generated methods may use symbols a platform lacks (e.g. Unix-only
+    // GIO functions on Windows), so they never stop the library loading.
     const optionalByPolicy = optional.has(symbol) || !!source.optional ||
+      !listed.has(symbol) ||
       declaration.since !== null &&
         compareVersions(declaration.since, profile.minimumVersion) > 0;
     if (override?.optional ?? optionalByPolicy) binding.optional = true;
@@ -881,7 +885,7 @@ async function main(args: string[]) {
       text: await format(
         generateClasses(
           namespacesFor(profile, classInputs),
-          profile.highLevel!,
+          { ...profile.highLevel!, listed: new Set(profile.symbols) },
           handWritten,
         ),
       ),

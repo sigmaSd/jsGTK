@@ -57,10 +57,11 @@ export const appLaunchContextMethods:
   & AppLaunchContextMethods
   & ThisType<GObject> = {
     launchFailed(this: GObject, startupNotifyId: string): void {
-      gio.symbols.g_app_launch_context_launch_failed(
-        this.ptr,
-        cstr(startupNotifyId),
-      );
+      (gio.symbols.g_app_launch_context_launch_failed ??
+        missing("g_app_launch_context_launch_failed"))(
+          this.ptr,
+          cstr(startupNotifyId),
+        );
     },
     setenv(this: GObject, variable: string, value: string): void {
       (gio.symbols.g_app_launch_context_setenv ??
@@ -124,20 +125,25 @@ export interface CancellableMethods {
 /** Implementations of {@linkcode CancellableMethods}. */
 export const cancellableMethods: CancellableMethods & ThisType<GObject> = {
   getFd(this: GObject): number {
-    return gio.symbols.g_cancellable_get_fd(this.ptr);
+    return (gio.symbols.g_cancellable_get_fd ??
+      missing("g_cancellable_get_fd"))(this.ptr);
   },
   popCurrent(this: GObject): void {
-    gio.symbols.g_cancellable_pop_current(this.ptr);
+    (gio.symbols.g_cancellable_pop_current ??
+      missing("g_cancellable_pop_current"))(this.ptr);
   },
   pushCurrent(this: GObject): void {
-    gio.symbols.g_cancellable_push_current(this.ptr);
+    (gio.symbols.g_cancellable_push_current ??
+      missing("g_cancellable_push_current"))(this.ptr);
   },
   releaseFd(this: GObject): void {
     (gio.symbols.g_cancellable_release_fd ??
       missing("g_cancellable_release_fd", "2.22"))(this.ptr);
   },
   reset(this: GObject): void {
-    gio.symbols.g_cancellable_reset(this.ptr);
+    (gio.symbols.g_cancellable_reset ?? missing("g_cancellable_reset"))(
+      this.ptr,
+    );
   },
   onCancelled(this: GObject, callback: () => void): number {
     return connectSignal(this, "cancelled", {
@@ -258,13 +264,16 @@ export interface InputStreamMethods {
 /** Implementations of {@linkcode InputStreamMethods}. */
 export const inputStreamMethods: InputStreamMethods & ThisType<GObject> = {
   clearPending(this: GObject): void {
-    gio.symbols.g_input_stream_clear_pending(this.ptr);
+    (gio.symbols.g_input_stream_clear_pending ??
+      missing("g_input_stream_clear_pending"))(this.ptr);
   },
   hasPending(this: GObject): boolean {
-    return gio.symbols.g_input_stream_has_pending(this.ptr);
+    return (gio.symbols.g_input_stream_has_pending ??
+      missing("g_input_stream_has_pending"))(this.ptr);
   },
   isClosed(this: GObject): boolean {
-    return gio.symbols.g_input_stream_is_closed(this.ptr);
+    return (gio.symbols.g_input_stream_is_closed ??
+      missing("g_input_stream_is_closed"))(this.ptr);
   },
 };
 
@@ -658,13 +667,16 @@ export interface OutputStreamMethods {
 /** Implementations of {@linkcode OutputStreamMethods}. */
 export const outputStreamMethods: OutputStreamMethods & ThisType<GObject> = {
   clearPending(this: GObject): void {
-    gio.symbols.g_output_stream_clear_pending(this.ptr);
+    (gio.symbols.g_output_stream_clear_pending ??
+      missing("g_output_stream_clear_pending"))(this.ptr);
   },
   hasPending(this: GObject): boolean {
-    return gio.symbols.g_output_stream_has_pending(this.ptr);
+    return (gio.symbols.g_output_stream_has_pending ??
+      missing("g_output_stream_has_pending"))(this.ptr);
   },
   isClosed(this: GObject): boolean {
-    return gio.symbols.g_output_stream_is_closed(this.ptr);
+    return (gio.symbols.g_output_stream_is_closed ??
+      missing("g_output_stream_is_closed"))(this.ptr);
   },
   isClosing(this: GObject): boolean {
     return (gio.symbols.g_output_stream_is_closing ??

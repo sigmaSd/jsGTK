@@ -96,8 +96,12 @@ export function notifiedCallback(
 }
 
 /** Throw for a method whose symbol this library version lacks. */
-export function missing(symbol: string, version: string): never {
-  throw new Error(`${symbol} needs version ${version} of its library`);
+export function missing(symbol: string, version?: string): never {
+  throw new Error(
+    version
+      ? `${symbol} needs version ${version} of its library`
+      : `${symbol} isn't available in this build of its library`,
+  );
 }
 
 /** What generated signal helpers need from GObject's protected API. */

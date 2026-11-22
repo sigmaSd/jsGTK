@@ -354,117 +354,206 @@ export const gioSymbols = {
   g_app_launch_context_launch_failed: {
     parameters: ["pointer", "buffer"],
     result: "void",
+    optional: true,
   },
   // Since 2.32.
   g_app_launch_context_unsetenv: {
     parameters: ["pointer", "buffer"],
     result: "void",
+    optional: true,
   },
-  g_cancellable_get_fd: { parameters: ["pointer"], result: "i32" },
-  g_cancellable_pop_current: { parameters: ["pointer"], result: "void" },
-  g_cancellable_push_current: { parameters: ["pointer"], result: "void" },
+  g_cancellable_get_fd: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  g_cancellable_pop_current: {
+    parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
+  g_cancellable_push_current: {
+    parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
   // Since 2.22.
-  g_cancellable_release_fd: { parameters: ["pointer"], result: "void" },
-  g_cancellable_reset: { parameters: ["pointer"], result: "void" },
+  g_cancellable_release_fd: {
+    parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
+  g_cancellable_reset: {
+    parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
   // Since 2.26.
-  g_dbus_proxy_get_connection: { parameters: ["pointer"], result: "pointer" },
+  g_dbus_proxy_get_connection: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
   // Since 2.26.
-  g_dbus_proxy_get_default_timeout: { parameters: ["pointer"], result: "i32" },
+  g_dbus_proxy_get_default_timeout: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
   // Since 2.26.
-  g_dbus_proxy_get_flags: { parameters: ["pointer"], result: "i32" },
+  g_dbus_proxy_get_flags: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
   // Since 2.26.
   g_dbus_proxy_get_interface_name: {
     parameters: ["pointer"],
     result: "pointer",
+    optional: true,
   },
   // Since 2.26.
-  g_dbus_proxy_get_name: { parameters: ["pointer"], result: "pointer" },
+  g_dbus_proxy_get_name: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
   // Since 2.26. Return transfer full.
-  g_dbus_proxy_get_name_owner: { parameters: ["pointer"], result: "pointer" },
+  g_dbus_proxy_get_name_owner: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
   // Since 2.26.
-  g_dbus_proxy_get_object_path: { parameters: ["pointer"], result: "pointer" },
+  g_dbus_proxy_get_object_path: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
   // Since 2.26.
   g_dbus_proxy_set_default_timeout: {
     parameters: ["pointer", "i32"],
     result: "void",
+    optional: true,
   },
-  g_input_stream_clear_pending: { parameters: ["pointer"], result: "void" },
-  g_input_stream_has_pending: { parameters: ["pointer"], result: "gboolean" },
-  g_input_stream_is_closed: { parameters: ["pointer"], result: "gboolean" },
+  g_input_stream_clear_pending: {
+    parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
+  g_input_stream_has_pending: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  g_input_stream_is_closed: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
   // Since 2.44.
   g_list_store_insert: {
     parameters: ["pointer", "u32", "pointer"],
     result: "void",
+    optional: true,
   },
   // Since 2.44. compare_func has call scope.
   g_list_store_insert_sorted: {
     parameters: ["pointer", "pointer", "pointer", "pointer"],
     result: "u32",
+    optional: true,
   },
   // Since 2.44.
-  g_list_store_remove: { parameters: ["pointer", "u32"], result: "void" },
+  g_list_store_remove: {
+    parameters: ["pointer", "u32"],
+    result: "void",
+    optional: true,
+  },
   // Since 2.46. compare_func has call scope.
   g_list_store_sort: {
     parameters: ["pointer", "pointer", "pointer"],
     result: "void",
+    optional: true,
   },
   // Since 2.32.
-  g_menu_append_item: { parameters: ["pointer", "pointer"], result: "void" },
+  g_menu_append_item: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
   // Since 2.32.
   g_menu_append_section: {
     parameters: ["pointer", "buffer", "pointer"],
     result: "void",
+    optional: true,
   },
   // Since 2.32.
   g_menu_append_submenu: {
     parameters: ["pointer", "buffer", "pointer"],
     result: "void",
+    optional: true,
   },
   // Since 2.32.
-  g_menu_freeze: { parameters: ["pointer"], result: "void" },
+  g_menu_freeze: { parameters: ["pointer"], result: "void", optional: true },
   // Since 2.32.
   g_menu_insert: {
     parameters: ["pointer", "i32", "buffer", "buffer"],
     result: "void",
+    optional: true,
   },
   // Since 2.32.
   g_menu_insert_item: {
     parameters: ["pointer", "i32", "pointer"],
     result: "void",
+    optional: true,
   },
   // Since 2.32.
   g_menu_insert_section: {
     parameters: ["pointer", "i32", "buffer", "pointer"],
     result: "void",
+    optional: true,
   },
   // Since 2.32.
   g_menu_insert_submenu: {
     parameters: ["pointer", "i32", "buffer", "pointer"],
     result: "void",
+    optional: true,
   },
   // Since 2.32.
   g_menu_prepend: {
     parameters: ["pointer", "buffer", "buffer"],
     result: "void",
+    optional: true,
   },
   // Since 2.32.
-  g_menu_prepend_item: { parameters: ["pointer", "pointer"], result: "void" },
+  g_menu_prepend_item: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
   // Since 2.32.
   g_menu_prepend_section: {
     parameters: ["pointer", "buffer", "pointer"],
     result: "void",
+    optional: true,
   },
   // Since 2.32.
   g_menu_prepend_submenu: {
     parameters: ["pointer", "buffer", "pointer"],
     result: "void",
+    optional: true,
   },
   // Since 2.32.
-  g_menu_remove: { parameters: ["pointer", "i32"], result: "void" },
+  g_menu_remove: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
   // Since 2.40.
   g_notification_add_button: {
     parameters: ["pointer", "buffer", "buffer"],
     result: "void",
+    optional: true,
   },
   // Since 2.70.
   g_notification_set_category: {
@@ -476,42 +565,87 @@ export const gioSymbols = {
   g_notification_set_default_action: {
     parameters: ["pointer", "buffer"],
     result: "void",
+    optional: true,
   },
   // Since 2.40.
   g_notification_set_icon: {
     parameters: ["pointer", "pointer"],
     result: "void",
+    optional: true,
   },
   // Since 2.40.
   g_notification_set_priority: {
     parameters: ["pointer", "i32"],
     result: "void",
+    optional: true,
   },
   // Since 2.40.
   g_notification_set_title: {
     parameters: ["pointer", "buffer"],
     result: "void",
+    optional: true,
   },
-  g_output_stream_clear_pending: { parameters: ["pointer"], result: "void" },
-  g_output_stream_has_pending: { parameters: ["pointer"], result: "gboolean" },
-  g_output_stream_is_closed: { parameters: ["pointer"], result: "gboolean" },
+  g_output_stream_clear_pending: {
+    parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
+  g_output_stream_has_pending: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  g_output_stream_is_closed: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
   // Since 2.24.
-  g_output_stream_is_closing: { parameters: ["pointer"], result: "gboolean" },
+  g_output_stream_is_closing: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
   // Since 2.28.
   g_simple_action_set_enabled: {
     parameters: ["pointer", "gboolean"],
     result: "void",
+    optional: true,
   },
   // Since 2.40.
-  g_subprocess_get_identifier: { parameters: ["pointer"], result: "pointer" },
+  g_subprocess_get_identifier: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
   // Since 2.40.
-  g_subprocess_get_if_exited: { parameters: ["pointer"], result: "gboolean" },
+  g_subprocess_get_if_exited: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
   // Since 2.40.
-  g_subprocess_get_if_signaled: { parameters: ["pointer"], result: "gboolean" },
+  g_subprocess_get_if_signaled: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
   // Since 2.40.
-  g_subprocess_get_status: { parameters: ["pointer"], result: "i32" },
+  g_subprocess_get_status: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
   // Since 2.40.
-  g_subprocess_get_term_sig: { parameters: ["pointer"], result: "i32" },
+  g_subprocess_get_term_sig: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
   // Since 2.40.
-  g_subprocess_send_signal: { parameters: ["pointer", "i32"], result: "void" },
+  g_subprocess_send_signal: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
 } as const;
