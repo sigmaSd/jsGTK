@@ -289,19 +289,26 @@ app.onActivate(() => {
 await eventLoop.start(app);
 ```
 
-### EventLoop Options
+### How EventLoop Waits
+
+The EventLoop runs GLib's main context one step at a time. GLib says which file
+descriptors to watch and how long to wait, the wait happens on a worker thread,
+and ready GLib sources are dispatched on the main thread. JavaScript keeps
+running during the wait, and GLib work added from JavaScript (a redraw, an idle
+callback, a timeout) wakes the wait at once. Nothing wakes up while the app is
+idle.
+
+This needs off-thread FFI calls (Deno, and Node with `@sigma/deno-compat` 0.25.0
+or later) and GLib 2.72 or later. Otherwise, as on Bun, the loop checks GLib on
+a timer instead. `eventLoop.mode` says which one is running: `"driven"` or
+`"polling"`.
 
 ```typescript
-// Configure poll interval (default: 16ms)
+// Only used in "polling" mode (default: 16ms)
 const eventLoop = new EventLoop({
-  pollInterval: 16, // Check for events every 16ms when idle
+  pollInterval: 16, // Backs off from 16ms up to 250ms while idle
 });
 ```
-
-The EventLoop uses a hybrid approach:
-
-- **When active**: Sub-millisecond latency using microtasks
-- **When idle**: Sleeps to conserve CPU resources
 
 ### When to Use EventLoop
 
@@ -511,16 +518,20 @@ gtk/
 
 The `eventloop.ts` module provides:
 
-**`EventLoop` class**: Integrates GLib's MainContext with Deno/Bun's event loop
+**`EventLoop` class**: Integrates GLib's MainContext with the JavaScript event
+loop of Deno, Node or Bun
 
 - `start(app)` - Start the event loop with your application
 - `stop()` - Stop the event loop and quit the application
 - `isRunning` - Check if the event loop is running
-- `pollInterval` - Get the current poll interval
+- `mode` - `"driven"` or `"polling"`, see
+  [How EventLoop Waits](#how-eventloop-waits)
+- `pollInterval` - Get the poll interval used in `"polling"` mode
 
 **Options**:
 
-- `pollInterval` - Milliseconds to sleep when idle (default: 16)
+- `pollInterval` - Milliseconds to sleep when idle in `"polling"` mode (default:
+  16)
 
 ### Adding New Widgets
 

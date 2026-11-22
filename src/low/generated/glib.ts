@@ -12,6 +12,35 @@ export const glibSymbols = {
     parameters: ["pointer", "gboolean"],
     result: "gboolean",
   },
+  g_main_context_acquire: { parameters: ["pointer"], result: "gboolean" },
+  g_main_context_release: { parameters: ["pointer"], result: "void" },
+  // priority (out) transfer full.
+  g_main_context_prepare: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+  },
+  // timeout_ (out) transfer full.
+  g_main_context_query: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "i32"],
+    result: "i32",
+  },
+  g_main_context_check: {
+    parameters: ["pointer", "i32", "pointer", "i32"],
+    result: "gboolean",
+  },
+  g_main_context_dispatch: { parameters: ["pointer"], result: "void" },
+  g_main_context_wakeup: { parameters: ["pointer"], result: "void" },
+  // Since 2.20.
+  g_poll: {
+    parameters: ["pointer", "u32", "i32"],
+    result: "i32",
+    nonblocking: true,
+  },
+  g_thread_self: { parameters: [], result: "pointer" },
+  // Since 2.30.
+  g_atomic_int_or: { parameters: ["pointer", "u32"], result: "u32" },
+  // Since 2.6.
+  glib_check_version: { parameters: ["u32", "u32", "u32"], result: "pointer" },
   g_timeout_add: { parameters: ["u32", "function", "pointer"], result: "u32" },
   // Since 2.14.
   g_timeout_add_seconds: {

@@ -148,6 +148,47 @@
       </function>
     </record>
     <record name="MainContext" c:type="GMainContext" opaque="1" glib:type-name="GMainContext" glib:get-type="g_main_context_get_type" c:symbol-prefix="main_context">
+      <method name="acquire" c:identifier="g_main_context_acquire">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="MainContext" c:type="GMainContext*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="check" c:identifier="g_main_context_check">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="MainContext" c:type="GMainContext*"/>
+          </instance-parameter>
+          <parameter name="max_priority" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+          <parameter name="fds" transfer-ownership="none">
+            <array length="2" zero-terminated="0" c:type="GPollFD*">
+              <type name="PollFD" c:type="GPollFD"/>
+            </array>
+          </parameter>
+          <parameter name="n_fds" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="dispatch" c:identifier="g_main_context_dispatch">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="MainContext" c:type="GMainContext*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="iteration" c:identifier="g_main_context_iteration">
         <return-value transfer-ownership="none">
           <type name="gboolean" c:type="gboolean"/>
@@ -164,6 +205,63 @@
       <method name="pending" c:identifier="g_main_context_pending">
         <return-value transfer-ownership="none">
           <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="MainContext" c:type="GMainContext*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="prepare" c:identifier="g_main_context_prepare">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="MainContext" c:type="GMainContext*"/>
+          </instance-parameter>
+          <parameter name="priority" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <type name="gint" c:type="gint*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="query" c:identifier="g_main_context_query">
+        <return-value transfer-ownership="none">
+          <type name="gint" c:type="gint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="MainContext" c:type="GMainContext*"/>
+          </instance-parameter>
+          <parameter name="max_priority" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+          <parameter name="timeout_" direction="out" caller-allocates="0" transfer-ownership="full">
+            <type name="gint" c:type="gint*"/>
+          </parameter>
+          <parameter name="fds" direction="out" caller-allocates="1" transfer-ownership="none">
+            <array length="3" zero-terminated="0" c:type="GPollFD*">
+              <type name="PollFD" c:type="GPollFD"/>
+            </array>
+          </parameter>
+          <parameter name="n_fds" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="release" c:identifier="g_main_context_release">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="MainContext" c:type="GMainContext*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="wakeup" c:identifier="g_main_context_wakeup">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
@@ -222,6 +320,13 @@
             <type name="guint" c:type="guint"/>
           </parameter>
         </parameters>
+      </function>
+    </record>
+    <record name="Thread" c:type="GThread" glib:type-name="GThread" glib:get-type="g_thread_get_type" c:symbol-prefix="thread">
+      <function name="self" c:identifier="g_thread_self">
+        <return-value transfer-ownership="none">
+          <type name="Thread" c:type="GThread*"/>
+        </return-value>
       </function>
     </record>
     <record name="Variant" c:type="GVariant" opaque="1" copy-function="g_variant_ref_sink" free-function="g_variant_unref" version="2.24" glib:type-name="GVariant" glib:get-type="intern" c:symbol-prefix="variant">
@@ -439,6 +544,35 @@
         </parameters>
       </method>
     </record>
+    <function name="atomic_int_or" c:identifier="g_atomic_int_or" version="2.30">
+      <return-value transfer-ownership="none">
+        <type name="guint" c:type="guint"/>
+      </return-value>
+      <parameters>
+        <parameter name="atomic" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="gpointer" c:type="volatile guint*"/>
+        </parameter>
+        <parameter name="val" transfer-ownership="none">
+          <type name="guint" c:type="guint"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="check_version" c:identifier="glib_check_version" version="2.6">
+      <return-value transfer-ownership="none" nullable="1">
+        <type name="utf8" c:type="const gchar*"/>
+      </return-value>
+      <parameters>
+        <parameter name="required_major" transfer-ownership="none">
+          <type name="guint" c:type="guint"/>
+        </parameter>
+        <parameter name="required_minor" transfer-ownership="none">
+          <type name="guint" c:type="guint"/>
+        </parameter>
+        <parameter name="required_micro" transfer-ownership="none">
+          <type name="guint" c:type="guint"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="free" c:identifier="g_free">
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -488,6 +622,22 @@
       <parameters>
         <parameter name="n_bytes" transfer-ownership="none">
           <type name="gsize" c:type="gsize"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="poll" c:identifier="g_poll" version="2.20">
+      <return-value transfer-ownership="none">
+        <type name="gint" c:type="gint"/>
+      </return-value>
+      <parameters>
+        <parameter name="fds" transfer-ownership="none">
+          <type name="PollFD" c:type="GPollFD*"/>
+        </parameter>
+        <parameter name="nfds" transfer-ownership="none">
+          <type name="guint" c:type="guint"/>
+        </parameter>
+        <parameter name="timeout" transfer-ownership="none">
+          <type name="gint" c:type="gint"/>
         </parameter>
       </parameters>
     </function>
