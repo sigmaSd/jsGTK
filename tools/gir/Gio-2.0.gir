@@ -190,6 +190,23 @@
         </return-value>
       </constructor>
       <method name="get_startup_notify_id" c:identifier="g_app_launch_context_get_startup_notify_id">
+        <doc xml:space="preserve" filename="gio/gappinfo.c" line="1832">
+          Initiates startup notification for the application and returns the
+`XDG_ACTIVATION_TOKEN` or `DESKTOP_STARTUP_ID` for the launched operation,
+if supported.
+
+The returned token may be referred to equivalently as an ‘activation token’
+(using Wayland terminology) or a ‘startup sequence ID’ (using X11 terminology).
+The two [are interoperable](https://gitlab.freedesktop.org/wayland/wayland-protocols/-/blob/main/staging/xdg-activation/x11-interoperation.rst).
+
+Activation tokens are defined in the [XDG Activation Protocol](https://wayland.app/protocols/xdg-activation-v1),
+and startup notification IDs are defined in the
+[freedesktop.org Startup Notification Protocol](http://standards.freedesktop.org/startup-notification-spec/startup-notification-latest.txt).
+
+Support for the XDG Activation Protocol was added in GLib 2.76.
+Since GLib 2.82 @info and @files can be `NULL`. If that’s not supported by the backend,
+the returned token will be `NULL`.
+        </doc>
         <return-value transfer-ownership="full" nullable="1">
           <type name="utf8" c:type="char*"/>
         </return-value>
@@ -207,7 +224,29 @@
           </parameter>
         </parameters>
       </method>
+      <method name="launch_failed" c:identifier="g_app_launch_context_launch_failed">
+        <doc xml:space="preserve" filename="gio/gappinfo.c" line="1876">
+          Called when an application has failed to launch, so that it can cancel
+the application startup notification started in
+[method@Gio.AppLaunchContext.get_startup_notify_id].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <type name="AppLaunchContext" c:type="GAppLaunchContext*"/>
+          </instance-parameter>
+          <parameter name="startup_notify_id" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="setenv" c:identifier="g_app_launch_context_setenv" version="2.32">
+        <doc xml:space="preserve" filename="gio/gappinfo.c" line="1726">
+          Arranges for @variable to be set to @value in the child’s environment when
+@context is used to launch an application.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -223,6 +262,112 @@
           </parameter>
         </parameters>
       </method>
+      <method name="unsetenv" c:identifier="g_app_launch_context_unsetenv" version="2.32">
+        <doc xml:space="preserve" filename="gio/gappinfo.c" line="1753">
+          Arranges for @variable to be unset in the child’s environment when @context
+is used to launch an application.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <type name="AppLaunchContext" c:type="GAppLaunchContext*"/>
+          </instance-parameter>
+          <parameter name="variable" transfer-ownership="none">
+            <type name="filename" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <glib:signal name="launch-failed" when="last" version="2.36">
+        <doc xml:space="preserve" filename="gio/gappinfo.c" line="1615">
+          The [signal@Gio.AppLaunchContext::launch-failed] signal is emitted when a
+[iface@Gio.AppInfo] launch fails. The startup notification id is provided,
+so that the launcher can cancel the startup notification.
+
+Because a launch operation may involve spawning multiple instances of the
+target application, you should expect this signal to be emitted multiple
+times, one for each spawned instance.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="startup_notify_id" transfer-ownership="none">
+            <type name="utf8" c:type="gchar*"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
+      <glib:signal name="launch-started" when="last" version="2.72">
+        <doc xml:space="preserve" filename="gio/gappinfo.c" line="1637">
+          The [signal@Gio.AppLaunchContext::launch-started] signal is emitted when a
+[iface@Gio.AppInfo] is about to be launched. If non-null the
+@platform_data is an GVariant dictionary mapping strings to variants
+(ie `a{sv}`), which contains additional, platform-specific data about this
+launch. On UNIX, at least the `startup-notification-id` keys will be
+present.
+
+The value of the `startup-notification-id` key (type `s`) is a startup
+notification ID corresponding to the format from the [startup-notification
+specification](https://specifications.freedesktop.org/startup-notification-spec/startup-notification-0.1.txt).
+It allows tracking the progress of the launchee through startup.
+
+It is guaranteed that this signal is followed by either a
+[signal@Gio.AppLaunchContext::launched] or
+[signal@Gio.AppLaunchContext::launch-failed] signal.
+
+Because a launch operation may involve spawning multiple instances of the
+target application, you should expect this signal to be emitted multiple
+times, one for each spawned instance.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="info" transfer-ownership="none">
+            <type name="AppInfo"/>
+          </parameter>
+          <parameter name="platform_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="GLib.Variant"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
+      <glib:signal name="launched" when="last" version="2.36">
+        <doc xml:space="preserve" filename="gio/gappinfo.c" line="1677">
+          The [signal@Gio.AppLaunchContext::launched] signal is emitted when a
+[iface@Gio.AppInfo] is successfully launched.
+
+Because a launch operation may involve spawning multiple instances of the
+target application, you should expect this signal to be emitted multiple
+times, one time for each spawned instance.
+
+The @platform_data is an GVariant dictionary mapping
+strings to variants (ie `a{sv}`), which contains additional,
+platform-specific data about this launch. On UNIX, at least the
+`pid` and `startup-notification-id` keys will be present.
+
+Since 2.72 the `pid` may be 0 if the process id wasn’t known (for
+example if the process was launched via D-Bus). The `pid` may not be
+set at all in subsequent releases.
+
+On Windows, `pid` is guaranteed to be valid only for the duration of the
+[signal@Gio.AppLaunchContext::launched] signal emission; after the signal
+is emitted, GLib will call [func@GLib.spawn_close_pid]. If you need to
+keep the [alias@GLib.Pid] after the signal has been emitted, then you can
+duplicate `pid` using `DuplicateHandle()`.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="info" transfer-ownership="none">
+            <type name="AppInfo"/>
+          </parameter>
+          <parameter name="platform_data" transfer-ownership="none">
+            <type name="GLib.Variant"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
     </class>
     <class name="Application" c:symbol-prefix="application" c:type="GApplication" version="2.28" parent="GObject.Object" glib:type-name="GApplication" glib:get-type="g_application_get_type" glib:type-struct="ApplicationClass">
       <method name="activate" c:identifier="g_application_activate" version="2.28">
@@ -323,6 +468,27 @@
         </return-value>
       </constructor>
       <method name="cancel" c:identifier="g_cancellable_cancel">
+        <doc xml:space="preserve" filename="gio/gcancellable.c" line="482">
+          Will set @cancellable to cancelled, and will emit the
+#GCancellable::cancelled signal. (However, see the warning about
+race conditions in the documentation for that signal if you are
+planning to connect to it.)
+
+This function is thread-safe. In other words, you can safely call
+it from a thread other than the one running the operation that was
+passed the @cancellable.
+
+If @cancellable is %NULL, this function returns immediately for convenience.
+
+The convention within GIO is that cancelling an asynchronous
+operation causes it to complete asynchronously. That is, if you
+cancel the operation from the same thread in which it is running,
+then the operation's #GAsyncReadyCallback will not be invoked until
+the application returns to the main loop.
+
+It is safe (although useless, since it will be a no-op) to call
+this function from a [signal@Gio.Cancellable::cancelled] signal handler.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -332,7 +498,35 @@
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_fd" c:identifier="g_cancellable_get_fd">
+        <doc xml:space="preserve" filename="gio/gcancellable.c" line="334">
+          Gets the file descriptor for a cancellable job. This can be used to
+implement cancellable operations on Unix systems. The returned fd will
+turn readable when @cancellable is cancelled.
+
+You are not supposed to read from the fd yourself, just check for
+readable status. Reading to unset the readable status is done
+with g_cancellable_reset().
+
+After a successful return from this function, you should use
+g_cancellable_release_fd() to free up resources allocated for
+the returned file descriptor.
+
+See also g_cancellable_make_pollfd().
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="is_cancelled" c:identifier="g_cancellable_is_cancelled">
+        <doc xml:space="preserve" filename="gio/gcancellable.c" line="293">
+          Checks if a cancellable job has been cancelled.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -342,6 +536,152 @@
           </instance-parameter>
         </parameters>
       </method>
+      <method name="pop_current" c:identifier="g_cancellable_pop_current">
+        <doc xml:space="preserve" filename="gio/gcancellable.c" line="211">
+          Pops @cancellable off the cancellable stack (verifying that @cancellable
+is on the top of the stack).
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="cancellable" transfer-ownership="none">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="push_current" c:identifier="g_cancellable_push_current">
+        <doc xml:space="preserve" filename="gio/gcancellable.c" line="186">
+          Pushes @cancellable onto the cancellable stack. The current
+cancellable can then be received using g_cancellable_get_current().
+
+This is useful when implementing cancellable operations in
+code that does not allow you to pass down the cancellable object.
+
+This is typically called automatically by e.g. #GFile operations,
+so you rarely have to call this yourself.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="cancellable" transfer-ownership="none">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="release_fd" c:identifier="g_cancellable_release_fd" version="2.22">
+        <doc xml:space="preserve" filename="gio/gcancellable.c" line="440">
+          Releases a resources previously allocated by g_cancellable_get_fd()
+or g_cancellable_make_pollfd().
+
+For compatibility reasons with older releases, calling this function
+is not strictly required, the resources will be automatically freed
+when the @cancellable is finalized. However, the @cancellable will
+block scarce file descriptors until it is finalized if this function
+is not called. This can cause the application to run out of file
+descriptors when many #GCancellables are used at the same time.
+
+Note that in the event that a [signal@Gio.Cancellable::cancelled] signal handler is
+currently running, this call will block until the handler has finished.
+Calling this function from a signal handler will therefore result in a
+deadlock.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="reset" c:identifier="g_cancellable_reset">
+        <doc xml:space="preserve" filename="gio/gcancellable.c" line="252">
+          Resets @cancellable to its uncancelled state.
+
+If cancellable is currently in use by any cancellable operation
+then the behavior of this function is undefined.
+
+Note that it is generally not a good idea to reuse an existing
+cancellable for more operations after it has been cancelled once,
+as this function might tempt you to do. The recommended practice
+is to drop the reference to a cancellable after cancelling it,
+and let it die with the outstanding async operations. You should
+create a fresh cancellable for further async operations.
+
+In the event that a [signal@Gio.Cancellable::cancelled] signal handler is currently
+running, this call will block until the handler has finished.
+Calling this function from a signal handler will therefore result in a
+deadlock.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="cancellable" transfer-ownership="none">
+            <type name="Cancellable" c:type="GCancellable*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <glib:signal name="cancelled" when="last">
+        <doc xml:space="preserve" filename="gio/gcancellable.c" line="91">
+          Emitted when the operation has been cancelled.
+
+Can be used by implementations of cancellable operations. If the
+operation is cancelled from another thread, the signal will be
+emitted in the thread that cancelled the operation, not the
+thread that is running the operation.
+
+Note that disconnecting from this signal (or any signal) in a
+multi-threaded program is prone to race conditions. For instance
+it is possible that a signal handler may be invoked even after
+a call to g_signal_handler_disconnect() for that handler has
+already returned.
+
+There is also a problem when cancellation happens right before
+connecting to the signal. If this happens the signal will
+unexpectedly not be emitted, and checking before connecting to
+the signal leaves a race condition where this is still happening.
+
+In order to make it safe and easy to connect handlers there
+are two helper functions: g_cancellable_connect() and
+g_cancellable_disconnect() which protect against problems
+like this.
+
+An example of how to us this:
+|[&lt;!-- language="C" --&gt;
+    // Make sure we don't do unnecessary work if already cancelled
+    if (g_cancellable_set_error_if_cancelled (cancellable, error))
+      return;
+
+    // Set up all the data needed to be able to handle cancellation
+    // of the operation
+    my_data = my_data_new (...);
+
+    id = 0;
+    if (cancellable)
+      id = g_cancellable_connect (cancellable,
+    			      G_CALLBACK (cancelled_handler)
+    			      data, NULL);
+
+    // cancellable operation here...
+
+    g_cancellable_disconnect (cancellable, id);
+
+    // cancelled_handler is never called after this, it is now safe
+    // to free the data
+    my_data_free (my_data);
+]|
+
+Note that the cancelled signal is emitted in the thread that
+the user cancelled from, which may be the main thread. So, the
+cancellable signal should not do something that can block.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
     </class>
     <class name="DBusConnection" c:symbol-prefix="dbus_connection" c:type="GDBusConnection" version="2.26" parent="GObject.Object" glib:type-name="GDBusConnection" glib:get-type="g_dbus_connection_get_type">
       <constructor name="new_for_address_sync" c:identifier="g_dbus_connection_new_for_address_sync" version="2.26" throws="1">
@@ -459,6 +799,50 @@
         </parameters>
       </constructor>
       <method name="call" c:identifier="g_dbus_proxy_call" version="2.26" glib:finish-func="call_finish" glib:sync-func="call_sync">
+        <doc xml:space="preserve" filename="gio/gdbusproxy.c" line="2873">
+          Asynchronously invokes the @method_name method on @proxy.
+
+If @method_name contains any dots, then @name is split into interface and
+method name parts. This allows using @proxy for invoking methods on
+other interfaces.
+
+If the #GDBusConnection associated with @proxy is closed then
+the operation will fail with %G_IO_ERROR_CLOSED. If
+@cancellable is canceled, the operation will fail with
+%G_IO_ERROR_CANCELLED. If @parameters contains a value not
+compatible with the D-Bus protocol, the operation fails with
+%G_IO_ERROR_INVALID_ARGUMENT.
+
+If the @parameters #GVariant is floating, it is consumed. This allows
+convenient 'inline' use of g_variant_new(), e.g.:
+|[&lt;!-- language="C" --&gt;
+ g_dbus_proxy_call (proxy,
+                    "TwoStrings",
+                    g_variant_new ("(ss)",
+                                   "Thing One",
+                                   "Thing Two"),
+                    G_DBUS_CALL_FLAGS_NONE,
+                    -1,
+                    NULL,
+                    (GAsyncReadyCallback) two_strings_done,
+                    &amp;data);
+]|
+
+If @proxy has an expected interface (see
+#GDBusProxy:g-interface-info) and @method_name is referenced by it,
+then the return value is checked against the return type.
+
+This is an asynchronous method. When the operation is finished,
+@callback will be invoked in the thread-default main context
+(see [method@GLib.MainContext.push_thread_default])
+of the thread you are calling this method from.
+You can then call g_dbus_proxy_call_finish() to get the result of
+the operation. See g_dbus_proxy_call_sync() for the synchronous
+version of this method.
+
+If @callback is %NULL then the D-Bus method call message will be sent with
+the %G_DBUS_MESSAGE_FLAGS_NO_REPLY_EXPECTED flag set.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -490,6 +874,9 @@
         </parameters>
       </method>
       <method name="call_finish" c:identifier="g_dbus_proxy_call_finish" version="2.26" throws="1">
+        <doc xml:space="preserve" filename="gio/gdbusproxy.c" line="2944">
+          Finishes an operation started with g_dbus_proxy_call().
+        </doc>
         <return-value transfer-ownership="full">
           <type name="GLib.Variant" c:type="GVariant*"/>
         </return-value>
@@ -503,6 +890,42 @@
         </parameters>
       </method>
       <method name="call_sync" c:identifier="g_dbus_proxy_call_sync" version="2.26" throws="1" glib:async-func="call">
+        <doc xml:space="preserve" filename="gio/gdbusproxy.c" line="2965">
+          Synchronously invokes the @method_name method on @proxy.
+
+If @method_name contains any dots, then @name is split into interface and
+method name parts. This allows using @proxy for invoking methods on
+other interfaces.
+
+If the #GDBusConnection associated with @proxy is disconnected then
+the operation will fail with %G_IO_ERROR_CLOSED. If
+@cancellable is canceled, the operation will fail with
+%G_IO_ERROR_CANCELLED. If @parameters contains a value not
+compatible with the D-Bus protocol, the operation fails with
+%G_IO_ERROR_INVALID_ARGUMENT.
+
+If the @parameters #GVariant is floating, it is consumed. This allows
+convenient 'inline' use of g_variant_new(), e.g.:
+|[&lt;!-- language="C" --&gt;
+ g_dbus_proxy_call_sync (proxy,
+                         "TwoStrings",
+                         g_variant_new ("(ss)",
+                                        "Thing One",
+                                        "Thing Two"),
+                         G_DBUS_CALL_FLAGS_NONE,
+                         -1,
+                         NULL,
+                         &amp;error);
+]|
+
+The calling thread is blocked until a reply is received. See
+g_dbus_proxy_call() for the asynchronous version of this
+method.
+
+If @proxy has an expected interface (see
+#GDBusProxy:g-interface-info) and @method_name is referenced by it,
+then the return value is checked against the return type.
+        </doc>
         <return-value transfer-ownership="full">
           <type name="GLib.Variant" c:type="GVariant*"/>
         </return-value>
@@ -527,6 +950,180 @@
           </parameter>
         </parameters>
       </method>
+      <method name="get_connection" c:identifier="g_dbus_proxy_get_connection" glib:get-property="g-connection" version="2.26">
+        <doc xml:space="preserve" filename="gio/gdbusproxy.c" line="2232">
+          Gets the connection @proxy is for.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="DBusConnection" c:type="GDBusConnection*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="proxy" transfer-ownership="none">
+            <type name="DBusProxy" c:type="GDBusProxy*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_default_timeout" c:identifier="g_dbus_proxy_get_default_timeout" glib:get-property="g-default-timeout" version="2.26">
+        <doc xml:space="preserve" filename="gio/gdbusproxy.c" line="2348">
+          Gets the timeout to use if -1 (specifying default timeout) is
+passed as @timeout_msec in the g_dbus_proxy_call() and
+g_dbus_proxy_call_sync() functions.
+
+See the #GDBusProxy:g-default-timeout property for more details.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gint" c:type="gint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="proxy" transfer-ownership="none">
+            <type name="DBusProxy" c:type="GDBusProxy*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_flags" c:identifier="g_dbus_proxy_get_flags" glib:get-property="g-flags" version="2.26">
+        <doc xml:space="preserve" filename="gio/gdbusproxy.c" line="2249">
+          Gets the flags that @proxy was constructed with.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="DBusProxyFlags" c:type="GDBusProxyFlags"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="proxy" transfer-ownership="none">
+            <type name="DBusProxy" c:type="GDBusProxy*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_interface_name" c:identifier="g_dbus_proxy_get_interface_name" glib:get-property="g-interface-name" version="2.26">
+        <doc xml:space="preserve" filename="gio/gdbusproxy.c" line="2331">
+          Gets the D-Bus interface name @proxy is for.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="utf8" c:type="const gchar*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="proxy" transfer-ownership="none">
+            <type name="DBusProxy" c:type="GDBusProxy*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_name" c:identifier="g_dbus_proxy_get_name" glib:get-property="g-name" version="2.26">
+        <doc xml:space="preserve" filename="gio/gdbusproxy.c" line="2266">
+          Gets the name that @proxy was constructed for.
+
+When connected to a message bus, this will usually be non-%NULL.
+However, it may be %NULL for a proxy that communicates using a peer-to-peer
+pattern.
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="utf8" c:type="const gchar*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="proxy" transfer-ownership="none">
+            <type name="DBusProxy" c:type="GDBusProxy*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_name_owner" c:identifier="g_dbus_proxy_get_name_owner" glib:get-property="g-name-owner" version="2.26">
+        <doc xml:space="preserve" filename="gio/gdbusproxy.c" line="2287">
+          The unique name that owns the name that @proxy is for or %NULL if
+no-one currently owns that name. You may connect to the
+#GObject::notify signal to track changes to the
+#GDBusProxy:g-name-owner property.
+        </doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="utf8" c:type="gchar*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="proxy" transfer-ownership="none">
+            <type name="DBusProxy" c:type="GDBusProxy*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_object_path" c:identifier="g_dbus_proxy_get_object_path" glib:get-property="g-object-path" version="2.26">
+        <doc xml:space="preserve" filename="gio/gdbusproxy.c" line="2314">
+          Gets the object path @proxy is for.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="utf8" c:type="const gchar*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="proxy" transfer-ownership="none">
+            <type name="DBusProxy" c:type="GDBusProxy*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_default_timeout" c:identifier="g_dbus_proxy_set_default_timeout" glib:set-property="g-default-timeout" version="2.26">
+        <doc xml:space="preserve" filename="gio/gdbusproxy.c" line="2375">
+          Sets the timeout to use if -1 (specifying default timeout) is
+passed as @timeout_msec in the g_dbus_proxy_call() and
+g_dbus_proxy_call_sync() functions.
+
+See the #GDBusProxy:g-default-timeout property for more details.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="proxy" transfer-ownership="none">
+            <type name="DBusProxy" c:type="GDBusProxy*"/>
+          </instance-parameter>
+          <parameter name="timeout_msec" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+        </parameters>
+      </method>
+      <glib:signal name="g-properties-changed" when="last" version="2.26">
+        <doc xml:space="preserve" filename="gio/gdbusproxy.c" line="539">
+          Emitted when one or more D-Bus properties on @proxy changes. The
+local cache has already been updated when this signal fires. Note
+that both @changed_properties and @invalidated_properties are
+guaranteed to never be %NULL (either may be empty though).
+
+If the proxy has the flag
+%G_DBUS_PROXY_FLAGS_GET_INVALIDATED_PROPERTIES set, then
+@invalidated_properties will always be empty.
+
+This signal corresponds to the
+`PropertiesChanged` D-Bus signal on the
+`org.freedesktop.DBus.Properties` interface.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="changed_properties" transfer-ownership="none">
+            <type name="GLib.Variant"/>
+          </parameter>
+          <parameter name="invalidated_properties" transfer-ownership="none">
+            <array>
+              <type name="utf8"/>
+            </array>
+          </parameter>
+        </parameters>
+      </glib:signal>
+      <glib:signal name="g-signal" when="last" detailed="1" version="2.26">
+        <doc xml:space="preserve" filename="gio/gdbusproxy.c" line="575">
+          Emitted when a signal from the remote object and interface that @proxy is for, has been received.
+
+Since 2.72 this signal supports detailed connections. You can connect to
+the detailed signal `g-signal::x` in order to receive callbacks only when
+signal `x` is received from the remote object.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="sender_name" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="gchar*"/>
+          </parameter>
+          <parameter name="signal_name" transfer-ownership="none">
+            <type name="utf8" c:type="gchar*"/>
+          </parameter>
+          <parameter name="parameters" transfer-ownership="none">
+            <type name="GLib.Variant"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
     </class>
     <interface name="File" c:symbol-prefix="file" c:type="GFile" glib:type-name="GFile" glib:get-type="g_file_get_type" glib:type-struct="FileIface">
       <function name="new_for_path" c:identifier="g_file_new_for_path">
@@ -607,7 +1204,45 @@
       </method>
     </class>
     <class name="InputStream" c:symbol-prefix="input_stream" c:type="GInputStream" parent="GObject.Object" abstract="1" glib:type-name="GInputStream" glib:get-type="g_input_stream_get_type" glib:type-struct="InputStreamClass">
+      <method name="clear_pending" c:identifier="g_input_stream_clear_pending">
+        <doc xml:space="preserve" filename="gio/ginputstream.c" line="1270">
+          Clears the pending flag on @stream.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="stream" transfer-ownership="none">
+            <type name="InputStream" c:type="GInputStream*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="close" c:identifier="g_input_stream_close" throws="1" glib:async-func="close_async">
+        <doc xml:space="preserve" filename="gio/ginputstream.c" line="488">
+          Closes the stream, releasing resources related to it.
+
+Once the stream is closed, all other operations will return %G_IO_ERROR_CLOSED.
+Closing a stream multiple times will not return an error.
+
+Streams will be automatically closed when the last reference
+is dropped, but you might want to call this function to make sure
+resources are released as early as possible.
+
+Some streams might keep the backing store of the stream (e.g. a file descriptor)
+open after the stream is closed. See the documentation for the individual
+stream for details.
+
+On failure the first error that happened will be reported, but the close
+operation will finish as much as possible. A stream that failed to
+close will still return %G_IO_ERROR_CLOSED for all operations. Still, it
+is important to check and report the error to the user.
+
+If @cancellable is not %NULL, then the operation can be cancelled by
+triggering the cancellable object from another thread. If the operation
+was cancelled, the error %G_IO_ERROR_CANCELLED will be returned.
+Cancelling a close will still leave the stream closed, but some streams
+can use a faster close that doesn't block to e.g. check errors.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -620,7 +1255,62 @@
           </parameter>
         </parameters>
       </method>
+      <method name="has_pending" c:identifier="g_input_stream_has_pending">
+        <doc xml:space="preserve" filename="gio/ginputstream.c" line="1216">
+          Checks if an input stream has pending actions.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="stream" transfer-ownership="none">
+            <type name="InputStream" c:type="GInputStream*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="is_closed" c:identifier="g_input_stream_is_closed">
+        <doc xml:space="preserve" filename="gio/ginputstream.c" line="1194">
+          Checks if an input stream has been closed.
+
+This only indicates whether the stream has been closed from this end by
+calling [method@Gio.InputStream.close]. If the stream is a pipe or socket,
+for example, and the process on the other end has closed its end, this method
+will still return false. Methods which try to read from the input stream will
+return any remaining data, end-of-file or an error, however.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="stream" transfer-ownership="none">
+            <type name="InputStream" c:type="GInputStream*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="read" c:identifier="g_input_stream_read" throws="1">
+        <doc xml:space="preserve" filename="gio/ginputstream.c" line="129">
+          Tries to read @count bytes from the stream into the buffer starting at
+@buffer. Will block during this read.
+
+If count is zero returns zero and does nothing. A value of @count
+larger than %G_MAXSSIZE will cause a %G_IO_ERROR_INVALID_ARGUMENT error.
+
+On success, the number of bytes read into the buffer is returned.
+It is not an error if this is not the same as the requested size, as it
+can happen e.g. near the end of a file. Zero is returned on end of file
+(or if @count is zero),  but never otherwise.
+
+The returned @buffer is not a nul-terminated string, it can contain nul bytes
+at any position, and this function doesn't nul-terminate the @buffer.
+
+If @cancellable is not %NULL, then the operation can be cancelled by
+triggering the cancellable object from another thread. If the operation
+was cancelled, the error %G_IO_ERROR_CANCELLED will be returned. If an
+operation was partially finished when the operation was cancelled the
+partial result will be returned, without an error.
+
+On error -1 is returned and @error is set accordingly.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="gssize" c:type="gssize"/>
         </return-value>
@@ -642,6 +1332,28 @@
         </parameters>
       </method>
       <method name="read_bytes_async" c:identifier="g_input_stream_read_bytes_async" version="2.34" glib:finish-func="read_bytes_finish" glib:sync-func="read_bytes">
+        <doc xml:space="preserve" filename="gio/ginputstream.c" line="914">
+          Request an asynchronous read of @count bytes from the stream into a
+new #GBytes. When the operation is finished @callback will be
+called. You can then call g_input_stream_read_bytes_finish() to get the
+result of the operation.
+
+During an async request no other sync and async calls are allowed
+on @stream, and will result in %G_IO_ERROR_PENDING errors.
+
+A value of @count larger than %G_MAXSSIZE will cause a
+%G_IO_ERROR_INVALID_ARGUMENT error.
+
+On success, the new #GBytes will be passed to the callback. It is
+not an error if this is smaller than the requested size, as it can
+happen e.g. near the end of a file, but generally we try to read as
+many bytes as requested. Zero is returned on end of file (or if
+@count is zero), but never otherwise.
+
+Any outstanding I/O request with higher priority (lower numerical
+value) will be executed before an outstanding request with lower
+priority. Default priority is %G_PRIORITY_DEFAULT.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -667,6 +1379,9 @@
         </parameters>
       </method>
       <method name="read_bytes_finish" c:identifier="g_input_stream_read_bytes_finish" version="2.34" throws="1">
+        <doc xml:space="preserve" filename="gio/ginputstream.c" line="969">
+          Finishes an asynchronous stream read-into-#GBytes operation.
+        </doc>
         <return-value transfer-ownership="full">
           <type name="GLib.Bytes" c:type="GBytes*"/>
         </return-value>
@@ -692,6 +1407,14 @@
         </parameters>
       </constructor>
       <method name="append" c:identifier="g_list_store_append" version="2.44">
+        <doc xml:space="preserve" filename="gio/gliststore.c" line="361">
+          Appends @item to @store. @item must be of type #GListStore:item-type.
+
+This function takes a ref on @item.
+
+Use g_list_store_splice() to append multiple items at the same time
+efficiently.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -704,7 +1427,17 @@
           </parameter>
         </parameters>
       </method>
-      <method name="remove_all" c:identifier="g_list_store_remove_all" version="2.44">
+      <method name="insert" c:identifier="g_list_store_insert" version="2.44">
+        <doc xml:space="preserve" filename="gio/gliststore.c" line="260">
+          Inserts @item into @store at @position. @item must be of type
+#GListStore:item-type or derived from it. @position must be smaller
+than the length of the list, or equal to it to append.
+
+This function takes a ref on @item.
+
+Use g_list_store_splice() to insert multiple items at the same time
+efficiently.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -712,6 +1445,93 @@
           <instance-parameter name="store" transfer-ownership="none">
             <type name="ListStore" c:type="GListStore*"/>
           </instance-parameter>
+          <parameter name="position" transfer-ownership="none">
+            <type name="guint" c:type="guint"/>
+          </parameter>
+          <parameter name="item" transfer-ownership="none">
+            <type name="GObject.Object" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="insert_sorted" c:identifier="g_list_store_insert_sorted" version="2.44">
+        <doc xml:space="preserve" filename="gio/gliststore.c" line="294">
+          Inserts @item into @store at a position to be determined by the
+@compare_func.
+
+The list must already be sorted before calling this function or the
+result is undefined.  Usually you would approach this by only ever
+inserting items by way of this function.
+
+This function takes a ref on @item.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="guint" c:type="guint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="store" transfer-ownership="none">
+            <type name="ListStore" c:type="GListStore*"/>
+          </instance-parameter>
+          <parameter name="item" transfer-ownership="none">
+            <type name="GObject.Object" c:type="gpointer"/>
+          </parameter>
+          <parameter name="compare_func" transfer-ownership="none" scope="call" closure="2">
+            <type name="GLib.CompareDataFunc" c:type="GCompareDataFunc"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="remove" c:identifier="g_list_store_remove" version="2.44">
+        <doc xml:space="preserve" filename="gio/gliststore.c" line="390">
+          Removes the item from @store that is at @position. @position must be
+smaller than the current length of the list.
+
+Use g_list_store_splice() to remove multiple items at the same time
+efficiently.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="store" transfer-ownership="none">
+            <type name="ListStore" c:type="GListStore*"/>
+          </instance-parameter>
+          <parameter name="position" transfer-ownership="none">
+            <type name="guint" c:type="guint"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="remove_all" c:identifier="g_list_store_remove_all" version="2.44">
+        <doc xml:space="preserve" filename="gio/gliststore.c" line="418">
+          Removes all items from @store.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="store" transfer-ownership="none">
+            <type name="ListStore" c:type="GListStore*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="sort" c:identifier="g_list_store_sort" version="2.46">
+        <doc xml:space="preserve" filename="gio/gliststore.c" line="335">
+          Sort the items in @store according to @compare_func.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="store" transfer-ownership="none">
+            <type name="ListStore" c:type="GListStore*"/>
+          </instance-parameter>
+          <parameter name="compare_func" transfer-ownership="none" scope="call" closure="1">
+            <type name="GLib.CompareDataFunc" c:type="GCompareDataFunc"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
         </parameters>
       </method>
     </class>
@@ -722,6 +1542,11 @@
         </return-value>
       </constructor>
       <method name="append" c:identifier="g_menu_append" version="2.32">
+        <doc xml:space="preserve" filename="gio/gmenu.c" line="290">
+          Convenience function for appending a normal menu item to the end of
+@menu.  Combine g_menu_item_new() and g_menu_insert_item() for a more
+flexible alternative.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -737,7 +1562,303 @@
           </parameter>
         </parameters>
       </method>
+      <method name="append_item" c:identifier="g_menu_append_item" version="2.32">
+        <doc xml:space="preserve" filename="gio/gmenu.c" line="186">
+          Appends @item to the end of @menu.
+
+See g_menu_insert_item() for more information.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu" transfer-ownership="none">
+            <type name="Menu" c:type="GMenu*"/>
+          </instance-parameter>
+          <parameter name="item" transfer-ownership="none">
+            <type name="MenuItem" c:type="GMenuItem*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="append_section" c:identifier="g_menu_append_section" version="2.32">
+        <doc xml:space="preserve" filename="gio/gmenu.c" line="357">
+          Convenience function for appending a section menu item to the end of
+@menu.  Combine g_menu_item_new_section() and g_menu_insert_item() for a
+more flexible alternative.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu" transfer-ownership="none">
+            <type name="Menu" c:type="GMenu*"/>
+          </instance-parameter>
+          <parameter name="label" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="section" transfer-ownership="none">
+            <type name="MenuModel" c:type="GMenuModel*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="append_submenu" c:identifier="g_menu_append_submenu" version="2.32">
+        <doc xml:space="preserve" filename="gio/gmenu.c" line="423">
+          Convenience function for appending a submenu menu item to the end of
+@menu.  Combine g_menu_item_new_submenu() and g_menu_insert_item() for a
+more flexible alternative.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu" transfer-ownership="none">
+            <type name="Menu" c:type="GMenu*"/>
+          </instance-parameter>
+          <parameter name="label" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="submenu" transfer-ownership="none">
+            <type name="MenuModel" c:type="GMenuModel*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="freeze" c:identifier="g_menu_freeze" version="2.32">
+        <doc xml:space="preserve" filename="gio/gmenu.c" line="204">
+          Marks @menu as frozen.
+
+After the menu is frozen, it is an error to attempt to make any
+changes to it.  In effect this means that the #GMenu API must no
+longer be used.
+
+This function causes g_menu_model_is_mutable() to begin returning
+%FALSE, which has some positive performance implications.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu" transfer-ownership="none">
+            <type name="Menu" c:type="GMenu*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="insert" c:identifier="g_menu_insert" version="2.32">
+        <doc xml:space="preserve" filename="gio/gmenu.c" line="244">
+          Convenience function for inserting a normal menu item into @menu.
+Combine g_menu_item_new() and g_menu_insert_item() for a more flexible
+alternative.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu" transfer-ownership="none">
+            <type name="Menu" c:type="GMenu*"/>
+          </instance-parameter>
+          <parameter name="position" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+          <parameter name="label" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="detailed_action" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="insert_item" c:identifier="g_menu_insert_item" version="2.32">
+        <doc xml:space="preserve" filename="gio/gmenu.c" line="121">
+          Inserts @item into @menu.
+
+The "insertion" is actually done by copying all of the attribute and
+link values of @item and using them to form a new item within @menu.
+As such, @item itself is not really inserted, but rather, a menu item
+that is exactly the same as the one presently described by @item.
+
+This means that @item is essentially useless after the insertion
+occurs.  Any changes you make to it are ignored unless it is inserted
+again (at which point its updated values will be copied).
+
+You should probably just free @item once you're done.
+
+There are many convenience functions to take care of common cases.
+See g_menu_insert(), g_menu_insert_section() and
+g_menu_insert_submenu() as well as "prepend" and "append" variants of
+each of these functions.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu" transfer-ownership="none">
+            <type name="Menu" c:type="GMenu*"/>
+          </instance-parameter>
+          <parameter name="position" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+          <parameter name="item" transfer-ownership="none">
+            <type name="MenuItem" c:type="GMenuItem*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="insert_section" c:identifier="g_menu_insert_section" version="2.32">
+        <doc xml:space="preserve" filename="gio/gmenu.c" line="310">
+          Convenience function for inserting a section menu item into @menu.
+Combine g_menu_item_new_section() and g_menu_insert_item() for a more
+flexible alternative.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu" transfer-ownership="none">
+            <type name="Menu" c:type="GMenu*"/>
+          </instance-parameter>
+          <parameter name="position" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+          <parameter name="label" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="section" transfer-ownership="none">
+            <type name="MenuModel" c:type="GMenuModel*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="insert_submenu" c:identifier="g_menu_insert_submenu" version="2.32">
+        <doc xml:space="preserve" filename="gio/gmenu.c" line="377">
+          Convenience function for inserting a submenu menu item into @menu.
+Combine g_menu_item_new_submenu() and g_menu_insert_item() for a more
+flexible alternative.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu" transfer-ownership="none">
+            <type name="Menu" c:type="GMenu*"/>
+          </instance-parameter>
+          <parameter name="position" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+          <parameter name="label" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="submenu" transfer-ownership="none">
+            <type name="MenuModel" c:type="GMenuModel*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="prepend" c:identifier="g_menu_prepend" version="2.32">
+        <doc xml:space="preserve" filename="gio/gmenu.c" line="270">
+          Convenience function for prepending a normal menu item to the start
+of @menu.  Combine g_menu_item_new() and g_menu_insert_item() for a more
+flexible alternative.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu" transfer-ownership="none">
+            <type name="Menu" c:type="GMenu*"/>
+          </instance-parameter>
+          <parameter name="label" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="detailed_action" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="prepend_item" c:identifier="g_menu_prepend_item" version="2.32">
+        <doc xml:space="preserve" filename="gio/gmenu.c" line="168">
+          Prepends @item to the start of @menu.
+
+See g_menu_insert_item() for more information.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu" transfer-ownership="none">
+            <type name="Menu" c:type="GMenu*"/>
+          </instance-parameter>
+          <parameter name="item" transfer-ownership="none">
+            <type name="MenuItem" c:type="GMenuItem*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="prepend_section" c:identifier="g_menu_prepend_section" version="2.32">
+        <doc xml:space="preserve" filename="gio/gmenu.c" line="337">
+          Convenience function for prepending a section menu item to the start
+of @menu.  Combine g_menu_item_new_section() and g_menu_insert_item() for
+a more flexible alternative.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu" transfer-ownership="none">
+            <type name="Menu" c:type="GMenu*"/>
+          </instance-parameter>
+          <parameter name="label" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="section" transfer-ownership="none">
+            <type name="MenuModel" c:type="GMenuModel*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="prepend_submenu" c:identifier="g_menu_prepend_submenu" version="2.32">
+        <doc xml:space="preserve" filename="gio/gmenu.c" line="403">
+          Convenience function for prepending a submenu menu item to the start
+of @menu.  Combine g_menu_item_new_submenu() and g_menu_insert_item() for
+a more flexible alternative.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu" transfer-ownership="none">
+            <type name="Menu" c:type="GMenu*"/>
+          </instance-parameter>
+          <parameter name="label" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="submenu" transfer-ownership="none">
+            <type name="MenuModel" c:type="GMenuModel*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="remove" c:identifier="g_menu_remove" version="2.32">
+        <doc xml:space="preserve" filename="gio/gmenu.c" line="452">
+          Removes an item from the menu.
+
+@position gives the index of the item to remove.
+
+It is an error if position is not in range the range from 0 to one
+less than the number of items in the menu.
+
+It is not possible to remove items by identity since items are added
+to the menu simply by copying their links and attributes (ie:
+identity of the item itself is not preserved).
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="menu" transfer-ownership="none">
+            <type name="Menu" c:type="GMenu*"/>
+          </instance-parameter>
+          <parameter name="position" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="remove_all" c:identifier="g_menu_remove_all" version="2.38">
+        <doc xml:space="preserve" filename="gio/gmenu.c" line="482">
+          Removes all items in the menu.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -759,7 +1880,36 @@
           </parameter>
         </parameters>
       </constructor>
+      <method name="add_button" c:identifier="g_notification_add_button" version="2.40">
+        <doc xml:space="preserve" filename="gio/gnotification.c" line="410">
+          Adds a button to @notification that activates the action in
+@detailed_action when clicked. That action must be an
+application-wide action (starting with "app."). If @detailed_action
+contains a target, the action will be activated with that target as
+its parameter.
+
+See g_action_parse_detailed_name() for a description of the format
+for @detailed_action.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="notification" transfer-ownership="none">
+            <type name="Notification" c:type="GNotification*"/>
+          </instance-parameter>
+          <parameter name="label" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="detailed_action" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_body" c:identifier="g_notification_set_body" version="2.40">
+        <doc xml:space="preserve" filename="gio/gnotification.c" line="249">
+          Sets the body of @notification to @body.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -772,9 +1922,149 @@
           </parameter>
         </parameters>
       </method>
+      <method name="set_category" c:identifier="g_notification_set_category" version="2.70">
+        <doc xml:space="preserve" filename="gio/gnotification.c" line="367">
+          Sets the type of @notification to @category. Categories have a main
+type like `email`, `im` or `device` and can have a detail separated
+by a `.`, e.g. `im.received` or `email.arrived`. Setting the category
+helps the notification server to select proper feedback to the user.
+
+Standard categories are [listed in the specification](https://specifications.freedesktop.org/notification-spec/latest/ar01s06.html).
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="notification" transfer-ownership="none">
+            <type name="Notification" c:type="GNotification*"/>
+          </instance-parameter>
+          <parameter name="category" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_default_action" c:identifier="g_notification_set_default_action" version="2.40">
+        <doc xml:space="preserve" filename="gio/gnotification.c" line="646">
+          Sets the default action of @notification to @detailed_action. This
+action is activated when the notification is clicked on.
+
+The action in @detailed_action must be an application-wide action (it
+must start with "app."). If @detailed_action contains a target, the
+given action will be activated with that target as its parameter.
+See g_action_parse_detailed_name() for a description of the format
+for @detailed_action.
+
+When no default action is set, the application that the notification
+was sent on is activated.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="notification" transfer-ownership="none">
+            <type name="Notification" c:type="GNotification*"/>
+          </instance-parameter>
+          <parameter name="detailed_action" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_icon" c:identifier="g_notification_set_icon" version="2.40">
+        <doc xml:space="preserve" filename="gio/gnotification.c" line="288">
+          Sets the icon of @notification to @icon.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="notification" transfer-ownership="none">
+            <type name="Notification" c:type="GNotification*"/>
+          </instance-parameter>
+          <parameter name="icon" transfer-ownership="none">
+            <type name="Icon" c:type="GIcon*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_priority" c:identifier="g_notification_set_priority">
+        <doc xml:space="preserve" filename="gio/gnotification.c" line="393">
+          Sets the priority of @notification to @priority. See
+#GNotificationPriority for possible values.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="notification" transfer-ownership="none">
+            <type name="Notification" c:type="GNotification*"/>
+          </instance-parameter>
+          <parameter name="priority" transfer-ownership="none">
+            <type name="NotificationPriority" c:type="GNotificationPriority"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_title" c:identifier="g_notification_set_title" version="2.40">
+        <doc xml:space="preserve" filename="gio/gnotification.c" line="210">
+          Sets the title of @notification to @title.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="notification" transfer-ownership="none">
+            <type name="Notification" c:type="GNotification*"/>
+          </instance-parameter>
+          <parameter name="title" transfer-ownership="none">
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
     </class>
     <class name="OutputStream" c:symbol-prefix="output_stream" c:type="GOutputStream" parent="GObject.Object" abstract="1" glib:type-name="GOutputStream" glib:get-type="g_output_stream_get_type" glib:type-struct="OutputStreamClass">
+      <method name="clear_pending" c:identifier="g_output_stream_clear_pending">
+        <doc xml:space="preserve" filename="gio/goutputstream.c" line="2242">
+          Clears the pending flag on @stream.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="stream" transfer-ownership="none">
+            <type name="OutputStream" c:type="GOutputStream*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="close" c:identifier="g_output_stream_close" throws="1" glib:async-func="close_async">
+        <doc xml:space="preserve" filename="gio/goutputstream.c" line="897">
+          Closes the stream, releasing resources related to it.
+
+Once the stream is closed, all other operations will return %G_IO_ERROR_CLOSED.
+Closing a stream multiple times will not return an error.
+
+Closing a stream will automatically flush any outstanding buffers in the
+stream.
+
+Streams will be automatically closed when the last reference
+is dropped, but you might want to call this function to make sure
+resources are released as early as possible.
+
+Some streams might keep the backing store of the stream (e.g. a file descriptor)
+open after the stream is closed. See the documentation for the individual
+stream for details.
+
+On failure the first error that happened will be reported, but the close
+operation will finish as much as possible. A stream that failed to
+close will still return %G_IO_ERROR_CLOSED for all operations. Still, it
+is important to check and report the error to the user, otherwise
+there might be a loss of data as all data might not be written.
+
+If @cancellable is not %NULL, then the operation can be cancelled by
+triggering the cancellable object from another thread. If the operation
+was cancelled, the error %G_IO_ERROR_CANCELLED will be returned.
+Cancelling a close will still leave the stream closed, but there some streams
+can use a faster close that doesn't block to e.g. check errors. On
+cancellation (as with any error) there is no guarantee that all written
+data will reach the target.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -788,6 +2078,17 @@
         </parameters>
       </method>
       <method name="flush" c:identifier="g_output_stream_flush" throws="1" glib:async-func="flush_async">
+        <doc xml:space="preserve" filename="gio/goutputstream.c" line="655">
+          Forces a write of all user-space buffered data for the given
+@stream. Will block during the operation. Closing the stream will
+implicitly cause a flush.
+
+This function is optional for inherited classes.
+
+If @cancellable is not %NULL, then the operation can be cancelled by
+triggering the cancellable object from another thread. If the operation
+was cancelled, the error %G_IO_ERROR_CANCELLED will be returned.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -800,7 +2101,77 @@
           </parameter>
         </parameters>
       </method>
+      <method name="has_pending" c:identifier="g_output_stream_has_pending">
+        <doc xml:space="preserve" filename="gio/goutputstream.c" line="2187">
+          Checks if an output stream has pending actions.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="stream" transfer-ownership="none">
+            <type name="OutputStream" c:type="GOutputStream*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="is_closed" c:identifier="g_output_stream_is_closed">
+        <doc xml:space="preserve" filename="gio/goutputstream.c" line="2144">
+          Checks if an output stream has been closed.
+
+This only indicates whether the stream has been closed from this end by
+calling [method@Gio.OutputStream.close]. If the stream is a pipe or socket,
+for example, and the process on the other end has closed its end, this method
+will still return false. Methods which try to write to the output stream will
+return an error, however.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="stream" transfer-ownership="none">
+            <type name="OutputStream" c:type="GOutputStream*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="is_closing" c:identifier="g_output_stream_is_closing" version="2.24">
+        <doc xml:space="preserve" filename="gio/goutputstream.c" line="2166">
+          Checks if an output stream is being closed. This can be
+used inside e.g. a flush implementation to see if the
+flush (or other i/o operation) is called from within
+the closing operation.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="stream" transfer-ownership="none">
+            <type name="OutputStream" c:type="GOutputStream*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="write" c:identifier="g_output_stream_write" throws="1" glib:async-func="write_async">
+        <doc xml:space="preserve" filename="gio/goutputstream.c" line="177">
+          Tries to write @count bytes from @buffer into the stream. Will block
+during the operation.
+
+If count is 0, returns 0 and does nothing. A value of @count
+larger than %G_MAXSSIZE will cause a %G_IO_ERROR_INVALID_ARGUMENT error.
+
+On success, the number of bytes written to the stream is returned.
+It is not an error if this is not the same as the requested size, as it
+can happen e.g. on a partial I/O error, or if there is not enough
+storage in the stream. All writes block until at least one byte
+is written or an error occurs; 0 is never returned (unless
+@count is 0).
+
+If @cancellable is not %NULL, then the operation can be cancelled by
+triggering the cancellable object from another thread. If the operation
+was cancelled, the error %G_IO_ERROR_CANCELLED will be returned. If an
+operation was partially finished when the operation was cancelled the
+partial result will be returned, without an error.
+
+On error -1 is returned and @error is set accordingly.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="gssize" c:type="gssize"/>
         </return-value>
@@ -822,6 +2193,23 @@
         </parameters>
       </method>
       <method name="write_all_async" c:identifier="g_output_stream_write_all_async" version="2.44" glib:finish-func="write_all_finish" glib:sync-func="write_all">
+        <doc xml:space="preserve" filename="gio/goutputstream.c" line="1180">
+          Request an asynchronous write of @count bytes from @buffer into
+the stream. When the operation is finished @callback will be called.
+You can then call g_output_stream_write_all_finish() to get the result of the
+operation.
+
+This is the asynchronous version of g_output_stream_write_all().
+
+Call g_output_stream_write_all_finish() to collect the result.
+
+Any outstanding I/O request with higher priority (lower numerical
+value) will be executed before an outstanding request with lower
+priority. Default priority is %G_PRIORITY_DEFAULT.
+
+Note that no copy of @buffer will be made, so it must stay valid
+until @callback is called.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -852,6 +2240,18 @@
         </parameters>
       </method>
       <method name="write_all_finish" c:identifier="g_output_stream_write_all_finish" version="2.44" throws="1">
+        <doc xml:space="preserve" filename="gio/goutputstream.c" line="1246">
+          Finishes an asynchronous stream write operation started with
+g_output_stream_write_all_async().
+
+As a special exception to the normal conventions for functions that
+use #GError, if this function returns %FALSE (and sets @error) then
+@bytes_written will be set to the number of bytes that were
+successfully written before the error was encountered.  This
+functionality is only available from C.  If you need it from another
+language then you must write your own loop around
+g_output_stream_write_async().
+        </doc>
         <return-value transfer-ownership="none">
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -882,6 +2282,98 @@
           </parameter>
         </parameters>
       </constructor>
+      <method name="set_enabled" c:identifier="g_simple_action_set_enabled" glib:set-property="enabled" version="2.28">
+        <doc xml:space="preserve" filename="gio/gsimpleaction.c" line="517">
+          Sets the action as enabled or not.
+
+An action must be enabled in order to be activated or in order to
+have its state changed from outside callers.
+
+This should only be called by the implementor of the action.  Users
+of the action should not attempt to modify its enabled flag.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="simple" transfer-ownership="none">
+            <type name="SimpleAction" c:type="GSimpleAction*"/>
+          </instance-parameter>
+          <parameter name="enabled" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <glib:signal name="activate" when="last" version="2.28">
+        <doc xml:space="preserve" filename="gio/gsimpleaction.c" line="361">
+          Indicates that the action was just activated.
+
+@parameter will always be of the expected type, i.e. the parameter type
+specified when the action was created. If an incorrect type is given when
+activating the action, this signal is not emitted.
+
+Since GLib 2.40, if no handler is connected to this signal then the
+default behaviour for boolean-stated actions with a %NULL parameter
+type is to toggle them via the #GSimpleAction::change-state signal.
+For stateful actions where the state type is equal to the parameter
+type, the default is to forward them directly to
+#GSimpleAction::change-state.  This should allow almost all users
+of #GSimpleAction to connect only one handler or the other.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="parameter" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="GLib.Variant"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
+      <glib:signal name="change-state" when="last" version="2.30">
+        <doc xml:space="preserve" filename="gio/gsimpleaction.c" line="392">
+          Indicates that the action just received a request to change its
+state.
+
+@value will always be of the correct state type, i.e. the type of the
+initial state passed to g_simple_action_new_stateful(). If an incorrect
+type is given when requesting to change the state, this signal is not
+emitted.
+
+If no handler is connected to this signal then the default
+behaviour is to call g_simple_action_set_state() to set the state
+to the requested value. If you connect a signal handler then no
+default action is taken. If the state should change then you must
+call g_simple_action_set_state() from the handler.
+
+An example of a 'change-state' handler:
+|[&lt;!-- language="C" --&gt;
+static void
+change_volume_state (GSimpleAction *action,
+                     GVariant      *value,
+                     gpointer       user_data)
+{
+  gint requested;
+
+  requested = g_variant_get_int32 (value);
+
+  // Volume only goes from 0 to 10
+  if (0 &lt;= requested &amp;&amp; requested &lt;= 10)
+    g_simple_action_set_state (action, value);
+}
+]|
+
+The handler need not set the state to the requested value.
+It could set it to any value at all, or take some other action.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="value" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="GLib.Variant"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
     </class>
     <class name="Subprocess" c:symbol-prefix="subprocess" c:type="GSubprocess" version="2.40" parent="GObject.Object" glib:type-name="GSubprocess" glib:get-type="g_subprocess_get_type">
       <constructor name="new" c:identifier="g_subprocess_new" shadowed-by="newv" version="2.40" introspectable="0">
@@ -919,6 +2411,15 @@
         </parameters>
       </constructor>
       <method name="force_exit" c:identifier="g_subprocess_force_exit" version="2.40">
+        <doc xml:space="preserve" filename="gio/gsubprocess.c" line="1101">
+          Use an operating-system specific method to attempt an immediate,
+forceful termination of the process.  There is no mechanism to
+determine whether or not the request itself was successful;
+however, you can use g_subprocess_wait() to monitor the status of
+the process after calling this function.
+
+On Unix, this function sends %SIGKILL.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -929,6 +2430,91 @@
         </parameters>
       </method>
       <method name="get_exit_status" c:identifier="g_subprocess_get_exit_status" version="2.40">
+        <doc xml:space="preserve" filename="gio/gsubprocess.c" line="1242">
+          Check the exit status of the subprocess, given that it exited
+normally.  This is the value passed to the exit() system call or the
+return value from main.
+
+This is equivalent to the system WEXITSTATUS macro.
+
+It is an error to call this function before g_subprocess_wait() and
+unless g_subprocess_get_if_exited() returned %TRUE.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gint" c:type="gint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="subprocess" transfer-ownership="none">
+            <type name="Subprocess" c:type="GSubprocess*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_identifier" c:identifier="g_subprocess_get_identifier" version="2.40">
+        <doc xml:space="preserve" filename="gio/gsubprocess.c" line="638">
+          On UNIX, returns the process ID as a decimal string.
+On Windows, returns the result of GetProcessId() also as a string.
+If the subprocess has terminated, this will return %NULL.
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="utf8" c:type="const gchar*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="subprocess" transfer-ownership="none">
+            <type name="Subprocess" c:type="GSubprocess*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_if_exited" c:identifier="g_subprocess_get_if_exited" version="2.40">
+        <doc xml:space="preserve" filename="gio/gsubprocess.c" line="1204">
+          Check if the given subprocess exited normally (ie: by way of exit()
+or return from main()).
+
+This is equivalent to the system WIFEXITED macro.
+
+It is an error to call this function before g_subprocess_wait() has
+returned.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="subprocess" transfer-ownership="none">
+            <type name="Subprocess" c:type="GSubprocess*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_if_signaled" c:identifier="g_subprocess_get_if_signaled" version="2.40">
+        <doc xml:space="preserve" filename="gio/gsubprocess.c" line="1283">
+          Check if the given subprocess terminated in response to a signal.
+
+This is equivalent to the system WIFSIGNALED macro.
+
+It is an error to call this function before g_subprocess_wait() has
+returned.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="subprocess" transfer-ownership="none">
+            <type name="Subprocess" c:type="GSubprocess*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_status" c:identifier="g_subprocess_get_status" version="2.40">
+        <doc xml:space="preserve" filename="gio/gsubprocess.c" line="1129">
+          Gets the raw status code of the process, as from waitpid().
+
+This value has no particular meaning, but it can be used with the
+macros defined by the system headers such as WIFEXITED.  It can also
+be used with g_spawn_check_wait_status().
+
+It is more likely that you want to use g_subprocess_get_if_exited()
+followed by g_subprocess_get_exit_status().
+
+It is an error to call this function before g_subprocess_wait() has
+returned.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="gint" c:type="gint"/>
         </return-value>
@@ -939,6 +2525,13 @@
         </parameters>
       </method>
       <method name="get_stderr_pipe" c:identifier="g_subprocess_get_stderr_pipe" version="2.40">
+        <doc xml:space="preserve" filename="gio/gsubprocess.c" line="708">
+          Gets the #GInputStream from which to read the stderr output of
+@subprocess.
+
+The process must have been created with %G_SUBPROCESS_FLAGS_STDERR_PIPE,
+otherwise %NULL will be returned.
+        </doc>
         <return-value transfer-ownership="none" nullable="1">
           <type name="InputStream" c:type="GInputStream*"/>
         </return-value>
@@ -949,6 +2542,13 @@
         </parameters>
       </method>
       <method name="get_stdin_pipe" c:identifier="g_subprocess_get_stdin_pipe" version="2.40">
+        <doc xml:space="preserve" filename="gio/gsubprocess.c" line="664">
+          Gets the #GOutputStream that you can write to in order to give data
+to the stdin of @subprocess.
+
+The process must have been created with %G_SUBPROCESS_FLAGS_STDIN_PIPE and
+not %G_SUBPROCESS_FLAGS_STDIN_INHERIT, otherwise %NULL will be returned.
+        </doc>
         <return-value transfer-ownership="none" nullable="1">
           <type name="OutputStream" c:type="GOutputStream*"/>
         </return-value>
@@ -959,6 +2559,13 @@
         </parameters>
       </method>
       <method name="get_stdout_pipe" c:identifier="g_subprocess_get_stdout_pipe" version="2.40">
+        <doc xml:space="preserve" filename="gio/gsubprocess.c" line="686">
+          Gets the #GInputStream from which to read the stdout output of
+@subprocess.
+
+The process must have been created with %G_SUBPROCESS_FLAGS_STDOUT_PIPE,
+otherwise %NULL will be returned.
+        </doc>
         <return-value transfer-ownership="none" nullable="1">
           <type name="InputStream" c:type="GInputStream*"/>
         </return-value>
@@ -969,6 +2576,14 @@
         </parameters>
       </method>
       <method name="get_successful" c:identifier="g_subprocess_get_successful" version="2.40">
+        <doc xml:space="preserve" filename="gio/gsubprocess.c" line="1167">
+          Checks if the process was "successful".  A process is considered
+successful if it exited cleanly with an exit status of 0, either by
+way of the exit() system call or return from main().
+
+It is an error to call this function before g_subprocess_wait() has
+returned.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -978,7 +2593,61 @@
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_term_sig" c:identifier="g_subprocess_get_term_sig" version="2.40">
+        <doc xml:space="preserve" filename="gio/gsubprocess.c" line="1320">
+          Get the signal number that caused the subprocess to terminate, given
+that it terminated due to a signal.
+
+This is equivalent to the system WTERMSIG macro.
+
+It is an error to call this function before g_subprocess_wait() and
+unless g_subprocess_get_if_signaled() returned %TRUE.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gint" c:type="gint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="subprocess" transfer-ownership="none">
+            <type name="Subprocess" c:type="GSubprocess*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="send_signal" c:identifier="g_subprocess_send_signal" version="2.40">
+        <doc xml:space="preserve" filename="gio/gsubprocess.c" line="1076">
+          Sends the UNIX signal @signal_num to the subprocess, if it is still
+running.
+
+This API is race-free.  If the subprocess has terminated, it will not
+be signalled.
+
+This API is not available on Windows.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="subprocess" transfer-ownership="none">
+            <type name="Subprocess" c:type="GSubprocess*"/>
+          </instance-parameter>
+          <parameter name="signal_num" transfer-ownership="none">
+            <type name="gint" c:type="gint"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="wait" c:identifier="g_subprocess_wait" version="2.40" throws="1" glib:async-func="wait_async">
+        <doc xml:space="preserve" filename="gio/gsubprocess.c" line="878">
+          Synchronously wait for the subprocess to terminate.
+
+After the process terminates you can query its exit status with
+functions such as g_subprocess_get_if_exited() and
+g_subprocess_get_exit_status().
+
+This function does not fail in the case of the subprocess having
+abnormal termination.  See g_subprocess_wait_check() for that.
+
+Cancelling @cancellable doesn't kill the subprocess.  Call
+g_subprocess_force_exit() if it is desirable.
+        </doc>
         <return-value transfer-ownership="none">
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -992,6 +2661,11 @@
         </parameters>
       </method>
       <method name="wait_async" c:identifier="g_subprocess_wait_async" version="2.40" glib:finish-func="wait_finish" glib:sync-func="wait">
+        <doc xml:space="preserve" filename="gio/gsubprocess.c" line="777">
+          Wait for the subprocess to terminate.
+
+This is the asynchronous version of g_subprocess_wait().
+        </doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1011,6 +2685,10 @@
         </parameters>
       </method>
       <method name="wait_finish" c:identifier="g_subprocess_wait_finish" version="2.40" throws="1">
+        <doc xml:space="preserve" filename="gio/gsubprocess.c" line="826">
+          Collects the result of a previous call to
+g_subprocess_wait_async().
+        </doc>
         <return-value transfer-ownership="none">
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -1063,8 +2741,51 @@
         </parameter>
       </parameters>
     </function>
+    <interface name="ActionGroup" c:symbol-prefix="action_group" c:type="GActionGroup" glib:type-name="GActionGroup" glib:get-type="g_action_group_get_type" glib:type-struct="ActionGroupInterface"/>
+    <interface name="AsyncResult" c:symbol-prefix="async_result" c:type="GAsyncResult" glib:type-name="GAsyncResult" glib:get-type="g_async_result_get_type" glib:type-struct="AsyncResultIface"/>
+    <bitfield name="DBusCallFlags" version="2.26" glib:type-name="GDBusCallFlags" glib:get-type="g_dbus_call_flags_get_type" c:type="GDBusCallFlags">
+      <doc xml:space="preserve" filename="gio/gioenums.h" line="1281">
+        Flags used in g_dbus_connection_call() and similar APIs.
+      </doc>
+      <member name="none" value="0" c:identifier="G_DBUS_CALL_FLAGS_NONE" glib:nick="none" glib:name="G_DBUS_CALL_FLAGS_NONE"/>
+      <member name="no_auto_start" value="1" c:identifier="G_DBUS_CALL_FLAGS_NO_AUTO_START" glib:nick="no-auto-start" glib:name="G_DBUS_CALL_FLAGS_NO_AUTO_START"/>
+      <member name="allow_interactive_authorization" value="2" c:identifier="G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION" glib:nick="allow-interactive-authorization" glib:name="G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION"/>
+    </bitfield>
+    <record name="DBusInterfaceInfo" c:type="GDBusInterfaceInfo" version="2.26" glib:type-name="GDBusInterfaceInfo" glib:get-type="g_dbus_interface_info_get_type" c:symbol-prefix="dbus_interface_info"/>
+    <bitfield name="DBusProxyFlags" version="2.26" glib:type-name="GDBusProxyFlags" glib:get-type="g_dbus_proxy_flags_get_type" c:type="GDBusProxyFlags">
+      <doc xml:space="preserve" filename="gio/gioenums.h" line="1031">
+        Flags used when constructing an instance of a #GDBusProxy derived class.
+      </doc>
+      <member name="none" value="0" c:identifier="G_DBUS_PROXY_FLAGS_NONE" glib:nick="none" glib:name="G_DBUS_PROXY_FLAGS_NONE"/>
+      <member name="do_not_load_properties" value="1" c:identifier="G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES" glib:nick="do-not-load-properties" glib:name="G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES"/>
+      <member name="do_not_connect_signals" value="2" c:identifier="G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS" glib:nick="do-not-connect-signals" glib:name="G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS"/>
+      <member name="do_not_auto_start" value="4" c:identifier="G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START" glib:nick="do-not-auto-start" glib:name="G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START"/>
+      <member name="get_invalidated_properties" value="8" c:identifier="G_DBUS_PROXY_FLAGS_GET_INVALIDATED_PROPERTIES" glib:nick="get-invalidated-properties" glib:name="G_DBUS_PROXY_FLAGS_GET_INVALIDATED_PROPERTIES"/>
+      <member name="do_not_auto_start_at_construction" value="16" c:identifier="G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START_AT_CONSTRUCTION" glib:nick="do-not-auto-start-at-construction" glib:name="G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START_AT_CONSTRUCTION"/>
+      <member name="no_match_rule" value="32" c:identifier="G_DBUS_PROXY_FLAGS_NO_MATCH_RULE" glib:nick="no-match-rule" glib:name="G_DBUS_PROXY_FLAGS_NO_MATCH_RULE"/>
+    </bitfield>
+    <interface name="Icon" c:symbol-prefix="icon" c:type="GIcon" glib:type-name="GIcon" glib:get-type="g_icon_get_type" glib:type-struct="IconIface"/>
     <interface name="ListModel" c:symbol-prefix="list_model" c:type="GListModel" glib:type-name="GListModel" glib:get-type="g_list_model_get_type" glib:type-struct="ListModelInterface"/>
+    <class name="MenuItem" c:symbol-prefix="menu_item" c:type="GMenuItem" version="2.32" parent="GObject.Object" glib:type-name="GMenuItem" glib:get-type="g_menu_item_get_type"/>
     <class name="MenuModel" c:symbol-prefix="menu_model" c:type="GMenuModel" version="2.32" parent="GObject.Object" abstract="1" glib:type-name="GMenuModel" glib:get-type="g_menu_model_get_type" glib:type-struct="MenuModelClass"/>
+    <enumeration name="NotificationPriority" version="2.42" glib:type-name="GNotificationPriority" glib:get-type="g_notification_priority_get_type" c:type="GNotificationPriority">
+      <doc xml:space="preserve" filename="gio/gioenums.h" line="2087">
+        Priority levels for #GNotifications.
+      </doc>
+      <member name="normal" value="0" c:identifier="G_NOTIFICATION_PRIORITY_NORMAL" glib:nick="normal" glib:name="G_NOTIFICATION_PRIORITY_NORMAL"/>
+      <member name="low" value="1" c:identifier="G_NOTIFICATION_PRIORITY_LOW" glib:nick="low" glib:name="G_NOTIFICATION_PRIORITY_LOW"/>
+      <member name="high" value="2" c:identifier="G_NOTIFICATION_PRIORITY_HIGH" glib:nick="high" glib:name="G_NOTIFICATION_PRIORITY_HIGH"/>
+      <member name="urgent" value="3" c:identifier="G_NOTIFICATION_PRIORITY_URGENT" glib:nick="urgent" glib:name="G_NOTIFICATION_PRIORITY_URGENT"/>
+    </enumeration>
+    <bitfield name="OutputStreamSpliceFlags" glib:type-name="GOutputStreamSpliceFlags" glib:get-type="g_output_stream_splice_flags_get_type" c:type="GOutputStreamSpliceFlags">
+      <doc xml:space="preserve" filename="gio/gioenums.h" line="655">
+        GOutputStreamSpliceFlags determine how streams should be spliced.
+      </doc>
+      <member name="none" value="0" c:identifier="G_OUTPUT_STREAM_SPLICE_NONE" glib:nick="none" glib:name="G_OUTPUT_STREAM_SPLICE_NONE"/>
+      <member name="close_source" value="1" c:identifier="G_OUTPUT_STREAM_SPLICE_CLOSE_SOURCE" glib:nick="close-source" glib:name="G_OUTPUT_STREAM_SPLICE_CLOSE_SOURCE"/>
+      <member name="close_target" value="2" c:identifier="G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET" glib:nick="close-target" glib:name="G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET"/>
+    </bitfield>
+    <class name="UnixFDList" c:symbol-prefix="unix_fd_list" c:type="GUnixFDList" parent="GObject.Object" glib:type-name="GUnixFDList" glib:get-type="g_unix_fd_list_get_type" glib:type-struct="UnixFDListClass"/>
     <bitfield name="ApplicationFlags" version="2.28" glib:type-name="GApplicationFlags" glib:get-type="g_application_flags_get_type" c:type="GApplicationFlags"/>
     <callback name="AsyncReadyCallback" c:type="GAsyncReadyCallback">
       <return-value transfer-ownership="none">
@@ -1083,9 +2804,7 @@
       </parameters>
     </callback>
     <enumeration name="BusType" version="2.26" glib:type-name="GBusType" glib:get-type="g_bus_type_get_type" c:type="GBusType"/>
-    <bitfield name="DBusCallFlags" version="2.26" glib:type-name="GDBusCallFlags" glib:get-type="g_dbus_call_flags_get_type" c:type="GDBusCallFlags"/>
     <bitfield name="DBusConnectionFlags" version="2.26" glib:type-name="GDBusConnectionFlags" glib:get-type="g_dbus_connection_flags_get_type" c:type="GDBusConnectionFlags"/>
-    <bitfield name="DBusProxyFlags" version="2.26" glib:type-name="GDBusProxyFlags" glib:get-type="g_dbus_proxy_flags_get_type" c:type="GDBusProxyFlags"/>
     <bitfield name="SubprocessFlags" version="2.40" glib:type-name="GSubprocessFlags" glib:get-type="g_subprocess_flags_get_type" c:type="GSubprocessFlags"/>
   </namespace>
 </repository>

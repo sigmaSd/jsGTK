@@ -294,6 +294,52 @@
         </parameters>
       </method>
     </class>
-    <bitfield name="DragAction" glib:type-name="GdkDragAction" glib:get-type="gdk_drag_action_get_type" c:type="GdkDragAction"/>
+    <class name="Device" c:symbol-prefix="device" c:type="GdkDevice" parent="GObject.Object" abstract="1" glib:type-name="GdkDevice" glib:get-type="gdk_device_get_type" glib:type-struct="DeviceClass"/>
+    <bitfield name="DragAction" glib:type-name="GdkDragAction" glib:get-type="gdk_drag_action_get_type" c:type="GdkDragAction">
+      <doc xml:space="preserve" filename="gdk/gdkenums.h" line="295">
+        Used in `GdkDrop` and `GdkDrag` to indicate the actions that the
+destination can and should do with the dropped data.
+      </doc>
+      <member name="none" value="0" c:identifier="GDK_ACTION_NONE" version="4.20" glib:nick="none" glib:name="GDK_ACTION_NONE"/>
+      <member name="copy" value="1" c:identifier="GDK_ACTION_COPY" glib:nick="copy" glib:name="GDK_ACTION_COPY"/>
+      <member name="move" value="2" c:identifier="GDK_ACTION_MOVE" glib:nick="move" glib:name="GDK_ACTION_MOVE"/>
+      <member name="link" value="4" c:identifier="GDK_ACTION_LINK" glib:nick="link" glib:name="GDK_ACTION_LINK"/>
+      <member name="ask" value="8" c:identifier="GDK_ACTION_ASK" glib:nick="ask" glib:name="GDK_ACTION_ASK"/>
+    </bitfield>
+    <class name="Drop" c:symbol-prefix="drop" c:type="GdkDrop" parent="GObject.Object" abstract="1" glib:type-name="GdkDrop" glib:get-type="gdk_drop_get_type" glib:type-struct="DropClass"/>
+    <class name="Event" c:symbol-prefix="event" c:type="GdkEvent" abstract="1" glib:type-name="GdkEvent" glib:get-type="gdk_event_get_type" glib:fundamental="1" glib:ref-func="gdk_event_ref" glib:unref-func="gdk_event_unref"/>
+    <record name="EventSequence" c:type="GdkEventSequence" opaque="1" glib:type-name="GdkEventSequence" glib:get-type="gdk_event_sequence_get_type" c:symbol-prefix="event_sequence"/>
+    <class name="FrameClock" c:symbol-prefix="frame_clock" c:type="GdkFrameClock" parent="GObject.Object" abstract="1" glib:type-name="GdkFrameClock" glib:get-type="gdk_frame_clock_get_type" glib:type-struct="FrameClockClass"/>
+    <bitfield name="ModifierType" glib:type-name="GdkModifierType" glib:get-type="gdk_modifier_type_get_type" c:type="GdkModifierType">
+      <doc xml:space="preserve" filename="gdk/gdkenums.h" line="109">
+        Flags to indicate the state of modifier keys and mouse buttons
+in events.
+
+Typical modifier keys are Shift, Control, Meta, Super, Hyper, Alt, Compose,
+Apple, CapsLock or ShiftLock.
+
+Note that GDK may add internal values to events which include values outside
+of this enumeration. Your code should preserve and ignore them. You can use
+%GDK_MODIFIER_MASK to remove all private values.
+      </doc>
+      <member name="no_modifier_mask" value="0" c:identifier="GDK_NO_MODIFIER_MASK" version="4.14" glib:nick="no-modifier-mask" glib:name="GDK_NO_MODIFIER_MASK"/>
+      <member name="shift_mask" value="1" c:identifier="GDK_SHIFT_MASK" glib:nick="shift-mask" glib:name="GDK_SHIFT_MASK"/>
+      <member name="lock_mask" value="2" c:identifier="GDK_LOCK_MASK" glib:nick="lock-mask" glib:name="GDK_LOCK_MASK"/>
+      <member name="control_mask" value="4" c:identifier="GDK_CONTROL_MASK" glib:nick="control-mask" glib:name="GDK_CONTROL_MASK"/>
+      <member name="alt_mask" value="8" c:identifier="GDK_ALT_MASK" glib:nick="alt-mask" glib:name="GDK_ALT_MASK"/>
+      <member name="button1_mask" value="256" c:identifier="GDK_BUTTON1_MASK" glib:nick="button1-mask" glib:name="GDK_BUTTON1_MASK"/>
+      <member name="button2_mask" value="512" c:identifier="GDK_BUTTON2_MASK" glib:nick="button2-mask" glib:name="GDK_BUTTON2_MASK"/>
+      <member name="button3_mask" value="1024" c:identifier="GDK_BUTTON3_MASK" glib:nick="button3-mask" glib:name="GDK_BUTTON3_MASK"/>
+      <member name="button4_mask" value="2048" c:identifier="GDK_BUTTON4_MASK" glib:nick="button4-mask" glib:name="GDK_BUTTON4_MASK"/>
+      <member name="button5_mask" value="4096" c:identifier="GDK_BUTTON5_MASK" glib:nick="button5-mask" glib:name="GDK_BUTTON5_MASK"/>
+      <member name="super_mask" value="67108864" c:identifier="GDK_SUPER_MASK" glib:nick="super-mask" glib:name="GDK_SUPER_MASK"/>
+      <member name="hyper_mask" value="134217728" c:identifier="GDK_HYPER_MASK" glib:nick="hyper-mask" glib:name="GDK_HYPER_MASK"/>
+      <member name="meta_mask" value="268435456" c:identifier="GDK_META_MASK" glib:nick="meta-mask" glib:name="GDK_META_MASK"/>
+    </bitfield>
+    <class name="Monitor" c:symbol-prefix="monitor" c:type="GdkMonitor" parent="GObject.Object" glib:type-name="GdkMonitor" glib:get-type="gdk_monitor_get_type" glib:type-struct="MonitorClass"/>
+    <interface name="Paintable" c:symbol-prefix="paintable" c:type="GdkPaintable" glib:type-name="GdkPaintable" glib:get-type="gdk_paintable_get_type" glib:type-struct="PaintableInterface"/>
+    <record name="RGBA" c:type="GdkRGBA" glib:type-name="GdkRGBA" glib:get-type="gdk_rgba_get_type" c:symbol-prefix="rgba"/>
+    <record name="Rectangle" c:type="GdkRectangle" glib:type-name="GdkRectangle" glib:get-type="gdk_rectangle_get_type" c:symbol-prefix="rectangle"/>
+    <class name="Snapshot" c:symbol-prefix="snapshot" c:type="GdkSnapshot" parent="GObject.Object" abstract="1" glib:type-name="GdkSnapshot" glib:get-type="gdk_snapshot_get_type" glib:type-struct="SnapshotClass"/>
   </namespace>
 </repository>

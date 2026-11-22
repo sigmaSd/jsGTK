@@ -136,7 +136,16 @@
     </function>
     <enumeration name="Align" glib:type-name="GtkAlign" glib:get-type="gtk_align_get_type" c:type="GtkAlign"/>
     <bitfield name="ApplicationInhibitFlags" version="3.4" glib:type-name="GtkApplicationInhibitFlags" glib:get-type="gtk_application_inhibit_flags_get_type" c:type="GtkApplicationInhibitFlags"/>
+    <enumeration name="ArrowType" glib:type-name="GtkArrowType" glib:get-type="gtk_arrow_type_get_type" c:type="GtkArrowType"/>
+    <enumeration name="BaselinePosition" version="3.10" glib:type-name="GtkBaselinePosition" glib:get-type="gtk_baseline_position_get_type" c:type="GtkBaselinePosition"/>
+    <enumeration name="CornerType" glib:type-name="GtkCornerType" glib:get-type="gtk_corner_type_get_type" c:type="GtkCornerType"/>
+    <enumeration name="DirectionType" glib:type-name="GtkDirectionType" glib:get-type="gtk_direction_type_get_type" c:type="GtkDirectionType"/>
+    <enumeration name="IconSize" glib:type-name="GtkIconSize" glib:get-type="gtk_icon_size_get_type" c:type="GtkIconSize"/>
+    <enumeration name="ImageType" glib:type-name="GtkImageType" glib:get-type="gtk_image_type_get_type" c:type="GtkImageType"/>
+    <bitfield name="InputHints" version="3.6" glib:type-name="GtkInputHints" glib:get-type="gtk_input_hints_get_type" c:type="GtkInputHints"/>
+    <enumeration name="InputPurpose" version="3.6" glib:type-name="GtkInputPurpose" glib:get-type="gtk_input_purpose_get_type" c:type="GtkInputPurpose"/>
     <enumeration name="Justification" glib:type-name="GtkJustification" glib:get-type="gtk_justification_get_type" c:type="GtkJustification"/>
+    <enumeration name="LevelBarMode" version="3.6" glib:type-name="GtkLevelBarMode" glib:get-type="gtk_level_bar_mode_get_type" c:type="GtkLevelBarMode"/>
     <enumeration name="License" version="3.0" glib:type-name="GtkLicense" glib:get-type="gtk_license_get_type" c:type="GtkLicense"/>
     <callback name="ListBoxFilterFunc" c:type="GtkListBoxFilterFunc" version="3.10">
       <return-value transfer-ownership="none">
@@ -202,9 +211,34 @@
     <enumeration name="Orientation" glib:type-name="GtkOrientation" glib:get-type="gtk_orientation_get_type" c:type="GtkOrientation"/>
     <enumeration name="PackType" glib:type-name="GtkPackType" glib:get-type="gtk_pack_type_get_type" c:type="GtkPackType"/>
     <enumeration name="PolicyType" glib:type-name="GtkPolicyType" glib:get-type="gtk_policy_type_get_type" c:type="GtkPolicyType"/>
+    <enumeration name="PositionType" glib:type-name="GtkPositionType" glib:get-type="gtk_position_type_get_type" c:type="GtkPositionType"/>
+    <enumeration name="PropagationPhase" version="3.14" glib:type-name="GtkPropagationPhase" glib:get-type="gtk_propagation_phase_get_type" c:type="GtkPropagationPhase"/>
     <enumeration name="RevealerTransitionType" glib:type-name="GtkRevealerTransitionType" glib:get-type="gtk_revealer_transition_type_get_type" c:type="GtkRevealerTransitionType"/>
     <enumeration name="SelectionMode" glib:type-name="GtkSelectionMode" glib:get-type="gtk_selection_mode_get_type" c:type="GtkSelectionMode"/>
     <enumeration name="SizeGroupMode" glib:type-name="GtkSizeGroupMode" glib:get-type="gtk_size_group_mode_get_type" c:type="GtkSizeGroupMode"/>
+    <enumeration name="SizeRequestMode" glib:type-name="GtkSizeRequestMode" glib:get-type="gtk_size_request_mode_get_type" c:type="GtkSizeRequestMode"/>
+    <enumeration name="SortType" glib:type-name="GtkSortType" glib:get-type="gtk_sort_type_get_type" c:type="GtkSortType"/>
+    <enumeration name="SpinButtonUpdatePolicy" glib:type-name="GtkSpinButtonUpdatePolicy" glib:get-type="gtk_spin_button_update_policy_get_type" c:type="GtkSpinButtonUpdatePolicy"/>
+    <bitfield name="StateFlags" glib:type-name="GtkStateFlags" glib:get-type="gtk_state_flags_get_type" c:type="GtkStateFlags"/>
+    <enumeration name="TextDirection" glib:type-name="GtkTextDirection" glib:get-type="gtk_text_direction_get_type" c:type="GtkTextDirection"/>
     <bitfield name="TextSearchFlags" glib:type-name="GtkTextSearchFlags" glib:get-type="gtk_text_search_flags_get_type" c:type="GtkTextSearchFlags"/>
+    <enumeration name="TextWindowType" glib:type-name="GtkTextWindowType" glib:get-type="gtk_text_window_type_get_type" c:type="GtkTextWindowType"/>
+    <callback name="TickCallback" c:type="GtkTickCallback" version="3.8">
+      <return-value transfer-ownership="none">
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="widget" transfer-ownership="none">
+          <type name="Widget" c:type="GtkWidget*"/>
+        </parameter>
+        <parameter name="frame_clock" transfer-ownership="none">
+          <type name="Gdk.FrameClock" c:type="GdkFrameClock*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <enumeration name="WrapMode" glib:type-name="GtkWrapMode" glib:get-type="gtk_wrap_mode_get_type" c:type="GtkWrapMode"/>
   </namespace>
 </repository>

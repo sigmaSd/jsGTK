@@ -7,10 +7,13 @@ import {
 import { join } from "node:path";
 import config from "./gir/bindings.json" with { type: "json" };
 import {
+  checkHierarchy,
   classMembers,
   type ClassProfile,
   classSymbols,
   generateClasses,
+  girAncestors,
+  girClasses,
   type HandWritten,
   type Namespace,
 } from "./generate_classes.ts";
@@ -502,7 +505,11 @@ function widgetTypes(input: Input): string[] {
   });
 }
 
-async function snapshots(profiles: Profile[], inputs: Map<string, Input>) {
+async function snapshots(
+  profiles: Profile[],
+  inputs: Map<string, Input>,
+  handWritten: HandWritten,
+) {
   const selected = new Map<string, Set<string>>();
   for (const profile of profiles) {
     for (const file of profile.inputs) {
@@ -523,6 +530,20 @@ async function snapshots(profiles: Profile[], inputs: Map<string, Input>) {
     );
     for (const member of members) classNodes.add(member);
     for (const type of types) classTypes.add(type);
+  }
+  // Keep every wrapped class and the ancestors of all kept classes, so
+  // wrapper lookups and the hierarchy check work from the snapshot.
+  const withClasses = profiles.find((profile) => profile.highLevel);
+  if (withClasses) {
+    const namespaces = namespacesFor(withClasses, inputs);
+    for (const gir of girClasses(namespaces, handWritten).values()) {
+      classTypes.add(gir);
+    }
+    for (const type of [...classTypes]) {
+      for (const ancestor of girAncestors(namespaces, type)) {
+        classTypes.add(ancestor);
+      }
+    }
   }
   const requiredTypes = new Set<string>();
   const declarations = new Map<string, Declaration[]>();
@@ -741,6 +762,8 @@ async function format(text: string): Promise<string> {
 /** Hand-written classes in src/high, read with `deno doc`. */
 async function handWrittenClasses(): Promise<HandWritten> {
   const modules = ["gobject.ts", "gtk4.ts", "adw.ts", "gio.ts"];
+  // Read the class bodies only: generated interfaces merged into them are
+  // separate declarations, so a rerun sees the same hand-written methods.
   const output = await new Deno.Command(Deno.execPath(), {
     args: ["doc", "--json", ...modules.map((m) => `src/high/${m}`)],
     cwd: ROOT,
@@ -794,8 +817,16 @@ async function main(args: string[]) {
     const path = refresh ? join(refresh, file) : new URL(file, GIR);
     inputs.set(file, parse(await Deno.readTextFile(path), source));
   }
+  const withClasses = profiles.filter(([, profile]) => profile.highLevel);
+  const handWritten: HandWritten = withClasses.length
+    ? await handWrittenClasses()
+    : new Map();
   const pinned = refresh
-    ? await snapshots(profiles.map(([, profile]) => profile), inputs)
+    ? await snapshots(
+      profiles.map(([, profile]) => profile),
+      inputs,
+      handWritten,
+    )
     : undefined;
   const pinnedInputs = pinned &&
     new Map(
@@ -830,10 +861,20 @@ async function main(args: string[]) {
     };
   }));
   const classInputs = pinnedInputs ?? inputs;
-  const withClasses = profiles.filter(([, profile]) => profile.highLevel);
-  const handWritten = withClasses.length
-    ? await handWrittenClasses()
-    : new Map();
+  if (withClasses.length) {
+    const generatedClasses = new Set(
+      withClasses.flatMap(([, profile]) =>
+        Object.keys(profile.highLevel!.classes).map((name) =>
+          `${profile.highLevel!.namespace}.${name}`
+        )
+      ),
+    );
+    checkHierarchy(
+      namespacesFor(withClasses[0][1], classInputs),
+      generatedClasses,
+      handWritten,
+    );
+  }
   const classModules = await Promise.all(
     withClasses.map(async ([name, profile]) => ({
       name,

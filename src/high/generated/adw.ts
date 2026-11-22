@@ -5,8 +5,131 @@
 import { adw } from "../../low/adw.ts";
 import { cstr, readCStr } from "../../low/utils.ts";
 import { borrowed, connectSignal, cstrOrNull, missing } from "../wrappers.ts";
+import type {
+  Carousel,
+  Dialog,
+  NavigationPage,
+  PreferencesGroup,
+  PreferencesPage,
+} from "../adw.ts";
 import type { GObject } from "../gobject.ts";
-import type { Widget } from "../gtk4.ts";
+import type { Adjustment, Display, Widget } from "../gtk4.ts";
+
+/**
+ * Describes the available system accent colors.
+ */
+export const AccentColor = {
+  BLUE: 0,
+  TEAL: 1,
+  GREEN: 2,
+  YELLOW: 3,
+  ORANGE: 4,
+  RED: 5,
+  PINK: 6,
+  PURPLE: 7,
+  SLATE: 8,
+} as const;
+export type AccentColor = (typeof AccentColor)[keyof typeof AccentColor];
+
+/**
+ * Describes title centering behavior of a `HeaderBar` widget.
+ */
+export const CenteringPolicy = {
+  LOOSE: 0,
+  STRICT: 1,
+} as const;
+export type CenteringPolicy =
+  (typeof CenteringPolicy)[keyof typeof CenteringPolicy];
+
+/**
+ * Application color schemes for `color-scheme`.
+ */
+export const ColorScheme = {
+  DEFAULT: 0,
+  FORCE_LIGHT: 1,
+  PREFER_LIGHT: 2,
+  PREFER_DARK: 3,
+  FORCE_DARK: 4,
+} as const;
+export type ColorScheme = (typeof ColorScheme)[keyof typeof ColorScheme];
+
+/**
+ * Describes the available presentation modes for `Dialog`.
+ */
+export const DialogPresentationMode = {
+  AUTO: 0,
+  FLOATING: 1,
+  BOTTOM_SHEET: 2,
+} as const;
+export type DialogPresentationMode =
+  (typeof DialogPresentationMode)[keyof typeof DialogPresentationMode];
+
+/**
+ * The type of license for an application.
+ */
+export const GtkLicense = {
+  UNKNOWN: 0,
+  CUSTOM: 1,
+  GPL_2_0: 2,
+  GPL_3_0: 3,
+  LGPL_2_1: 4,
+  LGPL_3_0: 5,
+  BSD: 6,
+  MIT_X11: 7,
+  ARTISTIC: 8,
+  GPL_2_0_ONLY: 9,
+  GPL_3_0_ONLY: 10,
+  LGPL_2_1_ONLY: 11,
+  LGPL_3_0_ONLY: 12,
+  AGPL_3_0: 13,
+  AGPL_3_0_ONLY: 14,
+  BSD_3: 15,
+  APACHE_2_0: 16,
+  MPL_2_0: 17,
+  "0BSD": 18,
+} as const;
+export type GtkLicense = (typeof GtkLicense)[keyof typeof GtkLicense];
+
+/**
+ * Represents the packing location of a children in its parent.
+ */
+export const GtkPackType = {
+  START: 0,
+  END: 1,
+} as const;
+export type GtkPackType = (typeof GtkPackType)[keyof typeof GtkPackType];
+
+/**
+ * Determines whether the spin button displays values outside the adjustment
+ * bounds.
+ */
+export const GtkSpinButtonUpdatePolicy = {
+  ALWAYS: 0,
+  IF_VALID: 1,
+} as const;
+export type GtkSpinButtonUpdatePolicy =
+  (typeof GtkSpinButtonUpdatePolicy)[keyof typeof GtkSpinButtonUpdatePolicy];
+
+/**
+ * Specifies how search strings are matched inside text.
+ */
+export const GtkStringFilterMatchMode = {
+  EXACT: 0,
+  SUBSTRING: 1,
+  PREFIX: 2,
+} as const;
+export type GtkStringFilterMatchMode =
+  (typeof GtkStringFilterMatchMode)[keyof typeof GtkStringFilterMatchMode];
+
+/**
+ * Describes length units.
+ */
+export const LengthUnit = {
+  PX: 0,
+  PT: 1,
+  SP: 2,
+} as const;
+export type LengthUnit = (typeof LengthUnit)[keyof typeof LengthUnit];
 
 /**
  * `Toast` behavior when another toast is already displayed.
@@ -16,6 +139,2321 @@ export const ToastPriority = {
   HIGH: 1,
 } as const;
 export type ToastPriority = (typeof ToastPriority)[keyof typeof ToastPriority];
+
+/**
+ * Describes the possible top or bottom bar styles in an `ToolbarView`
+ * widget.
+ */
+export const ToolbarStyle = {
+  FLAT: 0,
+  RAISED: 1,
+  RAISED_BORDER: 2,
+} as const;
+export type ToolbarStyle = (typeof ToolbarStyle)[keyof typeof ToolbarStyle];
+
+/** Methods generated for `AdwAboutDialog`. */
+export interface AboutDialogMethods {
+  /**
+   * Adds an extra section to the Legal page.
+   */
+  addLegalSection(
+    title: string,
+    copyright: string | null,
+    licenseType: GtkLicense,
+    license: string | null,
+  ): void;
+  /**
+   * Adds an extra link to the Details page.
+   */
+  addLink(title: string, url: string): void;
+  /**
+   * Adds another application to `self`.
+   */
+  addOtherApp(appid: string, name: string, summary: string): void;
+  /**
+   * Gets the AppStream metadata resource path for `self`.
+   */
+  getAppdataResourcePath(): string | null;
+  /**
+   * Gets the name of the application icon for `self`.
+   */
+  getApplicationIcon(): string;
+  /**
+   * Gets the application name for `self`.
+   */
+  getApplicationName(): string;
+  /**
+   * Gets the comments about the application.
+   */
+  getComments(): string;
+  /**
+   * Gets the copyright information for `self`.
+   */
+  getCopyright(): string;
+  /**
+   * Gets the debug information for `self`.
+   */
+  getDebugInfo(): string;
+  /**
+   * Gets the debug information filename for `self`.
+   */
+  getDebugInfoFilename(): string;
+  /**
+   * Gets the developer name for `self`.
+   */
+  getDeveloperName(): string;
+  /**
+   * Gets the issue tracker URL for `self`.
+   */
+  getIssueUrl(): string;
+  /**
+   * Gets the license for `self`.
+   */
+  getLicense(): string;
+  /**
+   * Gets the license type for `self`.
+   */
+  getLicenseType(): GtkLicense;
+  /**
+   * Gets The other apps section title for `self`.
+   */
+  getOtherAppsTitle(): string;
+  /**
+   * Gets the release notes for `self`.
+   */
+  getReleaseNotes(): string;
+  /**
+   * Gets the version described by the application's release notes.
+   */
+  getReleaseNotesVersion(): string;
+  /**
+   * Gets the URL of the support page for `self`.
+   */
+  getSupportUrl(): string;
+  /**
+   * Gets the translator credits string.
+   */
+  getTranslatorCredits(): string;
+  /**
+   * Gets the version for `self`.
+   */
+  getVersion(): string;
+  /**
+   * Gets the application website URL for `self`.
+   */
+  getWebsite(): string;
+  /**
+   * Sets the copyright information for `self`.
+   */
+  setCopyright(copyright: string): void;
+  /**
+   * Sets the debug information for `self`.
+   */
+  setDebugInfo(debugInfo: string): void;
+  /**
+   * Sets the debug information filename for `self`.
+   */
+  setDebugInfoFilename(filename: string): void;
+  /**
+   * Sets the license for `self`.
+   */
+  setLicense(license: string): void;
+  /**
+   * Sets the "Other apps" section title for `self`.
+   */
+  setOtherAppsTitle(title: string): void;
+  /**
+   * Sets the release notes for `self`.
+   */
+  setReleaseNotes(releaseNotes: string): void;
+  /**
+   * Sets the version described by the application's release notes.
+   */
+  setReleaseNotesVersion(version: string): void;
+  /**
+   * Sets the URL of the support page for `self`.
+   */
+  setSupportUrl(supportUrl: string): void;
+  /**
+   * Sets the translator credits string.
+   */
+  setTranslatorCredits(translatorCredits: string): void;
+}
+
+/** Implementations of {@linkcode AboutDialogMethods}. */
+export const aboutDialogMethods: AboutDialogMethods & ThisType<GObject> = {
+  addLegalSection(
+    this: GObject,
+    title: string,
+    copyright: string | null,
+    licenseType: GtkLicense,
+    license: string | null,
+  ): void {
+    (adw.symbols.adw_about_dialog_add_legal_section ??
+      missing("adw_about_dialog_add_legal_section", "1.5"))(
+        this.ptr,
+        cstr(title),
+        cstrOrNull(copyright),
+        licenseType,
+        cstrOrNull(license),
+      );
+  },
+  addLink(this: GObject, title: string, url: string): void {
+    (adw.symbols.adw_about_dialog_add_link ??
+      missing("adw_about_dialog_add_link", "1.5"))(
+        this.ptr,
+        cstr(title),
+        cstr(url),
+      );
+  },
+  addOtherApp(
+    this: GObject,
+    appid: string,
+    name: string,
+    summary: string,
+  ): void {
+    (adw.symbols.adw_about_dialog_add_other_app ??
+      missing("adw_about_dialog_add_other_app", "1.7"))(
+        this.ptr,
+        cstr(appid),
+        cstr(name),
+        cstr(summary),
+      );
+  },
+  getAppdataResourcePath(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      (adw.symbols.adw_about_dialog_get_appdata_resource_path ??
+        missing("adw_about_dialog_get_appdata_resource_path", "1.9"))(this.ptr),
+    );
+  },
+  getApplicationIcon(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_about_dialog_get_application_icon ??
+        missing("adw_about_dialog_get_application_icon", "1.5"))(this.ptr),
+    );
+  },
+  getApplicationName(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_about_dialog_get_application_name ??
+        missing("adw_about_dialog_get_application_name", "1.5"))(this.ptr),
+    );
+  },
+  getComments(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_about_dialog_get_comments ??
+        missing("adw_about_dialog_get_comments", "1.5"))(this.ptr),
+    );
+  },
+  getCopyright(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_about_dialog_get_copyright ??
+        missing("adw_about_dialog_get_copyright", "1.5"))(this.ptr),
+    );
+  },
+  getDebugInfo(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_about_dialog_get_debug_info ??
+        missing("adw_about_dialog_get_debug_info", "1.5"))(this.ptr),
+    );
+  },
+  getDebugInfoFilename(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_about_dialog_get_debug_info_filename ??
+        missing("adw_about_dialog_get_debug_info_filename", "1.5"))(this.ptr),
+    );
+  },
+  getDeveloperName(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_about_dialog_get_developer_name ??
+        missing("adw_about_dialog_get_developer_name", "1.5"))(this.ptr),
+    );
+  },
+  getIssueUrl(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_about_dialog_get_issue_url ??
+        missing("adw_about_dialog_get_issue_url", "1.5"))(this.ptr),
+    );
+  },
+  getLicense(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_about_dialog_get_license ??
+        missing("adw_about_dialog_get_license", "1.5"))(this.ptr),
+    );
+  },
+  getLicenseType(this: GObject): GtkLicense {
+    return (adw.symbols.adw_about_dialog_get_license_type ??
+      missing("adw_about_dialog_get_license_type", "1.5"))(
+        this.ptr,
+      ) as GtkLicense;
+  },
+  getOtherAppsTitle(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_about_dialog_get_other_apps_title ??
+        missing("adw_about_dialog_get_other_apps_title", "1.10"))(this.ptr),
+    );
+  },
+  getReleaseNotes(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_about_dialog_get_release_notes ??
+        missing("adw_about_dialog_get_release_notes", "1.5"))(this.ptr),
+    );
+  },
+  getReleaseNotesVersion(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_about_dialog_get_release_notes_version ??
+        missing("adw_about_dialog_get_release_notes_version", "1.5"))(this.ptr),
+    );
+  },
+  getSupportUrl(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_about_dialog_get_support_url ??
+        missing("adw_about_dialog_get_support_url", "1.5"))(this.ptr),
+    );
+  },
+  getTranslatorCredits(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_about_dialog_get_translator_credits ??
+        missing("adw_about_dialog_get_translator_credits", "1.5"))(this.ptr),
+    );
+  },
+  getVersion(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_about_dialog_get_version ??
+        missing("adw_about_dialog_get_version", "1.5"))(this.ptr),
+    );
+  },
+  getWebsite(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_about_dialog_get_website ??
+        missing("adw_about_dialog_get_website", "1.5"))(this.ptr),
+    );
+  },
+  setCopyright(this: GObject, copyright: string): void {
+    (adw.symbols.adw_about_dialog_set_copyright ??
+      missing("adw_about_dialog_set_copyright", "1.5"))(
+        this.ptr,
+        cstr(copyright),
+      );
+  },
+  setDebugInfo(this: GObject, debugInfo: string): void {
+    (adw.symbols.adw_about_dialog_set_debug_info ??
+      missing("adw_about_dialog_set_debug_info", "1.5"))(
+        this.ptr,
+        cstr(debugInfo),
+      );
+  },
+  setDebugInfoFilename(this: GObject, filename: string): void {
+    (adw.symbols.adw_about_dialog_set_debug_info_filename ??
+      missing("adw_about_dialog_set_debug_info_filename", "1.5"))(
+        this.ptr,
+        cstr(filename),
+      );
+  },
+  setLicense(this: GObject, license: string): void {
+    (adw.symbols.adw_about_dialog_set_license ??
+      missing("adw_about_dialog_set_license", "1.5"))(this.ptr, cstr(license));
+  },
+  setOtherAppsTitle(this: GObject, title: string): void {
+    (adw.symbols.adw_about_dialog_set_other_apps_title ??
+      missing("adw_about_dialog_set_other_apps_title", "1.10"))(
+        this.ptr,
+        cstr(title),
+      );
+  },
+  setReleaseNotes(this: GObject, releaseNotes: string): void {
+    (adw.symbols.adw_about_dialog_set_release_notes ??
+      missing("adw_about_dialog_set_release_notes", "1.5"))(
+        this.ptr,
+        cstr(releaseNotes),
+      );
+  },
+  setReleaseNotesVersion(this: GObject, version: string): void {
+    (adw.symbols.adw_about_dialog_set_release_notes_version ??
+      missing("adw_about_dialog_set_release_notes_version", "1.5"))(
+        this.ptr,
+        cstr(version),
+      );
+  },
+  setSupportUrl(this: GObject, supportUrl: string): void {
+    (adw.symbols.adw_about_dialog_set_support_url ??
+      missing("adw_about_dialog_set_support_url", "1.5"))(
+        this.ptr,
+        cstr(supportUrl),
+      );
+  },
+  setTranslatorCredits(this: GObject, translatorCredits: string): void {
+    (adw.symbols.adw_about_dialog_set_translator_credits ??
+      missing("adw_about_dialog_set_translator_credits", "1.5"))(
+        this.ptr,
+        cstr(translatorCredits),
+      );
+  },
+};
+
+/** Methods generated for `AdwAboutWindow`. */
+export interface AboutWindowMethods {
+}
+
+/** Implementations of {@linkcode AboutWindowMethods}. */
+export const aboutWindowMethods: AboutWindowMethods & ThisType<GObject> = {};
+
+/** Methods generated for `AdwActionRow`. */
+export interface ActionRowMethods {
+  /**
+   * Gets the widget activated when `self` is activated.
+   */
+  getActivatableWidget(): Widget | null;
+  /**
+   * Gets the number of lines at the end of which the subtitle label will be
+   * ellipsized.
+   */
+  getSubtitleLines(): number;
+  /**
+   * Gets whether the user can copy the subtitle from the label
+   */
+  getSubtitleSelectable(): boolean;
+  /**
+   * Gets the number of lines at the end of which the title label will be
+   * ellipsized.
+   */
+  getTitleLines(): number;
+  /**
+   * Removes a child from `self`.
+   */
+  remove(widget: Widget): void;
+  /**
+   * Sets the number of lines at the end of which the subtitle label will be
+   * ellipsized.
+   */
+  setSubtitleLines(subtitleLines: number): void;
+  /**
+   * Sets whether the user can copy the subtitle from the label
+   */
+  setSubtitleSelectable(subtitleSelectable: boolean): void;
+  /**
+   * Sets the number of lines at the end of which the title label will be
+   * ellipsized.
+   */
+  setTitleLines(titleLines: number): void;
+  /**
+   * This signal is emitted after the row has been activated.
+   */
+  onActivated(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode ActionRowMethods}. */
+export const actionRowMethods: ActionRowMethods & ThisType<GObject> = {
+  getActivatableWidget(this: GObject): Widget | null {
+    return borrowed<Widget>(
+      adw.symbols.adw_action_row_get_activatable_widget(this.ptr),
+    );
+  },
+  getSubtitleLines(this: GObject): number {
+    return adw.symbols.adw_action_row_get_subtitle_lines(this.ptr);
+  },
+  getSubtitleSelectable(this: GObject): boolean {
+    return (adw.symbols.adw_action_row_get_subtitle_selectable ??
+      missing("adw_action_row_get_subtitle_selectable", "1.3"))(this.ptr);
+  },
+  getTitleLines(this: GObject): number {
+    return adw.symbols.adw_action_row_get_title_lines(this.ptr);
+  },
+  remove(this: GObject, widget: Widget): void {
+    adw.symbols.adw_action_row_remove(this.ptr, widget.ptr);
+  },
+  setSubtitleLines(this: GObject, subtitleLines: number): void {
+    adw.symbols.adw_action_row_set_subtitle_lines(this.ptr, subtitleLines);
+  },
+  setSubtitleSelectable(this: GObject, subtitleSelectable: boolean): void {
+    (adw.symbols.adw_action_row_set_subtitle_selectable ??
+      missing("adw_action_row_set_subtitle_selectable", "1.3"))(
+        this.ptr,
+        subtitleSelectable,
+      );
+  },
+  setTitleLines(this: GObject, titleLines: number): void {
+    adw.symbols.adw_action_row_set_title_lines(this.ptr, titleLines);
+  },
+  onActivated(this: GObject, callback: () => void): number {
+    return connectSignal(this, "activated", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `AdwApplicationWindow`. */
+export interface ApplicationWindowMethods {
+  /**
+   * Gets whether adaptive preview for `self` is currently open.
+   */
+  getAdaptivePreview(): boolean;
+  /**
+   * Gets the content widget of `self`.
+   */
+  getContent(): Widget | null;
+  /**
+   * Gets the current breakpoint.
+   */
+  getCurrentBreakpoint(): GObject | null;
+  /**
+   * Returns the currently visible dialog in `self`, if there's one.
+   */
+  getVisibleDialog(): Dialog | null;
+  /**
+   * Sets whether adaptive preview for `self` is currently open.
+   */
+  setAdaptivePreview(adaptivePreview: boolean): void;
+}
+
+/** Implementations of {@linkcode ApplicationWindowMethods}. */
+export const applicationWindowMethods:
+  & ApplicationWindowMethods
+  & ThisType<GObject> = {
+    getAdaptivePreview(this: GObject): boolean {
+      return (adw.symbols.adw_application_window_get_adaptive_preview ??
+        missing("adw_application_window_get_adaptive_preview", "1.7"))(
+          this.ptr,
+        );
+    },
+    getContent(this: GObject): Widget | null {
+      return borrowed<Widget>(
+        adw.symbols.adw_application_window_get_content(this.ptr),
+      );
+    },
+    getCurrentBreakpoint(this: GObject): GObject | null {
+      return borrowed<GObject>(
+        (adw.symbols.adw_application_window_get_current_breakpoint ??
+          missing("adw_application_window_get_current_breakpoint", "1.4"))(
+            this.ptr,
+          ),
+      );
+    },
+    getVisibleDialog(this: GObject): Dialog | null {
+      return borrowed<Dialog>(
+        (adw.symbols.adw_application_window_get_visible_dialog ??
+          missing("adw_application_window_get_visible_dialog", "1.5"))(
+            this.ptr,
+          ),
+      );
+    },
+    setAdaptivePreview(this: GObject, adaptivePreview: boolean): void {
+      (adw.symbols.adw_application_window_set_adaptive_preview ??
+        missing("adw_application_window_set_adaptive_preview", "1.7"))(
+          this.ptr,
+          adaptivePreview,
+        );
+    },
+  };
+
+/** Methods generated for `AdwButtonContent`. */
+export interface ButtonContentMethods {
+  /**
+   * gets whether the button can be smaller than the natural size of its contents.
+   */
+  getCanShrink(): boolean;
+  /**
+   * Gets the name of the displayed icon.
+   */
+  getIconName(): string;
+  /**
+   * Gets the displayed label.
+   */
+  getLabel(): string;
+  /**
+   * Gets whether an underline in the text indicates a mnemonic.
+   */
+  getUseUnderline(): boolean;
+  /**
+   * Sets whether the button can be smaller than the natural size of its contents.
+   */
+  setCanShrink(canShrink: boolean): void;
+  /**
+   * Sets whether an underline in the text indicates a mnemonic.
+   */
+  setUseUnderline(useUnderline: boolean): void;
+}
+
+/** Implementations of {@linkcode ButtonContentMethods}. */
+export const buttonContentMethods: ButtonContentMethods & ThisType<GObject> = {
+  getCanShrink(this: GObject): boolean {
+    return (adw.symbols.adw_button_content_get_can_shrink ??
+      missing("adw_button_content_get_can_shrink", "1.4"))(this.ptr);
+  },
+  getIconName(this: GObject): string {
+    return readCStr(adw.symbols.adw_button_content_get_icon_name(this.ptr));
+  },
+  getLabel(this: GObject): string {
+    return readCStr(adw.symbols.adw_button_content_get_label(this.ptr));
+  },
+  getUseUnderline(this: GObject): boolean {
+    return adw.symbols.adw_button_content_get_use_underline(this.ptr);
+  },
+  setCanShrink(this: GObject, canShrink: boolean): void {
+    (adw.symbols.adw_button_content_set_can_shrink ??
+      missing("adw_button_content_set_can_shrink", "1.4"))(this.ptr, canShrink);
+  },
+  setUseUnderline(this: GObject, useUnderline: boolean): void {
+    adw.symbols.adw_button_content_set_use_underline(this.ptr, useUnderline);
+  },
+};
+
+/** Methods generated for `AdwCarousel`. */
+export interface CarouselMethods {
+  /**
+   * Gets whether to allow swiping for more than one page at a time.
+   */
+  getAllowLongSwipes(): boolean;
+  /**
+   * Sets whether `self` can be dragged with mouse pointer.
+   */
+  getAllowMouseDrag(): boolean;
+  /**
+   * Gets whether `self` will respond to scroll wheel events.
+   */
+  getAllowScrollWheel(): boolean;
+  /**
+   * Gets whether `self` can be navigated.
+   */
+  getInteractive(): boolean;
+  /**
+   * Gets the number of pages in `self`.
+   */
+  getNPages(): number;
+  /**
+   * Gets current scroll position in `self`, unitless.
+   */
+  getPosition(): number;
+  /**
+   * Gets the page reveal duration, in milliseconds.
+   */
+  getRevealDuration(): number;
+  /**
+   * Gets spacing between pages in pixels.
+   */
+  getSpacing(): number;
+  /**
+   * Sets whether to allow swiping for more than one page at a time.
+   */
+  setAllowLongSwipes(allowLongSwipes: boolean): void;
+  /**
+   * Sets whether `self` can be dragged with mouse pointer.
+   */
+  setAllowMouseDrag(allowMouseDrag: boolean): void;
+  /**
+   * Sets whether `self` will respond to scroll wheel events.
+   */
+  setAllowScrollWheel(allowScrollWheel: boolean): void;
+  /**
+   * Sets whether `self` can be navigated.
+   */
+  setInteractive(interactive: boolean): void;
+  /**
+   * Sets the page reveal duration, in milliseconds.
+   */
+  setRevealDuration(revealDuration: number): void;
+  /**
+   * Sets spacing between pages in pixels.
+   */
+  setSpacing(spacing: number): void;
+  /**
+   * This signal is emitted after a page has been changed.
+   */
+  onPageChanged(callback: (index: number) => void): number;
+}
+
+/** Implementations of {@linkcode CarouselMethods}. */
+export const carouselMethods: CarouselMethods & ThisType<GObject> = {
+  getAllowLongSwipes(this: GObject): boolean {
+    return adw.symbols.adw_carousel_get_allow_long_swipes(this.ptr);
+  },
+  getAllowMouseDrag(this: GObject): boolean {
+    return adw.symbols.adw_carousel_get_allow_mouse_drag(this.ptr);
+  },
+  getAllowScrollWheel(this: GObject): boolean {
+    return adw.symbols.adw_carousel_get_allow_scroll_wheel(this.ptr);
+  },
+  getInteractive(this: GObject): boolean {
+    return adw.symbols.adw_carousel_get_interactive(this.ptr);
+  },
+  getNPages(this: GObject): number {
+    return adw.symbols.adw_carousel_get_n_pages(this.ptr);
+  },
+  getPosition(this: GObject): number {
+    return adw.symbols.adw_carousel_get_position(this.ptr);
+  },
+  getRevealDuration(this: GObject): number {
+    return adw.symbols.adw_carousel_get_reveal_duration(this.ptr);
+  },
+  getSpacing(this: GObject): number {
+    return adw.symbols.adw_carousel_get_spacing(this.ptr);
+  },
+  setAllowLongSwipes(this: GObject, allowLongSwipes: boolean): void {
+    adw.symbols.adw_carousel_set_allow_long_swipes(this.ptr, allowLongSwipes);
+  },
+  setAllowMouseDrag(this: GObject, allowMouseDrag: boolean): void {
+    adw.symbols.adw_carousel_set_allow_mouse_drag(this.ptr, allowMouseDrag);
+  },
+  setAllowScrollWheel(this: GObject, allowScrollWheel: boolean): void {
+    adw.symbols.adw_carousel_set_allow_scroll_wheel(this.ptr, allowScrollWheel);
+  },
+  setInteractive(this: GObject, interactive: boolean): void {
+    adw.symbols.adw_carousel_set_interactive(this.ptr, interactive);
+  },
+  setRevealDuration(this: GObject, revealDuration: number): void {
+    adw.symbols.adw_carousel_set_reveal_duration(this.ptr, revealDuration);
+  },
+  setSpacing(this: GObject, spacing: number): void {
+    adw.symbols.adw_carousel_set_spacing(this.ptr, spacing);
+  },
+  onPageChanged(this: GObject, callback: (index: number) => void): number {
+    return connectSignal(this, "page-changed", {
+      parameters: ["pointer", "u32", "pointer"],
+      result: "void",
+    }, (a0: never) => callback(a0));
+  },
+};
+
+/** Methods generated for `AdwCarouselIndicatorDots`. */
+export interface CarouselIndicatorDotsMethods {
+  /**
+   * Gets the displayed carousel.
+   */
+  getCarousel(): Carousel | null;
+  /**
+   * Sets the displayed carousel.
+   */
+  setCarousel(carousel: Carousel | null): void;
+}
+
+/** Implementations of {@linkcode CarouselIndicatorDotsMethods}. */
+export const carouselIndicatorDotsMethods:
+  & CarouselIndicatorDotsMethods
+  & ThisType<GObject> = {
+    getCarousel(this: GObject): Carousel | null {
+      return borrowed<Carousel>(
+        adw.symbols.adw_carousel_indicator_dots_get_carousel(this.ptr),
+      );
+    },
+    setCarousel(this: GObject, carousel: Carousel | null): void {
+      adw.symbols.adw_carousel_indicator_dots_set_carousel(
+        this.ptr,
+        carousel?.ptr ?? null,
+      );
+    },
+  };
+
+/** Methods generated for `AdwCarouselIndicatorLines`. */
+export interface CarouselIndicatorLinesMethods {
+  /**
+   * Gets the displayed carousel.
+   */
+  getCarousel(): Carousel | null;
+  /**
+   * Sets the displayed carousel.
+   */
+  setCarousel(carousel: Carousel | null): void;
+}
+
+/** Implementations of {@linkcode CarouselIndicatorLinesMethods}. */
+export const carouselIndicatorLinesMethods:
+  & CarouselIndicatorLinesMethods
+  & ThisType<GObject> = {
+    getCarousel(this: GObject): Carousel | null {
+      return borrowed<Carousel>(
+        adw.symbols.adw_carousel_indicator_lines_get_carousel(this.ptr),
+      );
+    },
+    setCarousel(this: GObject, carousel: Carousel | null): void {
+      adw.symbols.adw_carousel_indicator_lines_set_carousel(
+        this.ptr,
+        carousel?.ptr ?? null,
+      );
+    },
+  };
+
+/** Methods generated for `AdwClamp`. */
+export interface ClampMethods {
+  /**
+   * Gets the child widget of `self`.
+   */
+  getChild(): Widget | null;
+  /**
+   * Gets the maximum size allocated to the child.
+   */
+  getMaximumSize(): number;
+  /**
+   * Gets the size above which the child is clamped.
+   */
+  getTighteningThreshold(): number;
+  /**
+   * Gets the length unit for maximum size and tightening threshold.
+   */
+  getUnit(): LengthUnit;
+  /**
+   * Sets the size above which the child is clamped.
+   */
+  setTighteningThreshold(tighteningThreshold: number): void;
+  /**
+   * Sets the length unit for maximum size and tightening threshold.
+   */
+  setUnit(unit: LengthUnit): void;
+}
+
+/** Implementations of {@linkcode ClampMethods}. */
+export const clampMethods: ClampMethods & ThisType<GObject> = {
+  getChild(this: GObject): Widget | null {
+    return borrowed<Widget>(adw.symbols.adw_clamp_get_child(this.ptr));
+  },
+  getMaximumSize(this: GObject): number {
+    return adw.symbols.adw_clamp_get_maximum_size(this.ptr);
+  },
+  getTighteningThreshold(this: GObject): number {
+    return adw.symbols.adw_clamp_get_tightening_threshold(this.ptr);
+  },
+  getUnit(this: GObject): LengthUnit {
+    return (adw.symbols.adw_clamp_get_unit ??
+      missing("adw_clamp_get_unit", "1.4"))(this.ptr) as LengthUnit;
+  },
+  setTighteningThreshold(this: GObject, tighteningThreshold: number): void {
+    adw.symbols.adw_clamp_set_tightening_threshold(
+      this.ptr,
+      tighteningThreshold,
+    );
+  },
+  setUnit(this: GObject, unit: LengthUnit): void {
+    (adw.symbols.adw_clamp_set_unit ?? missing("adw_clamp_set_unit", "1.4"))(
+      this.ptr,
+      unit,
+    );
+  },
+};
+
+/** Methods generated for `AdwComboRow`. */
+export interface ComboRowMethods {
+  /**
+   * Gets whether search is enabled.
+   */
+  getEnableSearch(): boolean;
+  /**
+   * Gets the factory for populating list items.
+   */
+  getFactory(): GObject | null;
+  /**
+   * Gets the factory that's currently used to create header widgets for the popup.
+   */
+  getHeaderFactory(): GObject | null;
+  /**
+   * Gets the factory for populating list items in the popup.
+   */
+  getListFactory(): GObject | null;
+  /**
+   * Returns the match mode that the search filter is using.
+   */
+  getSearchMatchMode(): GtkStringFilterMatchMode;
+  /**
+   * Gets the selected item.
+   */
+  getSelectedItem(): GObject | null;
+  /**
+   * Gets whether to use the current value as the subtitle.
+   */
+  getUseSubtitle(): boolean;
+  /**
+   * Sets whether to enable search.
+   */
+  setEnableSearch(enableSearch: boolean): void;
+  /**
+   * Sets the factory for populating list items.
+   */
+  setFactory(factory: GObject | null): void;
+  /**
+   * Sets the factory to use for creating header widgets for the popup.
+   */
+  setHeaderFactory(factory: GObject | null): void;
+  /**
+   * Sets the factory for populating list items in the popup.
+   */
+  setListFactory(factory: GObject | null): void;
+  /**
+   * Sets the match mode for the search filter.
+   */
+  setSearchMatchMode(searchMatchMode: GtkStringFilterMatchMode): void;
+  /**
+   * Sets whether to use the current value as the subtitle.
+   */
+  setUseSubtitle(useSubtitle: boolean): void;
+}
+
+/** Implementations of {@linkcode ComboRowMethods}. */
+export const comboRowMethods: ComboRowMethods & ThisType<GObject> = {
+  getEnableSearch(this: GObject): boolean {
+    return (adw.symbols.adw_combo_row_get_enable_search ??
+      missing("adw_combo_row_get_enable_search", "1.4"))(this.ptr);
+  },
+  getFactory(this: GObject): GObject | null {
+    return borrowed<GObject>(adw.symbols.adw_combo_row_get_factory(this.ptr));
+  },
+  getHeaderFactory(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      (adw.symbols.adw_combo_row_get_header_factory ??
+        missing("adw_combo_row_get_header_factory", "1.6"))(this.ptr),
+    );
+  },
+  getListFactory(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      adw.symbols.adw_combo_row_get_list_factory(this.ptr),
+    );
+  },
+  getSearchMatchMode(this: GObject): GtkStringFilterMatchMode {
+    return (adw.symbols.adw_combo_row_get_search_match_mode ??
+      missing("adw_combo_row_get_search_match_mode", "1.6"))(
+        this.ptr,
+      ) as GtkStringFilterMatchMode;
+  },
+  getSelectedItem(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      adw.symbols.adw_combo_row_get_selected_item(this.ptr),
+    );
+  },
+  getUseSubtitle(this: GObject): boolean {
+    return adw.symbols.adw_combo_row_get_use_subtitle(this.ptr);
+  },
+  setEnableSearch(this: GObject, enableSearch: boolean): void {
+    (adw.symbols.adw_combo_row_set_enable_search ??
+      missing("adw_combo_row_set_enable_search", "1.4"))(
+        this.ptr,
+        enableSearch,
+      );
+  },
+  setFactory(this: GObject, factory: GObject | null): void {
+    adw.symbols.adw_combo_row_set_factory(this.ptr, factory?.ptr ?? null);
+  },
+  setHeaderFactory(this: GObject, factory: GObject | null): void {
+    (adw.symbols.adw_combo_row_set_header_factory ??
+      missing("adw_combo_row_set_header_factory", "1.6"))(
+        this.ptr,
+        factory?.ptr ?? null,
+      );
+  },
+  setListFactory(this: GObject, factory: GObject | null): void {
+    adw.symbols.adw_combo_row_set_list_factory(this.ptr, factory?.ptr ?? null);
+  },
+  setSearchMatchMode(
+    this: GObject,
+    searchMatchMode: GtkStringFilterMatchMode,
+  ): void {
+    (adw.symbols.adw_combo_row_set_search_match_mode ??
+      missing("adw_combo_row_set_search_match_mode", "1.6"))(
+        this.ptr,
+        searchMatchMode,
+      );
+  },
+  setUseSubtitle(this: GObject, useSubtitle: boolean): void {
+    adw.symbols.adw_combo_row_set_use_subtitle(this.ptr, useSubtitle);
+  },
+};
+
+/** Methods generated for `AdwDialog`. */
+export interface DialogMethods {
+  /**
+   * Closes `self`.
+   */
+  forceClose(): void;
+  /**
+   * Gets whether `self` can be closed.
+   */
+  getCanClose(): boolean;
+  /**
+   * Gets the child widget of `self`.
+   */
+  getChild(): Widget | null;
+  /**
+   * Gets the height of the dialog's contents.
+   */
+  getContentHeight(): number;
+  /**
+   * Gets the width of the dialog's contents.
+   */
+  getContentWidth(): number;
+  /**
+   * Gets the current breakpoint.
+   */
+  getCurrentBreakpoint(): GObject | null;
+  /**
+   * Gets the default widget for `self`.
+   */
+  getDefaultWidget(): Widget | null;
+  /**
+   * Gets the focus widget for `self`.
+   */
+  getFocus(): Widget | null;
+  /**
+   * Gets whether to size content of `self` automatically.
+   */
+  getFollowsContentSize(): boolean;
+  /**
+   * Gets presentation mode for `self`.
+   */
+  getPresentationMode(): DialogPresentationMode;
+  /**
+   * Gets the title of `self`.
+   */
+  getTitle(): string;
+  /**
+   * Sets whether `self` can be closed.
+   */
+  setCanClose(canClose: boolean): void;
+  /**
+   * Sets the child widget of `self`.
+   */
+  setChild(child: Widget | null): void;
+  /**
+   * Sets the height of the dialog's contents.
+   */
+  setContentHeight(contentHeight: number): void;
+  /**
+   * Sets the width of the dialog's contents.
+   */
+  setContentWidth(contentWidth: number): void;
+  /**
+   * Sets the default widget for `self`.
+   */
+  setDefaultWidget(defaultWidget: Widget | null): void;
+  /**
+   * Sets the focus widget for `self`.
+   */
+  setFocus(focus: Widget | null): void;
+  /**
+   * Sets whether to size content of `self` automatically.
+   */
+  setFollowsContentSize(followsContentSize: boolean): void;
+  /**
+   * Sets presentation mode for `self`.
+   */
+  setPresentationMode(presentationMode: DialogPresentationMode): void;
+  /**
+   * Sets the title of `self`.
+   */
+  setTitle(title: string): void;
+  /**
+   * Emitted when the close button or shortcut is used, or
+   * `close()` is called while `can-close` is set to
+   * `FALSE`.
+   */
+  onCloseAttempt(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode DialogMethods}. */
+export const dialogMethods: DialogMethods & ThisType<GObject> = {
+  forceClose(this: GObject): void {
+    (adw.symbols.adw_dialog_force_close ??
+      missing("adw_dialog_force_close", "1.5"))(this.ptr);
+  },
+  getCanClose(this: GObject): boolean {
+    return (adw.symbols.adw_dialog_get_can_close ??
+      missing("adw_dialog_get_can_close", "1.5"))(this.ptr);
+  },
+  getChild(this: GObject): Widget | null {
+    return borrowed<Widget>(
+      (adw.symbols.adw_dialog_get_child ??
+        missing("adw_dialog_get_child", "1.5"))(this.ptr),
+    );
+  },
+  getContentHeight(this: GObject): number {
+    return (adw.symbols.adw_dialog_get_content_height ??
+      missing("adw_dialog_get_content_height", "1.5"))(this.ptr);
+  },
+  getContentWidth(this: GObject): number {
+    return (adw.symbols.adw_dialog_get_content_width ??
+      missing("adw_dialog_get_content_width", "1.5"))(this.ptr);
+  },
+  getCurrentBreakpoint(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      (adw.symbols.adw_dialog_get_current_breakpoint ??
+        missing("adw_dialog_get_current_breakpoint", "1.5"))(this.ptr),
+    );
+  },
+  getDefaultWidget(this: GObject): Widget | null {
+    return borrowed<Widget>(
+      (adw.symbols.adw_dialog_get_default_widget ??
+        missing("adw_dialog_get_default_widget", "1.5"))(this.ptr),
+    );
+  },
+  getFocus(this: GObject): Widget | null {
+    return borrowed<Widget>(
+      (adw.symbols.adw_dialog_get_focus ??
+        missing("adw_dialog_get_focus", "1.5"))(this.ptr),
+    );
+  },
+  getFollowsContentSize(this: GObject): boolean {
+    return (adw.symbols.adw_dialog_get_follows_content_size ??
+      missing("adw_dialog_get_follows_content_size", "1.5"))(this.ptr);
+  },
+  getPresentationMode(this: GObject): DialogPresentationMode {
+    return (adw.symbols.adw_dialog_get_presentation_mode ??
+      missing("adw_dialog_get_presentation_mode", "1.5"))(
+        this.ptr,
+      ) as DialogPresentationMode;
+  },
+  getTitle(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_dialog_get_title ??
+        missing("adw_dialog_get_title", "1.5"))(this.ptr),
+    );
+  },
+  setCanClose(this: GObject, canClose: boolean): void {
+    (adw.symbols.adw_dialog_set_can_close ??
+      missing("adw_dialog_set_can_close", "1.5"))(this.ptr, canClose);
+  },
+  setChild(this: GObject, child: Widget | null): void {
+    (adw.symbols.adw_dialog_set_child ??
+      missing("adw_dialog_set_child", "1.5"))(this.ptr, child?.ptr ?? null);
+  },
+  setContentHeight(this: GObject, contentHeight: number): void {
+    (adw.symbols.adw_dialog_set_content_height ??
+      missing("adw_dialog_set_content_height", "1.5"))(this.ptr, contentHeight);
+  },
+  setContentWidth(this: GObject, contentWidth: number): void {
+    (adw.symbols.adw_dialog_set_content_width ??
+      missing("adw_dialog_set_content_width", "1.5"))(this.ptr, contentWidth);
+  },
+  setDefaultWidget(this: GObject, defaultWidget: Widget | null): void {
+    (adw.symbols.adw_dialog_set_default_widget ??
+      missing("adw_dialog_set_default_widget", "1.5"))(
+        this.ptr,
+        defaultWidget?.ptr ?? null,
+      );
+  },
+  setFocus(this: GObject, focus: Widget | null): void {
+    (adw.symbols.adw_dialog_set_focus ??
+      missing("adw_dialog_set_focus", "1.5"))(this.ptr, focus?.ptr ?? null);
+  },
+  setFollowsContentSize(this: GObject, followsContentSize: boolean): void {
+    (adw.symbols.adw_dialog_set_follows_content_size ??
+      missing("adw_dialog_set_follows_content_size", "1.5"))(
+        this.ptr,
+        followsContentSize,
+      );
+  },
+  setPresentationMode(
+    this: GObject,
+    presentationMode: DialogPresentationMode,
+  ): void {
+    (adw.symbols.adw_dialog_set_presentation_mode ??
+      missing("adw_dialog_set_presentation_mode", "1.5"))(
+        this.ptr,
+        presentationMode,
+      );
+  },
+  setTitle(this: GObject, title: string): void {
+    (adw.symbols.adw_dialog_set_title ??
+      missing("adw_dialog_set_title", "1.5"))(this.ptr, cstr(title));
+  },
+  onCloseAttempt(this: GObject, callback: () => void): number {
+    return connectSignal(this, "close-attempt", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `AdwHeaderBar`. */
+export interface HeaderBarMethods {
+  /**
+   * Gets the policy for aligning the center widget.
+   */
+  getCenteringPolicy(): CenteringPolicy;
+  /**
+   * Gets the decoration layout for `self`.
+   */
+  getDecorationLayout(): string | null;
+  /**
+   * Gets whether `self` can show the back button.
+   */
+  getShowBackButton(): boolean;
+  /**
+   * Gets whether to show title buttons at the end of `self`.
+   */
+  getShowEndTitleButtons(): boolean;
+  /**
+   * Gets whether to show title buttons at the start of `self`.
+   */
+  getShowStartTitleButtons(): boolean;
+  /**
+   * Gets whether the title widget should be shown.
+   */
+  getShowTitle(): boolean;
+  /**
+   * Gets the title widget widget of `self`.
+   */
+  getTitleWidget(): Widget | null;
+  /**
+   * Removes a child from `self`.
+   */
+  remove(child: Widget): void;
+  /**
+   * Sets the policy for aligning the center widget.
+   */
+  setCenteringPolicy(centeringPolicy: CenteringPolicy): void;
+  /**
+   * Sets the decoration layout for `self`.
+   */
+  setDecorationLayout(layout: string | null): void;
+  /**
+   * Sets whether `self` can show the back button.
+   */
+  setShowBackButton(showBackButton: boolean): void;
+  /**
+   * Sets whether to show title buttons at the end of `self`.
+   */
+  setShowEndTitleButtons(setting: boolean): void;
+  /**
+   * Sets whether to show title buttons at the start of `self`.
+   */
+  setShowStartTitleButtons(setting: boolean): void;
+  /**
+   * Sets whether the title widget should be shown.
+   */
+  setShowTitle(showTitle: boolean): void;
+}
+
+/** Implementations of {@linkcode HeaderBarMethods}. */
+export const headerBarMethods: HeaderBarMethods & ThisType<GObject> = {
+  getCenteringPolicy(this: GObject): CenteringPolicy {
+    return adw.symbols.adw_header_bar_get_centering_policy(
+      this.ptr,
+    ) as CenteringPolicy;
+  },
+  getDecorationLayout(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      adw.symbols.adw_header_bar_get_decoration_layout(this.ptr),
+    );
+  },
+  getShowBackButton(this: GObject): boolean {
+    return (adw.symbols.adw_header_bar_get_show_back_button ??
+      missing("adw_header_bar_get_show_back_button", "1.4"))(this.ptr);
+  },
+  getShowEndTitleButtons(this: GObject): boolean {
+    return adw.symbols.adw_header_bar_get_show_end_title_buttons(this.ptr);
+  },
+  getShowStartTitleButtons(this: GObject): boolean {
+    return adw.symbols.adw_header_bar_get_show_start_title_buttons(this.ptr);
+  },
+  getShowTitle(this: GObject): boolean {
+    return (adw.symbols.adw_header_bar_get_show_title ??
+      missing("adw_header_bar_get_show_title", "1.4"))(this.ptr);
+  },
+  getTitleWidget(this: GObject): Widget | null {
+    return borrowed<Widget>(
+      adw.symbols.adw_header_bar_get_title_widget(this.ptr),
+    );
+  },
+  remove(this: GObject, child: Widget): void {
+    adw.symbols.adw_header_bar_remove(this.ptr, child.ptr);
+  },
+  setCenteringPolicy(this: GObject, centeringPolicy: CenteringPolicy): void {
+    adw.symbols.adw_header_bar_set_centering_policy(this.ptr, centeringPolicy);
+  },
+  setDecorationLayout(this: GObject, layout: string | null): void {
+    adw.symbols.adw_header_bar_set_decoration_layout(
+      this.ptr,
+      cstrOrNull(layout),
+    );
+  },
+  setShowBackButton(this: GObject, showBackButton: boolean): void {
+    (adw.symbols.adw_header_bar_set_show_back_button ??
+      missing("adw_header_bar_set_show_back_button", "1.4"))(
+        this.ptr,
+        showBackButton,
+      );
+  },
+  setShowEndTitleButtons(this: GObject, setting: boolean): void {
+    adw.symbols.adw_header_bar_set_show_end_title_buttons(this.ptr, setting);
+  },
+  setShowStartTitleButtons(this: GObject, setting: boolean): void {
+    adw.symbols.adw_header_bar_set_show_start_title_buttons(this.ptr, setting);
+  },
+  setShowTitle(this: GObject, showTitle: boolean): void {
+    (adw.symbols.adw_header_bar_set_show_title ??
+      missing("adw_header_bar_set_show_title", "1.4"))(this.ptr, showTitle);
+  },
+};
+
+/** Methods generated for `AdwMessageDialog`. */
+export interface MessageDialogMethods {
+}
+
+/** Implementations of {@linkcode MessageDialogMethods}. */
+export const messageDialogMethods: MessageDialogMethods & ThisType<GObject> =
+  {};
+
+/** Methods generated for `AdwNavigationPage`. */
+export interface NavigationPageMethods {
+  /**
+   * Gets whether `self` can be popped from navigation stack.
+   */
+  getCanPop(): boolean;
+  /**
+   * Gets the child widget of `self`.
+   */
+  getChild(): Widget | null;
+  /**
+   * Gets the title of `self`.
+   */
+  getTitle(): string;
+  /**
+   * Sets whether `self` can be popped from navigation stack.
+   */
+  setCanPop(canPop: boolean): void;
+  /**
+   * Sets the child widget of `self`.
+   */
+  setChild(child: Widget | null): void;
+  /**
+   * Sets the title of `self`.
+   */
+  setTitle(title: string): void;
+  /**
+   * Emitted when the navigation view transition has been completed and the page
+   * is fully hidden.
+   */
+  onHidden(callback: () => void): number;
+  /**
+   * Emitted when the page starts hiding at the beginning of the navigation view
+   * transition.
+   */
+  onHiding(callback: () => void): number;
+  /**
+   * Emitted when the page shows at the beginning of the navigation view
+   * transition.
+   */
+  onShowing(callback: () => void): number;
+  /**
+   * Emitted when the navigation view transition has been completed and the page
+   * is fully shown.
+   */
+  onShown(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode NavigationPageMethods}. */
+export const navigationPageMethods: NavigationPageMethods & ThisType<GObject> =
+  {
+    getCanPop(this: GObject): boolean {
+      return (adw.symbols.adw_navigation_page_get_can_pop ??
+        missing("adw_navigation_page_get_can_pop", "1.4"))(this.ptr);
+    },
+    getChild(this: GObject): Widget | null {
+      return borrowed<Widget>(
+        (adw.symbols.adw_navigation_page_get_child ??
+          missing("adw_navigation_page_get_child", "1.4"))(this.ptr),
+      );
+    },
+    getTitle(this: GObject): string {
+      return readCStr(
+        (adw.symbols.adw_navigation_page_get_title ??
+          missing("adw_navigation_page_get_title", "1.4"))(this.ptr),
+      );
+    },
+    setCanPop(this: GObject, canPop: boolean): void {
+      (adw.symbols.adw_navigation_page_set_can_pop ??
+        missing("adw_navigation_page_set_can_pop", "1.4"))(this.ptr, canPop);
+    },
+    setChild(this: GObject, child: Widget | null): void {
+      (adw.symbols.adw_navigation_page_set_child ??
+        missing("adw_navigation_page_set_child", "1.4"))(
+          this.ptr,
+          child?.ptr ?? null,
+        );
+    },
+    setTitle(this: GObject, title: string): void {
+      (adw.symbols.adw_navigation_page_set_title ??
+        missing("adw_navigation_page_set_title", "1.4"))(this.ptr, cstr(title));
+    },
+    onHidden(this: GObject, callback: () => void): number {
+      return connectSignal(this, "hidden", {
+        parameters: ["pointer", "pointer"],
+        result: "void",
+      }, () => callback());
+    },
+    onHiding(this: GObject, callback: () => void): number {
+      return connectSignal(this, "hiding", {
+        parameters: ["pointer", "pointer"],
+        result: "void",
+      }, () => callback());
+    },
+    onShowing(this: GObject, callback: () => void): number {
+      return connectSignal(this, "showing", {
+        parameters: ["pointer", "pointer"],
+        result: "void",
+      }, () => callback());
+    },
+    onShown(this: GObject, callback: () => void): number {
+      return connectSignal(this, "shown", {
+        parameters: ["pointer", "pointer"],
+        result: "void",
+      }, () => callback());
+    },
+  };
+
+/** Methods generated for `AdwNavigationView`. */
+export interface NavigationViewMethods {
+  /**
+   * Finds a page in `self` by its tag.
+   */
+  findPage(tag: string): NavigationPage | null;
+  /**
+   * Gets whether `self` animates page transitions.
+   */
+  getAnimateTransitions(): boolean;
+  /**
+   * Gets whether `self` is horizontally homogeneous.
+   */
+  getHhomogeneous(): boolean;
+  /**
+   * Gets whether pressing Escape pops the current page on `self`.
+   */
+  getPopOnEscape(): boolean;
+  /**
+   * Gets the previous page for `page`.
+   */
+  getPreviousPage(page: NavigationPage): NavigationPage | null;
+  /**
+   * Gets whether `self` is vertically homogeneous.
+   */
+  getVhomogeneous(): boolean;
+  /**
+   * Gets the currently visible page in `self`.
+   */
+  getVisiblePage(): NavigationPage | null;
+  /**
+   * Pops pages from the navigation stack until `page` is visible.
+   */
+  popToPage(page: NavigationPage): boolean;
+  /**
+   * Pops pages from the navigation stack until page with the tag `tag` is visible.
+   */
+  popToTag(tag: string): boolean;
+  /**
+   * Pushes the page with the tag `tag` onto the navigation stack.
+   */
+  pushByTag(tag: string): void;
+  /**
+   * Removes `page` from `self`.
+   */
+  remove(page: NavigationPage): void;
+  /**
+   * Sets whether `self` should animate page transitions.
+   */
+  setAnimateTransitions(animateTransitions: boolean): void;
+  /**
+   * Sets `self` to be horizontally homogeneous or not.
+   */
+  setHhomogeneous(hhomogeneous: boolean): void;
+  /**
+   * Sets `self` to be vertically homogeneous or not.
+   */
+  setVhomogeneous(vhomogeneous: boolean): void;
+  /**
+   * Emitted after `page` has been popped from the navigation stack.
+   */
+  onPopped(callback: (page: NavigationPage) => void): number;
+  /**
+   * Emitted after a page has been pushed to the navigation stack.
+   */
+  onPushed(callback: () => void): number;
+  /**
+   * Emitted after the navigation stack has been replaced.
+   */
+  onReplaced(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode NavigationViewMethods}. */
+export const navigationViewMethods: NavigationViewMethods & ThisType<GObject> =
+  {
+    findPage(this: GObject, tag: string): NavigationPage | null {
+      return borrowed<NavigationPage>(
+        (adw.symbols.adw_navigation_view_find_page ??
+          missing("adw_navigation_view_find_page", "1.4"))(this.ptr, cstr(tag)),
+      );
+    },
+    getAnimateTransitions(this: GObject): boolean {
+      return (adw.symbols.adw_navigation_view_get_animate_transitions ??
+        missing("adw_navigation_view_get_animate_transitions", "1.4"))(
+          this.ptr,
+        );
+    },
+    getHhomogeneous(this: GObject): boolean {
+      return (adw.symbols.adw_navigation_view_get_hhomogeneous ??
+        missing("adw_navigation_view_get_hhomogeneous", "1.7"))(this.ptr);
+    },
+    getPopOnEscape(this: GObject): boolean {
+      return (adw.symbols.adw_navigation_view_get_pop_on_escape ??
+        missing("adw_navigation_view_get_pop_on_escape", "1.4"))(this.ptr);
+    },
+    getPreviousPage(
+      this: GObject,
+      page: NavigationPage,
+    ): NavigationPage | null {
+      return borrowed<NavigationPage>(
+        (adw.symbols.adw_navigation_view_get_previous_page ??
+          missing("adw_navigation_view_get_previous_page", "1.4"))(
+            this.ptr,
+            page.ptr,
+          ),
+      );
+    },
+    getVhomogeneous(this: GObject): boolean {
+      return (adw.symbols.adw_navigation_view_get_vhomogeneous ??
+        missing("adw_navigation_view_get_vhomogeneous", "1.7"))(this.ptr);
+    },
+    getVisiblePage(this: GObject): NavigationPage | null {
+      return borrowed<NavigationPage>(
+        (adw.symbols.adw_navigation_view_get_visible_page ??
+          missing("adw_navigation_view_get_visible_page", "1.4"))(this.ptr),
+      );
+    },
+    popToPage(this: GObject, page: NavigationPage): boolean {
+      return (adw.symbols.adw_navigation_view_pop_to_page ??
+        missing("adw_navigation_view_pop_to_page", "1.4"))(this.ptr, page.ptr);
+    },
+    popToTag(this: GObject, tag: string): boolean {
+      return (adw.symbols.adw_navigation_view_pop_to_tag ??
+        missing("adw_navigation_view_pop_to_tag", "1.4"))(this.ptr, cstr(tag));
+    },
+    pushByTag(this: GObject, tag: string): void {
+      (adw.symbols.adw_navigation_view_push_by_tag ??
+        missing("adw_navigation_view_push_by_tag", "1.4"))(this.ptr, cstr(tag));
+    },
+    remove(this: GObject, page: NavigationPage): void {
+      (adw.symbols.adw_navigation_view_remove ??
+        missing("adw_navigation_view_remove", "1.4"))(this.ptr, page.ptr);
+    },
+    setAnimateTransitions(this: GObject, animateTransitions: boolean): void {
+      (adw.symbols.adw_navigation_view_set_animate_transitions ??
+        missing("adw_navigation_view_set_animate_transitions", "1.4"))(
+          this.ptr,
+          animateTransitions,
+        );
+    },
+    setHhomogeneous(this: GObject, hhomogeneous: boolean): void {
+      (adw.symbols.adw_navigation_view_set_hhomogeneous ??
+        missing("adw_navigation_view_set_hhomogeneous", "1.7"))(
+          this.ptr,
+          hhomogeneous,
+        );
+    },
+    setVhomogeneous(this: GObject, vhomogeneous: boolean): void {
+      (adw.symbols.adw_navigation_view_set_vhomogeneous ??
+        missing("adw_navigation_view_set_vhomogeneous", "1.7"))(
+          this.ptr,
+          vhomogeneous,
+        );
+    },
+    onPopped(this: GObject, callback: (page: NavigationPage) => void): number {
+      return connectSignal(this, "popped", {
+        parameters: ["pointer", "pointer", "pointer"],
+        result: "void",
+      }, (a0: never) => callback(borrowed<NavigationPage>(a0)!));
+    },
+    onPushed(this: GObject, callback: () => void): number {
+      return connectSignal(this, "pushed", {
+        parameters: ["pointer", "pointer"],
+        result: "void",
+      }, () => callback());
+    },
+    onReplaced(this: GObject, callback: () => void): number {
+      return connectSignal(this, "replaced", {
+        parameters: ["pointer", "pointer"],
+        result: "void",
+      }, () => callback());
+    },
+  };
+
+/** Methods generated for `AdwOverlaySplitView`. */
+export interface OverlaySplitViewMethods {
+  /**
+   * Gets whether `self` is collapsed.
+   */
+  getCollapsed(): boolean;
+  /**
+   * Gets the content widget for `self`.
+   */
+  getContent(): Widget | null;
+  /**
+   * Gets whether `self` can be closed with a swipe gesture.
+   */
+  getEnableHideGesture(): boolean;
+  /**
+   * Gets whether `self` can be opened with an edge swipe gesture.
+   */
+  getEnableShowGesture(): boolean;
+  /**
+   * Gets the maximum sidebar width for `self`.
+   */
+  getMaxSidebarWidth(): number;
+  /**
+   * Gets the minimum sidebar width for `self`.
+   */
+  getMinSidebarWidth(): number;
+  /**
+   * Gets whether the sidebar widget is pinned for `self`.
+   */
+  getPinSidebar(): boolean;
+  /**
+   * Gets the sidebar widget for `self`.
+   */
+  getSidebar(): Widget | null;
+  /**
+   * Gets the sidebar position for `self`.
+   */
+  getSidebarPosition(): GtkPackType;
+  /**
+   * Gets the preferred sidebar width fraction for `self`.
+   */
+  getSidebarWidthFraction(): number;
+  /**
+   * Gets the length unit for minimum and maximum sidebar widths.
+   */
+  getSidebarWidthUnit(): LengthUnit;
+  /**
+   * Sets whether `self` can be closed with a swipe gesture.
+   */
+  setEnableHideGesture(enableHideGesture: boolean): void;
+  /**
+   * Sets whether `self` can be opened with an edge swipe gesture.
+   */
+  setEnableShowGesture(enableShowGesture: boolean): void;
+  /**
+   * Sets whether the sidebar widget is pinned for `self`.
+   */
+  setPinSidebar(pinSidebar: boolean): void;
+  /**
+   * Sets the length unit for minimum and maximum sidebar widths.
+   */
+  setSidebarWidthUnit(unit: LengthUnit): void;
+}
+
+/** Implementations of {@linkcode OverlaySplitViewMethods}. */
+export const overlaySplitViewMethods:
+  & OverlaySplitViewMethods
+  & ThisType<GObject> = {
+    getCollapsed(this: GObject): boolean {
+      return (adw.symbols.adw_overlay_split_view_get_collapsed ??
+        missing("adw_overlay_split_view_get_collapsed", "1.4"))(this.ptr);
+    },
+    getContent(this: GObject): Widget | null {
+      return borrowed<Widget>(
+        (adw.symbols.adw_overlay_split_view_get_content ??
+          missing("adw_overlay_split_view_get_content", "1.4"))(this.ptr),
+      );
+    },
+    getEnableHideGesture(this: GObject): boolean {
+      return (adw.symbols.adw_overlay_split_view_get_enable_hide_gesture ??
+        missing("adw_overlay_split_view_get_enable_hide_gesture", "1.4"))(
+          this.ptr,
+        );
+    },
+    getEnableShowGesture(this: GObject): boolean {
+      return (adw.symbols.adw_overlay_split_view_get_enable_show_gesture ??
+        missing("adw_overlay_split_view_get_enable_show_gesture", "1.4"))(
+          this.ptr,
+        );
+    },
+    getMaxSidebarWidth(this: GObject): number {
+      return (adw.symbols.adw_overlay_split_view_get_max_sidebar_width ??
+        missing("adw_overlay_split_view_get_max_sidebar_width", "1.4"))(
+          this.ptr,
+        );
+    },
+    getMinSidebarWidth(this: GObject): number {
+      return (adw.symbols.adw_overlay_split_view_get_min_sidebar_width ??
+        missing("adw_overlay_split_view_get_min_sidebar_width", "1.4"))(
+          this.ptr,
+        );
+    },
+    getPinSidebar(this: GObject): boolean {
+      return (adw.symbols.adw_overlay_split_view_get_pin_sidebar ??
+        missing("adw_overlay_split_view_get_pin_sidebar", "1.4"))(this.ptr);
+    },
+    getSidebar(this: GObject): Widget | null {
+      return borrowed<Widget>(
+        (adw.symbols.adw_overlay_split_view_get_sidebar ??
+          missing("adw_overlay_split_view_get_sidebar", "1.4"))(this.ptr),
+      );
+    },
+    getSidebarPosition(this: GObject): GtkPackType {
+      return (adw.symbols.adw_overlay_split_view_get_sidebar_position ??
+        missing("adw_overlay_split_view_get_sidebar_position", "1.4"))(
+          this.ptr,
+        ) as GtkPackType;
+    },
+    getSidebarWidthFraction(this: GObject): number {
+      return (adw.symbols.adw_overlay_split_view_get_sidebar_width_fraction ??
+        missing("adw_overlay_split_view_get_sidebar_width_fraction", "1.4"))(
+          this.ptr,
+        );
+    },
+    getSidebarWidthUnit(this: GObject): LengthUnit {
+      return (adw.symbols.adw_overlay_split_view_get_sidebar_width_unit ??
+        missing("adw_overlay_split_view_get_sidebar_width_unit", "1.4"))(
+          this.ptr,
+        ) as LengthUnit;
+    },
+    setEnableHideGesture(this: GObject, enableHideGesture: boolean): void {
+      (adw.symbols.adw_overlay_split_view_set_enable_hide_gesture ??
+        missing("adw_overlay_split_view_set_enable_hide_gesture", "1.4"))(
+          this.ptr,
+          enableHideGesture,
+        );
+    },
+    setEnableShowGesture(this: GObject, enableShowGesture: boolean): void {
+      (adw.symbols.adw_overlay_split_view_set_enable_show_gesture ??
+        missing("adw_overlay_split_view_set_enable_show_gesture", "1.4"))(
+          this.ptr,
+          enableShowGesture,
+        );
+    },
+    setPinSidebar(this: GObject, pinSidebar: boolean): void {
+      (adw.symbols.adw_overlay_split_view_set_pin_sidebar ??
+        missing("adw_overlay_split_view_set_pin_sidebar", "1.4"))(
+          this.ptr,
+          pinSidebar,
+        );
+    },
+    setSidebarWidthUnit(this: GObject, unit: LengthUnit): void {
+      (adw.symbols.adw_overlay_split_view_set_sidebar_width_unit ??
+        missing("adw_overlay_split_view_set_sidebar_width_unit", "1.4"))(
+          this.ptr,
+          unit,
+        );
+    },
+  };
+
+/** Methods generated for `AdwPreferencesDialog`. */
+export interface PreferencesDialogMethods {
+  /**
+   * Gets whether search is enabled for `self`.
+   */
+  getSearchEnabled(): boolean;
+  /**
+   * Gets the currently visible page of `self`.
+   */
+  getVisiblePage(): PreferencesPage | null;
+  /**
+   * Gets the name of currently visible page of `self`.
+   */
+  getVisiblePageName(): string | null;
+  /**
+   * Removes a page from `self`.
+   */
+  remove(page: PreferencesPage): void;
+  /**
+   * Sets whether search is enabled for `self`.
+   */
+  setSearchEnabled(searchEnabled: boolean): void;
+  /**
+   * Makes `page` the visible page of `self`.
+   */
+  setVisiblePage(page: PreferencesPage): void;
+  /**
+   * Makes the page with the given name visible.
+   */
+  setVisiblePageName(name: string): void;
+}
+
+/** Implementations of {@linkcode PreferencesDialogMethods}. */
+export const preferencesDialogMethods:
+  & PreferencesDialogMethods
+  & ThisType<GObject> = {
+    getSearchEnabled(this: GObject): boolean {
+      return (adw.symbols.adw_preferences_dialog_get_search_enabled ??
+        missing("adw_preferences_dialog_get_search_enabled", "1.5"))(this.ptr);
+    },
+    getVisiblePage(this: GObject): PreferencesPage | null {
+      return borrowed<PreferencesPage>(
+        (adw.symbols.adw_preferences_dialog_get_visible_page ??
+          missing("adw_preferences_dialog_get_visible_page", "1.5"))(this.ptr),
+      );
+    },
+    getVisiblePageName(this: GObject): string | null {
+      return ((p) => p ? readCStr(p) : null)(
+        (adw.symbols.adw_preferences_dialog_get_visible_page_name ??
+          missing("adw_preferences_dialog_get_visible_page_name", "1.5"))(
+            this.ptr,
+          ),
+      );
+    },
+    remove(this: GObject, page: PreferencesPage): void {
+      (adw.symbols.adw_preferences_dialog_remove ??
+        missing("adw_preferences_dialog_remove", "1.5"))(this.ptr, page.ptr);
+    },
+    setSearchEnabled(this: GObject, searchEnabled: boolean): void {
+      (adw.symbols.adw_preferences_dialog_set_search_enabled ??
+        missing("adw_preferences_dialog_set_search_enabled", "1.5"))(
+          this.ptr,
+          searchEnabled,
+        );
+    },
+    setVisiblePage(this: GObject, page: PreferencesPage): void {
+      (adw.symbols.adw_preferences_dialog_set_visible_page ??
+        missing("adw_preferences_dialog_set_visible_page", "1.5"))(
+          this.ptr,
+          page.ptr,
+        );
+    },
+    setVisiblePageName(this: GObject, name: string): void {
+      (adw.symbols.adw_preferences_dialog_set_visible_page_name ??
+        missing("adw_preferences_dialog_set_visible_page_name", "1.5"))(
+          this.ptr,
+          cstr(name),
+        );
+    },
+  };
+
+/** Methods generated for `AdwPreferencesGroup`. */
+export interface PreferencesGroupMethods {
+  /**
+   * Gets the description of `self`.
+   */
+  getDescription(): string | null;
+  /**
+   * Gets the suffix for `self`'s header.
+   */
+  getHeaderSuffix(): Widget | null;
+  /**
+   * Gets the row at `index`.
+   */
+  getRow(index: number): Widget | null;
+  /**
+   * Gets whether `self`'s rows are separated.
+   */
+  getSeparateRows(): boolean;
+  /**
+   * Gets the title of `self`.
+   */
+  getTitle(): string;
+  /**
+   * Removes a child from `self`.
+   */
+  remove(child: Widget): void;
+  /**
+   * Sets whether `self`'s rows are separated.
+   */
+  setSeparateRows(separateRows: boolean): void;
+}
+
+/** Implementations of {@linkcode PreferencesGroupMethods}. */
+export const preferencesGroupMethods:
+  & PreferencesGroupMethods
+  & ThisType<GObject> = {
+    getDescription(this: GObject): string | null {
+      return ((p) => p ? readCStr(p) : null)(
+        adw.symbols.adw_preferences_group_get_description(this.ptr),
+      );
+    },
+    getHeaderSuffix(this: GObject): Widget | null {
+      return borrowed<Widget>(
+        (adw.symbols.adw_preferences_group_get_header_suffix ??
+          missing("adw_preferences_group_get_header_suffix", "1.1"))(this.ptr),
+      );
+    },
+    getRow(this: GObject, index: number): Widget | null {
+      return borrowed<Widget>(
+        (adw.symbols.adw_preferences_group_get_row ??
+          missing("adw_preferences_group_get_row", "1.8"))(this.ptr, index),
+      );
+    },
+    getSeparateRows(this: GObject): boolean {
+      return (adw.symbols.adw_preferences_group_get_separate_rows ??
+        missing("adw_preferences_group_get_separate_rows", "1.6"))(this.ptr);
+    },
+    getTitle(this: GObject): string {
+      return readCStr(adw.symbols.adw_preferences_group_get_title(this.ptr));
+    },
+    remove(this: GObject, child: Widget): void {
+      adw.symbols.adw_preferences_group_remove(this.ptr, child.ptr);
+    },
+    setSeparateRows(this: GObject, separateRows: boolean): void {
+      (adw.symbols.adw_preferences_group_set_separate_rows ??
+        missing("adw_preferences_group_set_separate_rows", "1.6"))(
+          this.ptr,
+          separateRows,
+        );
+    },
+  };
+
+/** Methods generated for `AdwPreferencesPage`. */
+export interface PreferencesPageMethods {
+  /**
+   * Gets the banner displayed at the top of the page.
+   */
+  getBanner(): Widget | null;
+  /**
+   * Gets the description of `self`.
+   */
+  getDescription(): string;
+  /**
+   * Gets whether the description is centered.
+   */
+  getDescriptionCentered(): boolean;
+  /**
+   * Gets the group at `index`.
+   */
+  getGroup(index: number): PreferencesGroup | null;
+  /**
+   * Gets the icon name for `self`.
+   */
+  getIconName(): string | null;
+  /**
+   * Gets the title of `self`.
+   */
+  getTitle(): string;
+  /**
+   * Gets whether an embedded underline in the title indicates a mnemonic.
+   */
+  getUseUnderline(): boolean;
+  /**
+   * Inserts a preferences group to `self` at `index`.
+   */
+  insert(group: PreferencesGroup, index: number): void;
+  /**
+   * Removes a group from `self`.
+   */
+  remove(group: PreferencesGroup): void;
+  /**
+   * Scrolls the scrolled window of `self` to the top.
+   */
+  scrollToTop(): void;
+  /**
+   * Sets the banner displayed at the top of the page.
+   */
+  setBanner(banner: Widget | null): void;
+  /**
+   * Sets the description of `self`.
+   */
+  setDescription(description: string): void;
+  /**
+   * Sets whether the description should be centered.
+   */
+  setDescriptionCentered(centered: boolean): void;
+  /**
+   * Sets the icon name for `self`.
+   */
+  setIconName(iconName: string | null): void;
+  /**
+   * Sets the title of `self`.
+   */
+  setTitle(title: string): void;
+  /**
+   * Sets whether an embedded underline in the title indicates a mnemonic.
+   */
+  setUseUnderline(useUnderline: boolean): void;
+}
+
+/** Implementations of {@linkcode PreferencesPageMethods}. */
+export const preferencesPageMethods:
+  & PreferencesPageMethods
+  & ThisType<GObject> = {
+    getBanner(this: GObject): Widget | null {
+      return borrowed<Widget>(
+        (adw.symbols.adw_preferences_page_get_banner ??
+          missing("adw_preferences_page_get_banner", "1.7"))(this.ptr),
+      );
+    },
+    getDescription(this: GObject): string {
+      return readCStr(
+        (adw.symbols.adw_preferences_page_get_description ??
+          missing("adw_preferences_page_get_description", "1.4"))(this.ptr),
+      );
+    },
+    getDescriptionCentered(this: GObject): boolean {
+      return (adw.symbols.adw_preferences_page_get_description_centered ??
+        missing("adw_preferences_page_get_description_centered", "1.6"))(
+          this.ptr,
+        );
+    },
+    getGroup(this: GObject, index: number): PreferencesGroup | null {
+      return borrowed<PreferencesGroup>(
+        (adw.symbols.adw_preferences_page_get_group ??
+          missing("adw_preferences_page_get_group", "1.8"))(this.ptr, index),
+      );
+    },
+    getIconName(this: GObject): string | null {
+      return ((p) => p ? readCStr(p) : null)(
+        adw.symbols.adw_preferences_page_get_icon_name(this.ptr),
+      );
+    },
+    getTitle(this: GObject): string {
+      return readCStr(adw.symbols.adw_preferences_page_get_title(this.ptr));
+    },
+    getUseUnderline(this: GObject): boolean {
+      return adw.symbols.adw_preferences_page_get_use_underline(this.ptr);
+    },
+    insert(this: GObject, group: PreferencesGroup, index: number): void {
+      (adw.symbols.adw_preferences_page_insert ??
+        missing("adw_preferences_page_insert", "1.8"))(
+          this.ptr,
+          group.ptr,
+          index,
+        );
+    },
+    remove(this: GObject, group: PreferencesGroup): void {
+      adw.symbols.adw_preferences_page_remove(this.ptr, group.ptr);
+    },
+    scrollToTop(this: GObject): void {
+      (adw.symbols.adw_preferences_page_scroll_to_top ??
+        missing("adw_preferences_page_scroll_to_top", "1.3"))(this.ptr);
+    },
+    setBanner(this: GObject, banner: Widget | null): void {
+      (adw.symbols.adw_preferences_page_set_banner ??
+        missing("adw_preferences_page_set_banner", "1.7"))(
+          this.ptr,
+          banner?.ptr ?? null,
+        );
+    },
+    setDescription(this: GObject, description: string): void {
+      (adw.symbols.adw_preferences_page_set_description ??
+        missing("adw_preferences_page_set_description", "1.4"))(
+          this.ptr,
+          cstr(description),
+        );
+    },
+    setDescriptionCentered(this: GObject, centered: boolean): void {
+      (adw.symbols.adw_preferences_page_set_description_centered ??
+        missing("adw_preferences_page_set_description_centered", "1.6"))(
+          this.ptr,
+          centered,
+        );
+    },
+    setIconName(this: GObject, iconName: string | null): void {
+      adw.symbols.adw_preferences_page_set_icon_name(
+        this.ptr,
+        cstrOrNull(iconName),
+      );
+    },
+    setTitle(this: GObject, title: string): void {
+      adw.symbols.adw_preferences_page_set_title(this.ptr, cstr(title));
+    },
+    setUseUnderline(this: GObject, useUnderline: boolean): void {
+      adw.symbols.adw_preferences_page_set_use_underline(
+        this.ptr,
+        useUnderline,
+      );
+    },
+  };
+
+/** Methods generated for `AdwPreferencesWindow`. */
+export interface PreferencesWindowMethods {
+}
+
+/** Implementations of {@linkcode PreferencesWindowMethods}. */
+export const preferencesWindowMethods:
+  & PreferencesWindowMethods
+  & ThisType<GObject> = {};
+
+/** Methods generated for `AdwSpinRow`. */
+export interface SpinRowMethods {
+  /**
+   * Changes the properties of an existing spin row.
+   */
+  configure(
+    adjustment: Adjustment | null,
+    climbRate: number,
+    digits: number,
+  ): void;
+  /**
+   * Gets the adjustment that holds the value for the spin row.
+   */
+  getAdjustment(): Adjustment;
+  /**
+   * Gets the acceleration rate when you hold down a button or key.
+   */
+  getClimbRate(): number;
+  /**
+   * Gets the number of decimal places to display.
+   */
+  getDigits(): number;
+  /**
+   * Gets whether non-numeric characters should be ignored.
+   */
+  getNumeric(): boolean;
+  /**
+   * Gets whether invalid values are snapped to nearest step increment.
+   */
+  getSnapToTicks(): boolean;
+  /**
+   * Gets the policy for updating the spin row.
+   */
+  getUpdatePolicy(): GtkSpinButtonUpdatePolicy;
+  /**
+   * Gets whether the spin row should wrap upon reaching its limits.
+   */
+  getWrap(): boolean;
+  /**
+   * Sets the adjustment that holds the value for the spin row.
+   */
+  setAdjustment(adjustment: Adjustment | null): void;
+  /**
+   * Sets the acceleration rate when you hold down a button or key.
+   */
+  setClimbRate(climbRate: number): void;
+  /**
+   * Sets whether non-numeric characters should be ignored.
+   */
+  setNumeric(numeric: boolean): void;
+  /**
+   * Sets whether invalid values are snapped to the nearest step increment.
+   */
+  setSnapToTicks(snapToTicks: boolean): void;
+  /**
+   * Sets the policy for updating the spin row.
+   */
+  setUpdatePolicy(policy: GtkSpinButtonUpdatePolicy): void;
+  /**
+   * Sets whether the spin row should wrap upon reaching its limits.
+   */
+  setWrap(wrap: boolean): void;
+  /**
+   * Manually force an update of the spin row.
+   */
+  update(): void;
+  /**
+   * Emitted right after the spinbutton wraps.
+   */
+  onWrapped(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode SpinRowMethods}. */
+export const spinRowMethods: SpinRowMethods & ThisType<GObject> = {
+  configure(
+    this: GObject,
+    adjustment: Adjustment | null,
+    climbRate: number,
+    digits: number,
+  ): void {
+    (adw.symbols.adw_spin_row_configure ??
+      missing("adw_spin_row_configure", "1.4"))(
+        this.ptr,
+        adjustment?.ptr ?? null,
+        climbRate,
+        digits,
+      );
+  },
+  getAdjustment(this: GObject): Adjustment {
+    return borrowed<Adjustment>(
+      (adw.symbols.adw_spin_row_get_adjustment ??
+        missing("adw_spin_row_get_adjustment", "1.4"))(this.ptr),
+    )!;
+  },
+  getClimbRate(this: GObject): number {
+    return (adw.symbols.adw_spin_row_get_climb_rate ??
+      missing("adw_spin_row_get_climb_rate", "1.4"))(this.ptr);
+  },
+  getDigits(this: GObject): number {
+    return (adw.symbols.adw_spin_row_get_digits ??
+      missing("adw_spin_row_get_digits", "1.4"))(this.ptr);
+  },
+  getNumeric(this: GObject): boolean {
+    return (adw.symbols.adw_spin_row_get_numeric ??
+      missing("adw_spin_row_get_numeric", "1.4"))(this.ptr);
+  },
+  getSnapToTicks(this: GObject): boolean {
+    return (adw.symbols.adw_spin_row_get_snap_to_ticks ??
+      missing("adw_spin_row_get_snap_to_ticks", "1.4"))(this.ptr);
+  },
+  getUpdatePolicy(this: GObject): GtkSpinButtonUpdatePolicy {
+    return (adw.symbols.adw_spin_row_get_update_policy ??
+      missing("adw_spin_row_get_update_policy", "1.4"))(
+        this.ptr,
+      ) as GtkSpinButtonUpdatePolicy;
+  },
+  getWrap(this: GObject): boolean {
+    return (adw.symbols.adw_spin_row_get_wrap ??
+      missing("adw_spin_row_get_wrap", "1.4"))(this.ptr);
+  },
+  setAdjustment(this: GObject, adjustment: Adjustment | null): void {
+    (adw.symbols.adw_spin_row_set_adjustment ??
+      missing("adw_spin_row_set_adjustment", "1.4"))(
+        this.ptr,
+        adjustment?.ptr ?? null,
+      );
+  },
+  setClimbRate(this: GObject, climbRate: number): void {
+    (adw.symbols.adw_spin_row_set_climb_rate ??
+      missing("adw_spin_row_set_climb_rate", "1.4"))(this.ptr, climbRate);
+  },
+  setNumeric(this: GObject, numeric: boolean): void {
+    (adw.symbols.adw_spin_row_set_numeric ??
+      missing("adw_spin_row_set_numeric", "1.4"))(this.ptr, numeric);
+  },
+  setSnapToTicks(this: GObject, snapToTicks: boolean): void {
+    (adw.symbols.adw_spin_row_set_snap_to_ticks ??
+      missing("adw_spin_row_set_snap_to_ticks", "1.4"))(this.ptr, snapToTicks);
+  },
+  setUpdatePolicy(this: GObject, policy: GtkSpinButtonUpdatePolicy): void {
+    (adw.symbols.adw_spin_row_set_update_policy ??
+      missing("adw_spin_row_set_update_policy", "1.4"))(this.ptr, policy);
+  },
+  setWrap(this: GObject, wrap: boolean): void {
+    (adw.symbols.adw_spin_row_set_wrap ??
+      missing("adw_spin_row_set_wrap", "1.4"))(this.ptr, wrap);
+  },
+  update(this: GObject): void {
+    (adw.symbols.adw_spin_row_update ?? missing("adw_spin_row_update", "1.4"))(
+      this.ptr,
+    );
+  },
+  onWrapped(this: GObject, callback: () => void): number {
+    return connectSignal(this, "wrapped", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `AdwSpinner`. */
+export interface SpinnerMethods {
+}
+
+/** Implementations of {@linkcode SpinnerMethods}. */
+export const spinnerMethods: SpinnerMethods & ThisType<GObject> = {};
+
+/** Methods generated for `AdwStatusPage`. */
+export interface StatusPageMethods {
+  /**
+   * Gets the child widget of `self`.
+   */
+  getChild(): Widget | null;
+  /**
+   * Gets the description markup for `self`.
+   */
+  getDescription(): string | null;
+  /**
+   * Gets the icon name for `self`.
+   */
+  getIconName(): string | null;
+  /**
+   * Gets the paintable for `self`.
+   */
+  getPaintable(): GObject | null;
+  /**
+   * Gets the title for `self`.
+   */
+  getTitle(): string;
+  /**
+   * Sets the paintable for `self`.
+   */
+  setPaintable(paintable: GObject | null): void;
+}
+
+/** Implementations of {@linkcode StatusPageMethods}. */
+export const statusPageMethods: StatusPageMethods & ThisType<GObject> = {
+  getChild(this: GObject): Widget | null {
+    return borrowed<Widget>(adw.symbols.adw_status_page_get_child(this.ptr));
+  },
+  getDescription(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      adw.symbols.adw_status_page_get_description(this.ptr),
+    );
+  },
+  getIconName(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      adw.symbols.adw_status_page_get_icon_name(this.ptr),
+    );
+  },
+  getPaintable(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      adw.symbols.adw_status_page_get_paintable(this.ptr),
+    );
+  },
+  getTitle(this: GObject): string {
+    return readCStr(adw.symbols.adw_status_page_get_title(this.ptr));
+  },
+  setPaintable(this: GObject, paintable: GObject | null): void {
+    adw.symbols.adw_status_page_set_paintable(this.ptr, paintable?.ptr ?? null);
+  },
+};
+
+/** Methods generated for `AdwStyleManager`. */
+export interface StyleManagerMethods {
+  /**
+   * Gets the current system accent color.
+   */
+  getAccentColor(): AccentColor;
+  /**
+   * Gets the display the style manager is associated with.
+   */
+  getDisplay(): Display | null;
+  /**
+   * Gets the system document font.
+   */
+  getDocumentFontName(): string;
+  /**
+   * Gets whether the application is using high contrast appearance.
+   */
+  getHighContrast(): boolean;
+  /**
+   * Gets the system monospace font.
+   */
+  getMonospaceFontName(): string;
+  /**
+   * Gets whether the system supports accent colors.
+   */
+  getSystemSupportsAccentColors(): boolean;
+  /**
+   * Gets whether the system supports color schemes.
+   */
+  getSystemSupportsColorSchemes(): boolean;
+}
+
+/** Implementations of {@linkcode StyleManagerMethods}. */
+export const styleManagerMethods: StyleManagerMethods & ThisType<GObject> = {
+  getAccentColor(this: GObject): AccentColor {
+    return (adw.symbols.adw_style_manager_get_accent_color ??
+      missing("adw_style_manager_get_accent_color", "1.6"))(
+        this.ptr,
+      ) as AccentColor;
+  },
+  getDisplay(this: GObject): Display | null {
+    return borrowed<Display>(
+      adw.symbols.adw_style_manager_get_display(this.ptr),
+    );
+  },
+  getDocumentFontName(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_style_manager_get_document_font_name ??
+        missing("adw_style_manager_get_document_font_name", "1.7"))(this.ptr),
+    );
+  },
+  getHighContrast(this: GObject): boolean {
+    return adw.symbols.adw_style_manager_get_high_contrast(this.ptr);
+  },
+  getMonospaceFontName(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_style_manager_get_monospace_font_name ??
+        missing("adw_style_manager_get_monospace_font_name", "1.7"))(this.ptr),
+    );
+  },
+  getSystemSupportsAccentColors(this: GObject): boolean {
+    return (adw.symbols.adw_style_manager_get_system_supports_accent_colors ??
+      missing("adw_style_manager_get_system_supports_accent_colors", "1.6"))(
+        this.ptr,
+      );
+  },
+  getSystemSupportsColorSchemes(this: GObject): boolean {
+    return adw.symbols.adw_style_manager_get_system_supports_color_schemes(
+      this.ptr,
+    );
+  },
+};
+
+/** Methods generated for `AdwSwitchRow`. */
+export interface SwitchRowMethods {
+}
+
+/** Implementations of {@linkcode SwitchRowMethods}. */
+export const switchRowMethods: SwitchRowMethods & ThisType<GObject> = {};
 
 /** Methods generated for `AdwToast`. */
 export interface ToastMethods {
@@ -122,3 +2560,215 @@ export const toastMethods: ToastMethods & ThisType<GObject> = {
       missing("adw_toast_set_use_markup", "1.4"))(this.ptr, useMarkup);
   },
 };
+
+/** Methods generated for `AdwToastOverlay`. */
+export interface ToastOverlayMethods {
+  /**
+   * Dismisses all displayed toasts.
+   */
+  dismissAll(): void;
+  /**
+   * Gets the child widget of `self`.
+   */
+  getChild(): Widget | null;
+}
+
+/** Implementations of {@linkcode ToastOverlayMethods}. */
+export const toastOverlayMethods: ToastOverlayMethods & ThisType<GObject> = {
+  dismissAll(this: GObject): void {
+    (adw.symbols.adw_toast_overlay_dismiss_all ??
+      missing("adw_toast_overlay_dismiss_all", "1.7"))(this.ptr);
+  },
+  getChild(this: GObject): Widget | null {
+    return borrowed<Widget>(adw.symbols.adw_toast_overlay_get_child(this.ptr));
+  },
+};
+
+/** Methods generated for `AdwToolbarView`. */
+export interface ToolbarViewMethods {
+  /**
+   * Gets the current bottom bar height for `self`.
+   */
+  getBottomBarHeight(): number;
+  /**
+   * Gets appearance of the bottom bars for `self`.
+   */
+  getBottomBarStyle(): ToolbarStyle;
+  /**
+   * Gets the content widget for `self`.
+   */
+  getContent(): Widget | null;
+  /**
+   * Gets whether the content widget can extend behind bottom bars.
+   */
+  getExtendContentToBottomEdge(): boolean;
+  /**
+   * Gets whether the content widget can extend behind top bars.
+   */
+  getExtendContentToTopEdge(): boolean;
+  /**
+   * Gets whether bottom bars are revealed for `self`.
+   */
+  getRevealBottomBars(): boolean;
+  /**
+   * Gets whether top bars are revealed for `self`.
+   */
+  getRevealTopBars(): boolean;
+  /**
+   * Gets the current top bar height for `self`.
+   */
+  getTopBarHeight(): number;
+  /**
+   * Gets appearance of the top bars for `self`.
+   */
+  getTopBarStyle(): ToolbarStyle;
+  /**
+   * Removes a child from `self`.
+   */
+  remove(widget: Widget): void;
+  /**
+   * Sets appearance of the bottom bars for `self`.
+   */
+  setBottomBarStyle(style: ToolbarStyle): void;
+  /**
+   * Sets whether the content widget can extend behind bottom bars.
+   */
+  setExtendContentToBottomEdge(extend: boolean): void;
+  /**
+   * Sets whether the content widget can extend behind top bars.
+   */
+  setExtendContentToTopEdge(extend: boolean): void;
+  /**
+   * Sets whether bottom bars are revealed for `self`.
+   */
+  setRevealBottomBars(reveal: boolean): void;
+  /**
+   * Sets whether top bars are revealed for `self`.
+   */
+  setRevealTopBars(reveal: boolean): void;
+  /**
+   * Sets appearance of the top bars for `self`.
+   */
+  setTopBarStyle(style: ToolbarStyle): void;
+}
+
+/** Implementations of {@linkcode ToolbarViewMethods}. */
+export const toolbarViewMethods: ToolbarViewMethods & ThisType<GObject> = {
+  getBottomBarHeight(this: GObject): number {
+    return (adw.symbols.adw_toolbar_view_get_bottom_bar_height ??
+      missing("adw_toolbar_view_get_bottom_bar_height", "1.4"))(this.ptr);
+  },
+  getBottomBarStyle(this: GObject): ToolbarStyle {
+    return (adw.symbols.adw_toolbar_view_get_bottom_bar_style ??
+      missing("adw_toolbar_view_get_bottom_bar_style", "1.4"))(
+        this.ptr,
+      ) as ToolbarStyle;
+  },
+  getContent(this: GObject): Widget | null {
+    return borrowed<Widget>(
+      (adw.symbols.adw_toolbar_view_get_content ??
+        missing("adw_toolbar_view_get_content", "1.4"))(this.ptr),
+    );
+  },
+  getExtendContentToBottomEdge(this: GObject): boolean {
+    return (adw.symbols.adw_toolbar_view_get_extend_content_to_bottom_edge ??
+      missing("adw_toolbar_view_get_extend_content_to_bottom_edge", "1.4"))(
+        this.ptr,
+      );
+  },
+  getExtendContentToTopEdge(this: GObject): boolean {
+    return (adw.symbols.adw_toolbar_view_get_extend_content_to_top_edge ??
+      missing("adw_toolbar_view_get_extend_content_to_top_edge", "1.4"))(
+        this.ptr,
+      );
+  },
+  getRevealBottomBars(this: GObject): boolean {
+    return (adw.symbols.adw_toolbar_view_get_reveal_bottom_bars ??
+      missing("adw_toolbar_view_get_reveal_bottom_bars", "1.4"))(this.ptr);
+  },
+  getRevealTopBars(this: GObject): boolean {
+    return (adw.symbols.adw_toolbar_view_get_reveal_top_bars ??
+      missing("adw_toolbar_view_get_reveal_top_bars", "1.4"))(this.ptr);
+  },
+  getTopBarHeight(this: GObject): number {
+    return (adw.symbols.adw_toolbar_view_get_top_bar_height ??
+      missing("adw_toolbar_view_get_top_bar_height", "1.4"))(this.ptr);
+  },
+  getTopBarStyle(this: GObject): ToolbarStyle {
+    return (adw.symbols.adw_toolbar_view_get_top_bar_style ??
+      missing("adw_toolbar_view_get_top_bar_style", "1.4"))(
+        this.ptr,
+      ) as ToolbarStyle;
+  },
+  remove(this: GObject, widget: Widget): void {
+    (adw.symbols.adw_toolbar_view_remove ??
+      missing("adw_toolbar_view_remove", "1.4"))(this.ptr, widget.ptr);
+  },
+  setBottomBarStyle(this: GObject, style: ToolbarStyle): void {
+    (adw.symbols.adw_toolbar_view_set_bottom_bar_style ??
+      missing("adw_toolbar_view_set_bottom_bar_style", "1.4"))(this.ptr, style);
+  },
+  setExtendContentToBottomEdge(this: GObject, extend: boolean): void {
+    (adw.symbols.adw_toolbar_view_set_extend_content_to_bottom_edge ??
+      missing("adw_toolbar_view_set_extend_content_to_bottom_edge", "1.4"))(
+        this.ptr,
+        extend,
+      );
+  },
+  setExtendContentToTopEdge(this: GObject, extend: boolean): void {
+    (adw.symbols.adw_toolbar_view_set_extend_content_to_top_edge ??
+      missing("adw_toolbar_view_set_extend_content_to_top_edge", "1.4"))(
+        this.ptr,
+        extend,
+      );
+  },
+  setRevealBottomBars(this: GObject, reveal: boolean): void {
+    (adw.symbols.adw_toolbar_view_set_reveal_bottom_bars ??
+      missing("adw_toolbar_view_set_reveal_bottom_bars", "1.4"))(
+        this.ptr,
+        reveal,
+      );
+  },
+  setRevealTopBars(this: GObject, reveal: boolean): void {
+    (adw.symbols.adw_toolbar_view_set_reveal_top_bars ??
+      missing("adw_toolbar_view_set_reveal_top_bars", "1.4"))(this.ptr, reveal);
+  },
+  setTopBarStyle(this: GObject, style: ToolbarStyle): void {
+    (adw.symbols.adw_toolbar_view_set_top_bar_style ??
+      missing("adw_toolbar_view_set_top_bar_style", "1.4"))(this.ptr, style);
+  },
+};
+
+/** Methods generated for `AdwWindowTitle`. */
+export interface WindowTitleMethods {
+  /**
+   * Gets the subtitle of `self`.
+   */
+  getSubtitle(): string;
+  /**
+   * Gets the title of `self`.
+   */
+  getTitle(): string;
+}
+
+/** Implementations of {@linkcode WindowTitleMethods}. */
+export const windowTitleMethods: WindowTitleMethods & ThisType<GObject> = {
+  getSubtitle(this: GObject): string {
+    return readCStr(adw.symbols.adw_window_title_get_subtitle(this.ptr));
+  },
+  getTitle(this: GObject): string {
+    return readCStr(adw.symbols.adw_window_title_get_title(this.ptr));
+  },
+};
+
+// Not generated (unsupported shapes):
+// - AboutDialog.activate-link: signal with a result
+// - AboutDialog.set_developers: arrays and varargs
+// - Carousel.get_scroll_params: record SpringParams
+// - Carousel.set_scroll_params: record SpringParams
+// - NavigationView.get-next-page: signal with a result
+// - PreferencesPage.get_name: same name as Gtk.Widget.get_name
+// - PreferencesPage.set_name: same name as Gtk.Widget.set_name
+// - SpinRow.input: signal with a result
+// - SpinRow.output: signal with a result
+// - ToastOverlay.add_toast: object ownership transfer

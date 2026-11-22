@@ -11,8 +11,8 @@ import { cstr, readCStr } from "../low/utils.ts";
 import { glib } from "../low/glib.ts";
 import { GObject } from "./gobject.ts";
 
-// deno-lint-ignore no-explicit-any
-type WrapperClass = abstract new (...args: any[]) => GObject;
+/** A class whose prototype wraps a GType; its constructor may be private. */
+type WrapperClass = { prototype: GObject };
 
 /** Wrapper classes by GType name, e.g. `GtkListBoxRow`. */
 const wrappers = new Map<string, WrapperClass>();
@@ -38,7 +38,7 @@ function wrapperFor(ptr: NonNullable<Deno.PointerValue>): WrapperClass {
     if (!type) break;
     name = readCStr(gobject.symbols.g_type_name(type));
   }
-  return GObject;
+  return GObject as WrapperClass;
 }
 
 /**
@@ -124,11 +124,17 @@ export function connectSignal(
 }
 
 /**
- * Add generated methods to a hand-written class. Methods the class defines
- * itself are kept; the class's TypeScript interface omits them too.
+ * Add generated methods to a hand-written class and register it as the
+ * wrapper for its GType. Methods the class defines itself are kept; the
+ * class's TypeScript interface omits them too.
  */
-export function applyGenerated(target: WrapperClass, methods: object): void {
-  const prototype = target.prototype as Record<string, unknown>;
+export function applyGenerated(
+  target: WrapperClass,
+  methods: object,
+  typeName: string,
+): void {
+  wrappers.set(typeName, target);
+  const prototype: object = target.prototype;
   for (const [name, method] of Object.entries(methods)) {
     if (Object.hasOwn(prototype, name)) continue;
     Object.defineProperty(prototype, name, {

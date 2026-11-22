@@ -10,9 +10,158 @@ import {
   cstrOrNull,
   missing,
   notifiedCallback,
+  takeString,
 } from "../wrappers.ts";
+import type { Cancellable, Menu } from "../gio.ts";
 import type { GObject } from "../gobject.ts";
-import type { Adjustment, ListBox, ListBoxRow, Widget } from "../gtk4.ts";
+import type {
+  Adjustment,
+  Application,
+  CheckButton,
+  Clipboard,
+  ColumnView,
+  ColumnViewColumn,
+  Cursor,
+  Display,
+  DrawingArea,
+  EventController,
+  FileFilter,
+  ListBox,
+  ListBoxRow,
+  MenuButton,
+  Popover,
+  TextBuffer,
+  ToggleButton,
+  Widget,
+  Window,
+} from "../gtk4.ts";
+
+/**
+ * Controls how a widget deals with extra space in a single dimension.
+ */
+export const Align = {
+  FILL: 0,
+  START: 1,
+  END: 2,
+  CENTER: 3,
+  BASELINE_FILL: 4,
+  BASELINE: 4,
+  BASELINE_CENTER: 5,
+} as const;
+export type Align = (typeof Align)[keyof typeof Align];
+
+/**
+ * Indicates the direction in which an arrow should point.
+ */
+export const ArrowType = {
+  UP: 0,
+  DOWN: 1,
+  LEFT: 2,
+  RIGHT: 3,
+  NONE: 4,
+} as const;
+export type ArrowType = (typeof ArrowType)[keyof typeof ArrowType];
+
+/**
+ * Baseline position in a row of widgets.
+ */
+export const BaselinePosition = {
+  TOP: 0,
+  CENTER: 1,
+  BOTTOM: 2,
+} as const;
+export type BaselinePosition =
+  (typeof BaselinePosition)[keyof typeof BaselinePosition];
+
+/**
+ * Controls how a content should be made to fit inside an allocation.
+ */
+export const ContentFit = {
+  FILL: 0,
+  CONTAIN: 1,
+  COVER: 2,
+  SCALE_DOWN: 3,
+} as const;
+export type ContentFit = (typeof ContentFit)[keyof typeof ContentFit];
+
+/**
+ * Specifies which corner a child widget should be placed in when packed into
+ * a `GtkScrolledWindow.`
+ */
+export const CornerType = {
+  TOP_LEFT: 0,
+  BOTTOM_LEFT: 1,
+  TOP_RIGHT: 2,
+  BOTTOM_RIGHT: 3,
+} as const;
+export type CornerType = (typeof CornerType)[keyof typeof CornerType];
+
+/**
+ * Passed to various keybinding signals for deleting text.
+ */
+export const DeleteType = {
+  CHARS: 0,
+  WORD_ENDS: 1,
+  WORDS: 2,
+  DISPLAY_LINES: 3,
+  DISPLAY_LINE_ENDS: 4,
+  PARAGRAPH_ENDS: 5,
+  PARAGRAPHS: 6,
+  WHITESPACE: 7,
+} as const;
+export type DeleteType = (typeof DeleteType)[keyof typeof DeleteType];
+
+/**
+ * Focus movement types.
+ */
+export const DirectionType = {
+  TAB_FORWARD: 0,
+  TAB_BACKWARD: 1,
+  UP: 2,
+  DOWN: 3,
+  LEFT: 4,
+  RIGHT: 5,
+} as const;
+export type DirectionType = (typeof DirectionType)[keyof typeof DirectionType];
+
+/**
+ * Built-in icon sizes.
+ */
+export const IconSize = {
+  INHERIT: 0,
+  NORMAL: 1,
+  LARGE: 2,
+} as const;
+export type IconSize = (typeof IconSize)[keyof typeof IconSize];
+
+/**
+ * Describes the image data representation used by a `Image`.
+ */
+export const ImageType = {
+  EMPTY: 0,
+  ICON_NAME: 1,
+  GICON: 2,
+  PAINTABLE: 3,
+} as const;
+export type ImageType = (typeof ImageType)[keyof typeof ImageType];
+
+/**
+ * Describes primary purpose of the input widget.
+ */
+export const InputPurpose = {
+  FREE_FORM: 0,
+  ALPHA: 1,
+  DIGITS: 2,
+  NUMBER: 3,
+  PHONE: 4,
+  URL: 5,
+  EMAIL: 6,
+  NAME: 7,
+  PASSWORD: 8,
+  PIN: 9,
+  TERMINAL: 10,
+} as const;
+export type InputPurpose = (typeof InputPurpose)[keyof typeof InputPurpose];
 
 /**
  * Used for justifying the text inside a `Label` widget.
@@ -24,6 +173,15 @@ export const Justification = {
   FILL: 3,
 } as const;
 export type Justification = (typeof Justification)[keyof typeof Justification];
+
+/**
+ * Describes how `LevelBar` contents should be rendered.
+ */
+export const LevelBarMode = {
+  CONTINUOUS: 0,
+  DISCRETE: 1,
+} as const;
+export type LevelBarMode = (typeof LevelBarMode)[keyof typeof LevelBarMode];
 
 /**
  * Used to configure the focus behavior in the `GTK_DIR_TAB_FORWARD`
@@ -69,6 +227,24 @@ export type NaturalWrapMode =
   (typeof NaturalWrapMode)[keyof typeof NaturalWrapMode];
 
 /**
+ * Represents the orientation of widgets and other objects.
+ */
+export const Orientation = {
+  HORIZONTAL: 0,
+  VERTICAL: 1,
+} as const;
+export type Orientation = (typeof Orientation)[keyof typeof Orientation];
+
+/**
+ * Defines how content overflowing a given area should be handled.
+ */
+export const Overflow = {
+  VISIBLE: 0,
+  HIDDEN: 1,
+} as const;
+export type Overflow = (typeof Overflow)[keyof typeof Overflow];
+
+/**
  * `PangoEllipsizeMode` describes what sort of ellipsization
  * should be applied to text.
  */
@@ -94,6 +270,88 @@ export const PangoWrapMode = {
 export type PangoWrapMode = (typeof PangoWrapMode)[keyof typeof PangoWrapMode];
 
 /**
+ * Determines how the size should be computed to achieve the one of the
+ * visibility mode for the scrollbars.
+ */
+export const PolicyType = {
+  ALWAYS: 0,
+  AUTOMATIC: 1,
+  NEVER: 2,
+  EXTERNAL: 3,
+} as const;
+export type PolicyType = (typeof PolicyType)[keyof typeof PolicyType];
+
+/**
+ * Describes which edge of a widget a certain feature is positioned at.
+ */
+export const PositionType = {
+  LEFT: 0,
+  RIGHT: 1,
+  TOP: 2,
+  BOTTOM: 3,
+} as const;
+export type PositionType = (typeof PositionType)[keyof typeof PositionType];
+
+/**
+ * Describes limits of a `EventController` for handling events
+ * targeting other widgets.
+ */
+export const PropagationLimit = {
+  NONE: 0,
+  SAME_NATIVE: 1,
+} as const;
+export type PropagationLimit =
+  (typeof PropagationLimit)[keyof typeof PropagationLimit];
+
+/**
+ * Describes the stage at which events are fed into a `EventController`.
+ */
+export const PropagationPhase = {
+  NONE: 0,
+  CAPTURE: 1,
+  BUBBLE: 2,
+  TARGET: 3,
+} as const;
+export type PropagationPhase =
+  (typeof PropagationPhase)[keyof typeof PropagationPhase];
+
+/**
+ * These enumeration values describe the possible transitions
+ * when the child of a `GtkRevealer` widget is shown or hidden.
+ */
+export const RevealerTransitionType = {
+  NONE: 0,
+  CROSSFADE: 1,
+  SLIDE_RIGHT: 2,
+  SLIDE_LEFT: 3,
+  SLIDE_UP: 4,
+  SLIDE_DOWN: 5,
+  SWING_RIGHT: 6,
+  SWING_LEFT: 7,
+  SWING_UP: 8,
+  SWING_DOWN: 9,
+  FADE_SLIDE_RIGHT: 10,
+  FADE_SLIDE_LEFT: 11,
+  FADE_SLIDE_UP: 12,
+  FADE_SLIDE_DOWN: 13,
+} as const;
+export type RevealerTransitionType =
+  (typeof RevealerTransitionType)[keyof typeof RevealerTransitionType];
+
+/**
+ * Passed as argument to various keybinding signals.
+ */
+export const ScrollStep = {
+  STEPS: 0,
+  PAGES: 1,
+  ENDS: 2,
+  HORIZONTAL_STEPS: 3,
+  HORIZONTAL_PAGES: 4,
+  HORIZONTAL_ENDS: 5,
+} as const;
+export type ScrollStep = (typeof ScrollStep)[keyof typeof ScrollStep];
+
+/**
  * Used to control what selections users are allowed to make.
  */
 export const SelectionMode = {
@@ -103,6 +361,2341 @@ export const SelectionMode = {
   MULTIPLE: 3,
 } as const;
 export type SelectionMode = (typeof SelectionMode)[keyof typeof SelectionMode];
+
+/**
+ * The mode of the size group determines the directions in which the size
+ * group affects the requested sizes of its component widgets.
+ */
+export const SizeGroupMode = {
+  NONE: 0,
+  HORIZONTAL: 1,
+  VERTICAL: 2,
+  BOTH: 3,
+} as const;
+export type SizeGroupMode = (typeof SizeGroupMode)[keyof typeof SizeGroupMode];
+
+/**
+ * Specifies a preference for height-for-width or
+ * width-for-height geometry management.
+ */
+export const SizeRequestMode = {
+  HEIGHT_FOR_WIDTH: 0,
+  WIDTH_FOR_HEIGHT: 1,
+  CONSTANT_SIZE: 2,
+} as const;
+export type SizeRequestMode =
+  (typeof SizeRequestMode)[keyof typeof SizeRequestMode];
+
+/**
+ * Determines the direction of a sort.
+ */
+export const SortType = {
+  ASCENDING: 0,
+  DESCENDING: 1,
+} as const;
+export type SortType = (typeof SortType)[keyof typeof SortType];
+
+/**
+ * Specifies how search strings are matched inside text.
+ */
+export const StringFilterMatchMode = {
+  EXACT: 0,
+  SUBSTRING: 1,
+  PREFIX: 2,
+} as const;
+export type StringFilterMatchMode =
+  (typeof StringFilterMatchMode)[keyof typeof StringFilterMatchMode];
+
+/**
+ * Reading directions for text.
+ */
+export const TextDirection = {
+  NONE: 0,
+  LTR: 1,
+  RTL: 2,
+} as const;
+export type TextDirection = (typeof TextDirection)[keyof typeof TextDirection];
+
+/**
+ * Used to reference the parts of `GtkTextView`.
+ */
+export const TextWindowType = {
+  WIDGET: 1,
+  TEXT: 2,
+  LEFT: 3,
+  RIGHT: 4,
+  TOP: 5,
+  BOTTOM: 6,
+} as const;
+export type TextWindowType =
+  (typeof TextWindowType)[keyof typeof TextWindowType];
+
+/**
+ * Determines which point or edge of a window is meant to remain fixed
+ * when a window changes size.
+ */
+export const WindowGravity = {
+  TOP_LEFT: 0,
+  TOP: 1,
+  TOP_RIGHT: 2,
+  LEFT: 3,
+  CENTER: 4,
+  RIGHT: 5,
+  BOTTOM_LEFT: 6,
+  BOTTOM: 7,
+  BOTTOM_RIGHT: 8,
+  TOP_START: 9,
+  TOP_END: 10,
+  START: 11,
+  END: 12,
+  BOTTOM_START: 13,
+  BOTTOM_END: 14,
+} as const;
+export type WindowGravity = (typeof WindowGravity)[keyof typeof WindowGravity];
+
+/**
+ * Describes a type of line wrapping.
+ */
+export const WrapMode = {
+  NONE: 0,
+  CHAR: 1,
+  WORD: 2,
+  WORD_CHAR: 3,
+} as const;
+export type WrapMode = (typeof WrapMode)[keyof typeof WrapMode];
+
+/** Methods generated for `GtkAdjustment`. */
+export interface AdjustmentMethods {
+  /**
+   * Updates the value of the adjustment to ensure that the
+   * given range is contained in the current page.
+   */
+  clampPage(lower: number, upper: number): void;
+  /**
+   * Sets all properties of the adjustment at once.
+   */
+  configure(
+    value: number,
+    lower: number,
+    upper: number,
+    stepIncrement: number,
+    pageIncrement: number,
+    pageSize: number,
+  ): void;
+  /**
+   * Retrieves the minimum value of the adjustment.
+   */
+  getLower(): number;
+  /**
+   * Gets the smaller of step increment and page increment.
+   */
+  getMinimumIncrement(): number;
+  /**
+   * Retrieves the page increment of the adjustment.
+   */
+  getPageIncrement(): number;
+  /**
+   * Retrieves the step increment of the adjustment.
+   */
+  getStepIncrement(): number;
+  /**
+   * Sets the minimum value of the adjustment.
+   */
+  setLower(lower: number): void;
+  /**
+   * Sets the page increment of the adjustment.
+   */
+  setPageIncrement(pageIncrement: number): void;
+  /**
+   * Sets the page size of the adjustment.
+   */
+  setPageSize(pageSize: number): void;
+  /**
+   * Sets the step increment of the adjustment.
+   */
+  setStepIncrement(stepIncrement: number): void;
+  /**
+   * Sets the maximum value of the adjustment.
+   */
+  setUpper(upper: number): void;
+  /**
+   * Emitted when one or more of the `GtkAdjustment` properties have been
+   * changed.
+   */
+  onChanged(callback: () => void): number;
+  /**
+   * Emitted when the value has been changed.
+   */
+  onValueChanged(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode AdjustmentMethods}. */
+export const adjustmentMethods: AdjustmentMethods & ThisType<GObject> = {
+  clampPage(this: GObject, lower: number, upper: number): void {
+    gtk4.symbols.gtk_adjustment_clamp_page(this.ptr, lower, upper);
+  },
+  configure(
+    this: GObject,
+    value: number,
+    lower: number,
+    upper: number,
+    stepIncrement: number,
+    pageIncrement: number,
+    pageSize: number,
+  ): void {
+    gtk4.symbols.gtk_adjustment_configure(
+      this.ptr,
+      value,
+      lower,
+      upper,
+      stepIncrement,
+      pageIncrement,
+      pageSize,
+    );
+  },
+  getLower(this: GObject): number {
+    return gtk4.symbols.gtk_adjustment_get_lower(this.ptr);
+  },
+  getMinimumIncrement(this: GObject): number {
+    return gtk4.symbols.gtk_adjustment_get_minimum_increment(this.ptr);
+  },
+  getPageIncrement(this: GObject): number {
+    return gtk4.symbols.gtk_adjustment_get_page_increment(this.ptr);
+  },
+  getStepIncrement(this: GObject): number {
+    return gtk4.symbols.gtk_adjustment_get_step_increment(this.ptr);
+  },
+  setLower(this: GObject, lower: number): void {
+    gtk4.symbols.gtk_adjustment_set_lower(this.ptr, lower);
+  },
+  setPageIncrement(this: GObject, pageIncrement: number): void {
+    gtk4.symbols.gtk_adjustment_set_page_increment(this.ptr, pageIncrement);
+  },
+  setPageSize(this: GObject, pageSize: number): void {
+    gtk4.symbols.gtk_adjustment_set_page_size(this.ptr, pageSize);
+  },
+  setStepIncrement(this: GObject, stepIncrement: number): void {
+    gtk4.symbols.gtk_adjustment_set_step_increment(this.ptr, stepIncrement);
+  },
+  setUpper(this: GObject, upper: number): void {
+    gtk4.symbols.gtk_adjustment_set_upper(this.ptr, upper);
+  },
+  onChanged(this: GObject, callback: () => void): number {
+    return connectSignal(this, "changed", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onValueChanged(this: GObject, callback: () => void): number {
+    return connectSignal(this, "value-changed", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `GtkAlertDialog`. */
+export interface AlertDialogMethods {
+  /**
+   * Returns the index of the cancel button.
+   */
+  getCancelButton(): number;
+  /**
+   * Returns the index of the default button.
+   */
+  getDefaultButton(): number;
+  /**
+   * Returns the detail text that will be shown in the alert.
+   */
+  getDetail(): string;
+  /**
+   * Returns the message that will be shown in the alert.
+   */
+  getMessage(): string;
+  /**
+   * Returns whether the alert blocks interaction
+   * with the parent window while it is presented.
+   */
+  getModal(): boolean;
+  /**
+   * Sets the index of the cancel button.
+   */
+  setCancelButton(button: number): void;
+  /**
+   * Sets the index of the default button.
+   */
+  setDefaultButton(button: number): void;
+  /**
+   * Sets the detail text that will be shown in the alert.
+   */
+  setDetail(detail: string): void;
+  /**
+   * Sets the message that will be shown in the alert.
+   */
+  setMessage(message: string): void;
+  /**
+   * Sets whether the alert blocks interaction
+   * with the parent window while it is presented.
+   */
+  setModal(modal: boolean): void;
+  /**
+   * Shows the alert to the user.
+   */
+  show(parent: Window | null): void;
+}
+
+/** Implementations of {@linkcode AlertDialogMethods}. */
+export const alertDialogMethods: AlertDialogMethods & ThisType<GObject> = {
+  getCancelButton(this: GObject): number {
+    return (gtk4.symbols.gtk_alert_dialog_get_cancel_button ??
+      missing("gtk_alert_dialog_get_cancel_button", "4.10"))(this.ptr);
+  },
+  getDefaultButton(this: GObject): number {
+    return (gtk4.symbols.gtk_alert_dialog_get_default_button ??
+      missing("gtk_alert_dialog_get_default_button", "4.10"))(this.ptr);
+  },
+  getDetail(this: GObject): string {
+    return readCStr(
+      (gtk4.symbols.gtk_alert_dialog_get_detail ??
+        missing("gtk_alert_dialog_get_detail", "4.10"))(this.ptr),
+    );
+  },
+  getMessage(this: GObject): string {
+    return readCStr(
+      (gtk4.symbols.gtk_alert_dialog_get_message ??
+        missing("gtk_alert_dialog_get_message", "4.10"))(this.ptr),
+    );
+  },
+  getModal(this: GObject): boolean {
+    return (gtk4.symbols.gtk_alert_dialog_get_modal ??
+      missing("gtk_alert_dialog_get_modal", "4.10"))(this.ptr);
+  },
+  setCancelButton(this: GObject, button: number): void {
+    (gtk4.symbols.gtk_alert_dialog_set_cancel_button ??
+      missing("gtk_alert_dialog_set_cancel_button", "4.10"))(this.ptr, button);
+  },
+  setDefaultButton(this: GObject, button: number): void {
+    (gtk4.symbols.gtk_alert_dialog_set_default_button ??
+      missing("gtk_alert_dialog_set_default_button", "4.10"))(this.ptr, button);
+  },
+  setDetail(this: GObject, detail: string): void {
+    (gtk4.symbols.gtk_alert_dialog_set_detail ??
+      missing("gtk_alert_dialog_set_detail", "4.10"))(this.ptr, cstr(detail));
+  },
+  setMessage(this: GObject, message: string): void {
+    (gtk4.symbols.gtk_alert_dialog_set_message ??
+      missing("gtk_alert_dialog_set_message", "4.10"))(this.ptr, cstr(message));
+  },
+  setModal(this: GObject, modal: boolean): void {
+    (gtk4.symbols.gtk_alert_dialog_set_modal ??
+      missing("gtk_alert_dialog_set_modal", "4.10"))(this.ptr, modal);
+  },
+  show(this: GObject, parent: Window | null): void {
+    (gtk4.symbols.gtk_alert_dialog_show ??
+      missing("gtk_alert_dialog_show", "4.10"))(this.ptr, parent?.ptr ?? null);
+  },
+};
+
+/** Methods generated for `GtkApplication`. */
+export interface ApplicationMethods {
+  /**
+   * Adds a window to the application.
+   */
+  addWindow(window: Window): void;
+  /**
+   * Gets a menu from automatically loaded resources.
+   */
+  getMenuById(id: string): Menu | null;
+  /**
+   * Returns the menu model for the menu bar of the application.
+   */
+  getMenubar(): GObject | null;
+  /**
+   * Returns the window with the given ID.
+   */
+  getWindowById(id: number): Window | null;
+  /**
+   * Remove a window from the application.
+   */
+  removeWindow(window: Window): void;
+  /**
+   * Sets or unsets the menubar for windows of the application.
+   */
+  setMenubar(menubar: GObject | null): void;
+  /**
+   * Emitted when the session manager is about to end the session.
+   */
+  onQueryEnd(callback: () => void): number;
+  /**
+   * Emitted when a window is added to an application.
+   */
+  onWindowAdded(callback: (window: Window) => void): number;
+  /**
+   * Emitted when a window is removed from an application.
+   */
+  onWindowRemoved(callback: (window: Window) => void): number;
+}
+
+/** Implementations of {@linkcode ApplicationMethods}. */
+export const applicationMethods: ApplicationMethods & ThisType<GObject> = {
+  addWindow(this: GObject, window: Window): void {
+    gtk4.symbols.gtk_application_add_window(this.ptr, window.ptr);
+  },
+  getMenuById(this: GObject, id: string): Menu | null {
+    return borrowed<Menu>(
+      gtk4.symbols.gtk_application_get_menu_by_id(this.ptr, cstr(id)),
+    );
+  },
+  getMenubar(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      gtk4.symbols.gtk_application_get_menubar(this.ptr),
+    );
+  },
+  getWindowById(this: GObject, id: number): Window | null {
+    return borrowed<Window>(
+      gtk4.symbols.gtk_application_get_window_by_id(this.ptr, id),
+    );
+  },
+  removeWindow(this: GObject, window: Window): void {
+    gtk4.symbols.gtk_application_remove_window(this.ptr, window.ptr);
+  },
+  setMenubar(this: GObject, menubar: GObject | null): void {
+    gtk4.symbols.gtk_application_set_menubar(this.ptr, menubar?.ptr ?? null);
+  },
+  onQueryEnd(this: GObject, callback: () => void): number {
+    return connectSignal(this, "query-end", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onWindowAdded(this: GObject, callback: (window: Window) => void): number {
+    return connectSignal(this, "window-added", {
+      parameters: ["pointer", "pointer", "pointer"],
+      result: "void",
+    }, (a0: never) => callback(borrowed<Window>(a0)!));
+  },
+  onWindowRemoved(this: GObject, callback: (window: Window) => void): number {
+    return connectSignal(this, "window-removed", {
+      parameters: ["pointer", "pointer", "pointer"],
+      result: "void",
+    }, (a0: never) => callback(borrowed<Window>(a0)!));
+  },
+};
+
+/** Methods generated for `GtkApplicationWindow`. */
+export interface ApplicationWindowMethods {
+  /**
+   * Returns the unique ID of the window.
+   */
+  getId(): number;
+  /**
+   * Returns whether the window will display a menubar for the app menu
+   * and menubar as needed.
+   */
+  getShowMenubar(): boolean;
+  /**
+   * Sets whether the window will display a menubar for the app menu
+   * and menubar as needed.
+   */
+  setShowMenubar(showMenubar: boolean): void;
+}
+
+/** Implementations of {@linkcode ApplicationWindowMethods}. */
+export const applicationWindowMethods:
+  & ApplicationWindowMethods
+  & ThisType<GObject> = {
+    getId(this: GObject): number {
+      return gtk4.symbols.gtk_application_window_get_id(this.ptr);
+    },
+    getShowMenubar(this: GObject): boolean {
+      return gtk4.symbols.gtk_application_window_get_show_menubar(this.ptr);
+    },
+    setShowMenubar(this: GObject, showMenubar: boolean): void {
+      gtk4.symbols.gtk_application_window_set_show_menubar(
+        this.ptr,
+        showMenubar,
+      );
+    },
+  };
+
+/** Methods generated for `GtkBox`. */
+export interface BoxMethods {
+  /**
+   * Gets the value set by `setBaselineChild()`.
+   */
+  getBaselineChild(): number;
+  /**
+   * Gets the value set by `setBaselinePosition()`.
+   */
+  getBaselinePosition(): BaselinePosition;
+  /**
+   * Returns whether the box is homogeneous.
+   */
+  getHomogeneous(): boolean;
+  /**
+   * Gets the value set by `setSpacing()`.
+   */
+  getSpacing(): number;
+  /**
+   * Inserts a child at a specific position.
+   */
+  insertChildAfter(child: Widget, sibling: Widget | null): void;
+  /**
+   * Adds a child at the beginning.
+   */
+  prepend(child: Widget): void;
+  /**
+   * Moves a child to a different position.
+   */
+  reorderChildAfter(child: Widget, sibling: Widget | null): void;
+  /**
+   * Sets the baseline child of a box.
+   */
+  setBaselineChild(child: number): void;
+  /**
+   * Sets the baseline position of a box.
+   */
+  setBaselinePosition(position: BaselinePosition): void;
+  /**
+   * Sets whether or not all children are given equal space
+   * in the box.
+   */
+  setHomogeneous(homogeneous: boolean): void;
+}
+
+/** Implementations of {@linkcode BoxMethods}. */
+export const boxMethods: BoxMethods & ThisType<GObject> = {
+  getBaselineChild(this: GObject): number {
+    return (gtk4.symbols.gtk_box_get_baseline_child ??
+      missing("gtk_box_get_baseline_child", "4.12"))(this.ptr);
+  },
+  getBaselinePosition(this: GObject): BaselinePosition {
+    return gtk4.symbols.gtk_box_get_baseline_position(
+      this.ptr,
+    ) as BaselinePosition;
+  },
+  getHomogeneous(this: GObject): boolean {
+    return gtk4.symbols.gtk_box_get_homogeneous(this.ptr);
+  },
+  getSpacing(this: GObject): number {
+    return gtk4.symbols.gtk_box_get_spacing(this.ptr);
+  },
+  insertChildAfter(this: GObject, child: Widget, sibling: Widget | null): void {
+    gtk4.symbols.gtk_box_insert_child_after(
+      this.ptr,
+      child.ptr,
+      sibling?.ptr ?? null,
+    );
+  },
+  prepend(this: GObject, child: Widget): void {
+    gtk4.symbols.gtk_box_prepend(this.ptr, child.ptr);
+  },
+  reorderChildAfter(
+    this: GObject,
+    child: Widget,
+    sibling: Widget | null,
+  ): void {
+    gtk4.symbols.gtk_box_reorder_child_after(
+      this.ptr,
+      child.ptr,
+      sibling?.ptr ?? null,
+    );
+  },
+  setBaselineChild(this: GObject, child: number): void {
+    (gtk4.symbols.gtk_box_set_baseline_child ??
+      missing("gtk_box_set_baseline_child", "4.12"))(this.ptr, child);
+  },
+  setBaselinePosition(this: GObject, position: BaselinePosition): void {
+    gtk4.symbols.gtk_box_set_baseline_position(this.ptr, position);
+  },
+  setHomogeneous(this: GObject, homogeneous: boolean): void {
+    gtk4.symbols.gtk_box_set_homogeneous(this.ptr, homogeneous);
+  },
+};
+
+/** Methods generated for `GtkBuilder`. */
+export interface BuilderMethods {
+  /**
+   * Add `object` to the `builder` object pool so it can be
+   * referenced just like any other object built by builder.
+   */
+  exposeObject(name: string, object: GObject): void;
+  /**
+   * Gets the current object set via gtk_builder_set_current_object().
+   */
+  getCurrentObject(): GObject | null;
+  /**
+   * Gets the scope in use that was set via gtk_builder_set_scope().
+   */
+  getScope(): GObject;
+  /**
+   * Gets the translation domain of `builder`.
+   */
+  getTranslationDomain(): string | null;
+  /**
+   * Sets the current object for the `builder`.
+   */
+  setCurrentObject(currentObject: GObject | null): void;
+  /**
+   * Sets the scope the builder should operate in.
+   */
+  setScope(scope: GObject | null): void;
+  /**
+   * Sets the translation domain of `builder`.
+   */
+  setTranslationDomain(domain: string | null): void;
+}
+
+/** Implementations of {@linkcode BuilderMethods}. */
+export const builderMethods: BuilderMethods & ThisType<GObject> = {
+  exposeObject(this: GObject, name: string, object: GObject): void {
+    gtk4.symbols.gtk_builder_expose_object(this.ptr, cstr(name), object.ptr);
+  },
+  getCurrentObject(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      gtk4.symbols.gtk_builder_get_current_object(this.ptr),
+    );
+  },
+  getScope(this: GObject): GObject {
+    return borrowed<GObject>(gtk4.symbols.gtk_builder_get_scope(this.ptr))!;
+  },
+  getTranslationDomain(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      gtk4.symbols.gtk_builder_get_translation_domain(this.ptr),
+    );
+  },
+  setCurrentObject(this: GObject, currentObject: GObject | null): void {
+    gtk4.symbols.gtk_builder_set_current_object(
+      this.ptr,
+      currentObject?.ptr ?? null,
+    );
+  },
+  setScope(this: GObject, scope: GObject | null): void {
+    gtk4.symbols.gtk_builder_set_scope(this.ptr, scope?.ptr ?? null);
+  },
+  setTranslationDomain(this: GObject, domain: string | null): void {
+    gtk4.symbols.gtk_builder_set_translation_domain(
+      this.ptr,
+      cstrOrNull(domain),
+    );
+  },
+};
+
+/** Methods generated for `GtkButton`. */
+export interface ButtonMethods {
+  /**
+   * Retrieves whether the button can be smaller than the natural
+   * size of its contents.
+   */
+  getCanShrink(): boolean;
+  /**
+   * Gets the child widget of `button`.
+   */
+  getChild(): Widget | null;
+  /**
+   * Returns whether the button has a frame.
+   */
+  getHasFrame(): boolean;
+  /**
+   * Returns the icon name of the button.
+   */
+  getIconName(): string | null;
+  /**
+   * gets whether underlines are interpreted as mnemonics.
+   */
+  getUseUnderline(): boolean;
+  /**
+   * Sets whether the button size can be smaller than the natural size of
+   * its contents.
+   */
+  setCanShrink(canShrink: boolean): void;
+  /**
+   * Sets the style of the button.
+   */
+  setHasFrame(hasFrame: boolean): void;
+  /**
+   * Sets whether to use underlines as mnemonics.
+   */
+  setUseUnderline(useUnderline: boolean): void;
+  /**
+   * Emitted to animate press then release.
+   */
+  onActivate(callback: () => void): number;
+  /**
+   * Emitted when the button has been activated (pressed and released).
+   */
+  onClicked(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode ButtonMethods}. */
+export const buttonMethods: ButtonMethods & ThisType<GObject> = {
+  getCanShrink(this: GObject): boolean {
+    return (gtk4.symbols.gtk_button_get_can_shrink ??
+      missing("gtk_button_get_can_shrink", "4.12"))(this.ptr);
+  },
+  getChild(this: GObject): Widget | null {
+    return borrowed<Widget>(gtk4.symbols.gtk_button_get_child(this.ptr));
+  },
+  getHasFrame(this: GObject): boolean {
+    return gtk4.symbols.gtk_button_get_has_frame(this.ptr);
+  },
+  getIconName(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      gtk4.symbols.gtk_button_get_icon_name(this.ptr),
+    );
+  },
+  getUseUnderline(this: GObject): boolean {
+    return gtk4.symbols.gtk_button_get_use_underline(this.ptr);
+  },
+  setCanShrink(this: GObject, canShrink: boolean): void {
+    (gtk4.symbols.gtk_button_set_can_shrink ??
+      missing("gtk_button_set_can_shrink", "4.12"))(this.ptr, canShrink);
+  },
+  setHasFrame(this: GObject, hasFrame: boolean): void {
+    gtk4.symbols.gtk_button_set_has_frame(this.ptr, hasFrame);
+  },
+  setUseUnderline(this: GObject, useUnderline: boolean): void {
+    gtk4.symbols.gtk_button_set_use_underline(this.ptr, useUnderline);
+  },
+  onActivate(this: GObject, callback: () => void): number {
+    return connectSignal(this, "activate", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onClicked(this: GObject, callback: () => void): number {
+    return connectSignal(this, "clicked", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `GtkCheckButton`. */
+export interface CheckButtonMethods {
+  /**
+   * Gets the child widget of `button` or `null` if `label` is set.
+   */
+  getChild(): Widget | null;
+  /**
+   * Returns whether underlines in the label indicate mnemonics.
+   */
+  getUseUnderline(): boolean;
+  /**
+   * Sets the child widget of `button`.
+   */
+  setChild(child: Widget | null): void;
+  /**
+   * Sets whether underlines in the label indicate mnemonics.
+   */
+  setUseUnderline(setting: boolean): void;
+  /**
+   * Emitted to when the check button is activated.
+   */
+  onActivate(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode CheckButtonMethods}. */
+export const checkButtonMethods: CheckButtonMethods & ThisType<GObject> = {
+  getChild(this: GObject): Widget | null {
+    return borrowed<Widget>(
+      (gtk4.symbols.gtk_check_button_get_child ??
+        missing("gtk_check_button_get_child", "4.8"))(this.ptr),
+    );
+  },
+  getUseUnderline(this: GObject): boolean {
+    return gtk4.symbols.gtk_check_button_get_use_underline(this.ptr);
+  },
+  setChild(this: GObject, child: Widget | null): void {
+    (gtk4.symbols.gtk_check_button_set_child ??
+      missing("gtk_check_button_set_child", "4.8"))(
+        this.ptr,
+        child?.ptr ?? null,
+      );
+  },
+  setUseUnderline(this: GObject, setting: boolean): void {
+    gtk4.symbols.gtk_check_button_set_use_underline(this.ptr, setting);
+  },
+  onActivate(this: GObject, callback: () => void): number {
+    return connectSignal(this, "activate", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `GtkColumnView`. */
+export interface ColumnViewMethods {
+  /**
+   * Gets the list of columns in this column view.
+   */
+  getColumns(): GObject;
+  /**
+   * Returns whether rows can be selected by dragging with the mouse.
+   */
+  getEnableRubberband(): boolean;
+  /**
+   * Gets the factory that's currently used to populate section headers.
+   */
+  getHeaderFactory(): GObject | null;
+  /**
+   * Gets the model that's currently used to read the items displayed.
+   */
+  getModel(): GObject | null;
+  /**
+   * Returns whether columns are reorderable.
+   */
+  getReorderable(): boolean;
+  /**
+   * Gets the factory set via `setRowFactory()`.
+   */
+  getRowFactory(): GObject | null;
+  /**
+   * Returns whether the list should show separators between columns.
+   */
+  getShowColumnSeparators(): boolean;
+  /**
+   * Returns whether the list should show separators between rows.
+   */
+  getShowRowSeparators(): boolean;
+  /**
+   * Returns whether rows will be activated on single click and
+   * selected on hover.
+   */
+  getSingleClickActivate(): boolean;
+  /**
+   * Returns a special sorter that reflects the users sorting
+   * choices in the column view.
+   */
+  getSorter(): GObject | null;
+  /**
+   * Gets the behavior set for the <kbd>Tab</kbd> key.
+   */
+  getTabBehavior(): ListTabBehavior;
+  /**
+   * Inserts a column at the given position in the columns of `self`.
+   */
+  insertColumn(position: number, column: ColumnViewColumn): void;
+  /**
+   * Removes the `column` from the list of columns of `self`.
+   */
+  removeColumn(column: ColumnViewColumn): void;
+  /**
+   * Sets whether selections can be changed by dragging with the mouse.
+   */
+  setEnableRubberband(enableRubberband: boolean): void;
+  /**
+   * Sets the factory to use for populating the
+   * `ListHeader` objects used in section headers.
+   */
+  setHeaderFactory(factory: GObject | null): void;
+  /**
+   * Sets whether columns should be reorderable by dragging.
+   */
+  setReorderable(reorderable: boolean): void;
+  /**
+   * Sets the factory used for configuring rows.
+   */
+  setRowFactory(factory: GObject | null): void;
+  /**
+   * Sets whether the list should show separators between columns.
+   */
+  setShowColumnSeparators(showColumnSeparators: boolean): void;
+  /**
+   * Sets whether the list should show separators between rows.
+   */
+  setShowRowSeparators(showRowSeparators: boolean): void;
+  /**
+   * Sets whether rows should be activated on single click and
+   * selected on hover.
+   */
+  setSingleClickActivate(singleClickActivate: boolean): void;
+  /**
+   * Sets the <kbd>Tab</kbd> key behavior.
+   */
+  setTabBehavior(tabBehavior: ListTabBehavior): void;
+  /**
+   * Sets the sorting of the view.
+   */
+  sortByColumn(column: ColumnViewColumn | null, direction: SortType): void;
+  /**
+   * Emitted when a row has been activated by the user, usually via activating
+   * the GtkListBase|list.activate-item action.
+   */
+  onActivate(callback: (position: number) => void): number;
+}
+
+/** Implementations of {@linkcode ColumnViewMethods}. */
+export const columnViewMethods: ColumnViewMethods & ThisType<GObject> = {
+  getColumns(this: GObject): GObject {
+    return borrowed<GObject>(
+      gtk4.symbols.gtk_column_view_get_columns(this.ptr),
+    )!;
+  },
+  getEnableRubberband(this: GObject): boolean {
+    return gtk4.symbols.gtk_column_view_get_enable_rubberband(this.ptr);
+  },
+  getHeaderFactory(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_column_view_get_header_factory ??
+        missing("gtk_column_view_get_header_factory", "4.12"))(this.ptr),
+    );
+  },
+  getModel(this: GObject): GObject | null {
+    return borrowed<GObject>(gtk4.symbols.gtk_column_view_get_model(this.ptr));
+  },
+  getReorderable(this: GObject): boolean {
+    return gtk4.symbols.gtk_column_view_get_reorderable(this.ptr);
+  },
+  getRowFactory(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_column_view_get_row_factory ??
+        missing("gtk_column_view_get_row_factory", "4.12"))(this.ptr),
+    );
+  },
+  getShowColumnSeparators(this: GObject): boolean {
+    return gtk4.symbols.gtk_column_view_get_show_column_separators(this.ptr);
+  },
+  getShowRowSeparators(this: GObject): boolean {
+    return gtk4.symbols.gtk_column_view_get_show_row_separators(this.ptr);
+  },
+  getSingleClickActivate(this: GObject): boolean {
+    return gtk4.symbols.gtk_column_view_get_single_click_activate(this.ptr);
+  },
+  getSorter(this: GObject): GObject | null {
+    return borrowed<GObject>(gtk4.symbols.gtk_column_view_get_sorter(this.ptr));
+  },
+  getTabBehavior(this: GObject): ListTabBehavior {
+    return (gtk4.symbols.gtk_column_view_get_tab_behavior ??
+      missing("gtk_column_view_get_tab_behavior", "4.12"))(
+        this.ptr,
+      ) as ListTabBehavior;
+  },
+  insertColumn(
+    this: GObject,
+    position: number,
+    column: ColumnViewColumn,
+  ): void {
+    gtk4.symbols.gtk_column_view_insert_column(this.ptr, position, column.ptr);
+  },
+  removeColumn(this: GObject, column: ColumnViewColumn): void {
+    gtk4.symbols.gtk_column_view_remove_column(this.ptr, column.ptr);
+  },
+  setEnableRubberband(this: GObject, enableRubberband: boolean): void {
+    gtk4.symbols.gtk_column_view_set_enable_rubberband(
+      this.ptr,
+      enableRubberband,
+    );
+  },
+  setHeaderFactory(this: GObject, factory: GObject | null): void {
+    (gtk4.symbols.gtk_column_view_set_header_factory ??
+      missing("gtk_column_view_set_header_factory", "4.12"))(
+        this.ptr,
+        factory?.ptr ?? null,
+      );
+  },
+  setReorderable(this: GObject, reorderable: boolean): void {
+    gtk4.symbols.gtk_column_view_set_reorderable(this.ptr, reorderable);
+  },
+  setRowFactory(this: GObject, factory: GObject | null): void {
+    (gtk4.symbols.gtk_column_view_set_row_factory ??
+      missing("gtk_column_view_set_row_factory", "4.12"))(
+        this.ptr,
+        factory?.ptr ?? null,
+      );
+  },
+  setShowColumnSeparators(this: GObject, showColumnSeparators: boolean): void {
+    gtk4.symbols.gtk_column_view_set_show_column_separators(
+      this.ptr,
+      showColumnSeparators,
+    );
+  },
+  setShowRowSeparators(this: GObject, showRowSeparators: boolean): void {
+    gtk4.symbols.gtk_column_view_set_show_row_separators(
+      this.ptr,
+      showRowSeparators,
+    );
+  },
+  setSingleClickActivate(this: GObject, singleClickActivate: boolean): void {
+    gtk4.symbols.gtk_column_view_set_single_click_activate(
+      this.ptr,
+      singleClickActivate,
+    );
+  },
+  setTabBehavior(this: GObject, tabBehavior: ListTabBehavior): void {
+    (gtk4.symbols.gtk_column_view_set_tab_behavior ??
+      missing("gtk_column_view_set_tab_behavior", "4.12"))(
+        this.ptr,
+        tabBehavior,
+      );
+  },
+  sortByColumn(
+    this: GObject,
+    column: ColumnViewColumn | null,
+    direction: SortType,
+  ): void {
+    gtk4.symbols.gtk_column_view_sort_by_column(
+      this.ptr,
+      column?.ptr ?? null,
+      direction,
+    );
+  },
+  onActivate(this: GObject, callback: (position: number) => void): number {
+    return connectSignal(this, "activate", {
+      parameters: ["pointer", "u32", "pointer"],
+      result: "void",
+    }, (a0: never) => callback(a0));
+  },
+};
+
+/** Methods generated for `GtkColumnViewColumn`. */
+export interface ColumnViewColumnMethods {
+  /**
+   * Gets the column view that's currently displaying this column.
+   */
+  getColumnView(): ColumnView | null;
+  /**
+   * Returns whether this column should expand.
+   */
+  getExpand(): boolean;
+  /**
+   * Gets the factory that's currently used to populate list items
+   * for this column.
+   */
+  getFactory(): GObject | null;
+  /**
+   * Gets the fixed width of the column.
+   */
+  getFixedWidth(): number;
+  /**
+   * Gets the menu model that is used to create the context menu
+   * for the column header.
+   */
+  getHeaderMenu(): GObject | null;
+  /**
+   * Returns the ID set with `setId()`.
+   */
+  getId(): string | null;
+  /**
+   * Returns whether this column is resizable.
+   */
+  getResizable(): boolean;
+  /**
+   * Returns the sorter that is associated with the column.
+   */
+  getSorter(): GObject | null;
+  /**
+   * Returns the title set with `setTitle()`.
+   */
+  getTitle(): string | null;
+  /**
+   * Returns whether this column is visible.
+   */
+  getVisible(): boolean;
+  /**
+   * Sets the column to take available extra space.
+   */
+  setExpand(expand: boolean): void;
+  /**
+   * Sets the `GtkListItemFactory` to use for populating list items
+   * for this column.
+   */
+  setFactory(factory: GObject | null): void;
+  /**
+   * Sets the fixed width of the column.
+   */
+  setFixedWidth(fixedWidth: number): void;
+  /**
+   * Sets the menu model that is used to create the context menu
+   * for the column header.
+   */
+  setHeaderMenu(menu: GObject | null): void;
+  /**
+   * Sets the id of this column.
+   */
+  setId(id: string | null): void;
+  /**
+   * Sets whether this column should be resizable by dragging.
+   */
+  setResizable(resizable: boolean): void;
+  /**
+   * Associates a sorter with the column.
+   */
+  setSorter(sorter: GObject | null): void;
+  /**
+   * Sets the title of this column.
+   */
+  setTitle(title: string | null): void;
+  /**
+   * Sets whether this column should be visible in views.
+   */
+  setVisible(visible: boolean): void;
+}
+
+/** Implementations of {@linkcode ColumnViewColumnMethods}. */
+export const columnViewColumnMethods:
+  & ColumnViewColumnMethods
+  & ThisType<GObject> = {
+    getColumnView(this: GObject): ColumnView | null {
+      return borrowed<ColumnView>(
+        gtk4.symbols.gtk_column_view_column_get_column_view(this.ptr),
+      );
+    },
+    getExpand(this: GObject): boolean {
+      return gtk4.symbols.gtk_column_view_column_get_expand(this.ptr);
+    },
+    getFactory(this: GObject): GObject | null {
+      return borrowed<GObject>(
+        gtk4.symbols.gtk_column_view_column_get_factory(this.ptr),
+      );
+    },
+    getFixedWidth(this: GObject): number {
+      return gtk4.symbols.gtk_column_view_column_get_fixed_width(this.ptr);
+    },
+    getHeaderMenu(this: GObject): GObject | null {
+      return borrowed<GObject>(
+        gtk4.symbols.gtk_column_view_column_get_header_menu(this.ptr),
+      );
+    },
+    getId(this: GObject): string | null {
+      return ((p) => p ? readCStr(p) : null)(
+        (gtk4.symbols.gtk_column_view_column_get_id ??
+          missing("gtk_column_view_column_get_id", "4.10"))(this.ptr),
+      );
+    },
+    getResizable(this: GObject): boolean {
+      return gtk4.symbols.gtk_column_view_column_get_resizable(this.ptr);
+    },
+    getSorter(this: GObject): GObject | null {
+      return borrowed<GObject>(
+        gtk4.symbols.gtk_column_view_column_get_sorter(this.ptr),
+      );
+    },
+    getTitle(this: GObject): string | null {
+      return ((p) => p ? readCStr(p) : null)(
+        gtk4.symbols.gtk_column_view_column_get_title(this.ptr),
+      );
+    },
+    getVisible(this: GObject): boolean {
+      return gtk4.symbols.gtk_column_view_column_get_visible(this.ptr);
+    },
+    setExpand(this: GObject, expand: boolean): void {
+      gtk4.symbols.gtk_column_view_column_set_expand(this.ptr, expand);
+    },
+    setFactory(this: GObject, factory: GObject | null): void {
+      gtk4.symbols.gtk_column_view_column_set_factory(
+        this.ptr,
+        factory?.ptr ?? null,
+      );
+    },
+    setFixedWidth(this: GObject, fixedWidth: number): void {
+      gtk4.symbols.gtk_column_view_column_set_fixed_width(this.ptr, fixedWidth);
+    },
+    setHeaderMenu(this: GObject, menu: GObject | null): void {
+      gtk4.symbols.gtk_column_view_column_set_header_menu(
+        this.ptr,
+        menu?.ptr ?? null,
+      );
+    },
+    setId(this: GObject, id: string | null): void {
+      (gtk4.symbols.gtk_column_view_column_set_id ??
+        missing("gtk_column_view_column_set_id", "4.10"))(
+          this.ptr,
+          cstrOrNull(id),
+        );
+    },
+    setResizable(this: GObject, resizable: boolean): void {
+      gtk4.symbols.gtk_column_view_column_set_resizable(this.ptr, resizable);
+    },
+    setSorter(this: GObject, sorter: GObject | null): void {
+      gtk4.symbols.gtk_column_view_column_set_sorter(
+        this.ptr,
+        sorter?.ptr ?? null,
+      );
+    },
+    setTitle(this: GObject, title: string | null): void {
+      gtk4.symbols.gtk_column_view_column_set_title(
+        this.ptr,
+        cstrOrNull(title),
+      );
+    },
+    setVisible(this: GObject, visible: boolean): void {
+      gtk4.symbols.gtk_column_view_column_set_visible(this.ptr, visible);
+    },
+  };
+
+/** Methods generated for `GtkCssProvider`. */
+export interface CssProviderMethods {
+  /**
+   * Loads the data contained in `file` into `cssProvider`.
+   */
+  loadFromFile(file: GObject): void;
+  /**
+   * Loads the data contained in `path` into `cssProvider`.
+   */
+  loadFromPath(path: string): void;
+  /**
+   * Loads the data contained in the resource at `resourcePath` into
+   * the `cssProvider`.
+   */
+  loadFromResource(resourcePath: string): void;
+  /**
+   * Loads `string` into `cssProvider`.
+   */
+  loadFromString(string: string): void;
+  /**
+   * Converts the `provider` into a string representation in CSS
+   * format.
+   */
+  toString(): string;
+}
+
+/** Implementations of {@linkcode CssProviderMethods}. */
+export const cssProviderMethods: CssProviderMethods & ThisType<GObject> = {
+  loadFromFile(this: GObject, file: GObject): void {
+    gtk4.symbols.gtk_css_provider_load_from_file(this.ptr, file.ptr);
+  },
+  loadFromPath(this: GObject, path: string): void {
+    gtk4.symbols.gtk_css_provider_load_from_path(this.ptr, cstr(path));
+  },
+  loadFromResource(this: GObject, resourcePath: string): void {
+    gtk4.symbols.gtk_css_provider_load_from_resource(
+      this.ptr,
+      cstr(resourcePath),
+    );
+  },
+  loadFromString(this: GObject, string: string): void {
+    (gtk4.symbols.gtk_css_provider_load_from_string ??
+      missing("gtk_css_provider_load_from_string", "4.12"))(
+        this.ptr,
+        cstr(string),
+      );
+  },
+  toString(this: GObject): string {
+    return takeString(gtk4.symbols.gtk_css_provider_to_string(this.ptr)) ?? "";
+  },
+};
+
+/** Methods generated for `GtkDrawingArea`. */
+export interface DrawingAreaMethods {
+  /**
+   * Retrieves the content height of the `GtkDrawingArea`.
+   */
+  getContentHeight(): number;
+  /**
+   * Retrieves the content width of the `GtkDrawingArea`.
+   */
+  getContentWidth(): number;
+  /**
+   * Emitted once when the widget is realized, and then each time the widget
+   * is changed while realized.
+   */
+  onResize(callback: (width: number, height: number) => void): number;
+}
+
+/** Implementations of {@linkcode DrawingAreaMethods}. */
+export const drawingAreaMethods: DrawingAreaMethods & ThisType<GObject> = {
+  getContentHeight(this: GObject): number {
+    return gtk4.symbols.gtk_drawing_area_get_content_height(this.ptr);
+  },
+  getContentWidth(this: GObject): number {
+    return gtk4.symbols.gtk_drawing_area_get_content_width(this.ptr);
+  },
+  onResize(
+    this: GObject,
+    callback: (width: number, height: number) => void,
+  ): number {
+    return connectSignal(this, "resize", {
+      parameters: ["pointer", "i32", "i32", "pointer"],
+      result: "void",
+    }, (a0: never, a1: never) => callback(a0, a1));
+  },
+};
+
+/** Methods generated for `GtkDropDown`. */
+export interface DropDownMethods {
+  /**
+   * Returns whether search is enabled.
+   */
+  getEnableSearch(): boolean;
+  /**
+   * Gets the factory that's currently used to populate list items.
+   */
+  getFactory(): GObject | null;
+  /**
+   * Gets the factory that's currently used to create header widgets for the popup.
+   */
+  getHeaderFactory(): GObject | null;
+  /**
+   * Gets the factory that's currently used to populate list items in the popup.
+   */
+  getListFactory(): GObject | null;
+  /**
+   * Gets the model that provides the displayed items.
+   */
+  getModel(): GObject | null;
+  /**
+   * Returns the match mode that the search filter is using.
+   */
+  getSearchMatchMode(): StringFilterMatchMode;
+  /**
+   * Gets the selected item. If no item is selected, `null` is returned.
+   */
+  getSelectedItem(): GObject | null;
+  /**
+   * Returns whether to show an arrow within the widget.
+   */
+  getShowArrow(): boolean;
+  /**
+   * Sets whether a search entry will be shown in the popup that
+   * allows to search for items in the list.
+   */
+  setEnableSearch(enableSearch: boolean): void;
+  /**
+   * Sets the `GtkListItemFactory` to use for populating list items.
+   */
+  setFactory(factory: GObject | null): void;
+  /**
+   * Sets the `GtkListItemFactory` to use for creating header widgets for the popup.
+   */
+  setHeaderFactory(factory: GObject | null): void;
+  /**
+   * Sets the `GtkListItemFactory` to use for populating list items in the popup.
+   */
+  setListFactory(factory: GObject | null): void;
+  /**
+   * Sets the match mode for the search filter.
+   */
+  setSearchMatchMode(searchMatchMode: StringFilterMatchMode): void;
+  /**
+   * Sets whether an arrow will be displayed within the widget.
+   */
+  setShowArrow(showArrow: boolean): void;
+  /**
+   * Emitted to when the drop down is activated.
+   */
+  onActivate(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode DropDownMethods}. */
+export const dropDownMethods: DropDownMethods & ThisType<GObject> = {
+  getEnableSearch(this: GObject): boolean {
+    return gtk4.symbols.gtk_drop_down_get_enable_search(this.ptr);
+  },
+  getFactory(this: GObject): GObject | null {
+    return borrowed<GObject>(gtk4.symbols.gtk_drop_down_get_factory(this.ptr));
+  },
+  getHeaderFactory(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_drop_down_get_header_factory ??
+        missing("gtk_drop_down_get_header_factory", "4.12"))(this.ptr),
+    );
+  },
+  getListFactory(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      gtk4.symbols.gtk_drop_down_get_list_factory(this.ptr),
+    );
+  },
+  getModel(this: GObject): GObject | null {
+    return borrowed<GObject>(gtk4.symbols.gtk_drop_down_get_model(this.ptr));
+  },
+  getSearchMatchMode(this: GObject): StringFilterMatchMode {
+    return (gtk4.symbols.gtk_drop_down_get_search_match_mode ??
+      missing("gtk_drop_down_get_search_match_mode", "4.12"))(
+        this.ptr,
+      ) as StringFilterMatchMode;
+  },
+  getSelectedItem(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      gtk4.symbols.gtk_drop_down_get_selected_item(this.ptr),
+    );
+  },
+  getShowArrow(this: GObject): boolean {
+    return (gtk4.symbols.gtk_drop_down_get_show_arrow ??
+      missing("gtk_drop_down_get_show_arrow", "4.6"))(this.ptr);
+  },
+  setEnableSearch(this: GObject, enableSearch: boolean): void {
+    gtk4.symbols.gtk_drop_down_set_enable_search(this.ptr, enableSearch);
+  },
+  setFactory(this: GObject, factory: GObject | null): void {
+    gtk4.symbols.gtk_drop_down_set_factory(this.ptr, factory?.ptr ?? null);
+  },
+  setHeaderFactory(this: GObject, factory: GObject | null): void {
+    (gtk4.symbols.gtk_drop_down_set_header_factory ??
+      missing("gtk_drop_down_set_header_factory", "4.12"))(
+        this.ptr,
+        factory?.ptr ?? null,
+      );
+  },
+  setListFactory(this: GObject, factory: GObject | null): void {
+    gtk4.symbols.gtk_drop_down_set_list_factory(this.ptr, factory?.ptr ?? null);
+  },
+  setSearchMatchMode(
+    this: GObject,
+    searchMatchMode: StringFilterMatchMode,
+  ): void {
+    (gtk4.symbols.gtk_drop_down_set_search_match_mode ??
+      missing("gtk_drop_down_set_search_match_mode", "4.12"))(
+        this.ptr,
+        searchMatchMode,
+      );
+  },
+  setShowArrow(this: GObject, showArrow: boolean): void {
+    (gtk4.symbols.gtk_drop_down_set_show_arrow ??
+      missing("gtk_drop_down_set_show_arrow", "4.6"))(this.ptr, showArrow);
+  },
+  onActivate(this: GObject, callback: () => void): number {
+    return connectSignal(this, "activate", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `GtkDropTarget`. */
+export interface DropTargetMethods {
+  /**
+   * Gets the actions that this drop target supports.
+   */
+  getActions(): number;
+  /**
+   * Gets the currently handled drop operation.
+   */
+  getCurrentDrop(): GObject | null;
+  /**
+   * Gets whether data should be preloaded on hover.
+   */
+  getPreload(): boolean;
+  /**
+   * Rejects the ongoing drop operation.
+   */
+  reject(): void;
+  /**
+   * Sets the actions that this drop target supports.
+   */
+  setActions(actions: number): void;
+  /**
+   * Sets whether data should be preloaded on hover.
+   */
+  setPreload(preload: boolean): void;
+  /**
+   * Emitted on the drop site when the pointer leaves the widget.
+   */
+  onLeave(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode DropTargetMethods}. */
+export const dropTargetMethods: DropTargetMethods & ThisType<GObject> = {
+  getActions(this: GObject): number {
+    return gtk4.symbols.gtk_drop_target_get_actions(this.ptr);
+  },
+  getCurrentDrop(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_drop_target_get_current_drop ??
+        missing("gtk_drop_target_get_current_drop", "4.4"))(this.ptr),
+    );
+  },
+  getPreload(this: GObject): boolean {
+    return gtk4.symbols.gtk_drop_target_get_preload(this.ptr);
+  },
+  reject(this: GObject): void {
+    gtk4.symbols.gtk_drop_target_reject(this.ptr);
+  },
+  setActions(this: GObject, actions: number): void {
+    gtk4.symbols.gtk_drop_target_set_actions(this.ptr, actions);
+  },
+  setPreload(this: GObject, preload: boolean): void {
+    gtk4.symbols.gtk_drop_target_set_preload(this.ptr, preload);
+  },
+  onLeave(this: GObject, callback: () => void): number {
+    return connectSignal(this, "leave", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `GtkEventController`. */
+export interface EventControllerMethods {
+  /**
+   * Returns the device of the event that is currently being
+   * handled by the controller.
+   */
+  getCurrentEventDevice(): GObject | null;
+  /**
+   * Returns the modifier state of the event that is currently being
+   * handled by the controller.
+   */
+  getCurrentEventState(): number;
+  /**
+   * Returns the timestamp of the event that is currently being
+   * handled by the controller.
+   */
+  getCurrentEventTime(): number;
+  /**
+   * Gets the name of `controller`.
+   */
+  getName(): string | null;
+  /**
+   * Gets the propagation limit of the event controller.
+   */
+  getPropagationLimit(): PropagationLimit;
+  /**
+   * Gets the propagation phase at which `controller` handles events.
+   */
+  getPropagationPhase(): PropagationPhase;
+  /**
+   * Returns the `GtkWidget` this controller relates to.
+   */
+  getWidget(): Widget | null;
+  /**
+   * Resets the `controller` to a clean state.
+   */
+  reset(): void;
+  /**
+   * Sets a name on the controller that can be used for debugging.
+   */
+  setName(name: string | null): void;
+  /**
+   * Sets the event propagation limit on the event controller.
+   */
+  setPropagationLimit(limit: PropagationLimit): void;
+  /**
+   * Sets the propagation phase at which a controller handles events.
+   */
+  setPropagationPhase(phase: PropagationPhase): void;
+  /**
+   * Sets a name on the controller that can be used for debugging.
+   */
+  setStaticName(name: string | null): void;
+}
+
+/** Implementations of {@linkcode EventControllerMethods}. */
+export const eventControllerMethods:
+  & EventControllerMethods
+  & ThisType<GObject> = {
+    getCurrentEventDevice(this: GObject): GObject | null {
+      return borrowed<GObject>(
+        gtk4.symbols.gtk_event_controller_get_current_event_device(this.ptr),
+      );
+    },
+    getCurrentEventState(this: GObject): number {
+      return gtk4.symbols.gtk_event_controller_get_current_event_state(
+        this.ptr,
+      );
+    },
+    getCurrentEventTime(this: GObject): number {
+      return gtk4.symbols.gtk_event_controller_get_current_event_time(this.ptr);
+    },
+    getName(this: GObject): string | null {
+      return ((p) => p ? readCStr(p) : null)(
+        gtk4.symbols.gtk_event_controller_get_name(this.ptr),
+      );
+    },
+    getPropagationLimit(this: GObject): PropagationLimit {
+      return gtk4.symbols.gtk_event_controller_get_propagation_limit(
+        this.ptr,
+      ) as PropagationLimit;
+    },
+    getPropagationPhase(this: GObject): PropagationPhase {
+      return gtk4.symbols.gtk_event_controller_get_propagation_phase(
+        this.ptr,
+      ) as PropagationPhase;
+    },
+    getWidget(this: GObject): Widget | null {
+      return borrowed<Widget>(
+        gtk4.symbols.gtk_event_controller_get_widget(this.ptr),
+      );
+    },
+    reset(this: GObject): void {
+      gtk4.symbols.gtk_event_controller_reset(this.ptr);
+    },
+    setName(this: GObject, name: string | null): void {
+      gtk4.symbols.gtk_event_controller_set_name(this.ptr, cstrOrNull(name));
+    },
+    setPropagationLimit(this: GObject, limit: PropagationLimit): void {
+      gtk4.symbols.gtk_event_controller_set_propagation_limit(this.ptr, limit);
+    },
+    setPropagationPhase(this: GObject, phase: PropagationPhase): void {
+      gtk4.symbols.gtk_event_controller_set_propagation_phase(this.ptr, phase);
+    },
+    setStaticName(this: GObject, name: string | null): void {
+      (gtk4.symbols.gtk_event_controller_set_static_name ??
+        missing("gtk_event_controller_set_static_name", "4.8"))(
+          this.ptr,
+          cstrOrNull(name),
+        );
+    },
+  };
+
+/** Methods generated for `GtkEventControllerKey`. */
+export interface EventControllerKeyMethods {
+  /**
+   * Gets the key group of the current event of this `controller`.
+   */
+  getGroup(): number;
+  /**
+   * Gets the input method context of the key `controller`.
+   */
+  getImContext(): GObject | null;
+  /**
+   * Sets the input method context of the key `controller`.
+   */
+  setImContext(imContext: GObject | null): void;
+  /**
+   * Emitted whenever the input method context filters away
+   * a keypress and prevents the `controller` receiving it.
+   */
+  onImUpdate(callback: () => void): number;
+  /**
+   * Emitted whenever a key is released.
+   */
+  onKeyReleased(
+    callback: (keyval: number, keycode: number, state: number) => void,
+  ): number;
+}
+
+/** Implementations of {@linkcode EventControllerKeyMethods}. */
+export const eventControllerKeyMethods:
+  & EventControllerKeyMethods
+  & ThisType<GObject> = {
+    getGroup(this: GObject): number {
+      return gtk4.symbols.gtk_event_controller_key_get_group(this.ptr);
+    },
+    getImContext(this: GObject): GObject | null {
+      return borrowed<GObject>(
+        gtk4.symbols.gtk_event_controller_key_get_im_context(this.ptr),
+      );
+    },
+    setImContext(this: GObject, imContext: GObject | null): void {
+      gtk4.symbols.gtk_event_controller_key_set_im_context(
+        this.ptr,
+        imContext?.ptr ?? null,
+      );
+    },
+    onImUpdate(this: GObject, callback: () => void): number {
+      return connectSignal(this, "im-update", {
+        parameters: ["pointer", "pointer"],
+        result: "void",
+      }, () => callback());
+    },
+    onKeyReleased(
+      this: GObject,
+      callback: (keyval: number, keycode: number, state: number) => void,
+    ): number {
+      return connectSignal(this, "key-released", {
+        parameters: ["pointer", "u32", "u32", "u32", "pointer"],
+        result: "void",
+      }, (a0: never, a1: never, a2: never) => callback(a0, a1, a2));
+    },
+  };
+
+/** Methods generated for `GtkEventControllerMotion`. */
+export interface EventControllerMotionMethods {
+  /**
+   * Returns if a pointer is within `self`, but not one of its children.
+   */
+  isPointer(): boolean;
+  /**
+   * Emitted when the pointer moves inside the widget.
+   */
+  onMotion(callback: (x: number, y: number) => void): number;
+}
+
+/** Implementations of {@linkcode EventControllerMotionMethods}. */
+export const eventControllerMotionMethods:
+  & EventControllerMotionMethods
+  & ThisType<GObject> = {
+    isPointer(this: GObject): boolean {
+      return gtk4.symbols.gtk_event_controller_motion_is_pointer(this.ptr);
+    },
+    onMotion(this: GObject, callback: (x: number, y: number) => void): number {
+      return connectSignal(this, "motion", {
+        parameters: ["pointer", "f64", "f64", "pointer"],
+        result: "void",
+      }, (a0: never, a1: never) => callback(a0, a1));
+    },
+  };
+
+/** Methods generated for `GtkFileDialog`. */
+export interface FileDialogMethods {
+  /**
+   * Retrieves the text used by the dialog on its accept button.
+   */
+  getAcceptLabel(): string | null;
+  /**
+   * Gets the filter that will be selected by default
+   * in the file chooser dialog.
+   */
+  getDefaultFilter(): FileFilter | null;
+  /**
+   * Gets the filters that will be offered to the user
+   * in the file chooser dialog.
+   */
+  getFilters(): GObject | null;
+  /**
+   * Gets the file that will be initially selected in
+   * the file chooser dialog.
+   */
+  getInitialFile(): GObject | null;
+  /**
+   * Gets the folder that will be set as the
+   * initial folder in the file chooser dialog.
+   */
+  getInitialFolder(): GObject | null;
+  /**
+   * Gets the filename that will be initially selected.
+   */
+  getInitialName(): string | null;
+  /**
+   * Returns whether the file chooser dialog blocks interaction
+   * with the parent window while it is presented.
+   */
+  getModal(): boolean;
+  /**
+   * Returns the title that will be shown on the file chooser dialog.
+   */
+  getTitle(): string;
+  /**
+   * Sets the label shown on the file chooser's accept button.
+   */
+  setAcceptLabel(acceptLabel: string | null): void;
+  /**
+   * Sets the file that will be initially selected in
+   * the file chooser dialog.
+   */
+  setInitialFile(file: GObject | null): void;
+  /**
+   * Sets the folder that will be set as the
+   * initial folder in the file chooser dialog.
+   */
+  setInitialFolder(folder: GObject | null): void;
+  /**
+   * Sets the filename that will be initially selected.
+   */
+  setInitialName(name: string | null): void;
+  /**
+   * Sets whether the file chooser dialog blocks interaction
+   * with the parent window while it is presented.
+   */
+  setModal(modal: boolean): void;
+}
+
+/** Implementations of {@linkcode FileDialogMethods}. */
+export const fileDialogMethods: FileDialogMethods & ThisType<GObject> = {
+  getAcceptLabel(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      (gtk4.symbols.gtk_file_dialog_get_accept_label ??
+        missing("gtk_file_dialog_get_accept_label", "4.10"))(this.ptr),
+    );
+  },
+  getDefaultFilter(this: GObject): FileFilter | null {
+    return borrowed<FileFilter>(
+      (gtk4.symbols.gtk_file_dialog_get_default_filter ??
+        missing("gtk_file_dialog_get_default_filter", "4.10"))(this.ptr),
+    );
+  },
+  getFilters(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_file_dialog_get_filters ??
+        missing("gtk_file_dialog_get_filters", "4.10"))(this.ptr),
+    );
+  },
+  getInitialFile(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_file_dialog_get_initial_file ??
+        missing("gtk_file_dialog_get_initial_file", "4.10"))(this.ptr),
+    );
+  },
+  getInitialFolder(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_file_dialog_get_initial_folder ??
+        missing("gtk_file_dialog_get_initial_folder", "4.10"))(this.ptr),
+    );
+  },
+  getInitialName(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      (gtk4.symbols.gtk_file_dialog_get_initial_name ??
+        missing("gtk_file_dialog_get_initial_name", "4.10"))(this.ptr),
+    );
+  },
+  getModal(this: GObject): boolean {
+    return (gtk4.symbols.gtk_file_dialog_get_modal ??
+      missing("gtk_file_dialog_get_modal", "4.10"))(this.ptr);
+  },
+  getTitle(this: GObject): string {
+    return readCStr(
+      (gtk4.symbols.gtk_file_dialog_get_title ??
+        missing("gtk_file_dialog_get_title", "4.10"))(this.ptr),
+    );
+  },
+  setAcceptLabel(this: GObject, acceptLabel: string | null): void {
+    (gtk4.symbols.gtk_file_dialog_set_accept_label ??
+      missing("gtk_file_dialog_set_accept_label", "4.10"))(
+        this.ptr,
+        cstrOrNull(acceptLabel),
+      );
+  },
+  setInitialFile(this: GObject, file: GObject | null): void {
+    (gtk4.symbols.gtk_file_dialog_set_initial_file ??
+      missing("gtk_file_dialog_set_initial_file", "4.10"))(
+        this.ptr,
+        file?.ptr ?? null,
+      );
+  },
+  setInitialFolder(this: GObject, folder: GObject | null): void {
+    (gtk4.symbols.gtk_file_dialog_set_initial_folder ??
+      missing("gtk_file_dialog_set_initial_folder", "4.10"))(
+        this.ptr,
+        folder?.ptr ?? null,
+      );
+  },
+  setInitialName(this: GObject, name: string | null): void {
+    (gtk4.symbols.gtk_file_dialog_set_initial_name ??
+      missing("gtk_file_dialog_set_initial_name", "4.10"))(
+        this.ptr,
+        cstrOrNull(name),
+      );
+  },
+  setModal(this: GObject, modal: boolean): void {
+    (gtk4.symbols.gtk_file_dialog_set_modal ??
+      missing("gtk_file_dialog_set_modal", "4.10"))(this.ptr, modal);
+  },
+};
+
+/** Methods generated for `GtkFileFilter`. */
+export interface FileFilterMethods {
+  /**
+   * Adds a suffix match rule to a filter.
+   */
+  addSuffix(suffix: string): void;
+  /**
+   * Gets the human-readable name for the filter.
+   */
+  getName(): string | null;
+}
+
+/** Implementations of {@linkcode FileFilterMethods}. */
+export const fileFilterMethods: FileFilterMethods & ThisType<GObject> = {
+  addSuffix(this: GObject, suffix: string): void {
+    (gtk4.symbols.gtk_file_filter_add_suffix ??
+      missing("gtk_file_filter_add_suffix", "4.4"))(this.ptr, cstr(suffix));
+  },
+  getName(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      gtk4.symbols.gtk_file_filter_get_name(this.ptr),
+    );
+  },
+};
+
+/** Methods generated for `GtkFrame`. */
+export interface FrameMethods {
+  /**
+   * Gets the child widget of `frame`.
+   */
+  getChild(): Widget | null;
+  /**
+   * Returns the frame labels text.
+   */
+  getLabel(): string | null;
+  /**
+   * Retrieves the X alignment of the frame’s label.
+   */
+  getLabelAlign(): number;
+  /**
+   * Retrieves the label widget for the frame.
+   */
+  getLabelWidget(): Widget | null;
+  /**
+   * Creates a new `GtkLabel` with the `label` and sets it as the frame's
+   * label widget.
+   */
+  setLabel(label: string | null): void;
+  /**
+   * Sets the X alignment of the frame widget’s label.
+   */
+  setLabelAlign(xalign: number): void;
+  /**
+   * Sets the label widget for the frame.
+   */
+  setLabelWidget(labelWidget: Widget | null): void;
+}
+
+/** Implementations of {@linkcode FrameMethods}. */
+export const frameMethods: FrameMethods & ThisType<GObject> = {
+  getChild(this: GObject): Widget | null {
+    return borrowed<Widget>(gtk4.symbols.gtk_frame_get_child(this.ptr));
+  },
+  getLabel(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      gtk4.symbols.gtk_frame_get_label(this.ptr),
+    );
+  },
+  getLabelAlign(this: GObject): number {
+    return gtk4.symbols.gtk_frame_get_label_align(this.ptr);
+  },
+  getLabelWidget(this: GObject): Widget | null {
+    return borrowed<Widget>(gtk4.symbols.gtk_frame_get_label_widget(this.ptr));
+  },
+  setLabel(this: GObject, label: string | null): void {
+    gtk4.symbols.gtk_frame_set_label(this.ptr, cstrOrNull(label));
+  },
+  setLabelAlign(this: GObject, xalign: number): void {
+    gtk4.symbols.gtk_frame_set_label_align(this.ptr, xalign);
+  },
+  setLabelWidget(this: GObject, labelWidget: Widget | null): void {
+    gtk4.symbols.gtk_frame_set_label_widget(this.ptr, labelWidget?.ptr ?? null);
+  },
+};
+
+/** Methods generated for `GtkGestureClick`. */
+export interface GestureClickMethods {
+  /**
+   * Emitted whenever a button or touch press happens.
+   */
+  onPressed(callback: (nPress: number, x: number, y: number) => void): number;
+  /**
+   * Emitted whenever any time/distance threshold has been exceeded.
+   */
+  onStopped(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode GestureClickMethods}. */
+export const gestureClickMethods: GestureClickMethods & ThisType<GObject> = {
+  onPressed(
+    this: GObject,
+    callback: (nPress: number, x: number, y: number) => void,
+  ): number {
+    return connectSignal(this, "pressed", {
+      parameters: ["pointer", "i32", "f64", "f64", "pointer"],
+      result: "void",
+    }, (a0: never, a1: never, a2: never) => callback(a0, a1, a2));
+  },
+  onStopped(this: GObject, callback: () => void): number {
+    return connectSignal(this, "stopped", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `GtkGrid`. */
+export interface GridMethods {
+  /**
+   * Adds a widget to the grid.
+   */
+  attachNextTo(
+    child: Widget,
+    sibling: Widget | null,
+    side: PositionType,
+    width: number,
+    height: number,
+  ): void;
+  /**
+   * Returns which row defines the global baseline of `grid`.
+   */
+  getBaselineRow(): number;
+  /**
+   * Gets the child of `grid` whose area covers the grid
+   * cell at `column`, `row`.
+   */
+  getChildAt(column: number, row: number): Widget | null;
+  /**
+   * Returns whether all columns of `grid` have the same width.
+   */
+  getColumnHomogeneous(): boolean;
+  /**
+   * Returns the amount of space between the columns of `grid`.
+   */
+  getColumnSpacing(): number;
+  /**
+   * Returns the baseline position of `row`.
+   */
+  getRowBaselinePosition(row: number): BaselinePosition;
+  /**
+   * Returns whether all rows of `grid` have the same height.
+   */
+  getRowHomogeneous(): boolean;
+  /**
+   * Returns the amount of space between the rows of `grid`.
+   */
+  getRowSpacing(): number;
+  /**
+   * Inserts a column at the specified position.
+   */
+  insertColumn(position: number): void;
+  /**
+   * Inserts a row or column at the specified position.
+   */
+  insertNextTo(sibling: Widget, side: PositionType): void;
+  /**
+   * Inserts a row at the specified position.
+   */
+  insertRow(position: number): void;
+  /**
+   * Removes a child from `grid`.
+   */
+  remove(child: Widget): void;
+  /**
+   * Removes a column from the grid.
+   */
+  removeColumn(position: number): void;
+  /**
+   * Removes a row from the grid.
+   */
+  removeRow(position: number): void;
+  /**
+   * Sets which row defines the global baseline for the entire grid.
+   */
+  setBaselineRow(row: number): void;
+  /**
+   * Sets whether all columns of `grid` will have the same width.
+   */
+  setColumnHomogeneous(homogeneous: boolean): void;
+  /**
+   * Sets how the baseline should be positioned on `row` of the
+   * grid, in case that row is assigned more space than is requested.
+   */
+  setRowBaselinePosition(row: number, pos: BaselinePosition): void;
+  /**
+   * Sets whether all rows of `grid` will have the same height.
+   */
+  setRowHomogeneous(homogeneous: boolean): void;
+}
+
+/** Implementations of {@linkcode GridMethods}. */
+export const gridMethods: GridMethods & ThisType<GObject> = {
+  attachNextTo(
+    this: GObject,
+    child: Widget,
+    sibling: Widget | null,
+    side: PositionType,
+    width: number,
+    height: number,
+  ): void {
+    gtk4.symbols.gtk_grid_attach_next_to(
+      this.ptr,
+      child.ptr,
+      sibling?.ptr ?? null,
+      side,
+      width,
+      height,
+    );
+  },
+  getBaselineRow(this: GObject): number {
+    return gtk4.symbols.gtk_grid_get_baseline_row(this.ptr);
+  },
+  getChildAt(this: GObject, column: number, row: number): Widget | null {
+    return borrowed<Widget>(
+      gtk4.symbols.gtk_grid_get_child_at(this.ptr, column, row),
+    );
+  },
+  getColumnHomogeneous(this: GObject): boolean {
+    return gtk4.symbols.gtk_grid_get_column_homogeneous(this.ptr);
+  },
+  getColumnSpacing(this: GObject): number {
+    return gtk4.symbols.gtk_grid_get_column_spacing(this.ptr);
+  },
+  getRowBaselinePosition(this: GObject, row: number): BaselinePosition {
+    return gtk4.symbols.gtk_grid_get_row_baseline_position(
+      this.ptr,
+      row,
+    ) as BaselinePosition;
+  },
+  getRowHomogeneous(this: GObject): boolean {
+    return gtk4.symbols.gtk_grid_get_row_homogeneous(this.ptr);
+  },
+  getRowSpacing(this: GObject): number {
+    return gtk4.symbols.gtk_grid_get_row_spacing(this.ptr);
+  },
+  insertColumn(this: GObject, position: number): void {
+    gtk4.symbols.gtk_grid_insert_column(this.ptr, position);
+  },
+  insertNextTo(this: GObject, sibling: Widget, side: PositionType): void {
+    gtk4.symbols.gtk_grid_insert_next_to(this.ptr, sibling.ptr, side);
+  },
+  insertRow(this: GObject, position: number): void {
+    gtk4.symbols.gtk_grid_insert_row(this.ptr, position);
+  },
+  remove(this: GObject, child: Widget): void {
+    gtk4.symbols.gtk_grid_remove(this.ptr, child.ptr);
+  },
+  removeColumn(this: GObject, position: number): void {
+    gtk4.symbols.gtk_grid_remove_column(this.ptr, position);
+  },
+  removeRow(this: GObject, position: number): void {
+    gtk4.symbols.gtk_grid_remove_row(this.ptr, position);
+  },
+  setBaselineRow(this: GObject, row: number): void {
+    gtk4.symbols.gtk_grid_set_baseline_row(this.ptr, row);
+  },
+  setColumnHomogeneous(this: GObject, homogeneous: boolean): void {
+    gtk4.symbols.gtk_grid_set_column_homogeneous(this.ptr, homogeneous);
+  },
+  setRowBaselinePosition(
+    this: GObject,
+    row: number,
+    pos: BaselinePosition,
+  ): void {
+    gtk4.symbols.gtk_grid_set_row_baseline_position(this.ptr, row, pos);
+  },
+  setRowHomogeneous(this: GObject, homogeneous: boolean): void {
+    gtk4.symbols.gtk_grid_set_row_homogeneous(this.ptr, homogeneous);
+  },
+};
+
+/** Methods generated for `GtkHeaderBar`. */
+export interface HeaderBarMethods {
+  /**
+   * Gets the decoration layout of the header bar.
+   */
+  getDecorationLayout(): string | null;
+  /**
+   * Returns whether this header bar shows the standard window
+   * title buttons.
+   */
+  getShowTitleButtons(): boolean;
+  /**
+   * Retrieves the title widget of the header bar.
+   */
+  getTitleWidget(): Widget | null;
+  /**
+   * Returns whether this header bar shows platform
+   * native window controls.
+   */
+  getUseNativeControls(): boolean;
+  /**
+   * Removes a child from the header bar.
+   */
+  remove(child: Widget): void;
+  /**
+   * Sets the decoration layout for this header bar.
+   */
+  setDecorationLayout(layout: string | null): void;
+  /**
+   * Sets whether this header bar shows the standard window
+   * title buttons.
+   */
+  setShowTitleButtons(setting: boolean): void;
+  /**
+   * Sets the title for the header bar.
+   */
+  setTitleWidget(titleWidget: Widget | null): void;
+  /**
+   * Sets whether this header bar shows native window controls.
+   */
+  setUseNativeControls(setting: boolean): void;
+}
+
+/** Implementations of {@linkcode HeaderBarMethods}. */
+export const headerBarMethods: HeaderBarMethods & ThisType<GObject> = {
+  getDecorationLayout(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      gtk4.symbols.gtk_header_bar_get_decoration_layout(this.ptr),
+    );
+  },
+  getShowTitleButtons(this: GObject): boolean {
+    return gtk4.symbols.gtk_header_bar_get_show_title_buttons(this.ptr);
+  },
+  getTitleWidget(this: GObject): Widget | null {
+    return borrowed<Widget>(
+      gtk4.symbols.gtk_header_bar_get_title_widget(this.ptr),
+    );
+  },
+  getUseNativeControls(this: GObject): boolean {
+    return (gtk4.symbols.gtk_header_bar_get_use_native_controls ??
+      missing("gtk_header_bar_get_use_native_controls", "4.18"))(this.ptr);
+  },
+  remove(this: GObject, child: Widget): void {
+    gtk4.symbols.gtk_header_bar_remove(this.ptr, child.ptr);
+  },
+  setDecorationLayout(this: GObject, layout: string | null): void {
+    gtk4.symbols.gtk_header_bar_set_decoration_layout(
+      this.ptr,
+      cstrOrNull(layout),
+    );
+  },
+  setShowTitleButtons(this: GObject, setting: boolean): void {
+    gtk4.symbols.gtk_header_bar_set_show_title_buttons(this.ptr, setting);
+  },
+  setTitleWidget(this: GObject, titleWidget: Widget | null): void {
+    gtk4.symbols.gtk_header_bar_set_title_widget(
+      this.ptr,
+      titleWidget?.ptr ?? null,
+    );
+  },
+  setUseNativeControls(this: GObject, setting: boolean): void {
+    (gtk4.symbols.gtk_header_bar_set_use_native_controls ??
+      missing("gtk_header_bar_set_use_native_controls", "4.18"))(
+        this.ptr,
+        setting,
+      );
+  },
+};
+
+/** Methods generated for `GtkIconTheme`. */
+export interface IconThemeMethods {
+  /**
+   * Adds a resource path that will be looked at when looking
+   * for icons, similar to search paths.
+   */
+  addResourcePath(path: string): void;
+  /**
+   * Appends a directory to the search path.
+   */
+  addSearchPath(path: string): void;
+  /**
+   * Returns the display that the `GtkIconTheme` object was
+   * created for.
+   */
+  getDisplay(): Display | null;
+  /**
+   * Gets the current icon theme name.
+   */
+  getThemeName(): string;
+  /**
+   * Checks whether an icon theme includes an icon
+   * for a particular `GIcon`.
+   */
+  hasGicon(gicon: GObject): boolean;
+  /**
+   * Sets the name of the icon theme that the `GtkIconTheme` object uses
+   * overriding system configuration.
+   */
+  setThemeName(themeName: string | null): void;
+  /**
+   * Emitted when the icon theme changes.
+   */
+  onChanged(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode IconThemeMethods}. */
+export const iconThemeMethods: IconThemeMethods & ThisType<GObject> = {
+  addResourcePath(this: GObject, path: string): void {
+    gtk4.symbols.gtk_icon_theme_add_resource_path(this.ptr, cstr(path));
+  },
+  addSearchPath(this: GObject, path: string): void {
+    gtk4.symbols.gtk_icon_theme_add_search_path(this.ptr, cstr(path));
+  },
+  getDisplay(this: GObject): Display | null {
+    return borrowed<Display>(gtk4.symbols.gtk_icon_theme_get_display(this.ptr));
+  },
+  getThemeName(this: GObject): string {
+    return takeString(gtk4.symbols.gtk_icon_theme_get_theme_name(this.ptr)) ??
+      "";
+  },
+  hasGicon(this: GObject, gicon: GObject): boolean {
+    return (gtk4.symbols.gtk_icon_theme_has_gicon ??
+      missing("gtk_icon_theme_has_gicon", "4.2"))(this.ptr, gicon.ptr);
+  },
+  setThemeName(this: GObject, themeName: string | null): void {
+    gtk4.symbols.gtk_icon_theme_set_theme_name(this.ptr, cstrOrNull(themeName));
+  },
+  onChanged(this: GObject, callback: () => void): number {
+    return connectSignal(this, "changed", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `GtkImage`. */
+export interface ImageMethods {
+  /**
+   * Resets the image to be empty.
+   */
+  clear(): void;
+  /**
+   * Gets the `GIcon` being displayed by the `GtkImage`.
+   */
+  getGicon(): GObject | null;
+  /**
+   * Gets the icon name and size being displayed by the `GtkImage`.
+   */
+  getIconName(): string | null;
+  /**
+   * Gets the icon size used by the `image` when rendering icons.
+   */
+  getIconSize(): IconSize;
+  /**
+   * Gets the image `GdkPaintable` being displayed by the `GtkImage`.
+   */
+  getPaintable(): GObject | null;
+  /**
+   * Gets the pixel size used for named icons.
+   */
+  getPixelSize(): number;
+  /**
+   * Gets the type of representation being used by the `GtkImage`
+   * to store image data.
+   */
+  getStorageType(): ImageType;
+  /**
+   * Sets a `GtkImage` to show a file.
+   */
+  setFromFile(filename: string | null): void;
+  /**
+   * Sets a `GtkImage` to show a `GIcon`.
+   */
+  setFromGicon(icon: GObject): void;
+  /**
+   * Sets a `GtkImage` to show a `GdkPaintable`.
+   */
+  setFromPaintable(paintable: GObject | null): void;
+  /**
+   * Sets a `GtkImage` to show a resource.
+   */
+  setFromResource(resourcePath: string | null): void;
+  /**
+   * Suggests an icon size to the theme for named icons.
+   */
+  setIconSize(iconSize: IconSize): void;
+}
+
+/** Implementations of {@linkcode ImageMethods}. */
+export const imageMethods: ImageMethods & ThisType<GObject> = {
+  clear(this: GObject): void {
+    gtk4.symbols.gtk_image_clear(this.ptr);
+  },
+  getGicon(this: GObject): GObject | null {
+    return borrowed<GObject>(gtk4.symbols.gtk_image_get_gicon(this.ptr));
+  },
+  getIconName(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      gtk4.symbols.gtk_image_get_icon_name(this.ptr),
+    );
+  },
+  getIconSize(this: GObject): IconSize {
+    return gtk4.symbols.gtk_image_get_icon_size(this.ptr) as IconSize;
+  },
+  getPaintable(this: GObject): GObject | null {
+    return borrowed<GObject>(gtk4.symbols.gtk_image_get_paintable(this.ptr));
+  },
+  getPixelSize(this: GObject): number {
+    return gtk4.symbols.gtk_image_get_pixel_size(this.ptr);
+  },
+  getStorageType(this: GObject): ImageType {
+    return gtk4.symbols.gtk_image_get_storage_type(this.ptr) as ImageType;
+  },
+  setFromFile(this: GObject, filename: string | null): void {
+    gtk4.symbols.gtk_image_set_from_file(this.ptr, cstrOrNull(filename));
+  },
+  setFromGicon(this: GObject, icon: GObject): void {
+    gtk4.symbols.gtk_image_set_from_gicon(this.ptr, icon.ptr);
+  },
+  setFromPaintable(this: GObject, paintable: GObject | null): void {
+    gtk4.symbols.gtk_image_set_from_paintable(this.ptr, paintable?.ptr ?? null);
+  },
+  setFromResource(this: GObject, resourcePath: string | null): void {
+    gtk4.symbols.gtk_image_set_from_resource(
+      this.ptr,
+      cstrOrNull(resourcePath),
+    );
+  },
+  setIconSize(this: GObject, iconSize: IconSize): void {
+    gtk4.symbols.gtk_image_set_icon_size(this.ptr, iconSize);
+  },
+};
 
 /** Methods generated for `GtkLabel`. */
 export interface LabelMethods {
@@ -409,6 +3002,87 @@ export const labelMethods: LabelMethods & ThisType<GObject> = {
   },
 };
 
+/** Methods generated for `GtkLevelBar`. */
+export interface LevelBarMethods {
+  /**
+   * Adds a new offset marker on `self` at the position specified by `value`.
+   */
+  addOffsetValue(name: string, value: number): void;
+  /**
+   * Returns whether the levelbar is inverted.
+   */
+  getInverted(): boolean;
+  /**
+   * Returns the `max-value` of the `GtkLevelBar`.
+   */
+  getMaxValue(): number;
+  /**
+   * Returns the `min-value` of the `GtkLevelBar`.
+   */
+  getMinValue(): number;
+  /**
+   * Returns the `mode` of the `GtkLevelBar`.
+   */
+  getMode(): LevelBarMode;
+  /**
+   * Returns the `value` of the `GtkLevelBar`.
+   */
+  getValue(): number;
+  /**
+   * Removes an offset marker from a `GtkLevelBar`.
+   */
+  removeOffsetValue(name: string | null): void;
+  /**
+   * Sets whether the `GtkLevelBar` is inverted.
+   */
+  setInverted(inverted: boolean): void;
+  /**
+   * Sets the `mode` of the `GtkLevelBar`.
+   */
+  setMode(mode: LevelBarMode): void;
+  /**
+   * Emitted when an offset specified on the bar changes value.
+   */
+  onOffsetChanged(callback: (name: string) => void): number;
+}
+
+/** Implementations of {@linkcode LevelBarMethods}. */
+export const levelBarMethods: LevelBarMethods & ThisType<GObject> = {
+  addOffsetValue(this: GObject, name: string, value: number): void {
+    gtk4.symbols.gtk_level_bar_add_offset_value(this.ptr, cstr(name), value);
+  },
+  getInverted(this: GObject): boolean {
+    return gtk4.symbols.gtk_level_bar_get_inverted(this.ptr);
+  },
+  getMaxValue(this: GObject): number {
+    return gtk4.symbols.gtk_level_bar_get_max_value(this.ptr);
+  },
+  getMinValue(this: GObject): number {
+    return gtk4.symbols.gtk_level_bar_get_min_value(this.ptr);
+  },
+  getMode(this: GObject): LevelBarMode {
+    return gtk4.symbols.gtk_level_bar_get_mode(this.ptr) as LevelBarMode;
+  },
+  getValue(this: GObject): number {
+    return gtk4.symbols.gtk_level_bar_get_value(this.ptr);
+  },
+  removeOffsetValue(this: GObject, name: string | null): void {
+    gtk4.symbols.gtk_level_bar_remove_offset_value(this.ptr, cstrOrNull(name));
+  },
+  setInverted(this: GObject, inverted: boolean): void {
+    gtk4.symbols.gtk_level_bar_set_inverted(this.ptr, inverted);
+  },
+  setMode(this: GObject, mode: LevelBarMode): void {
+    gtk4.symbols.gtk_level_bar_set_mode(this.ptr, mode);
+  },
+  onOffsetChanged(this: GObject, callback: (name: string) => void): number {
+    return connectSignal(this, "offset-changed", {
+      parameters: ["pointer", "pointer", "pointer"],
+      result: "void",
+    }, (a0: never) => callback(readCStr(a0)));
+  },
+};
+
 /** Methods generated for `GtkListBox`. */
 export interface ListBoxMethods {
   /**
@@ -702,5 +3376,3796 @@ export const listBoxMethods: ListBoxMethods & ThisType<GObject> = {
   },
 };
 
+/** Methods generated for `GtkListBoxRow`. */
+export interface ListBoxRowMethods {
+  /**
+   * Gets whether the row is activatable.
+   */
+  getActivatable(): boolean;
+  /**
+   * Returns the current header of the `row`.
+   */
+  getHeader(): Widget | null;
+  /**
+   * Gets whether the row can be selected.
+   */
+  getSelectable(): boolean;
+  /**
+   * Returns whether the child is currently selected in its
+   * `GtkListBox` container.
+   */
+  isSelected(): boolean;
+  /**
+   * Sets the current header of the `row`.
+   */
+  setHeader(header: Widget | null): void;
+  /**
+   * Set whether the row can be selected.
+   */
+  setSelectable(selectable: boolean): void;
+  /**
+   * This is a keybinding signal, which will cause this row to be activated.
+   */
+  onActivate(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode ListBoxRowMethods}. */
+export const listBoxRowMethods: ListBoxRowMethods & ThisType<GObject> = {
+  getActivatable(this: GObject): boolean {
+    return gtk4.symbols.gtk_list_box_row_get_activatable(this.ptr);
+  },
+  getHeader(this: GObject): Widget | null {
+    return borrowed<Widget>(gtk4.symbols.gtk_list_box_row_get_header(this.ptr));
+  },
+  getSelectable(this: GObject): boolean {
+    return gtk4.symbols.gtk_list_box_row_get_selectable(this.ptr);
+  },
+  isSelected(this: GObject): boolean {
+    return gtk4.symbols.gtk_list_box_row_is_selected(this.ptr);
+  },
+  setHeader(this: GObject, header: Widget | null): void {
+    gtk4.symbols.gtk_list_box_row_set_header(this.ptr, header?.ptr ?? null);
+  },
+  setSelectable(this: GObject, selectable: boolean): void {
+    gtk4.symbols.gtk_list_box_row_set_selectable(this.ptr, selectable);
+  },
+  onActivate(this: GObject, callback: () => void): number {
+    return connectSignal(this, "activate", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `GtkListItem`. */
+export interface ListItemMethods {
+  /**
+   * Gets the accessible description of `self`.
+   */
+  getAccessibleDescription(): string;
+  /**
+   * Gets the accessible label of `self`.
+   */
+  getAccessibleLabel(): string;
+  /**
+   * Checks if a listitem has been set to be activatable via
+   * `setActivatable()`.
+   */
+  getActivatable(): boolean;
+  /**
+   * Gets the child previously set via `setChild()`
+   * or `null` if none was set.
+   */
+  getChild(): Widget | null;
+  /**
+   * Checks if a listitem has been set to be focusable via
+   * `setFocusable()`.
+   */
+  getFocusable(): boolean;
+  /**
+   * Gets the model item that associated with `self`.
+   */
+  getItem(): GObject | null;
+  /**
+   * Gets the position in the model that `self` currently displays.
+   */
+  getPosition(): number;
+  /**
+   * Checks if a listitem has been set to be selectable via
+   * `setSelectable()`.
+   */
+  getSelectable(): boolean;
+  /**
+   * Checks if the item is displayed as selected.
+   */
+  getSelected(): boolean;
+  /**
+   * Sets the accessible description for the listitem.
+   */
+  setAccessibleDescription(description: string): void;
+  /**
+   * Sets the accessible label for the listitem.
+   */
+  setAccessibleLabel(label: string): void;
+  /**
+   * Sets `self` to be activatable.
+   */
+  setActivatable(activatable: boolean): void;
+  /**
+   * Sets the child to be used for this listitem.
+   */
+  setChild(child: Widget | null): void;
+  /**
+   * Sets `self` to be focusable.
+   */
+  setFocusable(focusable: boolean): void;
+  /**
+   * Sets `self` to be selectable.
+   */
+  setSelectable(selectable: boolean): void;
+}
+
+/** Implementations of {@linkcode ListItemMethods}. */
+export const listItemMethods: ListItemMethods & ThisType<GObject> = {
+  getAccessibleDescription(this: GObject): string {
+    return readCStr(
+      (gtk4.symbols.gtk_list_item_get_accessible_description ??
+        missing("gtk_list_item_get_accessible_description", "4.12"))(this.ptr),
+    );
+  },
+  getAccessibleLabel(this: GObject): string {
+    return readCStr(
+      (gtk4.symbols.gtk_list_item_get_accessible_label ??
+        missing("gtk_list_item_get_accessible_label", "4.12"))(this.ptr),
+    );
+  },
+  getActivatable(this: GObject): boolean {
+    return gtk4.symbols.gtk_list_item_get_activatable(this.ptr);
+  },
+  getChild(this: GObject): Widget | null {
+    return borrowed<Widget>(gtk4.symbols.gtk_list_item_get_child(this.ptr));
+  },
+  getFocusable(this: GObject): boolean {
+    return (gtk4.symbols.gtk_list_item_get_focusable ??
+      missing("gtk_list_item_get_focusable", "4.12"))(this.ptr);
+  },
+  getItem(this: GObject): GObject | null {
+    return borrowed<GObject>(gtk4.symbols.gtk_list_item_get_item(this.ptr));
+  },
+  getPosition(this: GObject): number {
+    return gtk4.symbols.gtk_list_item_get_position(this.ptr);
+  },
+  getSelectable(this: GObject): boolean {
+    return gtk4.symbols.gtk_list_item_get_selectable(this.ptr);
+  },
+  getSelected(this: GObject): boolean {
+    return gtk4.symbols.gtk_list_item_get_selected(this.ptr);
+  },
+  setAccessibleDescription(this: GObject, description: string): void {
+    (gtk4.symbols.gtk_list_item_set_accessible_description ??
+      missing("gtk_list_item_set_accessible_description", "4.12"))(
+        this.ptr,
+        cstr(description),
+      );
+  },
+  setAccessibleLabel(this: GObject, label: string): void {
+    (gtk4.symbols.gtk_list_item_set_accessible_label ??
+      missing("gtk_list_item_set_accessible_label", "4.12"))(
+        this.ptr,
+        cstr(label),
+      );
+  },
+  setActivatable(this: GObject, activatable: boolean): void {
+    gtk4.symbols.gtk_list_item_set_activatable(this.ptr, activatable);
+  },
+  setChild(this: GObject, child: Widget | null): void {
+    gtk4.symbols.gtk_list_item_set_child(this.ptr, child?.ptr ?? null);
+  },
+  setFocusable(this: GObject, focusable: boolean): void {
+    (gtk4.symbols.gtk_list_item_set_focusable ??
+      missing("gtk_list_item_set_focusable", "4.12"))(this.ptr, focusable);
+  },
+  setSelectable(this: GObject, selectable: boolean): void {
+    gtk4.symbols.gtk_list_item_set_selectable(this.ptr, selectable);
+  },
+};
+
+/** Methods generated for `GtkMenuButton`. */
+export interface MenuButtonMethods {
+  /**
+   * Returns whether the menu button is active.
+   */
+  getActive(): boolean;
+  /**
+   * Gets whether to show a dropdown arrow even when using an icon or a custom
+   * child.
+   */
+  getAlwaysShowArrow(): boolean;
+  /**
+   * Retrieves whether the button can be smaller than the natural
+   * size of its contents.
+   */
+  getCanShrink(): boolean;
+  /**
+   * Gets the child widget of `menuButton`.
+   */
+  getChild(): Widget | null;
+  /**
+   * Returns whether the button has a frame.
+   */
+  getHasFrame(): boolean;
+  /**
+   * Gets the name of the icon shown in the button.
+   */
+  getIconName(): string | null;
+  /**
+   * Returns the `GMenuModel` used to generate the popup.
+   */
+  getMenuModel(): GObject | null;
+  /**
+   * Returns the `GtkPopover` that pops out of the button.
+   */
+  getPopover(): Popover | null;
+  /**
+   * Returns whether the menu button acts as a primary menu.
+   */
+  getPrimary(): boolean;
+  /**
+   * Returns whether an embedded underline in the text indicates a
+   * mnemonic.
+   */
+  getUseUnderline(): boolean;
+  /**
+   * Pop up the menu.
+   */
+  popup(): void;
+  /**
+   * Sets whether the menu button is active.
+   */
+  setActive(active: boolean): void;
+  /**
+   * Sets whether the button size can be smaller than the natural size of
+   * its contents.
+   */
+  setCanShrink(canShrink: boolean): void;
+  /**
+   * Sets `func` to be called when a popup is about to be shown.
+   */
+  setCreatePopupFunc(func: ((menuButton: MenuButton) => void) | null): void;
+  /**
+   * Sets the style of the button.
+   */
+  setHasFrame(hasFrame: boolean): void;
+  /**
+   * If true, an underline in the text indicates a mnemonic.
+   */
+  setUseUnderline(useUnderline: boolean): void;
+  /**
+   * Emitted to when the menu button is activated.
+   */
+  onActivate(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode MenuButtonMethods}. */
+export const menuButtonMethods: MenuButtonMethods & ThisType<GObject> = {
+  getActive(this: GObject): boolean {
+    return (gtk4.symbols.gtk_menu_button_get_active ??
+      missing("gtk_menu_button_get_active", "4.10"))(this.ptr);
+  },
+  getAlwaysShowArrow(this: GObject): boolean {
+    return (gtk4.symbols.gtk_menu_button_get_always_show_arrow ??
+      missing("gtk_menu_button_get_always_show_arrow", "4.4"))(this.ptr);
+  },
+  getCanShrink(this: GObject): boolean {
+    return (gtk4.symbols.gtk_menu_button_get_can_shrink ??
+      missing("gtk_menu_button_get_can_shrink", "4.12"))(this.ptr);
+  },
+  getChild(this: GObject): Widget | null {
+    return borrowed<Widget>(
+      (gtk4.symbols.gtk_menu_button_get_child ??
+        missing("gtk_menu_button_get_child", "4.6"))(this.ptr),
+    );
+  },
+  getHasFrame(this: GObject): boolean {
+    return gtk4.symbols.gtk_menu_button_get_has_frame(this.ptr);
+  },
+  getIconName(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      gtk4.symbols.gtk_menu_button_get_icon_name(this.ptr),
+    );
+  },
+  getMenuModel(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      gtk4.symbols.gtk_menu_button_get_menu_model(this.ptr),
+    );
+  },
+  getPopover(this: GObject): Popover | null {
+    return borrowed<Popover>(
+      gtk4.symbols.gtk_menu_button_get_popover(this.ptr),
+    );
+  },
+  getPrimary(this: GObject): boolean {
+    return (gtk4.symbols.gtk_menu_button_get_primary ??
+      missing("gtk_menu_button_get_primary", "4.4"))(this.ptr);
+  },
+  getUseUnderline(this: GObject): boolean {
+    return gtk4.symbols.gtk_menu_button_get_use_underline(this.ptr);
+  },
+  popup(this: GObject): void {
+    gtk4.symbols.gtk_menu_button_popup(this.ptr);
+  },
+  setActive(this: GObject, active: boolean): void {
+    (gtk4.symbols.gtk_menu_button_set_active ??
+      missing("gtk_menu_button_set_active", "4.10"))(this.ptr, active);
+  },
+  setCanShrink(this: GObject, canShrink: boolean): void {
+    (gtk4.symbols.gtk_menu_button_set_can_shrink ??
+      missing("gtk_menu_button_set_can_shrink", "4.12"))(this.ptr, canShrink);
+  },
+  setCreatePopupFunc(
+    this: GObject,
+    func: ((menuButton: MenuButton) => void) | null,
+  ): void {
+    let __0: Deno.PointerObject | null = null;
+    let __1: Deno.PointerObject | null = null;
+    let __2: Deno.PointerObject | null = null;
+    if (func) {
+      const cb = new Deno.UnsafeCallback(
+        { parameters: ["pointer", "pointer"], result: "void" } as const,
+        (a0, a1) => {
+          func(borrowed<MenuButton>(a0)!);
+        },
+      );
+      [__0, __1, __2] = notifiedCallback(cb);
+    }
+    gtk4.symbols.gtk_menu_button_set_create_popup_func(this.ptr, __0, __1, __2);
+  },
+  setHasFrame(this: GObject, hasFrame: boolean): void {
+    gtk4.symbols.gtk_menu_button_set_has_frame(this.ptr, hasFrame);
+  },
+  setUseUnderline(this: GObject, useUnderline: boolean): void {
+    gtk4.symbols.gtk_menu_button_set_use_underline(this.ptr, useUnderline);
+  },
+  onActivate(this: GObject, callback: () => void): number {
+    return connectSignal(this, "activate", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `GtkOverlay`. */
+export interface OverlayMethods {
+  /**
+   * Gets the child widget of `overlay`.
+   */
+  getChild(): Widget | null;
+  /**
+   * Gets whether `widget` should be clipped within the parent.
+   */
+  getClipOverlay(widget: Widget): boolean;
+  /**
+   * Gets whether `widget`'s size is included in the measurement of
+   * `overlay`.
+   */
+  getMeasureOverlay(widget: Widget): boolean;
+  /**
+   * Removes an overlay that was added with gtk_overlay_add_overlay().
+   */
+  removeOverlay(widget: Widget): void;
+  /**
+   * Sets whether `widget` should be clipped within the parent.
+   */
+  setClipOverlay(widget: Widget, clipOverlay: boolean): void;
+  /**
+   * Sets whether `widget` is included in the measured size of `overlay`.
+   */
+  setMeasureOverlay(widget: Widget, measure: boolean): void;
+}
+
+/** Implementations of {@linkcode OverlayMethods}. */
+export const overlayMethods: OverlayMethods & ThisType<GObject> = {
+  getChild(this: GObject): Widget | null {
+    return borrowed<Widget>(gtk4.symbols.gtk_overlay_get_child(this.ptr));
+  },
+  getClipOverlay(this: GObject, widget: Widget): boolean {
+    return gtk4.symbols.gtk_overlay_get_clip_overlay(this.ptr, widget.ptr);
+  },
+  getMeasureOverlay(this: GObject, widget: Widget): boolean {
+    return gtk4.symbols.gtk_overlay_get_measure_overlay(this.ptr, widget.ptr);
+  },
+  removeOverlay(this: GObject, widget: Widget): void {
+    gtk4.symbols.gtk_overlay_remove_overlay(this.ptr, widget.ptr);
+  },
+  setClipOverlay(this: GObject, widget: Widget, clipOverlay: boolean): void {
+    gtk4.symbols.gtk_overlay_set_clip_overlay(
+      this.ptr,
+      widget.ptr,
+      clipOverlay,
+    );
+  },
+  setMeasureOverlay(this: GObject, widget: Widget, measure: boolean): void {
+    gtk4.symbols.gtk_overlay_set_measure_overlay(this.ptr, widget.ptr, measure);
+  },
+};
+
+/** Methods generated for `GtkPicture`. */
+export interface PictureMethods {
+  /**
+   * Gets the alternative textual description of the picture.
+   */
+  getAlternativeText(): string | null;
+  /**
+   * Returns whether the `GtkPicture` respects its contents size.
+   */
+  getCanShrink(): boolean;
+  /**
+   * Returns the fit mode for the content of the `GtkPicture`.
+   */
+  getContentFit(): ContentFit;
+  /**
+   * Gets the `GFile` currently displayed if `self` is displaying a file.
+   */
+  getFile(): GObject | null;
+  /**
+   * Returns whether the contents are isolated.
+   */
+  getIsolateContents(): boolean;
+  /**
+   * Gets the `GdkPaintable` being displayed by the `GtkPicture`.
+   */
+  getPaintable(): GObject | null;
+  /**
+   * Sets an alternative textual description for the picture contents.
+   */
+  setAlternativeText(alternativeText: string | null): void;
+  /**
+   * Sets how the content should be resized to fit the `GtkPicture`.
+   */
+  setContentFit(contentFit: ContentFit): void;
+  /**
+   * Makes `self` load and display `file`.
+   */
+  setFile(file: GObject | null): void;
+  /**
+   * If set to true, then the contents will be rendered individually.
+   */
+  setIsolateContents(isolateContents: boolean): void;
+  /**
+   * Makes `self` display the given `paintable`.
+   */
+  setPaintable(paintable: GObject | null): void;
+  /**
+   * Makes `self` load and display the resource at the given
+   * `resourcePath`.
+   */
+  setResource(resourcePath: string | null): void;
+}
+
+/** Implementations of {@linkcode PictureMethods}. */
+export const pictureMethods: PictureMethods & ThisType<GObject> = {
+  getAlternativeText(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      gtk4.symbols.gtk_picture_get_alternative_text(this.ptr),
+    );
+  },
+  getCanShrink(this: GObject): boolean {
+    return gtk4.symbols.gtk_picture_get_can_shrink(this.ptr);
+  },
+  getContentFit(this: GObject): ContentFit {
+    return (gtk4.symbols.gtk_picture_get_content_fit ??
+      missing("gtk_picture_get_content_fit", "4.8"))(this.ptr) as ContentFit;
+  },
+  getFile(this: GObject): GObject | null {
+    return borrowed<GObject>(gtk4.symbols.gtk_picture_get_file(this.ptr));
+  },
+  getIsolateContents(this: GObject): boolean {
+    return (gtk4.symbols.gtk_picture_get_isolate_contents ??
+      missing("gtk_picture_get_isolate_contents", "4.22"))(this.ptr);
+  },
+  getPaintable(this: GObject): GObject | null {
+    return borrowed<GObject>(gtk4.symbols.gtk_picture_get_paintable(this.ptr));
+  },
+  setAlternativeText(this: GObject, alternativeText: string | null): void {
+    gtk4.symbols.gtk_picture_set_alternative_text(
+      this.ptr,
+      cstrOrNull(alternativeText),
+    );
+  },
+  setContentFit(this: GObject, contentFit: ContentFit): void {
+    (gtk4.symbols.gtk_picture_set_content_fit ??
+      missing("gtk_picture_set_content_fit", "4.8"))(this.ptr, contentFit);
+  },
+  setFile(this: GObject, file: GObject | null): void {
+    gtk4.symbols.gtk_picture_set_file(this.ptr, file?.ptr ?? null);
+  },
+  setIsolateContents(this: GObject, isolateContents: boolean): void {
+    (gtk4.symbols.gtk_picture_set_isolate_contents ??
+      missing("gtk_picture_set_isolate_contents", "4.22"))(
+        this.ptr,
+        isolateContents,
+      );
+  },
+  setPaintable(this: GObject, paintable: GObject | null): void {
+    gtk4.symbols.gtk_picture_set_paintable(this.ptr, paintable?.ptr ?? null);
+  },
+  setResource(this: GObject, resourcePath: string | null): void {
+    gtk4.symbols.gtk_picture_set_resource(this.ptr, cstrOrNull(resourcePath));
+  },
+};
+
+/** Methods generated for `GtkPopover`. */
+export interface PopoverMethods {
+  /**
+   * Returns whether the popover is modal.
+   */
+  getAutohide(): boolean;
+  /**
+   * Returns whether the popover will close after a modal child is closed.
+   */
+  getCascadePopdown(): boolean;
+  /**
+   * Gets the child widget of `popover`.
+   */
+  getChild(): Widget | null;
+  /**
+   * Gets whether this popover is showing an arrow
+   * pointing at the widget that it is relative to.
+   */
+  getHasArrow(): boolean;
+  /**
+   * Gets whether mnemonics are visible.
+   */
+  getMnemonicsVisible(): boolean;
+  /**
+   * Returns the preferred position of `popover`.
+   */
+  getPosition(): PositionType;
+  /**
+   * Allocate a size for the `GtkPopover`.
+   */
+  present(): void;
+  /**
+   * Sets whether `popover` is modal.
+   */
+  setAutohide(autohide: boolean): void;
+  /**
+   * If `cascadePopdown` is `true`, the popover will be
+   * closed when a child modal popover is closed.
+   */
+  setCascadePopdown(cascadePopdown: boolean): void;
+  /**
+   * Sets the default widget of a `GtkPopover`.
+   */
+  setDefaultWidget(widget: Widget | null): void;
+  /**
+   * Sets whether this popover should draw an arrow
+   * pointing at the widget it is relative to.
+   */
+  setHasArrow(hasArrow: boolean): void;
+  /**
+   * Sets whether mnemonics should be visible.
+   */
+  setMnemonicsVisible(mnemonicsVisible: boolean): void;
+  /**
+   * Sets the offset to use when calculating the position
+   * of the popover.
+   */
+  setOffset(xOffset: number, yOffset: number): void;
+  /**
+   * Sets the preferred position for `popover` to appear.
+   */
+  setPosition(position: PositionType): void;
+  /**
+   * Emitted whend the user activates the default widget.
+   */
+  onActivateDefault(callback: () => void): number;
+  /**
+   * Emitted when the popover is closed.
+   */
+  onClosed(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode PopoverMethods}. */
+export const popoverMethods: PopoverMethods & ThisType<GObject> = {
+  getAutohide(this: GObject): boolean {
+    return gtk4.symbols.gtk_popover_get_autohide(this.ptr);
+  },
+  getCascadePopdown(this: GObject): boolean {
+    return gtk4.symbols.gtk_popover_get_cascade_popdown(this.ptr);
+  },
+  getChild(this: GObject): Widget | null {
+    return borrowed<Widget>(gtk4.symbols.gtk_popover_get_child(this.ptr));
+  },
+  getHasArrow(this: GObject): boolean {
+    return gtk4.symbols.gtk_popover_get_has_arrow(this.ptr);
+  },
+  getMnemonicsVisible(this: GObject): boolean {
+    return gtk4.symbols.gtk_popover_get_mnemonics_visible(this.ptr);
+  },
+  getPosition(this: GObject): PositionType {
+    return gtk4.symbols.gtk_popover_get_position(this.ptr) as PositionType;
+  },
+  present(this: GObject): void {
+    gtk4.symbols.gtk_popover_present(this.ptr);
+  },
+  setAutohide(this: GObject, autohide: boolean): void {
+    gtk4.symbols.gtk_popover_set_autohide(this.ptr, autohide);
+  },
+  setCascadePopdown(this: GObject, cascadePopdown: boolean): void {
+    gtk4.symbols.gtk_popover_set_cascade_popdown(this.ptr, cascadePopdown);
+  },
+  setDefaultWidget(this: GObject, widget: Widget | null): void {
+    gtk4.symbols.gtk_popover_set_default_widget(this.ptr, widget?.ptr ?? null);
+  },
+  setHasArrow(this: GObject, hasArrow: boolean): void {
+    gtk4.symbols.gtk_popover_set_has_arrow(this.ptr, hasArrow);
+  },
+  setMnemonicsVisible(this: GObject, mnemonicsVisible: boolean): void {
+    gtk4.symbols.gtk_popover_set_mnemonics_visible(this.ptr, mnemonicsVisible);
+  },
+  setOffset(this: GObject, xOffset: number, yOffset: number): void {
+    gtk4.symbols.gtk_popover_set_offset(this.ptr, xOffset, yOffset);
+  },
+  setPosition(this: GObject, position: PositionType): void {
+    gtk4.symbols.gtk_popover_set_position(this.ptr, position);
+  },
+  onActivateDefault(this: GObject, callback: () => void): number {
+    return connectSignal(this, "activate-default", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onClosed(this: GObject, callback: () => void): number {
+    return connectSignal(this, "closed", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `GtkPopoverMenu`. */
+export interface PopoverMenuMethods {
+  /**
+   * Adds a custom widget to a generated menu.
+   */
+  addChild(child: Widget, id: string): boolean;
+  /**
+   * Returns the flags that `popover` uses to create/display a menu from its model.
+   */
+  getFlags(): number;
+  /**
+   * Returns the menu model used to populate the popover.
+   */
+  getMenuModel(): GObject | null;
+  /**
+   * Removes a widget that has previously been added with
+   * `addChild()`
+   */
+  removeChild(child: Widget): boolean;
+  /**
+   * Sets the flags that `popover` uses to create/display a menu from its model.
+   */
+  setFlags(flags: number): void;
+}
+
+/** Implementations of {@linkcode PopoverMenuMethods}. */
+export const popoverMenuMethods: PopoverMenuMethods & ThisType<GObject> = {
+  addChild(this: GObject, child: Widget, id: string): boolean {
+    return gtk4.symbols.gtk_popover_menu_add_child(
+      this.ptr,
+      child.ptr,
+      cstr(id),
+    );
+  },
+  getFlags(this: GObject): number {
+    return (gtk4.symbols.gtk_popover_menu_get_flags ??
+      missing("gtk_popover_menu_get_flags", "4.14"))(this.ptr);
+  },
+  getMenuModel(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      gtk4.symbols.gtk_popover_menu_get_menu_model(this.ptr),
+    );
+  },
+  removeChild(this: GObject, child: Widget): boolean {
+    return gtk4.symbols.gtk_popover_menu_remove_child(this.ptr, child.ptr);
+  },
+  setFlags(this: GObject, flags: number): void {
+    (gtk4.symbols.gtk_popover_menu_set_flags ??
+      missing("gtk_popover_menu_set_flags", "4.14"))(this.ptr, flags);
+  },
+};
+
+/** Methods generated for `GtkProgressBar`. */
+export interface ProgressBarMethods {
+  /**
+   * Returns the ellipsizing position of the progress bar.
+   */
+  getEllipsize(): PangoEllipsizeMode;
+  /**
+   * Returns whether the progress bar is inverted.
+   */
+  getInverted(): boolean;
+  /**
+   * Retrieves the pulse step.
+   */
+  getPulseStep(): number;
+  /**
+   * Returns whether the `GtkProgressBar` shows text.
+   */
+  getShowText(): boolean;
+  /**
+   * Retrieves the text that is displayed with the progress bar.
+   */
+  getText(): string | null;
+  /**
+   * Sets the mode used to ellipsize the text.
+   */
+  setEllipsize(mode: PangoEllipsizeMode): void;
+  /**
+   * Sets whether the progress bar is inverted.
+   */
+  setInverted(inverted: boolean): void;
+  /**
+   * Sets the fraction of total progress bar length to move the
+   * bouncing block.
+   */
+  setPulseStep(fraction: number): void;
+}
+
+/** Implementations of {@linkcode ProgressBarMethods}. */
+export const progressBarMethods: ProgressBarMethods & ThisType<GObject> = {
+  getEllipsize(this: GObject): PangoEllipsizeMode {
+    return gtk4.symbols.gtk_progress_bar_get_ellipsize(
+      this.ptr,
+    ) as PangoEllipsizeMode;
+  },
+  getInverted(this: GObject): boolean {
+    return gtk4.symbols.gtk_progress_bar_get_inverted(this.ptr);
+  },
+  getPulseStep(this: GObject): number {
+    return gtk4.symbols.gtk_progress_bar_get_pulse_step(this.ptr);
+  },
+  getShowText(this: GObject): boolean {
+    return gtk4.symbols.gtk_progress_bar_get_show_text(this.ptr);
+  },
+  getText(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      gtk4.symbols.gtk_progress_bar_get_text(this.ptr),
+    );
+  },
+  setEllipsize(this: GObject, mode: PangoEllipsizeMode): void {
+    gtk4.symbols.gtk_progress_bar_set_ellipsize(this.ptr, mode);
+  },
+  setInverted(this: GObject, inverted: boolean): void {
+    gtk4.symbols.gtk_progress_bar_set_inverted(this.ptr, inverted);
+  },
+  setPulseStep(this: GObject, fraction: number): void {
+    gtk4.symbols.gtk_progress_bar_set_pulse_step(this.ptr, fraction);
+  },
+};
+
+/** Methods generated for `GtkRevealer`. */
+export interface RevealerMethods {
+  /**
+   * Gets the child widget of `revealer`.
+   */
+  getChild(): Widget | null;
+  /**
+   * Returns whether the child is fully revealed.
+   */
+  getChildRevealed(): boolean;
+  /**
+   * Returns the amount of time (in milliseconds) that
+   * transitions will take.
+   */
+  getTransitionDuration(): number;
+  /**
+   * Gets the type of animation that will be used
+   * for transitions in `revealer`.
+   */
+  getTransitionType(): RevealerTransitionType;
+}
+
+/** Implementations of {@linkcode RevealerMethods}. */
+export const revealerMethods: RevealerMethods & ThisType<GObject> = {
+  getChild(this: GObject): Widget | null {
+    return borrowed<Widget>(gtk4.symbols.gtk_revealer_get_child(this.ptr));
+  },
+  getChildRevealed(this: GObject): boolean {
+    return gtk4.symbols.gtk_revealer_get_child_revealed(this.ptr);
+  },
+  getTransitionDuration(this: GObject): number {
+    return gtk4.symbols.gtk_revealer_get_transition_duration(this.ptr);
+  },
+  getTransitionType(this: GObject): RevealerTransitionType {
+    return gtk4.symbols.gtk_revealer_get_transition_type(
+      this.ptr,
+    ) as RevealerTransitionType;
+  },
+};
+
+/** Methods generated for `GtkScale`. */
+export interface ScaleMethods {
+  /**
+   * Adds a mark at `value`.
+   */
+  addMark(value: number, position: PositionType, markup: string | null): void;
+  /**
+   * Removes any marks that have been added.
+   */
+  clearMarks(): void;
+  /**
+   * Gets the number of decimal places that are displayed in the value.
+   */
+  getDigits(): number;
+  /**
+   * Returns whether the current value is displayed as a string
+   * next to the slider.
+   */
+  getDrawValue(): boolean;
+  /**
+   * Returns whether the scale has an origin.
+   */
+  getHasOrigin(): boolean;
+  /**
+   * Gets the `PangoLayout` used to display the scale.
+   */
+  getLayout(): GObject | null;
+  /**
+   * Gets the position in which the current value is displayed.
+   */
+  getValuePos(): PositionType;
+  /**
+   * Sets whether the scale has an origin.
+   */
+  setHasOrigin(hasOrigin: boolean): void;
+  /**
+   * Sets the position in which the current value is displayed.
+   */
+  setValuePos(pos: PositionType): void;
+}
+
+/** Implementations of {@linkcode ScaleMethods}. */
+export const scaleMethods: ScaleMethods & ThisType<GObject> = {
+  addMark(
+    this: GObject,
+    value: number,
+    position: PositionType,
+    markup: string | null,
+  ): void {
+    gtk4.symbols.gtk_scale_add_mark(
+      this.ptr,
+      value,
+      position,
+      cstrOrNull(markup),
+    );
+  },
+  clearMarks(this: GObject): void {
+    gtk4.symbols.gtk_scale_clear_marks(this.ptr);
+  },
+  getDigits(this: GObject): number {
+    return gtk4.symbols.gtk_scale_get_digits(this.ptr);
+  },
+  getDrawValue(this: GObject): boolean {
+    return gtk4.symbols.gtk_scale_get_draw_value(this.ptr);
+  },
+  getHasOrigin(this: GObject): boolean {
+    return gtk4.symbols.gtk_scale_get_has_origin(this.ptr);
+  },
+  getLayout(this: GObject): GObject | null {
+    return borrowed<GObject>(gtk4.symbols.gtk_scale_get_layout(this.ptr));
+  },
+  getValuePos(this: GObject): PositionType {
+    return gtk4.symbols.gtk_scale_get_value_pos(this.ptr) as PositionType;
+  },
+  setHasOrigin(this: GObject, hasOrigin: boolean): void {
+    gtk4.symbols.gtk_scale_set_has_origin(this.ptr, hasOrigin);
+  },
+  setValuePos(this: GObject, pos: PositionType): void {
+    gtk4.symbols.gtk_scale_set_value_pos(this.ptr, pos);
+  },
+};
+
+/** Methods generated for `GtkScrolledWindow`. */
+export interface ScrolledWindowMethods {
+  /**
+   * Gets the child widget of `scrolledWindow`.
+   */
+  getChild(): Widget | null;
+  /**
+   * Returns the horizontal scrollbar’s adjustment.
+   */
+  getHadjustment(): Adjustment;
+  /**
+   * Gets whether the scrolled window draws a frame.
+   */
+  getHasFrame(): boolean;
+  /**
+   * Returns the horizontal scrollbar of `scrolledWindow`.
+   */
+  getHscrollbar(): Widget;
+  /**
+   * Returns the specified kinetic scrolling behavior.
+   */
+  getKineticScrolling(): boolean;
+  /**
+   * Returns the maximum content height set.
+   */
+  getMaxContentHeight(): number;
+  /**
+   * Returns the maximum content width set.
+   */
+  getMaxContentWidth(): number;
+  /**
+   * Gets the minimal content height of `scrolledWindow`.
+   */
+  getMinContentHeight(): number;
+  /**
+   * Gets the minimum content width of `scrolledWindow`.
+   */
+  getMinContentWidth(): number;
+  /**
+   * Returns whether overlay scrolling is enabled for this scrolled window.
+   */
+  getOverlayScrolling(): boolean;
+  /**
+   * Gets the placement of the contents with respect to the scrollbars.
+   */
+  getPlacement(): CornerType;
+  /**
+   * Reports whether the natural height of the child will be calculated
+   * and propagated through the scrolled window’s requested natural height.
+   */
+  getPropagateNaturalHeight(): boolean;
+  /**
+   * Reports whether the natural width of the child will be calculated
+   * and propagated through the scrolled window’s requested natural width.
+   */
+  getPropagateNaturalWidth(): boolean;
+  /**
+   * Returns the vertical scrollbar of `scrolledWindow`.
+   */
+  getVscrollbar(): Widget;
+  /**
+   * Sets the `GtkAdjustment` for the horizontal scrollbar.
+   */
+  setHadjustment(hadjustment: Adjustment | null): void;
+  /**
+   * Changes the frame drawn around the contents of `scrolledWindow`.
+   */
+  setHasFrame(hasFrame: boolean): void;
+  /**
+   * Turns kinetic scrolling on or off.
+   */
+  setKineticScrolling(kineticScrolling: boolean): void;
+  /**
+   * Sets the maximum height that `scrolledWindow` should keep visible.
+   */
+  setMaxContentHeight(height: number): void;
+  /**
+   * Sets the maximum width that `scrolledWindow` should keep visible.
+   */
+  setMaxContentWidth(width: number): void;
+  /**
+   * Sets the minimum width that `scrolledWindow` should keep visible.
+   */
+  setMinContentWidth(width: number): void;
+  /**
+   * Enables or disables overlay scrolling for this scrolled window.
+   */
+  setOverlayScrolling(overlayScrolling: boolean): void;
+  /**
+   * Sets the placement of the contents with respect to the scrollbars
+   * for the scrolled window.
+   */
+  setPlacement(windowPlacement: CornerType): void;
+  /**
+   * Sets whether the natural height of the child should be calculated
+   * and propagated through the scrolled window’s requested natural height.
+   */
+  setPropagateNaturalHeight(propagate: boolean): void;
+  /**
+   * Sets whether the natural width of the child should be calculated
+   * and propagated through the scrolled window’s requested natural width.
+   */
+  setPropagateNaturalWidth(propagate: boolean): void;
+  /**
+   * Sets the `GtkAdjustment` for the vertical scrollbar.
+   */
+  setVadjustment(vadjustment: Adjustment | null): void;
+  /**
+   * Unsets the placement of the contents with respect to the scrollbars.
+   */
+  unsetPlacement(): void;
+  /**
+   * Emitted whenever user initiated scrolling makes the scrolled
+   * window firmly surpass the limits defined by the adjustment
+   * in that orientation.
+   */
+  onEdgeOvershot(callback: (pos: PositionType) => void): number;
+  /**
+   * Emitted whenever user-initiated scrolling makes the scrolled
+   * window exactly reach the lower or upper limits defined by the
+   * adjustment in that orientation.
+   */
+  onEdgeReached(callback: (pos: PositionType) => void): number;
+  /**
+   * Emitted when focus is moved away from the scrolled window by a
+   * keybinding.
+   */
+  onMoveFocusOut(callback: (directionType: DirectionType) => void): number;
+}
+
+/** Implementations of {@linkcode ScrolledWindowMethods}. */
+export const scrolledWindowMethods: ScrolledWindowMethods & ThisType<GObject> =
+  {
+    getChild(this: GObject): Widget | null {
+      return borrowed<Widget>(
+        gtk4.symbols.gtk_scrolled_window_get_child(this.ptr),
+      );
+    },
+    getHadjustment(this: GObject): Adjustment {
+      return borrowed<Adjustment>(
+        gtk4.symbols.gtk_scrolled_window_get_hadjustment(this.ptr),
+      )!;
+    },
+    getHasFrame(this: GObject): boolean {
+      return gtk4.symbols.gtk_scrolled_window_get_has_frame(this.ptr);
+    },
+    getHscrollbar(this: GObject): Widget {
+      return borrowed<Widget>(
+        gtk4.symbols.gtk_scrolled_window_get_hscrollbar(this.ptr),
+      )!;
+    },
+    getKineticScrolling(this: GObject): boolean {
+      return gtk4.symbols.gtk_scrolled_window_get_kinetic_scrolling(this.ptr);
+    },
+    getMaxContentHeight(this: GObject): number {
+      return gtk4.symbols.gtk_scrolled_window_get_max_content_height(this.ptr);
+    },
+    getMaxContentWidth(this: GObject): number {
+      return gtk4.symbols.gtk_scrolled_window_get_max_content_width(this.ptr);
+    },
+    getMinContentHeight(this: GObject): number {
+      return gtk4.symbols.gtk_scrolled_window_get_min_content_height(this.ptr);
+    },
+    getMinContentWidth(this: GObject): number {
+      return gtk4.symbols.gtk_scrolled_window_get_min_content_width(this.ptr);
+    },
+    getOverlayScrolling(this: GObject): boolean {
+      return gtk4.symbols.gtk_scrolled_window_get_overlay_scrolling(this.ptr);
+    },
+    getPlacement(this: GObject): CornerType {
+      return gtk4.symbols.gtk_scrolled_window_get_placement(
+        this.ptr,
+      ) as CornerType;
+    },
+    getPropagateNaturalHeight(this: GObject): boolean {
+      return gtk4.symbols.gtk_scrolled_window_get_propagate_natural_height(
+        this.ptr,
+      );
+    },
+    getPropagateNaturalWidth(this: GObject): boolean {
+      return gtk4.symbols.gtk_scrolled_window_get_propagate_natural_width(
+        this.ptr,
+      );
+    },
+    getVscrollbar(this: GObject): Widget {
+      return borrowed<Widget>(
+        gtk4.symbols.gtk_scrolled_window_get_vscrollbar(this.ptr),
+      )!;
+    },
+    setHadjustment(this: GObject, hadjustment: Adjustment | null): void {
+      gtk4.symbols.gtk_scrolled_window_set_hadjustment(
+        this.ptr,
+        hadjustment?.ptr ?? null,
+      );
+    },
+    setHasFrame(this: GObject, hasFrame: boolean): void {
+      gtk4.symbols.gtk_scrolled_window_set_has_frame(this.ptr, hasFrame);
+    },
+    setKineticScrolling(this: GObject, kineticScrolling: boolean): void {
+      gtk4.symbols.gtk_scrolled_window_set_kinetic_scrolling(
+        this.ptr,
+        kineticScrolling,
+      );
+    },
+    setMaxContentHeight(this: GObject, height: number): void {
+      gtk4.symbols.gtk_scrolled_window_set_max_content_height(this.ptr, height);
+    },
+    setMaxContentWidth(this: GObject, width: number): void {
+      gtk4.symbols.gtk_scrolled_window_set_max_content_width(this.ptr, width);
+    },
+    setMinContentWidth(this: GObject, width: number): void {
+      gtk4.symbols.gtk_scrolled_window_set_min_content_width(this.ptr, width);
+    },
+    setOverlayScrolling(this: GObject, overlayScrolling: boolean): void {
+      gtk4.symbols.gtk_scrolled_window_set_overlay_scrolling(
+        this.ptr,
+        overlayScrolling,
+      );
+    },
+    setPlacement(this: GObject, windowPlacement: CornerType): void {
+      gtk4.symbols.gtk_scrolled_window_set_placement(this.ptr, windowPlacement);
+    },
+    setPropagateNaturalHeight(this: GObject, propagate: boolean): void {
+      gtk4.symbols.gtk_scrolled_window_set_propagate_natural_height(
+        this.ptr,
+        propagate,
+      );
+    },
+    setPropagateNaturalWidth(this: GObject, propagate: boolean): void {
+      gtk4.symbols.gtk_scrolled_window_set_propagate_natural_width(
+        this.ptr,
+        propagate,
+      );
+    },
+    setVadjustment(this: GObject, vadjustment: Adjustment | null): void {
+      gtk4.symbols.gtk_scrolled_window_set_vadjustment(
+        this.ptr,
+        vadjustment?.ptr ?? null,
+      );
+    },
+    unsetPlacement(this: GObject): void {
+      gtk4.symbols.gtk_scrolled_window_unset_placement(this.ptr);
+    },
+    onEdgeOvershot(
+      this: GObject,
+      callback: (pos: PositionType) => void,
+    ): number {
+      return connectSignal(this, "edge-overshot", {
+        parameters: ["pointer", "i32", "pointer"],
+        result: "void",
+      }, (a0: never) => callback(a0 as PositionType));
+    },
+    onEdgeReached(
+      this: GObject,
+      callback: (pos: PositionType) => void,
+    ): number {
+      return connectSignal(this, "edge-reached", {
+        parameters: ["pointer", "i32", "pointer"],
+        result: "void",
+      }, (a0: never) => callback(a0 as PositionType));
+    },
+    onMoveFocusOut(
+      this: GObject,
+      callback: (directionType: DirectionType) => void,
+    ): number {
+      return connectSignal(this, "move-focus-out", {
+        parameters: ["pointer", "i32", "pointer"],
+        result: "void",
+      }, (a0: never) => callback(a0 as DirectionType));
+    },
+  };
+
+/** Methods generated for `GtkSearchBar`. */
+export interface SearchBarMethods {
+  /**
+   * Gets the child widget of `bar`.
+   */
+  getChild(): Widget | null;
+  /**
+   * Gets the widget that `bar` is capturing key events from.
+   */
+  getKeyCaptureWidget(): Widget | null;
+  /**
+   * Returns whether the close button is shown.
+   */
+  getShowCloseButton(): boolean;
+  /**
+   * Shows or hides the close button.
+   */
+  setShowCloseButton(visible: boolean): void;
+}
+
+/** Implementations of {@linkcode SearchBarMethods}. */
+export const searchBarMethods: SearchBarMethods & ThisType<GObject> = {
+  getChild(this: GObject): Widget | null {
+    return borrowed<Widget>(gtk4.symbols.gtk_search_bar_get_child(this.ptr));
+  },
+  getKeyCaptureWidget(this: GObject): Widget | null {
+    return borrowed<Widget>(
+      gtk4.symbols.gtk_search_bar_get_key_capture_widget(this.ptr),
+    );
+  },
+  getShowCloseButton(this: GObject): boolean {
+    return gtk4.symbols.gtk_search_bar_get_show_close_button(this.ptr);
+  },
+  setShowCloseButton(this: GObject, visible: boolean): void {
+    gtk4.symbols.gtk_search_bar_set_show_close_button(this.ptr, visible);
+  },
+};
+
+/** Methods generated for `GtkSearchEntry`. */
+export interface SearchEntryMethods {
+  /**
+   * Gets the input purpose for `entry`.
+   */
+  getInputHints(): number;
+  /**
+   * Gets the input purpose of `entry`.
+   */
+  getInputPurpose(): InputPurpose;
+  /**
+   * Gets the widget that `entry` is capturing key events from.
+   */
+  getKeyCaptureWidget(): Widget | null;
+  /**
+   * Gets the placeholder text associated with `entry`.
+   */
+  getPlaceholderText(): string | null;
+  /**
+   * Get the delay to be used between the last keypress and the
+   * `search-changed` signal being emitted.
+   */
+  getSearchDelay(): number;
+  /**
+   * Sets the input hints for `entry`.
+   */
+  setInputHints(hints: number): void;
+  /**
+   * Sets the input purpose of `entry`.
+   */
+  setInputPurpose(purpose: InputPurpose): void;
+  /**
+   * Sets `widget` as the widget that `entry` will capture key
+   * events from.
+   */
+  setKeyCaptureWidget(widget: Widget | null): void;
+  /**
+   * Set the delay to be used between the last keypress and the
+   * `search-changed` signal being emitted.
+   */
+  setSearchDelay(delay: number): void;
+  /**
+   * Emitted when the user initiates a move to the next match
+   * for the current search string.
+   */
+  onNextMatch(callback: () => void): number;
+  /**
+   * Emitted when the user initiates a move to the previous match
+   * for the current search string.
+   */
+  onPreviousMatch(callback: () => void): number;
+  /**
+   * Emitted when the user initiated a search on the entry.
+   */
+  onSearchStarted(callback: () => void): number;
+  /**
+   * Emitted when the user stops a search via keyboard input.
+   */
+  onStopSearch(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode SearchEntryMethods}. */
+export const searchEntryMethods: SearchEntryMethods & ThisType<GObject> = {
+  getInputHints(this: GObject): number {
+    return (gtk4.symbols.gtk_search_entry_get_input_hints ??
+      missing("gtk_search_entry_get_input_hints", "4.14"))(this.ptr);
+  },
+  getInputPurpose(this: GObject): InputPurpose {
+    return (gtk4.symbols.gtk_search_entry_get_input_purpose ??
+      missing("gtk_search_entry_get_input_purpose", "4.14"))(
+        this.ptr,
+      ) as InputPurpose;
+  },
+  getKeyCaptureWidget(this: GObject): Widget | null {
+    return borrowed<Widget>(
+      gtk4.symbols.gtk_search_entry_get_key_capture_widget(this.ptr),
+    );
+  },
+  getPlaceholderText(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      (gtk4.symbols.gtk_search_entry_get_placeholder_text ??
+        missing("gtk_search_entry_get_placeholder_text", "4.10"))(this.ptr),
+    );
+  },
+  getSearchDelay(this: GObject): number {
+    return (gtk4.symbols.gtk_search_entry_get_search_delay ??
+      missing("gtk_search_entry_get_search_delay", "4.8"))(this.ptr);
+  },
+  setInputHints(this: GObject, hints: number): void {
+    (gtk4.symbols.gtk_search_entry_set_input_hints ??
+      missing("gtk_search_entry_set_input_hints", "4.14"))(this.ptr, hints);
+  },
+  setInputPurpose(this: GObject, purpose: InputPurpose): void {
+    (gtk4.symbols.gtk_search_entry_set_input_purpose ??
+      missing("gtk_search_entry_set_input_purpose", "4.14"))(this.ptr, purpose);
+  },
+  setKeyCaptureWidget(this: GObject, widget: Widget | null): void {
+    gtk4.symbols.gtk_search_entry_set_key_capture_widget(
+      this.ptr,
+      widget?.ptr ?? null,
+    );
+  },
+  setSearchDelay(this: GObject, delay: number): void {
+    (gtk4.symbols.gtk_search_entry_set_search_delay ??
+      missing("gtk_search_entry_set_search_delay", "4.8"))(this.ptr, delay);
+  },
+  onNextMatch(this: GObject, callback: () => void): number {
+    return connectSignal(this, "next-match", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onPreviousMatch(this: GObject, callback: () => void): number {
+    return connectSignal(this, "previous-match", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onSearchStarted(this: GObject, callback: () => void): number {
+    return connectSignal(this, "search-started", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onStopSearch(this: GObject, callback: () => void): number {
+    return connectSignal(this, "stop-search", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `GtkSeparator`. */
+export interface SeparatorMethods {
+}
+
+/** Implementations of {@linkcode SeparatorMethods}. */
+export const separatorMethods: SeparatorMethods & ThisType<GObject> = {};
+
+/** Methods generated for `GtkSignalListItemFactory`. */
+export interface SignalListItemFactoryMethods {
+}
+
+/** Implementations of {@linkcode SignalListItemFactoryMethods}. */
+export const signalListItemFactoryMethods:
+  & SignalListItemFactoryMethods
+  & ThisType<GObject> = {};
+
+/** Methods generated for `GtkSingleSelection`. */
+export interface SingleSelectionMethods {
+  /**
+   * Checks if autoselect has been enabled or disabled via
+   * gtk_single_selection_set_autoselect().
+   */
+  getAutoselect(): boolean;
+  /**
+   * If `true`, gtk_selection_model_unselect_item() is supported and allows
+   * unselecting the selected item.
+   */
+  getCanUnselect(): boolean;
+  /**
+   * Gets the model that `self` is wrapping.
+   */
+  getModel(): GObject | null;
+  /**
+   * Gets the position of the selected item.
+   */
+  getSelected(): number;
+  /**
+   * Gets the selected item.
+   */
+  getSelectedItem(): GObject | null;
+  /**
+   * Enables or disables autoselect.
+   */
+  setAutoselect(autoselect: boolean): void;
+  /**
+   * If `true`, unselecting the current item via
+   * gtk_selection_model_unselect_item() is supported.
+   */
+  setCanUnselect(canUnselect: boolean): void;
+  /**
+   * Sets the model that `self` should wrap.
+   */
+  setModel(model: GObject | null): void;
+  /**
+   * Selects the item at the given position.
+   */
+  setSelected(position: number): void;
+}
+
+/** Implementations of {@linkcode SingleSelectionMethods}. */
+export const singleSelectionMethods:
+  & SingleSelectionMethods
+  & ThisType<GObject> = {
+    getAutoselect(this: GObject): boolean {
+      return gtk4.symbols.gtk_single_selection_get_autoselect(this.ptr);
+    },
+    getCanUnselect(this: GObject): boolean {
+      return gtk4.symbols.gtk_single_selection_get_can_unselect(this.ptr);
+    },
+    getModel(this: GObject): GObject | null {
+      return borrowed<GObject>(
+        gtk4.symbols.gtk_single_selection_get_model(this.ptr),
+      );
+    },
+    getSelected(this: GObject): number {
+      return gtk4.symbols.gtk_single_selection_get_selected(this.ptr);
+    },
+    getSelectedItem(this: GObject): GObject | null {
+      return borrowed<GObject>(
+        gtk4.symbols.gtk_single_selection_get_selected_item(this.ptr),
+      );
+    },
+    setAutoselect(this: GObject, autoselect: boolean): void {
+      gtk4.symbols.gtk_single_selection_set_autoselect(this.ptr, autoselect);
+    },
+    setCanUnselect(this: GObject, canUnselect: boolean): void {
+      gtk4.symbols.gtk_single_selection_set_can_unselect(this.ptr, canUnselect);
+    },
+    setModel(this: GObject, model: GObject | null): void {
+      gtk4.symbols.gtk_single_selection_set_model(this.ptr, model?.ptr ?? null);
+    },
+    setSelected(this: GObject, position: number): void {
+      gtk4.symbols.gtk_single_selection_set_selected(this.ptr, position);
+    },
+  };
+
+/** Methods generated for `GtkSizeGroup`. */
+export interface SizeGroupMethods {
+  /**
+   * Gets the current mode of the size group.
+   */
+  getMode(): SizeGroupMode;
+  /**
+   * Removes a widget from a `GtkSizeGroup`.
+   */
+  removeWidget(widget: Widget): void;
+  /**
+   * Sets the `GtkSizeGroupMode` of the size group.
+   */
+  setMode(mode: SizeGroupMode): void;
+}
+
+/** Implementations of {@linkcode SizeGroupMethods}. */
+export const sizeGroupMethods: SizeGroupMethods & ThisType<GObject> = {
+  getMode(this: GObject): SizeGroupMode {
+    return gtk4.symbols.gtk_size_group_get_mode(this.ptr) as SizeGroupMode;
+  },
+  removeWidget(this: GObject, widget: Widget): void {
+    gtk4.symbols.gtk_size_group_remove_widget(this.ptr, widget.ptr);
+  },
+  setMode(this: GObject, mode: SizeGroupMode): void {
+    gtk4.symbols.gtk_size_group_set_mode(this.ptr, mode);
+  },
+};
+
+/** Methods generated for `GtkSpinner`. */
+export interface SpinnerMethods {
+  /**
+   * Returns whether the spinner is spinning.
+   */
+  getSpinning(): boolean;
+  /**
+   * Sets the activity of the spinner.
+   */
+  setSpinning(spinning: boolean): void;
+}
+
+/** Implementations of {@linkcode SpinnerMethods}. */
+export const spinnerMethods: SpinnerMethods & ThisType<GObject> = {
+  getSpinning(this: GObject): boolean {
+    return gtk4.symbols.gtk_spinner_get_spinning(this.ptr);
+  },
+  setSpinning(this: GObject, spinning: boolean): void {
+    gtk4.symbols.gtk_spinner_set_spinning(this.ptr, spinning);
+  },
+};
+
+/** Methods generated for `GtkStringList`. */
+export interface StringListMethods {
+  /**
+   * Gets the position of the `string` in `self`.
+   */
+  find(string: string): number;
+  /**
+   * Removes the string at `position` from `self`.
+   */
+  remove(position: number): void;
+}
+
+/** Implementations of {@linkcode StringListMethods}. */
+export const stringListMethods: StringListMethods & ThisType<GObject> = {
+  find(this: GObject, string: string): number {
+    return (gtk4.symbols.gtk_string_list_find ??
+      missing("gtk_string_list_find", "4.18"))(this.ptr, cstr(string));
+  },
+  remove(this: GObject, position: number): void {
+    gtk4.symbols.gtk_string_list_remove(this.ptr, position);
+  },
+};
+
+/** Methods generated for `GtkSwitch`. */
+export interface SwitchMethods {
+  /**
+   * Gets the underlying state of the `GtkSwitch`.
+   */
+  getState(): boolean;
+  /**
+   * Sets the underlying state of the `GtkSwitch`.
+   */
+  setState(state: boolean): void;
+}
+
+/** Implementations of {@linkcode SwitchMethods}. */
+export const switchMethods: SwitchMethods & ThisType<GObject> = {
+  getState(this: GObject): boolean {
+    return gtk4.symbols.gtk_switch_get_state(this.ptr);
+  },
+  setState(this: GObject, state: boolean): void {
+    gtk4.symbols.gtk_switch_set_state(this.ptr, state);
+  },
+};
+
+/** Methods generated for `GtkTextBuffer`. */
+export interface TextBufferMethods {
+  /**
+   * Adds a [callback`Gtk`.TextBufferCommitNotify] to be called when a change
+   * is to be made to the [type`Gtk`.TextBuffer].
+   */
+  addCommitNotify(
+    flags: number,
+    commitNotify: (
+      buffer: TextBuffer,
+      flags: number,
+      position: number,
+      length: number,
+    ) => void,
+  ): number;
+  /**
+   * Adds `clipboard` to the list of clipboards in which the selection
+   * contents of `buffer` are available.
+   */
+  addSelectionClipboard(clipboard: Clipboard): void;
+  /**
+   * Denotes the beginning of an action that may not be undone.
+   */
+  beginIrreversibleAction(): void;
+  /**
+   * Copies the currently-selected text to a clipboard.
+   */
+  copyClipboard(clipboard: Clipboard): void;
+  /**
+   * Copies the currently-selected text to a clipboard,
+   * then deletes said text if it’s editable.
+   */
+  cutClipboard(clipboard: Clipboard, defaultEditable: boolean): void;
+  /**
+   * Deletes `mark`, so that it’s no longer located anywhere in the
+   * buffer.
+   */
+  deleteMark(mark: GObject): void;
+  /**
+   * Deletes the mark named `name`; the mark must exist.
+   */
+  deleteMarkByName(name: string): void;
+  /**
+   * Deletes the range between the “insert” and “selection_bound” marks,
+   * that is, the currently-selected text.
+   */
+  deleteSelection(interactive: boolean, defaultEditable: boolean): boolean;
+  /**
+   * Denotes the end of an action that may not be undone.
+   */
+  endIrreversibleAction(): void;
+  /**
+   * Gets whether there is a redoable action in the history.
+   */
+  getCanRedo(): boolean;
+  /**
+   * Gets whether there is an undoable action in the history.
+   */
+  getCanUndo(): boolean;
+  /**
+   * Gets the number of characters in the buffer.
+   */
+  getCharCount(): number;
+  /**
+   * Gets whether the buffer is saving modifications to the buffer
+   * to allow for undo and redo actions.
+   */
+  getEnableUndo(): boolean;
+  /**
+   * Indicates whether the buffer has some text currently selected.
+   */
+  getHasSelection(): boolean;
+  /**
+   * Returns the mark that represents the cursor (insertion point).
+   */
+  getInsert(): GObject;
+  /**
+   * Obtains the number of lines in the buffer.
+   */
+  getLineCount(): number;
+  /**
+   * Returns the mark named `name` in buffer `buffer`, or `null` if no such
+   * mark exists in the buffer.
+   */
+  getMark(name: string): GObject | null;
+  /**
+   * Gets the maximum number of undo levels to perform.
+   */
+  getMaxUndoLevels(): number;
+  /**
+   * Indicates whether the buffer has been modified since the last call
+   * to `setModified()` set the modification flag to
+   * `false`.
+   */
+  getModified(): boolean;
+  /**
+   * Returns the mark that represents the selection bound.
+   */
+  getSelectionBound(): GObject;
+  /**
+   * Get the `GtkTextTagTable` associated with this buffer.
+   */
+  getTagTable(): GObject;
+  /**
+   * Inserts `text` in `buffer`.
+   */
+  insertAtCursor(text: string, len: number): void;
+  /**
+   * Inserts `text` in `buffer`.
+   */
+  insertInteractiveAtCursor(
+    text: string,
+    len: number,
+    defaultEditable: boolean,
+  ): boolean;
+  /**
+   * Redoes the next redoable action on the buffer, if there is one.
+   */
+  redo(): void;
+  /**
+   * Removes the `GtkTextBufferCommitNotify` handler previously registered
+   * with `addCommitNotify()`.
+   */
+  removeCommitNotify(commitNotifyHandler: number): void;
+  /**
+   * Removes a `GdkClipboard` added with
+   * `addSelectionClipboard()`
+   */
+  removeSelectionClipboard(clipboard: Clipboard): void;
+  /**
+   * Sets whether or not to enable undoable actions in the text buffer.
+   */
+  setEnableUndo(enableUndo: boolean): void;
+  /**
+   * Sets the maximum number of undo levels to perform.
+   */
+  setMaxUndoLevels(maxUndoLevels: number): void;
+  /**
+   * Used to keep track of whether the buffer has been
+   * modified since the last time it was saved.
+   */
+  setModified(setting: boolean): void;
+  /**
+   * Undoes the last undoable action on the buffer, if there is one.
+   */
+  undo(): void;
+  /**
+   * Emitted at the beginning of a single user-visible
+   * operation on a `GtkTextBuffer`.
+   */
+  onBeginUserAction(callback: () => void): number;
+  /**
+   * Emitted when the content of a `GtkTextBuffer` has changed.
+   */
+  onChanged(callback: () => void): number;
+  /**
+   * Emitted at the end of a single user-visible
+   * operation on the `GtkTextBuffer`.
+   */
+  onEndUserAction(callback: () => void): number;
+  /**
+   * Emitted as notification after a `GtkTextMark` is deleted.
+   */
+  onMarkDeleted(callback: (mark: GObject) => void): number;
+  /**
+   * Emitted when the modified bit of a `GtkTextBuffer` flips.
+   */
+  onModifiedChanged(callback: () => void): number;
+  /**
+   * Emitted after paste operation has been completed.
+   */
+  onPasteDone(callback: (clipboard: Clipboard) => void): number;
+  /**
+   * Emitted when a request has been made to redo the
+   * previously undone operation.
+   */
+  onRedo(callback: () => void): number;
+  /**
+   * Emitted when a request has been made to undo the
+   * previous operation or set of operations that have
+   * been grouped together.
+   */
+  onUndo(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode TextBufferMethods}. */
+export const textBufferMethods: TextBufferMethods & ThisType<GObject> = {
+  addCommitNotify(
+    this: GObject,
+    flags: number,
+    commitNotify: (
+      buffer: TextBuffer,
+      flags: number,
+      position: number,
+      length: number,
+    ) => void,
+  ): number {
+    let __1: Deno.PointerObject | null = null;
+    let __2: Deno.PointerObject | null = null;
+    let __3: Deno.PointerObject | null = null;
+    {
+      const cb = new Deno.UnsafeCallback(
+        {
+          parameters: ["pointer", "u32", "u32", "u32", "pointer"],
+          result: "void",
+        } as const,
+        (a0, a1, a2, a3, a4) => {
+          commitNotify(borrowed<TextBuffer>(a0)!, a1, a2, a3);
+        },
+      );
+      [__1, __2, __3] = notifiedCallback(cb);
+    }
+    return (gtk4.symbols.gtk_text_buffer_add_commit_notify ??
+      missing("gtk_text_buffer_add_commit_notify", "4.16"))(
+        this.ptr,
+        flags,
+        __1,
+        __2,
+        __3,
+      );
+  },
+  addSelectionClipboard(this: GObject, clipboard: Clipboard): void {
+    gtk4.symbols.gtk_text_buffer_add_selection_clipboard(
+      this.ptr,
+      clipboard.ptr,
+    );
+  },
+  beginIrreversibleAction(this: GObject): void {
+    gtk4.symbols.gtk_text_buffer_begin_irreversible_action(this.ptr);
+  },
+  copyClipboard(this: GObject, clipboard: Clipboard): void {
+    gtk4.symbols.gtk_text_buffer_copy_clipboard(this.ptr, clipboard.ptr);
+  },
+  cutClipboard(
+    this: GObject,
+    clipboard: Clipboard,
+    defaultEditable: boolean,
+  ): void {
+    gtk4.symbols.gtk_text_buffer_cut_clipboard(
+      this.ptr,
+      clipboard.ptr,
+      defaultEditable,
+    );
+  },
+  deleteMark(this: GObject, mark: GObject): void {
+    gtk4.symbols.gtk_text_buffer_delete_mark(this.ptr, mark.ptr);
+  },
+  deleteMarkByName(this: GObject, name: string): void {
+    gtk4.symbols.gtk_text_buffer_delete_mark_by_name(this.ptr, cstr(name));
+  },
+  deleteSelection(
+    this: GObject,
+    interactive: boolean,
+    defaultEditable: boolean,
+  ): boolean {
+    return gtk4.symbols.gtk_text_buffer_delete_selection(
+      this.ptr,
+      interactive,
+      defaultEditable,
+    );
+  },
+  endIrreversibleAction(this: GObject): void {
+    gtk4.symbols.gtk_text_buffer_end_irreversible_action(this.ptr);
+  },
+  getCanRedo(this: GObject): boolean {
+    return gtk4.symbols.gtk_text_buffer_get_can_redo(this.ptr);
+  },
+  getCanUndo(this: GObject): boolean {
+    return gtk4.symbols.gtk_text_buffer_get_can_undo(this.ptr);
+  },
+  getCharCount(this: GObject): number {
+    return gtk4.symbols.gtk_text_buffer_get_char_count(this.ptr);
+  },
+  getEnableUndo(this: GObject): boolean {
+    return gtk4.symbols.gtk_text_buffer_get_enable_undo(this.ptr);
+  },
+  getHasSelection(this: GObject): boolean {
+    return gtk4.symbols.gtk_text_buffer_get_has_selection(this.ptr);
+  },
+  getInsert(this: GObject): GObject {
+    return borrowed<GObject>(
+      gtk4.symbols.gtk_text_buffer_get_insert(this.ptr),
+    )!;
+  },
+  getLineCount(this: GObject): number {
+    return gtk4.symbols.gtk_text_buffer_get_line_count(this.ptr);
+  },
+  getMark(this: GObject, name: string): GObject | null {
+    return borrowed<GObject>(
+      gtk4.symbols.gtk_text_buffer_get_mark(this.ptr, cstr(name)),
+    );
+  },
+  getMaxUndoLevels(this: GObject): number {
+    return gtk4.symbols.gtk_text_buffer_get_max_undo_levels(this.ptr);
+  },
+  getModified(this: GObject): boolean {
+    return gtk4.symbols.gtk_text_buffer_get_modified(this.ptr);
+  },
+  getSelectionBound(this: GObject): GObject {
+    return borrowed<GObject>(
+      gtk4.symbols.gtk_text_buffer_get_selection_bound(this.ptr),
+    )!;
+  },
+  getTagTable(this: GObject): GObject {
+    return borrowed<GObject>(
+      gtk4.symbols.gtk_text_buffer_get_tag_table(this.ptr),
+    )!;
+  },
+  insertAtCursor(this: GObject, text: string, len: number): void {
+    gtk4.symbols.gtk_text_buffer_insert_at_cursor(this.ptr, cstr(text), len);
+  },
+  insertInteractiveAtCursor(
+    this: GObject,
+    text: string,
+    len: number,
+    defaultEditable: boolean,
+  ): boolean {
+    return gtk4.symbols.gtk_text_buffer_insert_interactive_at_cursor(
+      this.ptr,
+      cstr(text),
+      len,
+      defaultEditable,
+    );
+  },
+  redo(this: GObject): void {
+    gtk4.symbols.gtk_text_buffer_redo(this.ptr);
+  },
+  removeCommitNotify(this: GObject, commitNotifyHandler: number): void {
+    (gtk4.symbols.gtk_text_buffer_remove_commit_notify ??
+      missing("gtk_text_buffer_remove_commit_notify", "4.16"))(
+        this.ptr,
+        commitNotifyHandler,
+      );
+  },
+  removeSelectionClipboard(this: GObject, clipboard: Clipboard): void {
+    gtk4.symbols.gtk_text_buffer_remove_selection_clipboard(
+      this.ptr,
+      clipboard.ptr,
+    );
+  },
+  setEnableUndo(this: GObject, enableUndo: boolean): void {
+    gtk4.symbols.gtk_text_buffer_set_enable_undo(this.ptr, enableUndo);
+  },
+  setMaxUndoLevels(this: GObject, maxUndoLevels: number): void {
+    gtk4.symbols.gtk_text_buffer_set_max_undo_levels(this.ptr, maxUndoLevels);
+  },
+  setModified(this: GObject, setting: boolean): void {
+    gtk4.symbols.gtk_text_buffer_set_modified(this.ptr, setting);
+  },
+  undo(this: GObject): void {
+    gtk4.symbols.gtk_text_buffer_undo(this.ptr);
+  },
+  onBeginUserAction(this: GObject, callback: () => void): number {
+    return connectSignal(this, "begin-user-action", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onChanged(this: GObject, callback: () => void): number {
+    return connectSignal(this, "changed", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onEndUserAction(this: GObject, callback: () => void): number {
+    return connectSignal(this, "end-user-action", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onMarkDeleted(this: GObject, callback: (mark: GObject) => void): number {
+    return connectSignal(this, "mark-deleted", {
+      parameters: ["pointer", "pointer", "pointer"],
+      result: "void",
+    }, (a0: never) => callback(borrowed<GObject>(a0)!));
+  },
+  onModifiedChanged(this: GObject, callback: () => void): number {
+    return connectSignal(this, "modified-changed", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onPasteDone(this: GObject, callback: (clipboard: Clipboard) => void): number {
+    return connectSignal(this, "paste-done", {
+      parameters: ["pointer", "pointer", "pointer"],
+      result: "void",
+    }, (a0: never) => callback(borrowed<Clipboard>(a0)!));
+  },
+  onRedo(this: GObject, callback: () => void): number {
+    return connectSignal(this, "redo", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onUndo(this: GObject, callback: () => void): number {
+    return connectSignal(this, "undo", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `GtkTextView`. */
+export interface TextViewMethods {
+  /**
+   * Adds a child widget in the text buffer, at the given `anchor`.
+   */
+  addChildAtAnchor(child: Widget, anchor: GObject): void;
+  /**
+   * Adds `child` at a fixed coordinate in the `GtkTextView`'s text window.
+   */
+  addOverlay(child: Widget, xpos: number, ypos: number): void;
+  /**
+   * Returns whether pressing the <kbd>Tab</kbd> key inserts a tab characters.
+   */
+  getAcceptsTab(): boolean;
+  /**
+   * Gets the bottom margin for text in the `textView`.
+   */
+  getBottomMargin(): number;
+  /**
+   * Find out whether the cursor should be displayed.
+   */
+  getCursorVisible(): boolean;
+  /**
+   * Returns the default editability of the `GtkTextView`.
+   */
+  getEditable(): boolean;
+  /**
+   * Gets the menu model that gets added to the context menu
+   * or `null` if none has been set.
+   */
+  getExtraMenu(): GObject | null;
+  /**
+   * Gets a `GtkWidget` that has previously been set as gutter.
+   */
+  getGutter(win: TextWindowType): Widget | null;
+  /**
+   * Gets the default indentation of paragraphs in `textView`.
+   */
+  getIndent(): number;
+  /**
+   * Gets the `input-hints` of the `GtkTextView`.
+   */
+  getInputHints(): number;
+  /**
+   * Gets the `input-purpose` of the `GtkTextView`.
+   */
+  getInputPurpose(): InputPurpose;
+  /**
+   * Gets the default justification of paragraphs in `textView`.
+   */
+  getJustification(): Justification;
+  /**
+   * Gets the default left margin size of paragraphs in the `textView`.
+   */
+  getLeftMargin(): number;
+  /**
+   * Gets the `PangoContext` that is used for rendering LTR directed
+   * text layouts.
+   */
+  getLtrContext(): GObject;
+  /**
+   * Gets whether the `GtkTextView` uses monospace styling.
+   */
+  getMonospace(): boolean;
+  /**
+   * Returns whether the `GtkTextView` is in overwrite mode or not.
+   */
+  getOverwrite(): boolean;
+  /**
+   * Gets the default number of pixels to put above paragraphs.
+   */
+  getPixelsAboveLines(): number;
+  /**
+   * Gets the default number of pixels to put below paragraphs.
+   */
+  getPixelsBelowLines(): number;
+  /**
+   * Gets the default number of pixels to put between wrapped lines
+   * inside a paragraph.
+   */
+  getPixelsInsideWrap(): number;
+  /**
+   * Gets the default right margin for text in `textView`.
+   */
+  getRightMargin(): number;
+  /**
+   * Gets the `PangoContext` that is used for rendering RTL directed
+   * text layouts.
+   */
+  getRtlContext(): GObject;
+  /**
+   * Gets the top margin for text in the `textView`.
+   */
+  getTopMargin(): number;
+  /**
+   * Gets the line wrapping for the view.
+   */
+  getWrapMode(): WrapMode;
+  /**
+   * Moves a mark within the buffer so that it's
+   * located within the currently-visible text area.
+   */
+  moveMarkOnscreen(mark: GObject): boolean;
+  /**
+   * Updates the position of a child.
+   */
+  moveOverlay(child: Widget, xpos: number, ypos: number): void;
+  /**
+   * Moves the cursor to the currently visible region of the
+   * buffer.
+   */
+  placeCursorOnscreen(): boolean;
+  /**
+   * Removes a child widget from `textView`.
+   */
+  remove(child: Widget): void;
+  /**
+   * Ensures that the cursor is shown.
+   */
+  resetCursorBlink(): void;
+  /**
+   * Reset the input method context of the text view if needed.
+   */
+  resetImContext(): void;
+  /**
+   * Scrolls `textView` the minimum distance such that `mark` is contained
+   * within the visible area of the widget.
+   */
+  scrollMarkOnscreen(mark: GObject): void;
+  /**
+   * Sets the behavior of the text widget when the <kbd>Tab</kbd> key is pressed.
+   */
+  setAcceptsTab(acceptsTab: boolean): void;
+  /**
+   * Sets the bottom margin for text in `textView`.
+   */
+  setBottomMargin(bottomMargin: number): void;
+  /**
+   * Sets `buffer` as the buffer being displayed by `textView`.
+   */
+  setBuffer(buffer: TextBuffer | null): void;
+  /**
+   * Sets a menu model to add when constructing the context
+   * menu for `textView`.
+   */
+  setExtraMenu(model: GObject | null): void;
+  /**
+   * Places `widget` into the gutter specified by `win`.
+   */
+  setGutter(win: TextWindowType, widget: Widget | null): void;
+  /**
+   * Sets the default indentation for paragraphs in `textView`.
+   */
+  setIndent(indent: number): void;
+  /**
+   * Sets the `input-hints` of the `GtkTextView`.
+   */
+  setInputHints(hints: number): void;
+  /**
+   * Sets the `input-purpose` of the `GtkTextView`.
+   */
+  setInputPurpose(purpose: InputPurpose): void;
+  /**
+   * Sets the default justification of text in `textView`.
+   */
+  setJustification(justification: Justification): void;
+  /**
+   * Sets the default left margin for text in `textView`.
+   */
+  setLeftMargin(leftMargin: number): void;
+  /**
+   * Changes the `GtkTextView` overwrite mode.
+   */
+  setOverwrite(overwrite: boolean): void;
+  /**
+   * Sets the default number of blank pixels above paragraphs in `textView`.
+   */
+  setPixelsAboveLines(pixelsAboveLines: number): void;
+  /**
+   * Sets the default number of pixels of blank space
+   * to put below paragraphs in `textView`.
+   */
+  setPixelsBelowLines(pixelsBelowLines: number): void;
+  /**
+   * Sets the default number of pixels of blank space to leave between
+   * display/wrapped lines within a paragraph.
+   */
+  setPixelsInsideWrap(pixelsInsideWrap: number): void;
+  /**
+   * Sets the default right margin for text in the text view.
+   */
+  setRightMargin(rightMargin: number): void;
+  /**
+   * Sets the top margin for text in `textView`.
+   */
+  setTopMargin(topMargin: number): void;
+  /**
+   * Sets the line wrapping for the view.
+   */
+  setWrapMode(wrapMode: WrapMode): void;
+  /**
+   * Gets emitted when the user asks for it.
+   */
+  onBackspace(callback: () => void): number;
+  /**
+   * Gets emitted to copy the selection to the clipboard.
+   */
+  onCopyClipboard(callback: () => void): number;
+  /**
+   * Gets emitted to cut the selection to the clipboard.
+   */
+  onCutClipboard(callback: () => void): number;
+  /**
+   * Gets emitted when the user initiates a text deletion.
+   */
+  onDeleteFromCursor(
+    callback: (type: DeleteType, count: number) => void,
+  ): number;
+  /**
+   * Gets emitted when the user initiates the insertion of a
+   * fixed string at the cursor.
+   */
+  onInsertAtCursor(callback: (string: string) => void): number;
+  /**
+   * Gets emitted to present the Emoji chooser for the `textView`.
+   */
+  onInsertEmoji(callback: () => void): number;
+  /**
+   * Gets emitted when the user initiates a cursor movement.
+   */
+  onMoveCursor(
+    callback: (
+      step: MovementStep,
+      count: number,
+      extendSelection: boolean,
+    ) => void,
+  ): number;
+  /**
+   * Gets emitted to move the viewport.
+   */
+  onMoveViewport(callback: (step: ScrollStep, count: number) => void): number;
+  /**
+   * Gets emitted to paste the contents of the clipboard
+   * into the text view.
+   */
+  onPasteClipboard(callback: () => void): number;
+  /**
+   * Emitted when preedit text of the active IM changes.
+   */
+  onPreeditChanged(callback: (preedit: string) => void): number;
+  /**
+   * Gets emitted to select or unselect the complete contents of the text view.
+   */
+  onSelectAll(callback: (select: boolean) => void): number;
+  /**
+   * Gets emitted when the user initiates settings the "anchor" mark.
+   */
+  onSetAnchor(callback: () => void): number;
+  /**
+   * Gets emitted to toggle the `cursor-visible` property.
+   */
+  onToggleCursorVisible(callback: () => void): number;
+  /**
+   * Gets emitted to toggle the overwrite mode of the text view.
+   */
+  onToggleOverwrite(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode TextViewMethods}. */
+export const textViewMethods: TextViewMethods & ThisType<GObject> = {
+  addChildAtAnchor(this: GObject, child: Widget, anchor: GObject): void {
+    gtk4.symbols.gtk_text_view_add_child_at_anchor(
+      this.ptr,
+      child.ptr,
+      anchor.ptr,
+    );
+  },
+  addOverlay(this: GObject, child: Widget, xpos: number, ypos: number): void {
+    gtk4.symbols.gtk_text_view_add_overlay(this.ptr, child.ptr, xpos, ypos);
+  },
+  getAcceptsTab(this: GObject): boolean {
+    return gtk4.symbols.gtk_text_view_get_accepts_tab(this.ptr);
+  },
+  getBottomMargin(this: GObject): number {
+    return gtk4.symbols.gtk_text_view_get_bottom_margin(this.ptr);
+  },
+  getCursorVisible(this: GObject): boolean {
+    return gtk4.symbols.gtk_text_view_get_cursor_visible(this.ptr);
+  },
+  getEditable(this: GObject): boolean {
+    return gtk4.symbols.gtk_text_view_get_editable(this.ptr);
+  },
+  getExtraMenu(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      gtk4.symbols.gtk_text_view_get_extra_menu(this.ptr),
+    );
+  },
+  getGutter(this: GObject, win: TextWindowType): Widget | null {
+    return borrowed<Widget>(
+      gtk4.symbols.gtk_text_view_get_gutter(this.ptr, win),
+    );
+  },
+  getIndent(this: GObject): number {
+    return gtk4.symbols.gtk_text_view_get_indent(this.ptr);
+  },
+  getInputHints(this: GObject): number {
+    return gtk4.symbols.gtk_text_view_get_input_hints(this.ptr);
+  },
+  getInputPurpose(this: GObject): InputPurpose {
+    return gtk4.symbols.gtk_text_view_get_input_purpose(
+      this.ptr,
+    ) as InputPurpose;
+  },
+  getJustification(this: GObject): Justification {
+    return gtk4.symbols.gtk_text_view_get_justification(
+      this.ptr,
+    ) as Justification;
+  },
+  getLeftMargin(this: GObject): number {
+    return gtk4.symbols.gtk_text_view_get_left_margin(this.ptr);
+  },
+  getLtrContext(this: GObject): GObject {
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_text_view_get_ltr_context ??
+        missing("gtk_text_view_get_ltr_context", "4.4"))(this.ptr),
+    )!;
+  },
+  getMonospace(this: GObject): boolean {
+    return gtk4.symbols.gtk_text_view_get_monospace(this.ptr);
+  },
+  getOverwrite(this: GObject): boolean {
+    return gtk4.symbols.gtk_text_view_get_overwrite(this.ptr);
+  },
+  getPixelsAboveLines(this: GObject): number {
+    return gtk4.symbols.gtk_text_view_get_pixels_above_lines(this.ptr);
+  },
+  getPixelsBelowLines(this: GObject): number {
+    return gtk4.symbols.gtk_text_view_get_pixels_below_lines(this.ptr);
+  },
+  getPixelsInsideWrap(this: GObject): number {
+    return gtk4.symbols.gtk_text_view_get_pixels_inside_wrap(this.ptr);
+  },
+  getRightMargin(this: GObject): number {
+    return gtk4.symbols.gtk_text_view_get_right_margin(this.ptr);
+  },
+  getRtlContext(this: GObject): GObject {
+    return borrowed<GObject>(
+      (gtk4.symbols.gtk_text_view_get_rtl_context ??
+        missing("gtk_text_view_get_rtl_context", "4.4"))(this.ptr),
+    )!;
+  },
+  getTopMargin(this: GObject): number {
+    return gtk4.symbols.gtk_text_view_get_top_margin(this.ptr);
+  },
+  getWrapMode(this: GObject): WrapMode {
+    return gtk4.symbols.gtk_text_view_get_wrap_mode(this.ptr) as WrapMode;
+  },
+  moveMarkOnscreen(this: GObject, mark: GObject): boolean {
+    return gtk4.symbols.gtk_text_view_move_mark_onscreen(this.ptr, mark.ptr);
+  },
+  moveOverlay(this: GObject, child: Widget, xpos: number, ypos: number): void {
+    gtk4.symbols.gtk_text_view_move_overlay(this.ptr, child.ptr, xpos, ypos);
+  },
+  placeCursorOnscreen(this: GObject): boolean {
+    return gtk4.symbols.gtk_text_view_place_cursor_onscreen(this.ptr);
+  },
+  remove(this: GObject, child: Widget): void {
+    gtk4.symbols.gtk_text_view_remove(this.ptr, child.ptr);
+  },
+  resetCursorBlink(this: GObject): void {
+    gtk4.symbols.gtk_text_view_reset_cursor_blink(this.ptr);
+  },
+  resetImContext(this: GObject): void {
+    gtk4.symbols.gtk_text_view_reset_im_context(this.ptr);
+  },
+  scrollMarkOnscreen(this: GObject, mark: GObject): void {
+    gtk4.symbols.gtk_text_view_scroll_mark_onscreen(this.ptr, mark.ptr);
+  },
+  setAcceptsTab(this: GObject, acceptsTab: boolean): void {
+    gtk4.symbols.gtk_text_view_set_accepts_tab(this.ptr, acceptsTab);
+  },
+  setBottomMargin(this: GObject, bottomMargin: number): void {
+    gtk4.symbols.gtk_text_view_set_bottom_margin(this.ptr, bottomMargin);
+  },
+  setBuffer(this: GObject, buffer: TextBuffer | null): void {
+    gtk4.symbols.gtk_text_view_set_buffer(this.ptr, buffer?.ptr ?? null);
+  },
+  setExtraMenu(this: GObject, model: GObject | null): void {
+    gtk4.symbols.gtk_text_view_set_extra_menu(this.ptr, model?.ptr ?? null);
+  },
+  setGutter(this: GObject, win: TextWindowType, widget: Widget | null): void {
+    gtk4.symbols.gtk_text_view_set_gutter(this.ptr, win, widget?.ptr ?? null);
+  },
+  setIndent(this: GObject, indent: number): void {
+    gtk4.symbols.gtk_text_view_set_indent(this.ptr, indent);
+  },
+  setInputHints(this: GObject, hints: number): void {
+    gtk4.symbols.gtk_text_view_set_input_hints(this.ptr, hints);
+  },
+  setInputPurpose(this: GObject, purpose: InputPurpose): void {
+    gtk4.symbols.gtk_text_view_set_input_purpose(this.ptr, purpose);
+  },
+  setJustification(this: GObject, justification: Justification): void {
+    gtk4.symbols.gtk_text_view_set_justification(this.ptr, justification);
+  },
+  setLeftMargin(this: GObject, leftMargin: number): void {
+    gtk4.symbols.gtk_text_view_set_left_margin(this.ptr, leftMargin);
+  },
+  setOverwrite(this: GObject, overwrite: boolean): void {
+    gtk4.symbols.gtk_text_view_set_overwrite(this.ptr, overwrite);
+  },
+  setPixelsAboveLines(this: GObject, pixelsAboveLines: number): void {
+    gtk4.symbols.gtk_text_view_set_pixels_above_lines(
+      this.ptr,
+      pixelsAboveLines,
+    );
+  },
+  setPixelsBelowLines(this: GObject, pixelsBelowLines: number): void {
+    gtk4.symbols.gtk_text_view_set_pixels_below_lines(
+      this.ptr,
+      pixelsBelowLines,
+    );
+  },
+  setPixelsInsideWrap(this: GObject, pixelsInsideWrap: number): void {
+    gtk4.symbols.gtk_text_view_set_pixels_inside_wrap(
+      this.ptr,
+      pixelsInsideWrap,
+    );
+  },
+  setRightMargin(this: GObject, rightMargin: number): void {
+    gtk4.symbols.gtk_text_view_set_right_margin(this.ptr, rightMargin);
+  },
+  setTopMargin(this: GObject, topMargin: number): void {
+    gtk4.symbols.gtk_text_view_set_top_margin(this.ptr, topMargin);
+  },
+  setWrapMode(this: GObject, wrapMode: WrapMode): void {
+    gtk4.symbols.gtk_text_view_set_wrap_mode(this.ptr, wrapMode);
+  },
+  onBackspace(this: GObject, callback: () => void): number {
+    return connectSignal(this, "backspace", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onCopyClipboard(this: GObject, callback: () => void): number {
+    return connectSignal(this, "copy-clipboard", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onCutClipboard(this: GObject, callback: () => void): number {
+    return connectSignal(this, "cut-clipboard", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onDeleteFromCursor(
+    this: GObject,
+    callback: (type: DeleteType, count: number) => void,
+  ): number {
+    return connectSignal(this, "delete-from-cursor", {
+      parameters: ["pointer", "i32", "i32", "pointer"],
+      result: "void",
+    }, (a0: never, a1: never) => callback(a0 as DeleteType, a1));
+  },
+  onInsertAtCursor(this: GObject, callback: (string: string) => void): number {
+    return connectSignal(this, "insert-at-cursor", {
+      parameters: ["pointer", "pointer", "pointer"],
+      result: "void",
+    }, (a0: never) => callback(readCStr(a0)));
+  },
+  onInsertEmoji(this: GObject, callback: () => void): number {
+    return connectSignal(this, "insert-emoji", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onMoveCursor(
+    this: GObject,
+    callback: (
+      step: MovementStep,
+      count: number,
+      extendSelection: boolean,
+    ) => void,
+  ): number {
+    return connectSignal(
+      this,
+      "move-cursor",
+      {
+        parameters: ["pointer", "i32", "i32", "i32", "pointer"],
+        result: "void",
+      },
+      (a0: never, a1: never, a2: never) =>
+        callback(a0 as MovementStep, a1, a2 !== 0),
+    );
+  },
+  onMoveViewport(
+    this: GObject,
+    callback: (step: ScrollStep, count: number) => void,
+  ): number {
+    return connectSignal(this, "move-viewport", {
+      parameters: ["pointer", "i32", "i32", "pointer"],
+      result: "void",
+    }, (a0: never, a1: never) => callback(a0 as ScrollStep, a1));
+  },
+  onPasteClipboard(this: GObject, callback: () => void): number {
+    return connectSignal(this, "paste-clipboard", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onPreeditChanged(this: GObject, callback: (preedit: string) => void): number {
+    return connectSignal(this, "preedit-changed", {
+      parameters: ["pointer", "pointer", "pointer"],
+      result: "void",
+    }, (a0: never) => callback(readCStr(a0)));
+  },
+  onSelectAll(this: GObject, callback: (select: boolean) => void): number {
+    return connectSignal(this, "select-all", {
+      parameters: ["pointer", "i32", "pointer"],
+      result: "void",
+    }, (a0: never) => callback(a0 !== 0));
+  },
+  onSetAnchor(this: GObject, callback: () => void): number {
+    return connectSignal(this, "set-anchor", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onToggleCursorVisible(this: GObject, callback: () => void): number {
+    return connectSignal(this, "toggle-cursor-visible", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onToggleOverwrite(this: GObject, callback: () => void): number {
+    return connectSignal(this, "toggle-overwrite", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `GtkToggleButton`. */
+export interface ToggleButtonMethods {
+}
+
+/** Implementations of {@linkcode ToggleButtonMethods}. */
+export const toggleButtonMethods: ToggleButtonMethods & ThisType<GObject> = {};
+
+/** Methods generated for `GtkWidget`. */
+export interface WidgetMethods {
+  /**
+   * Enables or disables an action installed with
+   * `installAction()`.
+   */
+  actionSetEnabled(actionName: string, enabled: boolean): void;
+  /**
+   * Activates the `default.activate` action for the widget.
+   */
+  activateDefault(): void;
+  /**
+   * Adds a widget to the list of mnemonic labels for this widget.
+   */
+  addMnemonicLabel(label: Widget): void;
+  /**
+   * Queues an animation frame update and adds a callback to be called
+   * before each frame.
+   */
+  addTickCallback(
+    callback: (widget: Widget, frameClock: GObject) => boolean,
+  ): number;
+  /**
+   * Called by widgets as the user moves around the window using
+   * keyboard shortcuts.
+   */
+  childFocus(direction: DirectionType): boolean;
+  /**
+   * Computes whether a parent widget should give this widget
+   * extra space when possible.
+   */
+  computeExpand(orientation: Orientation): boolean;
+  /**
+   * Tests if a given point is contained in the widget.
+   */
+  contains(x: number, y: number): boolean;
+  /**
+   * Checks to see if a drag movement has passed the GTK drag threshold.
+   */
+  dragCheckThreshold(
+    startX: number,
+    startY: number,
+    currentX: number,
+    currentY: number,
+  ): boolean;
+  /**
+   * Notifies the user about an input-related error on the widget.
+   */
+  errorBell(): void;
+  /**
+   * Returns the baseline that has currently been allocated to the widget.
+   */
+  getBaseline(): number;
+  /**
+   * Determines whether the input focus can enter the widget or any
+   * of its children.
+   */
+  getCanFocus(): boolean;
+  /**
+   * Queries whether the widget can be the target of pointer events.
+   */
+  getCanTarget(): boolean;
+  /**
+   * Gets the value set with `setChildVisible()`.
+   */
+  getChildVisible(): boolean;
+  /**
+   * Gets the clipboard object for the widget.
+   */
+  getClipboard(): Clipboard;
+  /**
+   * Returns the CSS name of the widget.
+   */
+  getCssName(): string;
+  /**
+   * Gets the cursor set on the widget.
+   */
+  getCursor(): Cursor | null;
+  /**
+   * Gets the reading direction for the widget.
+   */
+  getDirection(): TextDirection;
+  /**
+   * Returns the focus child of the widget.
+   */
+  getFocusChild(): Widget | null;
+  /**
+   * Returns whether the widget should grab focus when it is clicked
+   * with the mouse.
+   */
+  getFocusOnClick(): boolean;
+  /**
+   * Determines whether the widget can own the input focus.
+   */
+  getFocusable(): boolean;
+  /**
+   * Gets the font map of the widget.
+   */
+  getFontMap(): GObject | null;
+  /**
+   * Obtains the frame clock for a widget.
+   */
+  getFrameClock(): GObject | null;
+  /**
+   * Gets the horizontal alignment of the widget.
+   */
+  getHalign(): Align;
+  /**
+   * Returns the current value of the `has-tooltip` property.
+   */
+  getHasTooltip(): boolean;
+  /**
+   * Returns the content height of the widget.
+   */
+  getHeight(): number;
+  /**
+   * Gets whether the widget would like any available extra horizontal
+   * space.
+   */
+  getHexpand(): boolean;
+  /**
+   * Gets whether the `hexpand` flag has been explicitly set.
+   */
+  getHexpandSet(): boolean;
+  /**
+   * Retrieves the layout manager of the widget.
+   */
+  getLayoutManager(): GObject | null;
+  /**
+   * Gets the value of the `limit-events` property.
+   */
+  getLimitEvents(): boolean;
+  /**
+   * Returns whether the widget is mapped.
+   */
+  getMapped(): boolean;
+  /**
+   * Gets the bottom margin of the widget.
+   */
+  getMarginBottom(): number;
+  /**
+   * Gets the end margin of the widget.
+   */
+  getMarginEnd(): number;
+  /**
+   * Gets the start margin of the widget.
+   */
+  getMarginStart(): number;
+  /**
+   * Gets the top margin of the widget.
+   */
+  getMarginTop(): number;
+  /**
+   * Retrieves the name of a widget.
+   */
+  getName(): string;
+  /**
+   * Returns the nearest `GtkNative` ancestor of the widget.
+   */
+  getNative(): GObject | null;
+  /**
+   * Fetches the requested opacity for the widget.
+   */
+  getOpacity(): number;
+  /**
+   * Returns the widget’s overflow value.
+   */
+  getOverflow(): Overflow;
+  /**
+   * Gets a `PangoContext` that is configured for the widget.
+   */
+  getPangoContext(): GObject;
+  /**
+   * Returns the parent widget of the widget.
+   */
+  getParent(): Widget | null;
+  /**
+   * Returns the widget’s previous sibling.
+   */
+  getPrevSibling(): Widget | null;
+  /**
+   * Gets the primary clipboard of the widget.
+   */
+  getPrimaryClipboard(): Clipboard;
+  /**
+   * Determines whether the widget is realized.
+   */
+  getRealized(): boolean;
+  /**
+   * Determines whether the widget is always treated as the default widget
+   * within its toplevel when it has the focus, even if another widget
+   * is the default.
+   */
+  getReceivesDefault(): boolean;
+  /**
+   * Gets whether the widget prefers a height-for-width layout
+   * or a width-for-height layout.
+   */
+  getRequestMode(): SizeRequestMode;
+  /**
+   * Returns the `GtkRoot` widget of the widget.
+   */
+  getRoot(): GObject | null;
+  /**
+   * Retrieves the internal scale factor that maps from window
+   * coordinates to the actual device pixels.
+   */
+  getScaleFactor(): number;
+  /**
+   * Gets the settings object holding the settings used for the widget.
+   */
+  getSettings(): GObject;
+  /**
+   * Returns the content width or height of the widget.
+   */
+  getSize(orientation: Orientation): number;
+  /**
+   * Returns the widget state as a flag set.
+   */
+  getStateFlags(): number;
+  /**
+   * Gets the contents of the tooltip for the widget.
+   */
+  getTooltipMarkup(): string | null;
+  /**
+   * Gets the contents of the tooltip for the widget.
+   */
+  getTooltipText(): string | null;
+  /**
+   * Gets the vertical alignment of the widget.
+   */
+  getValign(): Align;
+  /**
+   * Gets whether the widget would like any available extra vertical
+   * space.
+   */
+  getVexpand(): boolean;
+  /**
+   * Gets whether the `vexpand` flag has been explicitly set.
+   */
+  getVexpandSet(): boolean;
+  /**
+   * Returns the content width of the widget.
+   */
+  getWidth(): number;
+  /**
+   * Returns whether a style class is currently applied to the widget.
+   */
+  hasCssClass(cssClass: string): boolean;
+  /**
+   * Determines whether the widget is the current default widget
+   * within its toplevel.
+   */
+  hasDefault(): boolean;
+  /**
+   * Determines if the widget has the global input focus.
+   */
+  hasFocus(): boolean;
+  /**
+   * Determines if the widget should show a visible indication that
+   * it has the global input focus.
+   */
+  hasVisibleFocus(): boolean;
+  /**
+   * Returns whether the widget is currently being destroyed.
+   */
+  inDestruction(): boolean;
+  /**
+   * Creates and initializes child widgets defined in templates.
+   */
+  initTemplate(): void;
+  /**
+   * Inserts an action group into the widget's actions.
+   */
+  insertActionGroup(name: string, group: GObject | null): void;
+  /**
+   * Sets the parent widget of the widget.
+   */
+  insertAfter(parent: Widget, previousSibling: Widget | null): void;
+  /**
+   * Sets the parent widget of the widget.
+   */
+  insertBefore(parent: Widget, nextSibling: Widget | null): void;
+  /**
+   * Determines whether the widget is a descendent of `ancestor`.
+   */
+  isAncestor(ancestor: Widget): boolean;
+  /**
+   * Determines whether the widget can be drawn to.
+   */
+  isDrawable(): boolean;
+  /**
+   * Determines if the widget is the focus widget within its
+   * toplevel.
+   */
+  isFocus(): boolean;
+  /**
+   * Emits the `keynav-failed` signal on the widget.
+   */
+  keynavFailed(direction: DirectionType): boolean;
+  /**
+   * Causes a widget to be mapped if it isn’t already.
+   */
+  map(): void;
+  /**
+   * Emits the `mnemonic-activate` signal.
+   */
+  mnemonicActivate(groupCycling: boolean): boolean;
+  /**
+   * Finds the descendant of the widget closest to a point.
+   */
+  pick(x: number, y: number, flags: number): Widget | null;
+  /**
+   * Flags the widget for a rerun of the [vfunc`Gtk`.Widget.size_allocate]
+   * function.
+   */
+  queueAllocate(): void;
+  /**
+   * Flags a widget to have its size renegotiated.
+   */
+  queueResize(): void;
+  /**
+   * Creates the GDK resources associated with a widget.
+   */
+  realize(): void;
+  /**
+   * Removes an event controller from the widget.
+   */
+  removeController(controller: EventController): void;
+  /**
+   * Removes a widget from the list of mnemonic labels for this widget.
+   */
+  removeMnemonicLabel(label: Widget): void;
+  /**
+   * Removes a tick callback previously registered with
+   * `addTickCallback()`.
+   */
+  removeTickCallback(id: number): void;
+  /**
+   * Sets whether the input focus can enter the widget or
+   * any of its children.
+   */
+  setCanFocus(canFocus: boolean): void;
+  /**
+   * Sets whether the widget should be mapped along with its parent.
+   */
+  setChildVisible(childVisible: boolean): void;
+  /**
+   * Sets the cursor to be shown when the pointer hovers over
+   * the widget.
+   */
+  setCursorFromName(name: string | null): void;
+  /**
+   * Sets the reading direction on the widget.
+   */
+  setDirection(dir: TextDirection): void;
+  /**
+   * Set the focus child of the widget.
+   */
+  setFocusChild(child: Widget | null): void;
+  /**
+   * Sets whether the widget should grab focus when it is clicked
+   * with the mouse.
+   */
+  setFocusOnClick(focusOnClick: boolean): void;
+  /**
+   * Sets the font map to use for text rendering in the widget.
+   */
+  setFontMap(fontMap: GObject | null): void;
+  /**
+   * Sets the `has-tooltip` property on the widget.
+   */
+  setHasTooltip(hasTooltip: boolean): void;
+  /**
+   * Sets whether the hexpand flag will be used.
+   */
+  setHexpandSet(set: boolean): void;
+  /**
+   * Sets whether the widget acts like a modal dialog,
+   * with respect to event delivery.
+   */
+  setLimitEvents(limitEvents: boolean): void;
+  /**
+   * Sets a widgets name.
+   */
+  setName(name: string): void;
+  /**
+   * Sets how the widget treats content that is drawn outside the
+   * it's content area.
+   */
+  setOverflow(overflow: Overflow): void;
+  /**
+   * Sets the parent widget of the widget.
+   */
+  setParent(parent: Widget): void;
+  /**
+   * Sets whether the widget will be treated as the default
+   * widget within its toplevel when it has the focus, even if
+   * another widget is the default.
+   */
+  setReceivesDefault(receivesDefault: boolean): void;
+  /**
+   * Turns on flag values in the current widget state.
+   */
+  setStateFlags(flags: number, clear: boolean): void;
+  /**
+   * Sets the contents of the tooltip for widget.
+   */
+  setTooltipMarkup(markup: string | null): void;
+  /**
+   * Sets whether the vexpand flag will be used.
+   */
+  setVexpandSet(set: boolean): void;
+  /**
+   * Returns whether the widget should contribute to
+   * the measuring and allocation of its parent.
+   */
+  shouldLayout(): boolean;
+  /**
+   * Snapshots a child of the widget.
+   */
+  snapshotChild(child: Widget, snapshot: GObject): void;
+  /**
+   * Triggers a tooltip query on the display of the widget.
+   */
+  triggerTooltipQuery(): void;
+  /**
+   * Causes a widget to be unmapped if it’s currently mapped.
+   */
+  unmap(): void;
+  /**
+   * Causes a widget to be unrealized.
+   */
+  unrealize(): void;
+  /**
+   * Turns off flag values for the current widget state.
+   */
+  unsetStateFlags(flags: number): void;
+  /**
+   * Signals that all holders of a reference to the widget should release
+   * the reference that they hold.
+   */
+  onDestroy(callback: () => void): number;
+  /**
+   * Emitted when the text direction of a widget changes.
+   */
+  onDirectionChanged(
+    callback: (previousDirection: TextDirection) => void,
+  ): number;
+  /**
+   * Emitted when `widget` is hidden.
+   */
+  onHide(callback: () => void): number;
+  /**
+   * Emitted when `widget` is going to be mapped.
+   */
+  onMap(callback: () => void): number;
+  /**
+   * Emitted when the focus is moved.
+   */
+  onMoveFocus(callback: (direction: DirectionType) => void): number;
+  /**
+   * Emitted when `widget` is associated with a `GdkSurface`.
+   */
+  onRealize(callback: () => void): number;
+  /**
+   * Emitted when `widget` is shown.
+   */
+  onShow(callback: () => void): number;
+  /**
+   * Emitted when the widget state changes.
+   */
+  onStateFlagsChanged(callback: (flags: number) => void): number;
+  /**
+   * Emitted when `widget` is going to be unmapped.
+   */
+  onUnmap(callback: () => void): number;
+  /**
+   * Emitted when the `GdkSurface` associated with `widget` is destroyed.
+   */
+  onUnrealize(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode WidgetMethods}. */
+export const widgetMethods: WidgetMethods & ThisType<GObject> = {
+  actionSetEnabled(this: GObject, actionName: string, enabled: boolean): void {
+    gtk4.symbols.gtk_widget_action_set_enabled(
+      this.ptr,
+      cstr(actionName),
+      enabled,
+    );
+  },
+  activateDefault(this: GObject): void {
+    gtk4.symbols.gtk_widget_activate_default(this.ptr);
+  },
+  addMnemonicLabel(this: GObject, label: Widget): void {
+    gtk4.symbols.gtk_widget_add_mnemonic_label(this.ptr, label.ptr);
+  },
+  addTickCallback(
+    this: GObject,
+    callback: (widget: Widget, frameClock: GObject) => boolean,
+  ): number {
+    let __0: Deno.PointerObject | null = null;
+    let __1: Deno.PointerObject | null = null;
+    let __2: Deno.PointerObject | null = null;
+    {
+      const cb = new Deno.UnsafeCallback(
+        {
+          parameters: ["pointer", "pointer", "pointer"],
+          result: "i32",
+        } as const,
+        (a0, a1, a2) => {
+          return callback(borrowed<Widget>(a0)!, borrowed<GObject>(a1)!)
+            ? 1
+            : 0;
+        },
+      );
+      [__0, __1, __2] = notifiedCallback(cb);
+    }
+    return gtk4.symbols.gtk_widget_add_tick_callback(this.ptr, __0, __1, __2);
+  },
+  childFocus(this: GObject, direction: DirectionType): boolean {
+    return gtk4.symbols.gtk_widget_child_focus(this.ptr, direction);
+  },
+  computeExpand(this: GObject, orientation: Orientation): boolean {
+    return gtk4.symbols.gtk_widget_compute_expand(this.ptr, orientation);
+  },
+  contains(this: GObject, x: number, y: number): boolean {
+    return gtk4.symbols.gtk_widget_contains(this.ptr, x, y);
+  },
+  dragCheckThreshold(
+    this: GObject,
+    startX: number,
+    startY: number,
+    currentX: number,
+    currentY: number,
+  ): boolean {
+    return gtk4.symbols.gtk_drag_check_threshold(
+      this.ptr,
+      startX,
+      startY,
+      currentX,
+      currentY,
+    );
+  },
+  errorBell(this: GObject): void {
+    gtk4.symbols.gtk_widget_error_bell(this.ptr);
+  },
+  getBaseline(this: GObject): number {
+    return (gtk4.symbols.gtk_widget_get_baseline ??
+      missing("gtk_widget_get_baseline", "4.12"))(this.ptr);
+  },
+  getCanFocus(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_get_can_focus(this.ptr);
+  },
+  getCanTarget(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_get_can_target(this.ptr);
+  },
+  getChildVisible(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_get_child_visible(this.ptr);
+  },
+  getClipboard(this: GObject): Clipboard {
+    return borrowed<Clipboard>(
+      gtk4.symbols.gtk_widget_get_clipboard(this.ptr),
+    )!;
+  },
+  getCssName(this: GObject): string {
+    return readCStr(gtk4.symbols.gtk_widget_get_css_name(this.ptr));
+  },
+  getCursor(this: GObject): Cursor | null {
+    return borrowed<Cursor>(gtk4.symbols.gtk_widget_get_cursor(this.ptr));
+  },
+  getDirection(this: GObject): TextDirection {
+    return gtk4.symbols.gtk_widget_get_direction(this.ptr) as TextDirection;
+  },
+  getFocusChild(this: GObject): Widget | null {
+    return borrowed<Widget>(gtk4.symbols.gtk_widget_get_focus_child(this.ptr));
+  },
+  getFocusOnClick(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_get_focus_on_click(this.ptr);
+  },
+  getFocusable(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_get_focusable(this.ptr);
+  },
+  getFontMap(this: GObject): GObject | null {
+    return borrowed<GObject>(gtk4.symbols.gtk_widget_get_font_map(this.ptr));
+  },
+  getFrameClock(this: GObject): GObject | null {
+    return borrowed<GObject>(gtk4.symbols.gtk_widget_get_frame_clock(this.ptr));
+  },
+  getHalign(this: GObject): Align {
+    return gtk4.symbols.gtk_widget_get_halign(this.ptr) as Align;
+  },
+  getHasTooltip(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_get_has_tooltip(this.ptr);
+  },
+  getHeight(this: GObject): number {
+    return gtk4.symbols.gtk_widget_get_height(this.ptr);
+  },
+  getHexpand(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_get_hexpand(this.ptr);
+  },
+  getHexpandSet(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_get_hexpand_set(this.ptr);
+  },
+  getLayoutManager(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      gtk4.symbols.gtk_widget_get_layout_manager(this.ptr),
+    );
+  },
+  getLimitEvents(this: GObject): boolean {
+    return (gtk4.symbols.gtk_widget_get_limit_events ??
+      missing("gtk_widget_get_limit_events", "4.18"))(this.ptr);
+  },
+  getMapped(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_get_mapped(this.ptr);
+  },
+  getMarginBottom(this: GObject): number {
+    return gtk4.symbols.gtk_widget_get_margin_bottom(this.ptr);
+  },
+  getMarginEnd(this: GObject): number {
+    return gtk4.symbols.gtk_widget_get_margin_end(this.ptr);
+  },
+  getMarginStart(this: GObject): number {
+    return gtk4.symbols.gtk_widget_get_margin_start(this.ptr);
+  },
+  getMarginTop(this: GObject): number {
+    return gtk4.symbols.gtk_widget_get_margin_top(this.ptr);
+  },
+  getName(this: GObject): string {
+    return readCStr(gtk4.symbols.gtk_widget_get_name(this.ptr));
+  },
+  getNative(this: GObject): GObject | null {
+    return borrowed<GObject>(gtk4.symbols.gtk_widget_get_native(this.ptr));
+  },
+  getOpacity(this: GObject): number {
+    return gtk4.symbols.gtk_widget_get_opacity(this.ptr);
+  },
+  getOverflow(this: GObject): Overflow {
+    return gtk4.symbols.gtk_widget_get_overflow(this.ptr) as Overflow;
+  },
+  getPangoContext(this: GObject): GObject {
+    return borrowed<GObject>(
+      gtk4.symbols.gtk_widget_get_pango_context(this.ptr),
+    )!;
+  },
+  getParent(this: GObject): Widget | null {
+    return borrowed<Widget>(gtk4.symbols.gtk_widget_get_parent(this.ptr));
+  },
+  getPrevSibling(this: GObject): Widget | null {
+    return borrowed<Widget>(gtk4.symbols.gtk_widget_get_prev_sibling(this.ptr));
+  },
+  getPrimaryClipboard(this: GObject): Clipboard {
+    return borrowed<Clipboard>(
+      gtk4.symbols.gtk_widget_get_primary_clipboard(this.ptr),
+    )!;
+  },
+  getRealized(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_get_realized(this.ptr);
+  },
+  getReceivesDefault(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_get_receives_default(this.ptr);
+  },
+  getRequestMode(this: GObject): SizeRequestMode {
+    return gtk4.symbols.gtk_widget_get_request_mode(
+      this.ptr,
+    ) as SizeRequestMode;
+  },
+  getRoot(this: GObject): GObject | null {
+    return borrowed<GObject>(gtk4.symbols.gtk_widget_get_root(this.ptr));
+  },
+  getScaleFactor(this: GObject): number {
+    return gtk4.symbols.gtk_widget_get_scale_factor(this.ptr);
+  },
+  getSettings(this: GObject): GObject {
+    return borrowed<GObject>(gtk4.symbols.gtk_widget_get_settings(this.ptr))!;
+  },
+  getSize(this: GObject, orientation: Orientation): number {
+    return gtk4.symbols.gtk_widget_get_size(this.ptr, orientation);
+  },
+  getStateFlags(this: GObject): number {
+    return gtk4.symbols.gtk_widget_get_state_flags(this.ptr);
+  },
+  getTooltipMarkup(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      gtk4.symbols.gtk_widget_get_tooltip_markup(this.ptr),
+    );
+  },
+  getTooltipText(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      gtk4.symbols.gtk_widget_get_tooltip_text(this.ptr),
+    );
+  },
+  getValign(this: GObject): Align {
+    return gtk4.symbols.gtk_widget_get_valign(this.ptr) as Align;
+  },
+  getVexpand(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_get_vexpand(this.ptr);
+  },
+  getVexpandSet(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_get_vexpand_set(this.ptr);
+  },
+  getWidth(this: GObject): number {
+    return gtk4.symbols.gtk_widget_get_width(this.ptr);
+  },
+  hasCssClass(this: GObject, cssClass: string): boolean {
+    return gtk4.symbols.gtk_widget_has_css_class(this.ptr, cstr(cssClass));
+  },
+  hasDefault(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_has_default(this.ptr);
+  },
+  hasFocus(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_has_focus(this.ptr);
+  },
+  hasVisibleFocus(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_has_visible_focus(this.ptr);
+  },
+  inDestruction(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_in_destruction(this.ptr);
+  },
+  initTemplate(this: GObject): void {
+    gtk4.symbols.gtk_widget_init_template(this.ptr);
+  },
+  insertActionGroup(this: GObject, name: string, group: GObject | null): void {
+    gtk4.symbols.gtk_widget_insert_action_group(
+      this.ptr,
+      cstr(name),
+      group?.ptr ?? null,
+    );
+  },
+  insertAfter(
+    this: GObject,
+    parent: Widget,
+    previousSibling: Widget | null,
+  ): void {
+    gtk4.symbols.gtk_widget_insert_after(
+      this.ptr,
+      parent.ptr,
+      previousSibling?.ptr ?? null,
+    );
+  },
+  insertBefore(
+    this: GObject,
+    parent: Widget,
+    nextSibling: Widget | null,
+  ): void {
+    gtk4.symbols.gtk_widget_insert_before(
+      this.ptr,
+      parent.ptr,
+      nextSibling?.ptr ?? null,
+    );
+  },
+  isAncestor(this: GObject, ancestor: Widget): boolean {
+    return gtk4.symbols.gtk_widget_is_ancestor(this.ptr, ancestor.ptr);
+  },
+  isDrawable(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_is_drawable(this.ptr);
+  },
+  isFocus(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_is_focus(this.ptr);
+  },
+  keynavFailed(this: GObject, direction: DirectionType): boolean {
+    return gtk4.symbols.gtk_widget_keynav_failed(this.ptr, direction);
+  },
+  map(this: GObject): void {
+    gtk4.symbols.gtk_widget_map(this.ptr);
+  },
+  mnemonicActivate(this: GObject, groupCycling: boolean): boolean {
+    return gtk4.symbols.gtk_widget_mnemonic_activate(this.ptr, groupCycling);
+  },
+  pick(this: GObject, x: number, y: number, flags: number): Widget | null {
+    return borrowed<Widget>(
+      gtk4.symbols.gtk_widget_pick(this.ptr, x, y, flags),
+    );
+  },
+  queueAllocate(this: GObject): void {
+    gtk4.symbols.gtk_widget_queue_allocate(this.ptr);
+  },
+  queueResize(this: GObject): void {
+    gtk4.symbols.gtk_widget_queue_resize(this.ptr);
+  },
+  realize(this: GObject): void {
+    gtk4.symbols.gtk_widget_realize(this.ptr);
+  },
+  removeController(this: GObject, controller: EventController): void {
+    gtk4.symbols.gtk_widget_remove_controller(this.ptr, controller.ptr);
+  },
+  removeMnemonicLabel(this: GObject, label: Widget): void {
+    gtk4.symbols.gtk_widget_remove_mnemonic_label(this.ptr, label.ptr);
+  },
+  removeTickCallback(this: GObject, id: number): void {
+    gtk4.symbols.gtk_widget_remove_tick_callback(this.ptr, id);
+  },
+  setCanFocus(this: GObject, canFocus: boolean): void {
+    gtk4.symbols.gtk_widget_set_can_focus(this.ptr, canFocus);
+  },
+  setChildVisible(this: GObject, childVisible: boolean): void {
+    gtk4.symbols.gtk_widget_set_child_visible(this.ptr, childVisible);
+  },
+  setCursorFromName(this: GObject, name: string | null): void {
+    gtk4.symbols.gtk_widget_set_cursor_from_name(this.ptr, cstrOrNull(name));
+  },
+  setDirection(this: GObject, dir: TextDirection): void {
+    gtk4.symbols.gtk_widget_set_direction(this.ptr, dir);
+  },
+  setFocusChild(this: GObject, child: Widget | null): void {
+    gtk4.symbols.gtk_widget_set_focus_child(this.ptr, child?.ptr ?? null);
+  },
+  setFocusOnClick(this: GObject, focusOnClick: boolean): void {
+    gtk4.symbols.gtk_widget_set_focus_on_click(this.ptr, focusOnClick);
+  },
+  setFontMap(this: GObject, fontMap: GObject | null): void {
+    gtk4.symbols.gtk_widget_set_font_map(this.ptr, fontMap?.ptr ?? null);
+  },
+  setHasTooltip(this: GObject, hasTooltip: boolean): void {
+    gtk4.symbols.gtk_widget_set_has_tooltip(this.ptr, hasTooltip);
+  },
+  setHexpandSet(this: GObject, set: boolean): void {
+    gtk4.symbols.gtk_widget_set_hexpand_set(this.ptr, set);
+  },
+  setLimitEvents(this: GObject, limitEvents: boolean): void {
+    (gtk4.symbols.gtk_widget_set_limit_events ??
+      missing("gtk_widget_set_limit_events", "4.18"))(this.ptr, limitEvents);
+  },
+  setName(this: GObject, name: string): void {
+    gtk4.symbols.gtk_widget_set_name(this.ptr, cstr(name));
+  },
+  setOverflow(this: GObject, overflow: Overflow): void {
+    gtk4.symbols.gtk_widget_set_overflow(this.ptr, overflow);
+  },
+  setParent(this: GObject, parent: Widget): void {
+    gtk4.symbols.gtk_widget_set_parent(this.ptr, parent.ptr);
+  },
+  setReceivesDefault(this: GObject, receivesDefault: boolean): void {
+    gtk4.symbols.gtk_widget_set_receives_default(this.ptr, receivesDefault);
+  },
+  setStateFlags(this: GObject, flags: number, clear: boolean): void {
+    gtk4.symbols.gtk_widget_set_state_flags(this.ptr, flags, clear);
+  },
+  setTooltipMarkup(this: GObject, markup: string | null): void {
+    gtk4.symbols.gtk_widget_set_tooltip_markup(this.ptr, cstrOrNull(markup));
+  },
+  setVexpandSet(this: GObject, set: boolean): void {
+    gtk4.symbols.gtk_widget_set_vexpand_set(this.ptr, set);
+  },
+  shouldLayout(this: GObject): boolean {
+    return gtk4.symbols.gtk_widget_should_layout(this.ptr);
+  },
+  snapshotChild(this: GObject, child: Widget, snapshot: GObject): void {
+    gtk4.symbols.gtk_widget_snapshot_child(this.ptr, child.ptr, snapshot.ptr);
+  },
+  triggerTooltipQuery(this: GObject): void {
+    gtk4.symbols.gtk_widget_trigger_tooltip_query(this.ptr);
+  },
+  unmap(this: GObject): void {
+    gtk4.symbols.gtk_widget_unmap(this.ptr);
+  },
+  unrealize(this: GObject): void {
+    gtk4.symbols.gtk_widget_unrealize(this.ptr);
+  },
+  unsetStateFlags(this: GObject, flags: number): void {
+    gtk4.symbols.gtk_widget_unset_state_flags(this.ptr, flags);
+  },
+  onDestroy(this: GObject, callback: () => void): number {
+    return connectSignal(this, "destroy", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onDirectionChanged(
+    this: GObject,
+    callback: (previousDirection: TextDirection) => void,
+  ): number {
+    return connectSignal(this, "direction-changed", {
+      parameters: ["pointer", "i32", "pointer"],
+      result: "void",
+    }, (a0: never) => callback(a0 as TextDirection));
+  },
+  onHide(this: GObject, callback: () => void): number {
+    return connectSignal(this, "hide", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onMap(this: GObject, callback: () => void): number {
+    return connectSignal(this, "map", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onMoveFocus(
+    this: GObject,
+    callback: (direction: DirectionType) => void,
+  ): number {
+    return connectSignal(this, "move-focus", {
+      parameters: ["pointer", "i32", "pointer"],
+      result: "void",
+    }, (a0: never) => callback(a0 as DirectionType));
+  },
+  onRealize(this: GObject, callback: () => void): number {
+    return connectSignal(this, "realize", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onShow(this: GObject, callback: () => void): number {
+    return connectSignal(this, "show", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onStateFlagsChanged(
+    this: GObject,
+    callback: (flags: number) => void,
+  ): number {
+    return connectSignal(this, "state-flags-changed", {
+      parameters: ["pointer", "u32", "pointer"],
+      result: "void",
+    }, (a0: never) => callback(a0));
+  },
+  onUnmap(this: GObject, callback: () => void): number {
+    return connectSignal(this, "unmap", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onUnrealize(this: GObject, callback: () => void): number {
+    return connectSignal(this, "unrealize", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `GtkWindow`. */
+export interface WindowMethods {
+  /**
+   * Asks to place the window in the fullscreen state.
+   */
+  fullscreen(): void;
+  /**
+   * Asks to place the window in the fullscreen state on the given monitor.
+   */
+  fullscreenOnMonitor(monitor: GObject): void;
+  /**
+   * Gets the application object associated with the window.
+   */
+  getApplication(): Application | null;
+  /**
+   * Returns whether the window has been set to have decorations.
+   */
+  getDecorated(): boolean;
+  /**
+   * Returns the default widget for `window`.
+   */
+  getDefaultWidget(): Widget | null;
+  /**
+   * Returns whether the window has been set to have a close button.
+   */
+  getDeletable(): boolean;
+  /**
+   * Returns whether the window will be destroyed with its transient parent.
+   */
+  getDestroyWithParent(): boolean;
+  /**
+   * Retrieves the current focused widget within the window.
+   */
+  getFocus(): Widget | null;
+  /**
+   * Gets whether “focus rectangles” are supposed to be visible.
+   */
+  getFocusVisible(): boolean;
+  /**
+   * Returns the gravity that is used when changing the window size programmatically.
+   */
+  getGravity(): WindowGravity;
+  /**
+   * Returns the group for the window.
+   */
+  getGroup(): GObject;
+  /**
+   * Returns whether this window reacts to <kbd>F10</kbd>
+   * presses by activating a menubar it contains.
+   */
+  getHandleMenubarAccel(): boolean;
+  /**
+   * Returns the name of the themed icon for the window.
+   */
+  getIconName(): string | null;
+  /**
+   * Gets whether mnemonics are supposed to be visible.
+   */
+  getMnemonicsVisible(): boolean;
+  /**
+   * Returns whether the window is modal.
+   */
+  getModal(): boolean;
+  /**
+   * Gets whether the user can resize the window.
+   */
+  getResizable(): boolean;
+  /**
+   * Retrieves the title of the window.
+   */
+  getTitle(): string | null;
+  /**
+   * Returns the titlebar that has been set with
+   * `setTitlebar()`.
+   */
+  getTitlebar(): Widget | null;
+  /**
+   * Fetches the transient parent for this window.
+   */
+  getTransientFor(): Window | null;
+  /**
+   * Returns whether the window has an explicit window group.
+   */
+  hasGroup(): boolean;
+  /**
+   * Retrieves the current fullscreen state of the window.
+   */
+  isFullscreen(): boolean;
+  /**
+   * Retrieves the current maximized state of the window.
+   */
+  isMaximized(): boolean;
+  /**
+   * Retrieves the current suspended state of the window.
+   */
+  isSuspended(): boolean;
+  /**
+   * Asks to minimize the window.
+   */
+  minimize(): void;
+  /**
+   * Sets the default widget.
+   */
+  setDefaultWidget(defaultWidget: Widget | null): void;
+  /**
+   * Sets whether the window should be deletable.
+   */
+  setDeletable(setting: boolean): void;
+  /**
+   * Sets whether to destroy the window when the transient parent is destroyed.
+   */
+  setDestroyWithParent(setting: boolean): void;
+  /**
+   * Sets the display where the window is displayed.
+   */
+  setDisplay(display: Display): void;
+  /**
+   * Sets the focus widget.
+   */
+  setFocus(focus: Widget | null): void;
+  /**
+   * Sets whether “focus rectangles” are supposed to be visible.
+   */
+  setFocusVisible(setting: boolean): void;
+  /**
+   * Sets the gravity that is used when changing the window size programmatically.
+   */
+  setGravity(gravity: WindowGravity): void;
+  /**
+   * Sets whether this window should react to <kbd>F10</kbd>
+   * presses by activating a menubar it contains.
+   */
+  setHandleMenubarAccel(handleMenubarAccel: boolean): void;
+  /**
+   * Sets the icon for the window from a named themed icon.
+   */
+  setIconName(name: string | null): void;
+  /**
+   * Sets whether mnemonics are supposed to be visible.
+   */
+  setMnemonicsVisible(setting: boolean): void;
+  /**
+   * Sets the startup notification ID.
+   */
+  setStartupId(startupId: string): void;
+  /**
+   * Asks to remove the fullscreen state for the window, and return to
+   * its previous state.
+   */
+  unfullscreen(): void;
+  /**
+   * Asks to unmaximize the window.
+   */
+  unmaximize(): void;
+  /**
+   * Asks to unminimize the window.
+   */
+  unminimize(): void;
+  /**
+   * Emitted when the user activates the default widget.
+   */
+  onActivateDefault(callback: () => void): number;
+  /**
+   * Emitted when the user activates the currently focused
+   * widget of `window`.
+   */
+  onActivateFocus(callback: () => void): number;
+  /**
+   * Emitted when the compositor has decided to eliminate a window.
+   */
+  onForceClose(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode WindowMethods}. */
+export const windowMethods: WindowMethods & ThisType<GObject> = {
+  fullscreen(this: GObject): void {
+    gtk4.symbols.gtk_window_fullscreen(this.ptr);
+  },
+  fullscreenOnMonitor(this: GObject, monitor: GObject): void {
+    gtk4.symbols.gtk_window_fullscreen_on_monitor(this.ptr, monitor.ptr);
+  },
+  getApplication(this: GObject): Application | null {
+    return borrowed<Application>(
+      gtk4.symbols.gtk_window_get_application(this.ptr),
+    );
+  },
+  getDecorated(this: GObject): boolean {
+    return gtk4.symbols.gtk_window_get_decorated(this.ptr);
+  },
+  getDefaultWidget(this: GObject): Widget | null {
+    return borrowed<Widget>(
+      gtk4.symbols.gtk_window_get_default_widget(this.ptr),
+    );
+  },
+  getDeletable(this: GObject): boolean {
+    return gtk4.symbols.gtk_window_get_deletable(this.ptr);
+  },
+  getDestroyWithParent(this: GObject): boolean {
+    return gtk4.symbols.gtk_window_get_destroy_with_parent(this.ptr);
+  },
+  getFocus(this: GObject): Widget | null {
+    return borrowed<Widget>(gtk4.symbols.gtk_window_get_focus(this.ptr));
+  },
+  getFocusVisible(this: GObject): boolean {
+    return gtk4.symbols.gtk_window_get_focus_visible(this.ptr);
+  },
+  getGravity(this: GObject): WindowGravity {
+    return (gtk4.symbols.gtk_window_get_gravity ??
+      missing("gtk_window_get_gravity", "4.20"))(this.ptr) as WindowGravity;
+  },
+  getGroup(this: GObject): GObject {
+    return borrowed<GObject>(gtk4.symbols.gtk_window_get_group(this.ptr))!;
+  },
+  getHandleMenubarAccel(this: GObject): boolean {
+    return (gtk4.symbols.gtk_window_get_handle_menubar_accel ??
+      missing("gtk_window_get_handle_menubar_accel", "4.2"))(this.ptr);
+  },
+  getIconName(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      gtk4.symbols.gtk_window_get_icon_name(this.ptr),
+    );
+  },
+  getMnemonicsVisible(this: GObject): boolean {
+    return gtk4.symbols.gtk_window_get_mnemonics_visible(this.ptr);
+  },
+  getModal(this: GObject): boolean {
+    return gtk4.symbols.gtk_window_get_modal(this.ptr);
+  },
+  getResizable(this: GObject): boolean {
+    return gtk4.symbols.gtk_window_get_resizable(this.ptr);
+  },
+  getTitle(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      gtk4.symbols.gtk_window_get_title(this.ptr),
+    );
+  },
+  getTitlebar(this: GObject): Widget | null {
+    return borrowed<Widget>(gtk4.symbols.gtk_window_get_titlebar(this.ptr));
+  },
+  getTransientFor(this: GObject): Window | null {
+    return borrowed<Window>(
+      gtk4.symbols.gtk_window_get_transient_for(this.ptr),
+    );
+  },
+  hasGroup(this: GObject): boolean {
+    return gtk4.symbols.gtk_window_has_group(this.ptr);
+  },
+  isFullscreen(this: GObject): boolean {
+    return gtk4.symbols.gtk_window_is_fullscreen(this.ptr);
+  },
+  isMaximized(this: GObject): boolean {
+    return gtk4.symbols.gtk_window_is_maximized(this.ptr);
+  },
+  isSuspended(this: GObject): boolean {
+    return (gtk4.symbols.gtk_window_is_suspended ??
+      missing("gtk_window_is_suspended", "4.12"))(this.ptr);
+  },
+  minimize(this: GObject): void {
+    gtk4.symbols.gtk_window_minimize(this.ptr);
+  },
+  setDefaultWidget(this: GObject, defaultWidget: Widget | null): void {
+    gtk4.symbols.gtk_window_set_default_widget(
+      this.ptr,
+      defaultWidget?.ptr ?? null,
+    );
+  },
+  setDeletable(this: GObject, setting: boolean): void {
+    gtk4.symbols.gtk_window_set_deletable(this.ptr, setting);
+  },
+  setDestroyWithParent(this: GObject, setting: boolean): void {
+    gtk4.symbols.gtk_window_set_destroy_with_parent(this.ptr, setting);
+  },
+  setDisplay(this: GObject, display: Display): void {
+    gtk4.symbols.gtk_window_set_display(this.ptr, display.ptr);
+  },
+  setFocus(this: GObject, focus: Widget | null): void {
+    gtk4.symbols.gtk_window_set_focus(this.ptr, focus?.ptr ?? null);
+  },
+  setFocusVisible(this: GObject, setting: boolean): void {
+    gtk4.symbols.gtk_window_set_focus_visible(this.ptr, setting);
+  },
+  setGravity(this: GObject, gravity: WindowGravity): void {
+    (gtk4.symbols.gtk_window_set_gravity ??
+      missing("gtk_window_set_gravity", "4.20"))(this.ptr, gravity);
+  },
+  setHandleMenubarAccel(this: GObject, handleMenubarAccel: boolean): void {
+    (gtk4.symbols.gtk_window_set_handle_menubar_accel ??
+      missing("gtk_window_set_handle_menubar_accel", "4.2"))(
+        this.ptr,
+        handleMenubarAccel,
+      );
+  },
+  setIconName(this: GObject, name: string | null): void {
+    gtk4.symbols.gtk_window_set_icon_name(this.ptr, cstrOrNull(name));
+  },
+  setMnemonicsVisible(this: GObject, setting: boolean): void {
+    gtk4.symbols.gtk_window_set_mnemonics_visible(this.ptr, setting);
+  },
+  setStartupId(this: GObject, startupId: string): void {
+    gtk4.symbols.gtk_window_set_startup_id(this.ptr, cstr(startupId));
+  },
+  unfullscreen(this: GObject): void {
+    gtk4.symbols.gtk_window_unfullscreen(this.ptr);
+  },
+  unmaximize(this: GObject): void {
+    gtk4.symbols.gtk_window_unmaximize(this.ptr);
+  },
+  unminimize(this: GObject): void {
+    gtk4.symbols.gtk_window_unminimize(this.ptr);
+  },
+  onActivateDefault(this: GObject, callback: () => void): number {
+    return connectSignal(this, "activate-default", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onActivateFocus(this: GObject, callback: () => void): number {
+    return connectSignal(this, "activate-focus", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onForceClose(this: GObject, callback: () => void): number {
+    return connectSignal(this, "force-close", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
 // Not generated (unsupported shapes):
+// - Application.set_accels_for_action: arrays and varargs
+// - Builder.add_from_file: GError
+// - Builder.add_from_string: GError
+// - CssProvider.parsing-error: record CssSection
+// - DrawingArea.set_draw_func: unknown type cairo.Context
+// - DropTarget.accept: signal with a result
+// - DropTarget.drop: signal with a result
+// - DropTarget.enter: signal with a result
+// - DropTarget.motion: signal with a result
+// - EventControllerKey.key-pressed: signal with a result
+// - EventControllerKey.modifiers: signal with a result
+// - FileDialog.open: callback scope async
+// - FileDialog.open_finish: GError
+// - FileDialog.select_folder: callback scope async
+// - FileDialog.select_folder_finish: GError
+// - GestureClick.unpaired-release: record Gdk.EventSequence
 // - Label.activate-link: signal with a result
+// - MenuButton.get_direction: same name as Gtk.Widget.get_direction
+// - MenuButton.set_direction: same name as Gtk.Widget.set_direction
+// - Overlay.get-child-position: signal with a result
+// - ScrolledWindow.scroll-child: signal with a result
+// - StringList.take: string ownership transfer
+// - Switch.state-set: signal with a result
+// - TextBuffer.apply-tag: record TextIter
+// - TextBuffer.apply_tag_by_name: record TextIter
+// - TextBuffer.create_mark: record TextIter
+// - TextBuffer.delete-range: record TextIter
+// - TextBuffer.delete: record TextIter
+// - TextBuffer.get_bounds: out parameter
+// - TextBuffer.get_end_iter: out parameter
+// - TextBuffer.get_iter_at_line: out parameter
+// - TextBuffer.get_iter_at_offset: out parameter
+// - TextBuffer.get_start_iter: out parameter
+// - TextBuffer.get_text: record TextIter
+// - TextBuffer.insert-child-anchor: record TextIter
+// - TextBuffer.insert-paintable: record TextIter
+// - TextBuffer.insert-text: record TextIter
+// - TextBuffer.insert: record TextIter
+// - TextBuffer.mark-set: record TextIter
+// - TextBuffer.remove-tag: record TextIter
+// - TextBuffer.remove_all_tags: record TextIter
+// - TextBuffer.remove_tag_by_name: record TextIter
+// - TextView.extend-selection: signal with a result
+// - TextView.scroll_to_iter: record TextIter
+// - Widget.add_controller: object ownership transfer
+// - Widget.compute_bounds: out parameter
+// - Widget.keynav-failed: signal with a result
+// - Widget.mnemonic-activate: signal with a result
+// - Widget.query-tooltip: signal with a result
+// - Window.close-request: signal with a result
+// - Window.enable-debugging: signal with a result

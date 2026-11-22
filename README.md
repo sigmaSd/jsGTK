@@ -535,41 +535,37 @@ loop of Deno, Node or Bun
 
 ### Adding New Widgets
 
-1. Add FFI symbol definitions in `src/low/gtk4.ts` (or appropriate low-level
-   module)
-2. Create a high-level wrapper class in `src/high/gtk4.ts` extending `Widget` or
-   `GObject`
-3. Implement constructor and common methods
-4. Export the class
+Most methods are generated from GIR. A class gets every method and signal helper
+GIR describes once it has a hand-written wrapper and is listed under
+`highLevel.classes` in `tools/gir/bindings.json`:
 
-Example:
+1. Write the wrapper in `src/high/gtk4.ts` (or the module for its library): the
+   class, its constructor, and any method you want to shape by hand. List the
+   constructor's C symbol in `bindings.json`'s `symbols`.
+2. Add the class name to `highLevel.classes` for its library.
+3. Run `deno task gir:refresh <GIR dir>` to update the pinned GIR snapshots, or
+   `deno task gir` if they already contain the class.
+4. Merge the generated methods into the class, after it:
 
-```gtk/src/low/gtk4.ts
-// 1. Add FFI binding in src/low/gtk4.ts
-export const gtk4 = Deno.dlopen(LIB_PATHS.gtk4, {
-  // ... existing symbols ...
-  gtk_my_widget_new: { parameters: [], result: "pointer" },
-  gtk_my_widget_set_text: { parameters: ["pointer", "buffer"], result: "void" },
-});
-```
-
-```gtk/src/high/gtk4.ts
-// 2. Create wrapper class in src/high/gtk4.ts
-import { gtk4 } from "../low/gtk4.ts";
-import { cstr } from "../low/utils.ts";
-
+```typescript
 export class MyWidget extends Widget {
   constructor() {
-    const ptr = gtk4.symbols.gtk_my_widget_new();
-    super(ptr);
-  }
-
-  setText(text: string): void {
-    const textCStr = cstr(text);
-    gtk4.symbols.gtk_my_widget_set_text(this.ptr, textCStr);
+    super(gtk4.symbols.gtk_my_widget_new());
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface MyWidget extends MyWidgetMethods {}
+applyGenerated(MyWidget, myWidgetMethods, "GtkMyWidget");
 ```
+
+Generated code lives in `src/high/generated/`. It turns nullable strings into
+`string | null`, enums into typed constants, borrowed objects into the wrapper
+already in use (or one of the object's real class), and notified callbacks into
+callbacks freed when GTK releases them. Methods a class or its hand-written
+ancestors define are left out, so hand-written code always wins. Methods the
+generator can't express yet (out parameters, arrays, `GError`, async callbacks)
+are listed at the end of each generated file.
 
 ### Regenerating the native bindings
 

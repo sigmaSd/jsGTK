@@ -14,6 +14,8 @@ export type Namespace = { name: string; node: Element };
 
 /** Per-class generator settings from bindings.json. */
 export type ClassConfig = {
+  /** The hand-written class, when its name differs from the GIR class. */
+  wrapper?: string;
   /** Methods or signals to leave out, by GIR name, with the reason. */
   skip?: Record<string, string>;
 };
@@ -42,6 +44,113 @@ const WRAPPER_MODULES: Record<string, string[]> = {
   Gio: ["gio.ts"],
   GObject: ["gobject.ts"],
 };
+
+/** Hand-written classes named differently from their GIR class. */
+const ALIASES: Record<string, string> = {
+  "adw.ts:AdwWindow": "Adw.Window",
+  "adw.ts:AdwApplicationWindow": "Adw.ApplicationWindow",
+  "gtk4.ts:GdkAppLaunchContext": "Gdk.AppLaunchContext",
+  "gobject.ts:GObject": "GObject.Object",
+};
+
+/** The GIR class each hand-written class wraps, by `module:Name` key. */
+export function girClasses(
+  namespaces: Map<string, Namespace>,
+  handWritten: HandWritten,
+): Map<string, string> {
+  const result = new Map<string, string>();
+  for (const key of handWritten.keys()) {
+    const [module, name] = key.split(":");
+    const alias = ALIASES[key];
+    if (alias) {
+      result.set(key, alias);
+      continue;
+    }
+    for (const [ns, modules] of Object.entries(WRAPPER_MODULES)) {
+      if (!modules.includes(module) || result.has(key)) continue;
+      const node = namespaces.get(ns) &&
+        children(namespaces.get(ns)!.node).find((entry) =>
+          entry.localName === "class" && entry.getAttribute("name") === name
+        );
+      if (node) result.set(key, `${ns}.${name}`);
+    }
+  }
+  return result;
+}
+
+/** A GIR class and its ancestors, qualified, e.g. `Gtk.Label`, `Gtk.Widget`. */
+export function girAncestors(
+  namespaces: Map<string, Namespace>,
+  qualified: string,
+): string[] {
+  const chain: string[] = [];
+  let current: string | null = qualified;
+  while (current && !chain.includes(current)) {
+    const [ns, name]: string[] = current.split(".", 2);
+    const owner: Namespace | undefined = namespaces.get(ns);
+    const node: Element | undefined = owner &&
+      children(owner.node).find((entry) =>
+        entry.localName === "class" && entry.getAttribute("name") === name
+      );
+    chain.push(current);
+    const parent: string | null | undefined = node?.getAttribute("parent");
+    current = parent
+      ? (parent.includes(".") ? parent : `${ns}.${parent}`)
+      : null;
+  }
+  return chain;
+}
+
+/** The hand-written key of a class's parent. */
+function parentKey(handWritten: HandWritten, key: string): string | null {
+  const entry = handWritten.get(key)!;
+  const parent = entry.parent;
+  if (!parent) return null;
+  if (handWritten.has(`${entry.module}:${parent}`)) {
+    return `${entry.module}:${parent}`;
+  }
+  return [...handWritten.keys()].find((k) => k.endsWith(`:${parent}`)) ??
+    null;
+}
+
+/**
+ * Generated methods are added to a hand-written class and inherited by its
+ * hand-written subclasses, so each of those must really derive from it in
+ * GIR. Throws listing the subclasses that don't.
+ */
+export function checkHierarchy(
+  namespaces: Map<string, Namespace>,
+  generated: Set<string>,
+  handWritten: HandWritten,
+): void {
+  const gir = girClasses(namespaces, handWritten);
+  const problems: string[] = [];
+  for (const key of handWritten.keys()) {
+    const own = gir.get(key);
+    if (!own) continue;
+    const ancestors = girAncestors(namespaces, own);
+    for (
+      let parent = parentKey(handWritten, key);
+      parent;
+      parent = parentKey(handWritten, parent)
+    ) {
+      const parentGir = gir.get(parent);
+      if (
+        parentGir && generated.has(parentGir) && !ancestors.includes(parentGir)
+      ) {
+        problems.push(
+          `${key} (${own}) inherits generated ${parentGir} methods from ${parent}, but isn't a ${parentGir}`,
+        );
+      }
+    }
+  }
+  if (problems.length) {
+    throw new Error(
+      "Generated methods would reach classes they don't apply to:\n" +
+        problems.join("\n"),
+    );
+  }
+}
 
 function children(node: Element): Element[] {
   return Array.from(node.childNodes)
@@ -99,11 +208,18 @@ class Generator {
   runtime = new Set<string>();
   skipped: string[] = [];
 
+  /** Hand-written class key by the GIR class it wraps. */
+  readonly byGir = new Map<string, string>();
+
   constructor(
     readonly namespaces: Map<string, Namespace>,
     readonly profile: ClassProfile,
     readonly handWritten: HandWritten,
-  ) {}
+  ) {
+    for (const [key, gir] of girClasses(namespaces, handWritten)) {
+      if (!this.byGir.has(gir)) this.byGir.set(gir, key);
+    }
+  }
 
   resolve(typeName: string, context: string): Resolved | null {
     const [ns, name] = typeName.includes(".")
@@ -119,15 +235,18 @@ class Generator {
 
   /** The TS class wrapping a GIR class, imported as a type, or GObject. */
   wrapperType(resolved: Resolved): string {
-    const name = resolved.namespace === "GObject" && resolved.name === "Object"
-      ? "GObject"
-      : resolved.name;
-    for (const module of WRAPPER_MODULES[resolved.namespace] ?? []) {
-      const entry = this.handWritten.get(`${module}:${name}`);
-      if (entry) {
-        this.import(`../${module}`, name);
-        return name;
-      }
+    // The nearest ancestor with a hand-written wrapper.
+    for (
+      const gir of girAncestors(
+        this.namespaces,
+        `${resolved.namespace}.${resolved.name}`,
+      )
+    ) {
+      const key = this.byGir.get(gir);
+      if (!key) continue;
+      const [module, name] = key.split(":");
+      this.import(`../${module}`, name);
+      return name;
     }
     this.import("../gobject.ts", "GObject");
     return "GObject";
@@ -171,12 +290,24 @@ class Generator {
       };
     }
     if (name === "utf8" || name === "filename") {
+      if (direction === "in" && transfer !== "none") {
+        throw new Unsupported("string ownership transfer");
+      }
+      // Non-const char* parameters are typed as pointers in the FFI table.
+      const constant = type.getAttributeNS(C, "type")?.startsWith("const ");
+      const wrap = (code: string) =>
+        constant ? code : `Deno.UnsafePointer.of(${code})`;
       this.runtime.add("cstrOrNull");
       const ts = nullable ? "string | null" : "string";
       return {
         ts,
         abi: "pointer",
-        toNative: (v: string) => nullable ? `cstrOrNull(${v})` : `cstr(${v})`,
+        toNative: (v: string) =>
+          nullable
+            ? constant
+              ? `cstrOrNull(${v})`
+              : `((s) => s === null ? null : Deno.UnsafePointer.of(cstr(s)))(${v})`
+            : wrap(`cstr(${v})`),
         fromNative: (v: string) => {
           if (direction === "out" && transfer === "full") {
             this.runtime.add("takeString");
@@ -484,26 +615,19 @@ class Generator {
   /** Every method name a hand-written class and its ancestors define. */
   handWrittenNames(className: string): Set<string> {
     const names = new Set<string>();
-    let key: string | null = null;
-    for (const module of WRAPPER_MODULES[this.profile.namespace] ?? []) {
-      if (this.handWritten.has(`${module}:${className}`)) {
-        key = `${module}:${className}`;
-        break;
-      }
+    let key = this.byGir.get(`${this.profile.namespace}.${className}`) ?? null;
+    if (!key) {
+      throw new Error(
+        `${this.profile.namespace}.${className}: no hand-written class to add generated methods to`,
+      );
     }
     const seen = new Set<string>();
     while (key && !seen.has(key)) {
       seen.add(key);
-      const entry = this.handWritten.get(key)!;
-      for (const method of entry.methods) names.add(method);
-      const parent: string | null = entry.parent;
-      key = parent
-        ? [...this.handWritten.keys()].find((k) =>
-          k === `${entry.module}:${parent}`
-        ) ?? [...this.handWritten.keys()].find((k) =>
-          k.endsWith(`:${parent}`)
-        ) ?? null
-        : null;
+      for (const method of this.handWritten.get(key)!.methods) {
+        names.add(method);
+      }
+      key = parentKey(this.handWritten, key);
     }
     return names;
   }
@@ -601,6 +725,34 @@ export function generateClasses(
   for (const [className, config] of Object.entries(profile.classes)) {
     const node = classNode(namespace, className);
     const taken = generator.handWrittenNames(className);
+    // Names GIR ancestors already use: a subclass method with the same name
+    // and another signature can't be typed, so it is left out.
+    const inherited = new Map<string, string>();
+    for (
+      const ancestor of girAncestors(
+        namespaces,
+        `${profile.namespace}.${className}`,
+      ).slice(1)
+    ) {
+      const [ns, name] = ancestor.split(".", 2);
+      const owner = namespaces.get(ns);
+      const ancestorNode = owner &&
+        children(owner.node).find((entry) =>
+          entry.localName === "class" && entry.getAttribute("name") === name
+        );
+      for (const entry of ancestorNode ? children(ancestorNode) : []) {
+        const memberName = entry.getAttribute("name");
+        if (!memberName) continue;
+        if (entry.localName === "method") {
+          inherited.set(camel(memberName), `${ancestor}.${memberName}`);
+        } else if (entry.localName === "signal") {
+          inherited.set(
+            "on" + pascal(memberName),
+            `${ancestor}::${memberName}`,
+          );
+        }
+      }
+    }
     const members = [];
     for (const member of children(node)) {
       const isSignal = member.namespaceURI === GLIB &&
@@ -613,6 +765,13 @@ export function generateClasses(
           ? generator.signal(member, className)
           : generator.method(member, className);
         if (!generated || taken.has(generated.name)) continue;
+        const shadowed = inherited.get(generated.name);
+        if (shadowed) {
+          generator.skipped.push(
+            `${className}.${girName}: same name as ${shadowed}`,
+          );
+          continue;
+        }
         members.push(generated);
       } catch (error) {
         if (!(error instanceof Unsupported)) throw error;
@@ -669,9 +828,11 @@ export function generateClasses(
         : []),
       `export const ${name} = {`,
       ...members.map((member) =>
-        `  ${member.getAttribute("name")!.toUpperCase()}: ${
-          member.getAttribute("value")
-        },`
+        `  ${
+          ((key) => /^[A-Za-z_$]/.test(key) ? key : JSON.stringify(key))(
+            member.getAttribute("name")!.toUpperCase(),
+          )
+        }: ${member.getAttribute("value")},`
       ),
       "} as const;",
       `export type ${name} = (typeof ${name})[keyof typeof ${name}];`,

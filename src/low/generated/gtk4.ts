@@ -813,6 +813,686 @@ export const gtk4Symbols = {
     result: "gboolean",
   },
   gtk_button_set_child: { parameters: ["pointer", "pointer"], result: "void" },
+  gtk_adjustment_clamp_page: {
+    parameters: ["pointer", "f64", "f64"],
+    result: "void",
+  },
+  gtk_adjustment_configure: {
+    parameters: ["pointer", "f64", "f64", "f64", "f64", "f64", "f64"],
+    result: "void",
+  },
+  gtk_adjustment_get_lower: { parameters: ["pointer"], result: "f64" },
+  gtk_adjustment_get_minimum_increment: {
+    parameters: ["pointer"],
+    result: "f64",
+  },
+  gtk_adjustment_get_page_increment: { parameters: ["pointer"], result: "f64" },
+  gtk_adjustment_get_step_increment: { parameters: ["pointer"], result: "f64" },
+  gtk_adjustment_set_lower: { parameters: ["pointer", "f64"], result: "void" },
+  gtk_adjustment_set_page_increment: {
+    parameters: ["pointer", "f64"],
+    result: "void",
+  },
+  gtk_adjustment_set_page_size: {
+    parameters: ["pointer", "f64"],
+    result: "void",
+  },
+  gtk_adjustment_set_step_increment: {
+    parameters: ["pointer", "f64"],
+    result: "void",
+  },
+  gtk_adjustment_set_upper: { parameters: ["pointer", "f64"], result: "void" },
+  // Since 4.10.
+  gtk_alert_dialog_get_cancel_button: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  // Since 4.10.
+  gtk_alert_dialog_get_default_button: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  // Since 4.10.
+  gtk_alert_dialog_get_detail: { parameters: ["pointer"], result: "pointer" },
+  // Since 4.10.
+  gtk_alert_dialog_get_message: { parameters: ["pointer"], result: "pointer" },
+  // Since 4.10.
+  gtk_alert_dialog_get_modal: { parameters: ["pointer"], result: "gboolean" },
+  // Since 4.10.
+  gtk_alert_dialog_set_cancel_button: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  // Since 4.10.
+  gtk_alert_dialog_set_default_button: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  // Since 4.10.
+  gtk_alert_dialog_set_detail: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  // Since 4.10.
+  gtk_alert_dialog_set_message: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  // Since 4.10.
+  gtk_alert_dialog_set_modal: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Since 4.10.
+  gtk_alert_dialog_show: { parameters: ["pointer", "pointer"], result: "void" },
+  gtk_application_add_window: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_application_get_menu_by_id: {
+    parameters: ["pointer", "buffer"],
+    result: "pointer",
+  },
+  gtk_application_get_menubar: { parameters: ["pointer"], result: "pointer" },
+  gtk_application_get_window_by_id: {
+    parameters: ["pointer", "u32"],
+    result: "pointer",
+  },
+  gtk_application_remove_window: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_application_set_menubar: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_application_window_get_id: { parameters: ["pointer"], result: "u32" },
+  gtk_application_window_get_show_menubar: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_application_window_set_show_menubar: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Since 4.12.
+  gtk_box_get_baseline_child: { parameters: ["pointer"], result: "i32" },
+  gtk_box_get_baseline_position: { parameters: ["pointer"], result: "i32" },
+  gtk_box_get_homogeneous: { parameters: ["pointer"], result: "gboolean" },
+  gtk_box_get_spacing: { parameters: ["pointer"], result: "i32" },
+  gtk_box_insert_child_after: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "void",
+  },
+  gtk_box_prepend: { parameters: ["pointer", "pointer"], result: "void" },
+  gtk_box_reorder_child_after: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "void",
+  },
+  // Since 4.12.
+  gtk_box_set_baseline_child: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_box_set_baseline_position: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_box_set_homogeneous: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_builder_expose_object: {
+    parameters: ["pointer", "buffer", "pointer"],
+    result: "void",
+  },
+  gtk_builder_get_current_object: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_builder_get_scope: { parameters: ["pointer"], result: "pointer" },
+  gtk_builder_get_translation_domain: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_builder_set_current_object: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_builder_set_scope: { parameters: ["pointer", "pointer"], result: "void" },
+  gtk_builder_set_translation_domain: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  // Since 4.12.
+  gtk_button_get_can_shrink: { parameters: ["pointer"], result: "gboolean" },
+  gtk_button_get_child: { parameters: ["pointer"], result: "pointer" },
+  gtk_button_get_has_frame: { parameters: ["pointer"], result: "gboolean" },
+  gtk_button_get_icon_name: { parameters: ["pointer"], result: "pointer" },
+  gtk_button_get_use_underline: { parameters: ["pointer"], result: "gboolean" },
+  // Since 4.12.
+  gtk_button_set_can_shrink: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_button_set_has_frame: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_button_set_use_underline: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Since 4.8.
+  gtk_check_button_get_child: { parameters: ["pointer"], result: "pointer" },
+  gtk_check_button_get_use_underline: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  // Since 4.8.
+  gtk_check_button_set_child: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_check_button_set_use_underline: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_column_view_get_columns: { parameters: ["pointer"], result: "pointer" },
+  gtk_column_view_get_enable_rubberband: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  // Since 4.12.
+  gtk_column_view_get_header_factory: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_column_view_get_model: { parameters: ["pointer"], result: "pointer" },
+  gtk_column_view_get_reorderable: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  // Since 4.12.
+  gtk_column_view_get_row_factory: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_column_view_get_show_column_separators: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_column_view_get_show_row_separators: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_column_view_get_single_click_activate: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_column_view_get_sorter: { parameters: ["pointer"], result: "pointer" },
+  // Since 4.12.
+  gtk_column_view_get_tab_behavior: { parameters: ["pointer"], result: "i32" },
+  gtk_column_view_insert_column: {
+    parameters: ["pointer", "u32", "pointer"],
+    result: "void",
+  },
+  gtk_column_view_remove_column: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_column_view_set_enable_rubberband: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Since 4.12.
+  gtk_column_view_set_header_factory: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_column_view_set_reorderable: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Since 4.12.
+  gtk_column_view_set_row_factory: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_column_view_set_show_column_separators: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_column_view_set_show_row_separators: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_column_view_set_single_click_activate: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Since 4.12.
+  gtk_column_view_set_tab_behavior: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_column_view_sort_by_column: {
+    parameters: ["pointer", "pointer", "i32"],
+    result: "void",
+  },
+  gtk_column_view_column_get_column_view: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_column_view_column_get_expand: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_column_view_column_get_factory: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_column_view_column_get_fixed_width: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  gtk_column_view_column_get_header_menu: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  // Since 4.10.
+  gtk_column_view_column_get_id: { parameters: ["pointer"], result: "pointer" },
+  gtk_column_view_column_get_resizable: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_column_view_column_get_sorter: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_column_view_column_get_title: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_column_view_column_get_visible: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_column_view_column_set_fixed_width: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_column_view_column_set_header_menu: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  // Since 4.10.
+  gtk_column_view_column_set_id: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_column_view_column_set_resizable: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_column_view_column_set_sorter: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_column_view_column_set_visible: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_css_provider_load_from_file: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_css_provider_load_from_path: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_css_provider_load_from_resource: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  // Since 4.12.
+  gtk_css_provider_load_from_string: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  // Return transfer full.
+  gtk_css_provider_to_string: { parameters: ["pointer"], result: "pointer" },
+  gtk_drawing_area_get_content_height: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  gtk_drawing_area_get_content_width: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  gtk_drop_down_get_enable_search: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_drop_down_get_factory: { parameters: ["pointer"], result: "pointer" },
+  // Since 4.12.
+  gtk_drop_down_get_header_factory: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_drop_down_get_list_factory: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_drop_down_get_model: { parameters: ["pointer"], result: "pointer" },
+  // Since 4.12.
+  gtk_drop_down_get_search_match_mode: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  gtk_drop_down_get_selected_item: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  // Since 4.6.
+  gtk_drop_down_get_show_arrow: { parameters: ["pointer"], result: "gboolean" },
+  gtk_drop_down_set_enable_search: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_drop_down_set_factory: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  // Since 4.12.
+  gtk_drop_down_set_header_factory: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_drop_down_set_list_factory: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_drop_down_set_model: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  // Since 4.12.
+  gtk_drop_down_set_search_match_mode: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  // Since 4.6.
+  gtk_drop_down_set_show_arrow: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_drop_target_get_actions: { parameters: ["pointer"], result: "i32" },
+  // Since 4.4.
+  gtk_drop_target_get_current_drop: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_drop_target_get_preload: { parameters: ["pointer"], result: "gboolean" },
+  gtk_drop_target_reject: { parameters: ["pointer"], result: "void" },
+  gtk_drop_target_set_actions: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_drop_target_set_preload: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_event_controller_get_current_event_device: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_event_controller_get_current_event_state: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  gtk_event_controller_get_current_event_time: {
+    parameters: ["pointer"],
+    result: "u32",
+  },
+  gtk_event_controller_get_name: { parameters: ["pointer"], result: "pointer" },
+  gtk_event_controller_get_propagation_limit: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  gtk_event_controller_get_propagation_phase: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  gtk_event_controller_get_widget: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_event_controller_reset: { parameters: ["pointer"], result: "void" },
+  gtk_event_controller_set_name: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_event_controller_set_propagation_limit: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_event_controller_set_propagation_phase: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  // Since 4.8.
+  gtk_event_controller_set_static_name: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_event_controller_key_get_group: {
+    parameters: ["pointer"],
+    result: "u32",
+  },
+  gtk_event_controller_key_get_im_context: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_event_controller_key_set_im_context: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_event_controller_motion_is_pointer: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  // Since 4.10.
+  gtk_file_dialog_get_accept_label: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  // Since 4.10.
+  gtk_file_dialog_get_default_filter: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  // Since 4.10.
+  gtk_file_dialog_get_filters: { parameters: ["pointer"], result: "pointer" },
+  // Since 4.10.
+  gtk_file_dialog_get_initial_file: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  // Since 4.10.
+  gtk_file_dialog_get_initial_folder: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  // Since 4.10.
+  gtk_file_dialog_get_initial_name: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  // Since 4.10.
+  gtk_file_dialog_get_modal: { parameters: ["pointer"], result: "gboolean" },
+  // Since 4.10.
+  gtk_file_dialog_get_title: { parameters: ["pointer"], result: "pointer" },
+  // Since 4.10.
+  gtk_file_dialog_set_accept_label: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  // Since 4.10.
+  gtk_file_dialog_set_initial_file: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  // Since 4.10.
+  gtk_file_dialog_set_initial_folder: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  // Since 4.10.
+  gtk_file_dialog_set_initial_name: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  // Since 4.10.
+  gtk_file_dialog_set_modal: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Since 4.4.
+  gtk_file_filter_add_suffix: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_file_filter_get_name: { parameters: ["pointer"], result: "pointer" },
+  gtk_frame_get_child: { parameters: ["pointer"], result: "pointer" },
+  gtk_frame_get_label: { parameters: ["pointer"], result: "pointer" },
+  gtk_frame_get_label_align: { parameters: ["pointer"], result: "f32" },
+  gtk_frame_get_label_widget: { parameters: ["pointer"], result: "pointer" },
+  gtk_frame_set_label: { parameters: ["pointer", "buffer"], result: "void" },
+  gtk_frame_set_label_align: { parameters: ["pointer", "f32"], result: "void" },
+  gtk_frame_set_label_widget: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_grid_attach_next_to: {
+    parameters: ["pointer", "pointer", "pointer", "i32", "i32", "i32"],
+    result: "void",
+  },
+  gtk_grid_get_baseline_row: { parameters: ["pointer"], result: "i32" },
+  gtk_grid_get_child_at: {
+    parameters: ["pointer", "i32", "i32"],
+    result: "pointer",
+  },
+  gtk_grid_get_column_homogeneous: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_grid_get_column_spacing: { parameters: ["pointer"], result: "u32" },
+  gtk_grid_get_row_baseline_position: {
+    parameters: ["pointer", "i32"],
+    result: "i32",
+  },
+  gtk_grid_get_row_homogeneous: { parameters: ["pointer"], result: "gboolean" },
+  gtk_grid_get_row_spacing: { parameters: ["pointer"], result: "u32" },
+  gtk_grid_insert_column: { parameters: ["pointer", "i32"], result: "void" },
+  gtk_grid_insert_next_to: {
+    parameters: ["pointer", "pointer", "i32"],
+    result: "void",
+  },
+  gtk_grid_insert_row: { parameters: ["pointer", "i32"], result: "void" },
+  gtk_grid_remove: { parameters: ["pointer", "pointer"], result: "void" },
+  gtk_grid_remove_column: { parameters: ["pointer", "i32"], result: "void" },
+  gtk_grid_remove_row: { parameters: ["pointer", "i32"], result: "void" },
+  gtk_grid_set_baseline_row: { parameters: ["pointer", "i32"], result: "void" },
+  gtk_grid_set_column_homogeneous: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_grid_set_row_baseline_position: {
+    parameters: ["pointer", "i32", "i32"],
+    result: "void",
+  },
+  gtk_grid_set_row_homogeneous: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_header_bar_get_decoration_layout: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_header_bar_get_show_title_buttons: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_header_bar_get_title_widget: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  // Since 4.18.
+  gtk_header_bar_get_use_native_controls: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  gtk_header_bar_remove: { parameters: ["pointer", "pointer"], result: "void" },
+  gtk_header_bar_set_decoration_layout: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_header_bar_set_show_title_buttons: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_header_bar_set_title_widget: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  // Since 4.18.
+  gtk_header_bar_set_use_native_controls: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+    optional: true,
+  },
+  gtk_icon_theme_add_resource_path: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_icon_theme_add_search_path: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_icon_theme_get_display: { parameters: ["pointer"], result: "pointer" },
+  // Return transfer full.
+  gtk_icon_theme_get_theme_name: { parameters: ["pointer"], result: "pointer" },
+  // Since 4.2.
+  gtk_icon_theme_has_gicon: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+  },
+  gtk_icon_theme_set_theme_name: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_image_clear: { parameters: ["pointer"], result: "void" },
+  gtk_image_get_gicon: { parameters: ["pointer"], result: "pointer" },
+  gtk_image_get_icon_name: { parameters: ["pointer"], result: "pointer" },
+  gtk_image_get_icon_size: { parameters: ["pointer"], result: "i32" },
+  gtk_image_get_paintable: { parameters: ["pointer"], result: "pointer" },
+  gtk_image_get_pixel_size: { parameters: ["pointer"], result: "i32" },
+  gtk_image_get_storage_type: { parameters: ["pointer"], result: "i32" },
+  gtk_image_set_from_gicon: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_image_set_from_paintable: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_image_set_from_resource: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_image_set_icon_size: { parameters: ["pointer", "i32"], result: "void" },
   gtk_label_get_current_uri: { parameters: ["pointer"], result: "pointer" },
   gtk_label_get_ellipsize: { parameters: ["pointer"], result: "i32" },
   gtk_label_get_extra_menu: { parameters: ["pointer"], result: "pointer" },
@@ -879,6 +1559,24 @@ export const gtk4Symbols = {
   },
   gtk_label_set_wrap_mode: { parameters: ["pointer", "i32"], result: "void" },
   gtk_label_set_yalign: { parameters: ["pointer", "f32"], result: "void" },
+  gtk_level_bar_add_offset_value: {
+    parameters: ["pointer", "buffer", "f64"],
+    result: "void",
+  },
+  gtk_level_bar_get_inverted: { parameters: ["pointer"], result: "gboolean" },
+  gtk_level_bar_get_max_value: { parameters: ["pointer"], result: "f64" },
+  gtk_level_bar_get_min_value: { parameters: ["pointer"], result: "f64" },
+  gtk_level_bar_get_mode: { parameters: ["pointer"], result: "i32" },
+  gtk_level_bar_get_value: { parameters: ["pointer"], result: "f64" },
+  gtk_level_bar_remove_offset_value: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_level_bar_set_inverted: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_level_bar_set_mode: { parameters: ["pointer", "i32"], result: "void" },
   gtk_list_box_drag_highlight_row: {
     parameters: ["pointer", "pointer"],
     result: "void",
@@ -946,6 +1644,1052 @@ export const gtk4Symbols = {
     parameters: ["pointer", "pointer"],
     result: "void",
   },
+  gtk_list_box_row_get_activatable: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_list_box_row_get_header: { parameters: ["pointer"], result: "pointer" },
+  gtk_list_box_row_get_selectable: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_list_box_row_is_selected: { parameters: ["pointer"], result: "gboolean" },
+  gtk_list_box_row_set_header: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_list_box_row_set_selectable: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Since 4.12.
+  gtk_list_item_get_accessible_description: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  // Since 4.12.
+  gtk_list_item_get_accessible_label: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_list_item_get_activatable: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  // Since 4.12.
+  gtk_list_item_get_focusable: { parameters: ["pointer"], result: "gboolean" },
+  gtk_list_item_get_position: { parameters: ["pointer"], result: "u32" },
+  gtk_list_item_get_selectable: { parameters: ["pointer"], result: "gboolean" },
+  gtk_list_item_get_selected: { parameters: ["pointer"], result: "gboolean" },
+  // Since 4.12.
+  gtk_list_item_set_accessible_description: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  // Since 4.12.
+  gtk_list_item_set_accessible_label: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_list_item_set_activatable: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Since 4.12.
+  gtk_list_item_set_focusable: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_list_item_set_selectable: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Since 4.10.
+  gtk_menu_button_get_active: { parameters: ["pointer"], result: "gboolean" },
+  // Since 4.4.
+  gtk_menu_button_get_always_show_arrow: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  // Since 4.12.
+  gtk_menu_button_get_can_shrink: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  // Since 4.6.
+  gtk_menu_button_get_child: { parameters: ["pointer"], result: "pointer" },
+  gtk_menu_button_get_direction: { parameters: ["pointer"], result: "i32" },
+  gtk_menu_button_get_has_frame: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_menu_button_get_icon_name: { parameters: ["pointer"], result: "pointer" },
+  gtk_menu_button_get_menu_model: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_menu_button_get_popover: { parameters: ["pointer"], result: "pointer" },
+  // Since 4.4.
+  gtk_menu_button_get_primary: { parameters: ["pointer"], result: "gboolean" },
+  gtk_menu_button_get_use_underline: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_menu_button_popup: { parameters: ["pointer"], result: "void" },
+  // Since 4.10.
+  gtk_menu_button_set_active: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Since 4.12.
+  gtk_menu_button_set_can_shrink: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // func has notified scope. destroy_notify has async scope.
+  gtk_menu_button_set_create_popup_func: {
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+  },
+  gtk_menu_button_set_direction: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_menu_button_set_has_frame: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_menu_button_set_menu_model: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_menu_button_set_use_underline: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_overlay_get_child: { parameters: ["pointer"], result: "pointer" },
+  gtk_overlay_get_clip_overlay: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+  },
+  gtk_overlay_get_measure_overlay: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+  },
+  gtk_overlay_remove_overlay: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_overlay_set_clip_overlay: {
+    parameters: ["pointer", "pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_overlay_set_measure_overlay: {
+    parameters: ["pointer", "pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_picture_get_alternative_text: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_picture_get_can_shrink: { parameters: ["pointer"], result: "gboolean" },
+  // Since 4.8.
+  gtk_picture_get_content_fit: { parameters: ["pointer"], result: "i32" },
+  gtk_picture_get_file: { parameters: ["pointer"], result: "pointer" },
+  // Since 4.22.
+  gtk_picture_get_isolate_contents: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  gtk_picture_get_paintable: { parameters: ["pointer"], result: "pointer" },
+  gtk_picture_set_alternative_text: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  // Since 4.8.
+  gtk_picture_set_content_fit: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_picture_set_file: { parameters: ["pointer", "pointer"], result: "void" },
+  // Since 4.22.
+  gtk_picture_set_isolate_contents: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+    optional: true,
+  },
+  gtk_picture_set_paintable: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_picture_set_resource: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_popover_get_autohide: { parameters: ["pointer"], result: "gboolean" },
+  gtk_popover_get_cascade_popdown: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_popover_get_child: { parameters: ["pointer"], result: "pointer" },
+  gtk_popover_get_has_arrow: { parameters: ["pointer"], result: "gboolean" },
+  gtk_popover_get_mnemonics_visible: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_popover_get_position: { parameters: ["pointer"], result: "i32" },
+  gtk_popover_present: { parameters: ["pointer"], result: "void" },
+  gtk_popover_set_autohide: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_popover_set_cascade_popdown: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_popover_set_default_widget: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_popover_set_has_arrow: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_popover_set_mnemonics_visible: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_popover_set_offset: {
+    parameters: ["pointer", "i32", "i32"],
+    result: "void",
+  },
+  gtk_popover_set_position: { parameters: ["pointer", "i32"], result: "void" },
+  gtk_popover_menu_add_child: {
+    parameters: ["pointer", "pointer", "buffer"],
+    result: "gboolean",
+  },
+  // Since 4.14.
+  gtk_popover_menu_get_flags: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  gtk_popover_menu_get_menu_model: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_popover_menu_remove_child: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+  },
+  // Since 4.14.
+  gtk_popover_menu_set_flags: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_progress_bar_get_ellipsize: { parameters: ["pointer"], result: "i32" },
+  gtk_progress_bar_get_inverted: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_progress_bar_get_pulse_step: { parameters: ["pointer"], result: "f64" },
+  gtk_progress_bar_get_show_text: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_progress_bar_get_text: { parameters: ["pointer"], result: "pointer" },
+  gtk_progress_bar_set_ellipsize: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_progress_bar_set_inverted: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_progress_bar_set_pulse_step: {
+    parameters: ["pointer", "f64"],
+    result: "void",
+  },
+  gtk_revealer_get_child: { parameters: ["pointer"], result: "pointer" },
+  gtk_revealer_get_child_revealed: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_revealer_get_transition_duration: {
+    parameters: ["pointer"],
+    result: "u32",
+  },
+  gtk_revealer_get_transition_type: { parameters: ["pointer"], result: "i32" },
+  gtk_scale_add_mark: {
+    parameters: ["pointer", "f64", "i32", "buffer"],
+    result: "void",
+  },
+  gtk_scale_clear_marks: { parameters: ["pointer"], result: "void" },
+  gtk_scale_get_digits: { parameters: ["pointer"], result: "i32" },
+  gtk_scale_get_draw_value: { parameters: ["pointer"], result: "gboolean" },
+  gtk_scale_get_has_origin: { parameters: ["pointer"], result: "gboolean" },
+  gtk_scale_get_layout: { parameters: ["pointer"], result: "pointer" },
+  gtk_scale_get_value_pos: { parameters: ["pointer"], result: "i32" },
+  gtk_scale_set_has_origin: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_scale_set_value_pos: { parameters: ["pointer", "i32"], result: "void" },
+  gtk_scrolled_window_get_child: { parameters: ["pointer"], result: "pointer" },
+  gtk_scrolled_window_get_hadjustment: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_scrolled_window_get_has_frame: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_scrolled_window_get_hscrollbar: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_scrolled_window_get_kinetic_scrolling: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_scrolled_window_get_max_content_height: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  gtk_scrolled_window_get_max_content_width: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  gtk_scrolled_window_get_min_content_height: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  gtk_scrolled_window_get_min_content_width: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  gtk_scrolled_window_get_overlay_scrolling: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_scrolled_window_get_placement: { parameters: ["pointer"], result: "i32" },
+  gtk_scrolled_window_get_propagate_natural_height: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_scrolled_window_get_propagate_natural_width: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_scrolled_window_get_vscrollbar: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_scrolled_window_set_hadjustment: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_scrolled_window_set_has_frame: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_scrolled_window_set_kinetic_scrolling: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_scrolled_window_set_max_content_height: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_scrolled_window_set_max_content_width: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_scrolled_window_set_min_content_width: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_scrolled_window_set_overlay_scrolling: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_scrolled_window_set_placement: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_scrolled_window_set_propagate_natural_height: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_scrolled_window_set_propagate_natural_width: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_scrolled_window_set_vadjustment: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_scrolled_window_unset_placement: {
+    parameters: ["pointer"],
+    result: "void",
+  },
+  gtk_search_bar_get_child: { parameters: ["pointer"], result: "pointer" },
+  gtk_search_bar_get_key_capture_widget: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_search_bar_get_show_close_button: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_search_bar_set_show_close_button: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Since 4.14.
+  gtk_search_entry_get_input_hints: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  // Since 4.14.
+  gtk_search_entry_get_input_purpose: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  gtk_search_entry_get_key_capture_widget: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  // Since 4.10.
+  gtk_search_entry_get_placeholder_text: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  // Since 4.8.
+  gtk_search_entry_get_search_delay: { parameters: ["pointer"], result: "u32" },
+  // Since 4.14.
+  gtk_search_entry_set_input_hints: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.14.
+  gtk_search_entry_set_input_purpose: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_search_entry_set_key_capture_widget: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  // Since 4.10.
+  gtk_search_entry_set_placeholder_text: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  // Since 4.8.
+  gtk_search_entry_set_search_delay: {
+    parameters: ["pointer", "u32"],
+    result: "void",
+  },
+  gtk_single_selection_get_autoselect: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_single_selection_get_can_unselect: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_single_selection_get_model: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_single_selection_get_selected: { parameters: ["pointer"], result: "u32" },
+  gtk_single_selection_get_selected_item: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_single_selection_set_autoselect: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_single_selection_set_can_unselect: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_single_selection_set_model: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_single_selection_set_selected: {
+    parameters: ["pointer", "u32"],
+    result: "void",
+  },
+  gtk_size_group_get_mode: { parameters: ["pointer"], result: "i32" },
+  gtk_size_group_remove_widget: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_size_group_set_mode: { parameters: ["pointer", "i32"], result: "void" },
+  gtk_spinner_get_spinning: { parameters: ["pointer"], result: "gboolean" },
+  gtk_spinner_set_spinning: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Since 4.18.
+  gtk_string_list_find: {
+    parameters: ["pointer", "buffer"],
+    result: "u32",
+    optional: true,
+  },
+  gtk_string_list_remove: { parameters: ["pointer", "u32"], result: "void" },
+  gtk_switch_get_state: { parameters: ["pointer"], result: "gboolean" },
+  gtk_switch_set_state: { parameters: ["pointer", "gboolean"], result: "void" },
+  // Since 4.16. commit_notify has notified scope. destroy has async scope.
+  gtk_text_buffer_add_commit_notify: {
+    parameters: ["pointer", "i32", "pointer", "pointer", "pointer"],
+    result: "u32",
+    optional: true,
+  },
+  gtk_text_buffer_add_selection_clipboard: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_text_buffer_begin_irreversible_action: {
+    parameters: ["pointer"],
+    result: "void",
+  },
+  gtk_text_buffer_copy_clipboard: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_text_buffer_cut_clipboard: {
+    parameters: ["pointer", "pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_text_buffer_delete_mark: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_text_buffer_delete_mark_by_name: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_text_buffer_delete_selection: {
+    parameters: ["pointer", "gboolean", "gboolean"],
+    result: "gboolean",
+  },
+  gtk_text_buffer_end_irreversible_action: {
+    parameters: ["pointer"],
+    result: "void",
+  },
+  gtk_text_buffer_get_can_redo: { parameters: ["pointer"], result: "gboolean" },
+  gtk_text_buffer_get_can_undo: { parameters: ["pointer"], result: "gboolean" },
+  gtk_text_buffer_get_char_count: { parameters: ["pointer"], result: "i32" },
+  gtk_text_buffer_get_enable_undo: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_text_buffer_get_has_selection: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_text_buffer_get_insert: { parameters: ["pointer"], result: "pointer" },
+  gtk_text_buffer_get_mark: {
+    parameters: ["pointer", "buffer"],
+    result: "pointer",
+  },
+  gtk_text_buffer_get_max_undo_levels: {
+    parameters: ["pointer"],
+    result: "u32",
+  },
+  gtk_text_buffer_get_modified: { parameters: ["pointer"], result: "gboolean" },
+  gtk_text_buffer_get_selection_bound: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_text_buffer_get_tag_table: { parameters: ["pointer"], result: "pointer" },
+  gtk_text_buffer_insert_at_cursor: {
+    parameters: ["pointer", "buffer", "i32"],
+    result: "void",
+  },
+  gtk_text_buffer_insert_interactive_at_cursor: {
+    parameters: ["pointer", "buffer", "i32", "gboolean"],
+    result: "gboolean",
+  },
+  gtk_text_buffer_redo: { parameters: ["pointer"], result: "void" },
+  // Since 4.16.
+  gtk_text_buffer_remove_commit_notify: {
+    parameters: ["pointer", "u32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_text_buffer_remove_selection_clipboard: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_text_buffer_set_enable_undo: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_text_buffer_set_max_undo_levels: {
+    parameters: ["pointer", "u32"],
+    result: "void",
+  },
+  gtk_text_buffer_set_modified: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_text_buffer_undo: { parameters: ["pointer"], result: "void" },
+  gtk_text_view_add_child_at_anchor: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "void",
+  },
+  gtk_text_view_add_overlay: {
+    parameters: ["pointer", "pointer", "i32", "i32"],
+    result: "void",
+  },
+  gtk_text_view_get_accepts_tab: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_text_view_get_bottom_margin: { parameters: ["pointer"], result: "i32" },
+  gtk_text_view_get_cursor_visible: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_text_view_get_editable: { parameters: ["pointer"], result: "gboolean" },
+  gtk_text_view_get_extra_menu: { parameters: ["pointer"], result: "pointer" },
+  gtk_text_view_get_gutter: {
+    parameters: ["pointer", "i32"],
+    result: "pointer",
+  },
+  gtk_text_view_get_indent: { parameters: ["pointer"], result: "i32" },
+  gtk_text_view_get_input_hints: { parameters: ["pointer"], result: "i32" },
+  gtk_text_view_get_input_purpose: { parameters: ["pointer"], result: "i32" },
+  gtk_text_view_get_justification: { parameters: ["pointer"], result: "i32" },
+  gtk_text_view_get_left_margin: { parameters: ["pointer"], result: "i32" },
+  // Since 4.4.
+  gtk_text_view_get_ltr_context: { parameters: ["pointer"], result: "pointer" },
+  gtk_text_view_get_monospace: { parameters: ["pointer"], result: "gboolean" },
+  gtk_text_view_get_overwrite: { parameters: ["pointer"], result: "gboolean" },
+  gtk_text_view_get_pixels_above_lines: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  gtk_text_view_get_pixels_below_lines: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  gtk_text_view_get_pixels_inside_wrap: {
+    parameters: ["pointer"],
+    result: "i32",
+  },
+  gtk_text_view_get_right_margin: { parameters: ["pointer"], result: "i32" },
+  // Since 4.4.
+  gtk_text_view_get_rtl_context: { parameters: ["pointer"], result: "pointer" },
+  gtk_text_view_get_top_margin: { parameters: ["pointer"], result: "i32" },
+  gtk_text_view_get_wrap_mode: { parameters: ["pointer"], result: "i32" },
+  gtk_text_view_move_mark_onscreen: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+  },
+  gtk_text_view_move_overlay: {
+    parameters: ["pointer", "pointer", "i32", "i32"],
+    result: "void",
+  },
+  gtk_text_view_place_cursor_onscreen: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_text_view_remove: { parameters: ["pointer", "pointer"], result: "void" },
+  gtk_text_view_reset_cursor_blink: { parameters: ["pointer"], result: "void" },
+  gtk_text_view_reset_im_context: { parameters: ["pointer"], result: "void" },
+  gtk_text_view_scroll_mark_onscreen: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_text_view_set_accepts_tab: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_text_view_set_bottom_margin: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_text_view_set_buffer: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_text_view_set_extra_menu: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_text_view_set_gutter: {
+    parameters: ["pointer", "i32", "pointer"],
+    result: "void",
+  },
+  gtk_text_view_set_indent: { parameters: ["pointer", "i32"], result: "void" },
+  gtk_text_view_set_input_hints: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_text_view_set_input_purpose: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_text_view_set_justification: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_text_view_set_left_margin: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_text_view_set_overwrite: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_text_view_set_pixels_above_lines: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_text_view_set_pixels_below_lines: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_text_view_set_pixels_inside_wrap: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_text_view_set_right_margin: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_text_view_set_top_margin: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_text_view_set_wrap_mode: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_widget_action_set_enabled: {
+    parameters: ["pointer", "buffer", "gboolean"],
+    result: "void",
+  },
+  gtk_widget_activate_default: { parameters: ["pointer"], result: "void" },
+  gtk_widget_add_mnemonic_label: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  // callback has notified scope. notify has async scope.
+  gtk_widget_add_tick_callback: {
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
+    result: "u32",
+  },
+  gtk_widget_child_focus: {
+    parameters: ["pointer", "i32"],
+    result: "gboolean",
+  },
+  gtk_widget_compute_expand: {
+    parameters: ["pointer", "i32"],
+    result: "gboolean",
+  },
+  gtk_widget_contains: {
+    parameters: ["pointer", "f64", "f64"],
+    result: "gboolean",
+  },
+  gtk_drag_check_threshold: {
+    parameters: ["pointer", "i32", "i32", "i32", "i32"],
+    result: "gboolean",
+  },
+  gtk_widget_error_bell: { parameters: ["pointer"], result: "void" },
+  // Since 4.12.
+  gtk_widget_get_baseline: { parameters: ["pointer"], result: "i32" },
+  gtk_widget_get_can_focus: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_get_can_target: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_get_child_visible: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_get_clipboard: { parameters: ["pointer"], result: "pointer" },
+  gtk_widget_get_css_name: { parameters: ["pointer"], result: "pointer" },
+  gtk_widget_get_cursor: { parameters: ["pointer"], result: "pointer" },
+  gtk_widget_get_direction: { parameters: ["pointer"], result: "i32" },
+  gtk_widget_get_focus_child: { parameters: ["pointer"], result: "pointer" },
+  gtk_widget_get_focus_on_click: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_widget_get_focusable: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_get_font_map: { parameters: ["pointer"], result: "pointer" },
+  gtk_widget_get_frame_clock: { parameters: ["pointer"], result: "pointer" },
+  gtk_widget_get_halign: { parameters: ["pointer"], result: "i32" },
+  gtk_widget_get_has_tooltip: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_get_height: { parameters: ["pointer"], result: "i32" },
+  gtk_widget_get_hexpand: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_get_hexpand_set: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_get_layout_manager: { parameters: ["pointer"], result: "pointer" },
+  // Since 4.18.
+  gtk_widget_get_limit_events: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  gtk_widget_get_mapped: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_get_margin_bottom: { parameters: ["pointer"], result: "i32" },
+  gtk_widget_get_margin_end: { parameters: ["pointer"], result: "i32" },
+  gtk_widget_get_margin_start: { parameters: ["pointer"], result: "i32" },
+  gtk_widget_get_margin_top: { parameters: ["pointer"], result: "i32" },
+  gtk_widget_get_name: { parameters: ["pointer"], result: "pointer" },
+  gtk_widget_get_native: { parameters: ["pointer"], result: "pointer" },
+  gtk_widget_get_opacity: { parameters: ["pointer"], result: "f64" },
+  gtk_widget_get_overflow: { parameters: ["pointer"], result: "i32" },
+  gtk_widget_get_pango_context: { parameters: ["pointer"], result: "pointer" },
+  gtk_widget_get_parent: { parameters: ["pointer"], result: "pointer" },
+  gtk_widget_get_prev_sibling: { parameters: ["pointer"], result: "pointer" },
+  gtk_widget_get_primary_clipboard: {
+    parameters: ["pointer"],
+    result: "pointer",
+  },
+  gtk_widget_get_realized: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_get_receives_default: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_widget_get_request_mode: { parameters: ["pointer"], result: "i32" },
+  gtk_widget_get_root: { parameters: ["pointer"], result: "pointer" },
+  gtk_widget_get_scale_factor: { parameters: ["pointer"], result: "i32" },
+  gtk_widget_get_settings: { parameters: ["pointer"], result: "pointer" },
+  gtk_widget_get_size: { parameters: ["pointer", "i32"], result: "i32" },
+  gtk_widget_get_state_flags: { parameters: ["pointer"], result: "i32" },
+  gtk_widget_get_tooltip_markup: { parameters: ["pointer"], result: "pointer" },
+  gtk_widget_get_tooltip_text: { parameters: ["pointer"], result: "pointer" },
+  gtk_widget_get_valign: { parameters: ["pointer"], result: "i32" },
+  gtk_widget_get_vexpand: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_get_vexpand_set: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_get_width: { parameters: ["pointer"], result: "i32" },
+  gtk_widget_has_css_class: {
+    parameters: ["pointer", "buffer"],
+    result: "gboolean",
+  },
+  gtk_widget_has_default: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_has_focus: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_has_visible_focus: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_in_destruction: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_init_template: { parameters: ["pointer"], result: "void" },
+  gtk_widget_insert_action_group: {
+    parameters: ["pointer", "buffer", "pointer"],
+    result: "void",
+  },
+  gtk_widget_insert_after: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "void",
+  },
+  gtk_widget_insert_before: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "void",
+  },
+  gtk_widget_is_ancestor: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+  },
+  gtk_widget_is_drawable: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_is_focus: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_keynav_failed: {
+    parameters: ["pointer", "i32"],
+    result: "gboolean",
+  },
+  gtk_widget_map: { parameters: ["pointer"], result: "void" },
+  gtk_widget_mnemonic_activate: {
+    parameters: ["pointer", "gboolean"],
+    result: "gboolean",
+  },
+  gtk_widget_pick: {
+    parameters: ["pointer", "f64", "f64", "i32"],
+    result: "pointer",
+  },
+  gtk_widget_queue_allocate: { parameters: ["pointer"], result: "void" },
+  gtk_widget_queue_resize: { parameters: ["pointer"], result: "void" },
+  gtk_widget_realize: { parameters: ["pointer"], result: "void" },
+  gtk_widget_remove_controller: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_widget_remove_mnemonic_label: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_widget_remove_tick_callback: {
+    parameters: ["pointer", "u32"],
+    result: "void",
+  },
+  gtk_widget_set_can_focus: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_widget_set_child_visible: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_widget_set_direction: { parameters: ["pointer", "i32"], result: "void" },
+  gtk_widget_set_focus_child: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_widget_set_focus_on_click: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_widget_set_font_map: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_widget_set_has_tooltip: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_widget_set_hexpand_set: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Since 4.18.
+  gtk_widget_set_limit_events: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+    optional: true,
+  },
+  gtk_widget_set_name: { parameters: ["pointer", "buffer"], result: "void" },
+  gtk_widget_set_overflow: { parameters: ["pointer", "i32"], result: "void" },
+  gtk_widget_set_receives_default: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_widget_set_state_flags: {
+    parameters: ["pointer", "i32", "gboolean"],
+    result: "void",
+  },
+  gtk_widget_set_tooltip_markup: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_widget_set_vexpand_set: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_widget_should_layout: { parameters: ["pointer"], result: "gboolean" },
+  gtk_widget_snapshot_child: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "void",
+  },
+  gtk_widget_trigger_tooltip_query: { parameters: ["pointer"], result: "void" },
+  gtk_widget_unmap: { parameters: ["pointer"], result: "void" },
+  gtk_widget_unrealize: { parameters: ["pointer"], result: "void" },
+  gtk_widget_unset_state_flags: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+  },
+  gtk_window_fullscreen: { parameters: ["pointer"], result: "void" },
+  gtk_window_fullscreen_on_monitor: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_window_get_application: { parameters: ["pointer"], result: "pointer" },
+  gtk_window_get_decorated: { parameters: ["pointer"], result: "gboolean" },
+  gtk_window_get_default_widget: { parameters: ["pointer"], result: "pointer" },
+  gtk_window_get_deletable: { parameters: ["pointer"], result: "gboolean" },
+  gtk_window_get_destroy_with_parent: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_window_get_focus: { parameters: ["pointer"], result: "pointer" },
+  gtk_window_get_focus_visible: { parameters: ["pointer"], result: "gboolean" },
+  // Since 4.20.
+  gtk_window_get_gravity: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  gtk_window_get_group: { parameters: ["pointer"], result: "pointer" },
+  // Since 4.2.
+  gtk_window_get_handle_menubar_accel: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_window_get_icon_name: { parameters: ["pointer"], result: "pointer" },
+  gtk_window_get_mnemonics_visible: {
+    parameters: ["pointer"],
+    result: "gboolean",
+  },
+  gtk_window_get_modal: { parameters: ["pointer"], result: "gboolean" },
+  gtk_window_get_resizable: { parameters: ["pointer"], result: "gboolean" },
+  gtk_window_get_title: { parameters: ["pointer"], result: "pointer" },
+  gtk_window_get_titlebar: { parameters: ["pointer"], result: "pointer" },
+  gtk_window_get_transient_for: { parameters: ["pointer"], result: "pointer" },
+  gtk_window_has_group: { parameters: ["pointer"], result: "gboolean" },
+  gtk_window_is_fullscreen: { parameters: ["pointer"], result: "gboolean" },
+  gtk_window_is_maximized: { parameters: ["pointer"], result: "gboolean" },
+  // Since 4.12.
+  gtk_window_is_suspended: { parameters: ["pointer"], result: "gboolean" },
+  gtk_window_minimize: { parameters: ["pointer"], result: "void" },
+  gtk_window_set_application: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_window_set_decorated: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_window_set_default_widget: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_window_set_deletable: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_window_set_destroy_with_parent: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_window_set_display: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+  },
+  gtk_window_set_focus: { parameters: ["pointer", "pointer"], result: "void" },
+  gtk_window_set_focus_visible: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  // Since 4.20.
+  gtk_window_set_gravity: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.2.
+  gtk_window_set_handle_menubar_accel: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_window_set_icon_name: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_window_set_mnemonics_visible: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+  },
+  gtk_window_set_startup_id: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+  },
+  gtk_window_unfullscreen: { parameters: ["pointer"], result: "void" },
+  gtk_window_unmaximize: { parameters: ["pointer"], result: "void" },
+  gtk_window_unminimize: { parameters: ["pointer"], result: "void" },
 } as const;
 
 export interface ButtonProperties {

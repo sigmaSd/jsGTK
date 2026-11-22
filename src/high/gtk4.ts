@@ -14,13 +14,6 @@ import { gobject } from "../low/gobject.ts";
 import { gtk4 } from "../low/gtk4.ts";
 import { createGValue, cstr, readCStr } from "../low/utils.ts";
 import { CairoContext } from "./cairo.ts";
-import {
-  type LabelMethods,
-  labelMethods,
-  type ListBoxMethods,
-  listBoxMethods,
-} from "./generated/gtk4.ts";
-import { applyGenerated, registerWrappers } from "./wrappers.ts";
 import { AppLaunchContext, File, type Menu, type SimpleAction } from "./gio.ts";
 import { unixSignalAdd as glibUnixSignalAdd } from "./glib.ts";
 import {
@@ -29,6 +22,115 @@ import {
   type PropertyValue,
   type SignalHandler,
 } from "./gobject.ts";
+import {
+  type AdjustmentMethods,
+  adjustmentMethods,
+  type AlertDialogMethods,
+  alertDialogMethods,
+  type ApplicationMethods,
+  applicationMethods,
+  type ApplicationWindowMethods,
+  applicationWindowMethods,
+  type BoxMethods,
+  boxMethods,
+  type BuilderMethods,
+  builderMethods,
+  type ButtonMethods,
+  buttonMethods,
+  type CheckButtonMethods,
+  checkButtonMethods,
+  type ColumnViewColumnMethods,
+  columnViewColumnMethods,
+  type ColumnViewMethods,
+  columnViewMethods,
+  type CssProviderMethods,
+  cssProviderMethods,
+  type DrawingAreaMethods,
+  drawingAreaMethods,
+  type DropDownMethods,
+  dropDownMethods,
+  type DropTargetMethods,
+  dropTargetMethods,
+  type EventControllerKeyMethods,
+  eventControllerKeyMethods,
+  type EventControllerMethods,
+  eventControllerMethods,
+  type EventControllerMotionMethods,
+  eventControllerMotionMethods,
+  type FileDialogMethods,
+  fileDialogMethods,
+  type FileFilterMethods,
+  fileFilterMethods,
+  type FrameMethods,
+  frameMethods,
+  type GestureClickMethods,
+  gestureClickMethods,
+  type GridMethods,
+  gridMethods,
+  type HeaderBarMethods,
+  headerBarMethods,
+  type IconThemeMethods,
+  iconThemeMethods,
+  type ImageMethods,
+  imageMethods,
+  type LabelMethods,
+  labelMethods,
+  type LevelBarMethods,
+  levelBarMethods,
+  type ListBoxMethods,
+  listBoxMethods,
+  type ListBoxRowMethods,
+  listBoxRowMethods,
+  type ListItemMethods,
+  listItemMethods,
+  type MenuButtonMethods,
+  menuButtonMethods,
+  type OverlayMethods,
+  overlayMethods,
+  type PictureMethods,
+  pictureMethods,
+  type PopoverMenuMethods,
+  popoverMenuMethods,
+  type PopoverMethods,
+  popoverMethods,
+  type ProgressBarMethods,
+  progressBarMethods,
+  type RevealerMethods,
+  revealerMethods,
+  type ScaleMethods,
+  scaleMethods,
+  type ScrolledWindowMethods,
+  scrolledWindowMethods,
+  type SearchBarMethods,
+  searchBarMethods,
+  type SearchEntryMethods,
+  searchEntryMethods,
+  type SeparatorMethods,
+  separatorMethods,
+  type SignalListItemFactoryMethods,
+  signalListItemFactoryMethods,
+  type SingleSelectionMethods,
+  singleSelectionMethods,
+  type SizeGroupMethods,
+  sizeGroupMethods,
+  type SpinnerMethods,
+  spinnerMethods,
+  type StringListMethods,
+  stringListMethods,
+  type SwitchMethods,
+  switchMethods,
+  type TextBufferMethods,
+  textBufferMethods,
+  type TextViewMethods,
+  textViewMethods,
+  type ToggleButtonMethods,
+  toggleButtonMethods,
+  type WidgetMethods,
+  widgetMethods,
+  type WindowMethods,
+  windowMethods,
+} from "./generated/gtk4.ts";
+import { applyGenerated } from "./wrappers.ts";
 export { G_TYPE_BOOLEAN, G_TYPE_STRING } from "./gobject.ts";
 
 type WidgetMember<Members> =
@@ -374,6 +476,10 @@ export class Widget extends GObject {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface Widget extends WidgetMethods {}
+applyGenerated(Widget, widgetMethods, "GtkWidget");
+
 export class ExpanderRow extends Widget {
   constructor() {
     const ptr = adw.symbols.adw_expander_row_new();
@@ -522,6 +628,10 @@ export class Application extends GObject {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface Application extends ApplicationMethods {}
+applyGenerated(Application, applicationMethods, "GtkApplication");
+
 // GTK Window base class
 export class Window extends Widget {
   constructor(ptr: Deno.PointerValue) {
@@ -596,7 +706,7 @@ export class Window extends Widget {
   }
 
   // High-level signal connection for destroy
-  onDestroy(callback: () => void): number {
+  override onDestroy(callback: () => void): number {
     return this.connect("destroy", callback);
   }
 
@@ -605,6 +715,10 @@ export class Window extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface Window extends WindowMethods {}
+applyGenerated(Window, windowMethods, "GtkWindow");
+
 // GTK ApplicationWindow extends GtkWindow
 export class ApplicationWindow extends Window {
   constructor(app: Application) {
@@ -612,6 +726,14 @@ export class ApplicationWindow extends Window {
     super(ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface ApplicationWindow extends ApplicationWindowMethods {}
+applyGenerated(
+  ApplicationWindow,
+  applicationWindowMethods,
+  "GtkApplicationWindow",
+);
 
 // GtkShortcutsWindow extends GtkWindow
 // Typically loaded from a Builder UI definition, e.g.
@@ -670,7 +792,7 @@ export class AboutWindow extends Window {
   }
 }
 
-export class AlertDialog extends Widget {
+export class AlertDialog extends GObject {
   constructor(heading: string, body: string) {
     const ptr = adw.symbols.adw_alert_dialog_new(cstr(heading), cstr(body));
     super(ptr);
@@ -714,6 +836,10 @@ export class AlertDialog extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface AlertDialog extends AlertDialogMethods {}
+applyGenerated(AlertDialog, alertDialogMethods, "GtkAlertDialog");
+
 // GTK Box
 export class Box extends Widget {
   constructor(orientation: number, spacing: number) {
@@ -734,6 +860,10 @@ export class Box extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface Box extends BoxMethods {}
+applyGenerated(Box, boxMethods, "GtkBox");
+
 // GTK Separator
 export class Separator extends Widget {
   constructor(orientation: number = Orientation.HORIZONTAL) {
@@ -741,6 +871,10 @@ export class Separator extends Widget {
     super(ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface Separator extends SeparatorMethods {}
+applyGenerated(Separator, separatorMethods, "GtkSeparator");
 
 // GTK Adjustment
 export class Adjustment extends GObject {
@@ -787,6 +921,10 @@ export class Adjustment extends GObject {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface Adjustment extends AdjustmentMethods {}
+applyGenerated(Adjustment, adjustmentMethods, "GtkAdjustment");
+
 // GTK Scale
 export class Scale extends Widget {
   #adjustment: Adjustment;
@@ -810,6 +948,10 @@ export class Scale extends Widget {
     this.connect("value-changed", callback);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface Scale extends ScaleMethods {}
+applyGenerated(Scale, scaleMethods, "GtkScale");
 
 // GTK Label
 export class Label extends Widget {
@@ -862,7 +1004,7 @@ export class Label extends Widget {
 
 // Methods generated from GIR; the ones above take precedence.
 export interface Label extends LabelMethods {}
-applyGenerated(Label, labelMethods);
+applyGenerated(Label, labelMethods, "GtkLabel");
 
 // GTK Button
 export class Button extends Widget {
@@ -923,6 +1065,10 @@ export class Button extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface Button extends ButtonMethods {}
+applyGenerated(Button, buttonMethods, "GtkButton");
+
 export class ToggleButton extends Button {
   constructor(ptr?: Deno.PointerValue) {
     const actualPtr = ptr ?? gtk4.symbols.gtk_toggle_button_new();
@@ -947,6 +1093,10 @@ export class ToggleButton extends Button {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface ToggleButton extends ToggleButtonMethods {}
+applyGenerated(ToggleButton, toggleButtonMethods, "GtkToggleButton");
+
 // GTK Spinner
 export class Spinner extends Widget {
   constructor() {
@@ -962,6 +1112,10 @@ export class Spinner extends Widget {
     gtk4.symbols.gtk_spinner_stop(this.ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface Spinner extends SpinnerMethods {}
+applyGenerated(Spinner, spinnerMethods, "GtkSpinner");
 
 // GTK Image
 export class Image extends Widget {
@@ -997,6 +1151,10 @@ export class Image extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface Image extends ImageMethods {}
+applyGenerated(Image, imageMethods, "GtkImage");
+
 // GTK Overlay
 export class Overlay extends Widget {
   constructor() {
@@ -1012,6 +1170,10 @@ export class Overlay extends Widget {
     gtk4.symbols.gtk_overlay_add_overlay(this.ptr, widget.ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface Overlay extends OverlayMethods {}
+applyGenerated(Overlay, overlayMethods, "GtkOverlay");
 
 // GTK Revealer: shows or hides its child with an animation
 export class Revealer extends Widget {
@@ -1042,6 +1204,10 @@ export class Revealer extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface Revealer extends RevealerMethods {}
+applyGenerated(Revealer, revealerMethods, "GtkRevealer");
+
 // GtkHeaderBar (GTK4 version)
 export class HeaderBar extends Widget {
   constructor() {
@@ -1057,6 +1223,10 @@ export class HeaderBar extends Widget {
     gtk4.symbols.gtk_header_bar_pack_end(this.ptr, child.ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface HeaderBar extends HeaderBarMethods {}
+applyGenerated(HeaderBar, headerBarMethods, "GtkHeaderBar");
 
 // GTK CheckButton
 export class CheckButton extends Widget {
@@ -1107,6 +1277,10 @@ export class CheckButton extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface CheckButton extends CheckButtonMethods {}
+applyGenerated(CheckButton, checkButtonMethods, "GtkCheckButton");
+
 // GTK Picture
 export class Picture extends Widget {
   constructor(filename?: string) {
@@ -1130,6 +1304,10 @@ export class Picture extends Widget {
     this.setProperty("keep-aspect-ratio", keep);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface Picture extends PictureMethods {}
+applyGenerated(Picture, pictureMethods, "GtkPicture");
 
 // GTK DrawingArea
 export class DrawingArea extends Widget {
@@ -1182,6 +1360,10 @@ export class DrawingArea extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface DrawingArea extends DrawingAreaMethods {}
+applyGenerated(DrawingArea, drawingAreaMethods, "GtkDrawingArea");
+
 // GTK Frame
 export class Frame extends Widget {
   constructor(label?: string) {
@@ -1194,6 +1376,10 @@ export class Frame extends Widget {
     gtk4.symbols.gtk_frame_set_child(this.ptr, child.ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface Frame extends FrameMethods {}
+applyGenerated(Frame, frameMethods, "GtkFrame");
 
 // GTK ScrolledWindow extends GtkWidget
 export class ScrolledWindow extends Widget {
@@ -1223,6 +1409,10 @@ export class ScrolledWindow extends Widget {
     );
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface ScrolledWindow extends ScrolledWindowMethods {}
+applyGenerated(ScrolledWindow, scrolledWindowMethods, "GtkScrolledWindow");
 
 // GTK ListBoxRow extends GtkWidget
 export class ListBoxRow extends Widget {
@@ -1254,6 +1444,10 @@ export class ListBoxRow extends Widget {
     gtk4.symbols.gtk_list_box_row_set_activatable(this.ptr, activatable);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface ListBoxRow extends ListBoxRowMethods {}
+applyGenerated(ListBoxRow, listBoxRowMethods, "GtkListBoxRow");
 
 /** The registered wrapper for a borrowed row pointer, or a plain row wrapper. */
 function borrowedRow(ptr: Deno.PointerValue): ListBoxRow {
@@ -1371,7 +1565,7 @@ export class ListBox extends Widget {
 
 // Methods generated from GIR; the ones above take precedence.
 export interface ListBox extends ListBoxMethods {}
-applyGenerated(ListBox, listBoxMethods);
+applyGenerated(ListBox, listBoxMethods, "GtkListBox");
 
 // GtkStringList extends GObject (implements GListModel)
 export class StringList extends GObject {
@@ -1396,6 +1590,10 @@ export class StringList extends GObject {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface StringList extends StringListMethods {}
+applyGenerated(StringList, stringListMethods, "GtkStringList");
+
 // GTK DropDown extends GtkWidget
 export class DropDown extends Widget {
   constructor(model?: GObject) {
@@ -1419,6 +1617,10 @@ export class DropDown extends Widget {
     );
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface DropDown extends DropDownMethods {}
+applyGenerated(DropDown, dropDownMethods, "GtkDropDown");
 
 // GTK Entry extends GtkWidget
 export class Entry extends Widget {
@@ -1502,6 +1704,10 @@ export class SearchBar extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface SearchBar extends SearchBarMethods {}
+applyGenerated(SearchBar, searchBarMethods, "GtkSearchBar");
+
 export class SearchEntry extends Entry {
   constructor(ptr?: Deno.PointerValue) {
     const actualPtr = ptr ?? gtk4.symbols.gtk_search_entry_new();
@@ -1523,6 +1729,10 @@ export class SearchEntry extends Entry {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface SearchEntry extends SearchEntryMethods {}
+applyGenerated(SearchEntry, searchEntryMethods, "GtkSearchEntry");
+
 // GTK Popover
 export class Popover extends Widget {
   constructor() {
@@ -1530,7 +1740,7 @@ export class Popover extends Widget {
     super(ptr);
   }
 
-  setParent(parent: Widget): void {
+  override setParent(parent: Widget): void {
     gtk4.symbols.gtk_widget_set_parent(this.ptr, parent.ptr);
   }
 
@@ -1546,6 +1756,10 @@ export class Popover extends Widget {
     gtk4.symbols.gtk_popover_popdown(this.ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface Popover extends PopoverMethods {}
+applyGenerated(Popover, popoverMethods, "GtkPopover");
 
 export class ListItem<I extends GObject = GObject, C extends Widget = Widget>
   extends GObject {
@@ -1567,6 +1781,13 @@ export class ListItem<I extends GObject = GObject, C extends Widget = Widget>
     gtk4.symbols.gtk_list_item_set_child(this.ptr, child?.ptr ?? null);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface ListItem<
+  I extends GObject = GObject,
+  C extends Widget = Widget,
+> extends ListItemMethods {}
+applyGenerated(ListItem, listItemMethods, "GtkListItem");
 
 export class SignalListItemFactory<
   I extends GObject = GObject,
@@ -1594,12 +1815,27 @@ export class SignalListItemFactory<
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface SignalListItemFactory<
+  I extends GObject = GObject,
+  C extends Widget = Widget,
+> extends SignalListItemFactoryMethods {}
+applyGenerated(
+  SignalListItemFactory,
+  signalListItemFactoryMethods,
+  "GtkSignalListItemFactory",
+);
+
 export class SingleSelection extends GObject {
   constructor(model: GObject) {
     const ptr = gtk4.symbols.gtk_single_selection_new(model.ptr);
     super(ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface SingleSelection extends SingleSelectionMethods {}
+applyGenerated(SingleSelection, singleSelectionMethods, "GtkSingleSelection");
 
 export class ColumnViewColumn extends GObject {
   constructor(title: string, factory: GObject | null) {
@@ -1618,6 +1854,14 @@ export class ColumnViewColumn extends GObject {
     gtk4.symbols.gtk_column_view_column_set_title(this.ptr, cstr(title));
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface ColumnViewColumn extends ColumnViewColumnMethods {}
+applyGenerated(
+  ColumnViewColumn,
+  columnViewColumnMethods,
+  "GtkColumnViewColumn",
+);
 
 export class ColumnView extends Widget {
   constructor() {
@@ -1675,6 +1919,10 @@ export class ColumnView extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface ColumnView extends ColumnViewMethods {}
+applyGenerated(ColumnView, columnViewMethods, "GtkColumnView");
+
 // GtkMenuButton extends GtkWidget
 export class MenuButton extends Widget {
   constructor() {
@@ -1724,6 +1972,10 @@ export class MenuButton extends Widget {
     gtk4.symbols.gtk_menu_button_popdown(this.ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface MenuButton extends MenuButtonMethods {}
+applyGenerated(MenuButton, menuButtonMethods, "GtkMenuButton");
 
 // GtkBuilder extends GObject
 export class Builder extends GObject {
@@ -1811,6 +2063,10 @@ export class Builder extends GObject {
     return box;
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface Builder extends BuilderMethods {}
+applyGenerated(Builder, builderMethods, "GtkBuilder");
 
 /** Launch context that propagates the originating display's focus notification. */
 export class GdkAppLaunchContext extends AppLaunchContext {
@@ -2069,6 +2325,10 @@ export class IconTheme extends GObject {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface IconTheme extends IconThemeMethods {}
+applyGenerated(IconTheme, iconThemeMethods, "GtkIconTheme");
+
 export function addAction(app: Application, action: SimpleAction): void {
   gio.symbols.g_action_map_add_action(app.ptr, action.ptr);
 }
@@ -2090,6 +2350,10 @@ export class CssProvider extends GObject {
     );
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface CssProvider extends CssProviderMethods {}
+applyGenerated(CssProvider, cssProviderMethods, "GtkCssProvider");
 
 export class StyleContext extends GObject {
   constructor(ptr: Deno.PointerValue) {
@@ -2133,6 +2397,10 @@ export class Cursor extends GObject {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface EventController extends EventControllerMethods {}
+applyGenerated(EventController, eventControllerMethods, "GtkEventController");
+
 export class EventControllerKey extends EventController {
   constructor() {
     const ptr = gtk4.symbols.gtk_event_controller_key_new();
@@ -2161,6 +2429,14 @@ export class EventControllerKey extends EventController {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface EventControllerKey extends EventControllerKeyMethods {}
+applyGenerated(
+  EventControllerKey,
+  eventControllerKeyMethods,
+  "GtkEventControllerKey",
+);
+
 /** Tracks the pointer entering, leaving and moving over a widget. */
 export class EventControllerMotion extends EventController {
   constructor() {
@@ -2188,6 +2464,14 @@ export class EventControllerMotion extends EventController {
     return gtk4.symbols.gtk_event_controller_motion_contains_pointer(this.ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface EventControllerMotion extends EventControllerMotionMethods {}
+applyGenerated(
+  EventControllerMotion,
+  eventControllerMotionMethods,
+  "GtkEventControllerMotion",
+);
 
 export const GDK_ACTION_COPY = 1 << 0;
 
@@ -2285,6 +2569,10 @@ export class DropTarget extends EventController {
     return this.connectNative("drop", cb);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface DropTarget extends DropTargetMethods {}
+applyGenerated(DropTarget, dropTargetMethods, "GtkDropTarget");
 
 function buildGdkFormats(mimeTypes: string[]): Deno.PointerValue {
   const builder = gtk4.symbols.gdk_content_formats_builder_new();
@@ -2405,6 +2693,10 @@ export class FileDialog extends GObject {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface FileDialog extends FileDialogMethods {}
+applyGenerated(FileDialog, fileDialogMethods, "GtkFileDialog");
+
 export class FileFilter extends GObject {
   constructor() {
     const ptr = gtk4.symbols.gtk_file_filter_new();
@@ -2424,6 +2716,10 @@ export class FileFilter extends GObject {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface FileFilter extends FileFilterMethods {}
+applyGenerated(FileFilter, fileFilterMethods, "GtkFileFilter");
+
 export class PopoverMenu extends Widget {
   constructor(model?: Menu) {
     const ptr = gtk4.symbols.gtk_popover_menu_new_from_model(
@@ -2435,6 +2731,10 @@ export class PopoverMenu extends Widget {
     gtk4.symbols.gtk_popover_menu_set_menu_model(this.ptr, model.ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface PopoverMenu extends PopoverMenuMethods {}
+applyGenerated(PopoverMenu, popoverMenuMethods, "GtkPopoverMenu");
 
 export class GestureClick extends EventController {
   constructor() {
@@ -2462,6 +2762,10 @@ export class GestureClick extends EventController {
     return this.connectNative("released", cb);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface GestureClick extends GestureClickMethods {}
+applyGenerated(GestureClick, gestureClickMethods, "GtkGestureClick");
 
 export function unixSignalAdd(signum: number, callback: () => boolean): number {
   return glibUnixSignalAdd(signum, callback);
@@ -2500,6 +2804,10 @@ export class ProgressBar extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface ProgressBar extends ProgressBarMethods {}
+applyGenerated(ProgressBar, progressBarMethods, "GtkProgressBar");
+
 // GTK LevelBar
 export class LevelBar extends Widget {
   constructor() {
@@ -2519,6 +2827,10 @@ export class LevelBar extends Widget {
     gtk4.symbols.gtk_level_bar_set_max_value(this.ptr, value);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface LevelBar extends LevelBarMethods {}
+applyGenerated(LevelBar, levelBarMethods, "GtkLevelBar");
 
 // GTK Grid
 export class Grid extends Widget {
@@ -2553,6 +2865,10 @@ export class Grid extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface Grid extends GridMethods {}
+applyGenerated(Grid, gridMethods, "GtkGrid");
+
 // GTK SizeGroup
 export class SizeGroup extends GObject {
   constructor(mode: number) {
@@ -2564,6 +2880,10 @@ export class SizeGroup extends GObject {
     gtk4.symbols.gtk_size_group_add_widget(this.ptr, widget.ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface SizeGroup extends SizeGroupMethods {}
+applyGenerated(SizeGroup, sizeGroupMethods, "GtkSizeGroup");
 
 // GTK TextView
 export class TextView extends Widget {
@@ -2607,6 +2927,10 @@ export class TextView extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface TextView extends TextViewMethods {}
+applyGenerated(TextView, textViewMethods, "GtkTextView");
+
 // GTK Switch
 export class Switch extends Widget {
   constructor() {
@@ -2626,6 +2950,10 @@ export class Switch extends Widget {
     return this.connect("notify::active", callback);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface Switch extends SwitchMethods {}
+applyGenerated(Switch, switchMethods, "GtkSwitch");
 
 export class TextBuffer extends GObject {
   constructor(ptr: Deno.PointerValue) {
@@ -2798,6 +3126,10 @@ export class TextBuffer extends GObject {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface TextBuffer extends TextBufferMethods {}
+applyGenerated(TextBuffer, textBufferMethods, "GtkTextBuffer");
+
 export class ViewStack extends Widget {
   constructor() {
     const ptr = adw.symbols.adw_view_stack_new();
@@ -2834,18 +3166,3 @@ export {
   PangoEllipsizeMode,
   PangoWrapMode,
 } from "./generated/gtk4.ts";
-
-// Wrap objects GTK hands back in the most specific class available.
-registerWrappers({
-  GtkWidget: Widget,
-  GtkWindow: Window,
-  GtkBox: Box,
-  GtkLabel: Label,
-  GtkButton: Button,
-  GtkImage: Image,
-  GtkEntry: Entry,
-  GtkAdjustment: Adjustment,
-  GtkScrolledWindow: ScrolledWindow,
-  GtkListBox: ListBox,
-  GtkListBoxRow: ListBoxRow,
-});

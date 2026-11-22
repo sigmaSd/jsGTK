@@ -8,8 +8,67 @@ import {
   Window,
 } from "./gtk4.ts";
 import { GObject } from "./gobject.ts";
-import { type ToastMethods, toastMethods } from "./generated/adw.ts";
-import { applyGenerated, registerWrappers } from "./wrappers.ts";
+import {
+  type AboutDialogMethods,
+  aboutDialogMethods,
+  type AboutWindowMethods,
+  aboutWindowMethods,
+  type ActionRowMethods,
+  actionRowMethods,
+  type ApplicationWindowMethods,
+  applicationWindowMethods,
+  type ButtonContentMethods,
+  buttonContentMethods,
+  type CarouselIndicatorDotsMethods,
+  carouselIndicatorDotsMethods,
+  type CarouselIndicatorLinesMethods,
+  carouselIndicatorLinesMethods,
+  type CarouselMethods,
+  carouselMethods,
+  type ClampMethods,
+  clampMethods,
+  type ComboRowMethods,
+  comboRowMethods,
+  type DialogMethods,
+  dialogMethods,
+  type HeaderBarMethods,
+  headerBarMethods,
+  type MessageDialogMethods,
+  messageDialogMethods,
+  type NavigationPageMethods,
+  navigationPageMethods,
+  type NavigationViewMethods,
+  navigationViewMethods,
+  type OverlaySplitViewMethods,
+  overlaySplitViewMethods,
+  type PreferencesDialogMethods,
+  preferencesDialogMethods,
+  type PreferencesGroupMethods,
+  preferencesGroupMethods,
+  type PreferencesPageMethods,
+  preferencesPageMethods,
+  type PreferencesWindowMethods,
+  preferencesWindowMethods,
+  type SpinnerMethods,
+  spinnerMethods,
+  type SpinRowMethods,
+  spinRowMethods,
+  type StatusPageMethods,
+  statusPageMethods,
+  type StyleManagerMethods,
+  styleManagerMethods,
+  type SwitchRowMethods,
+  switchRowMethods,
+  type ToastMethods,
+  toastMethods,
+  type ToastOverlayMethods,
+  toastOverlayMethods,
+  type ToolbarViewMethods,
+  toolbarViewMethods,
+  type WindowTitleMethods,
+  windowTitleMethods,
+} from "./generated/adw.ts";
+import { applyGenerated } from "./wrappers.ts";
 
 // ============================================================================
 // Builder Extensions for Adwaita Widgets
@@ -99,6 +158,14 @@ export class AdwApplicationWindow extends AdwWindow {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface AdwApplicationWindow extends ApplicationWindowMethods {}
+applyGenerated(
+  AdwApplicationWindow,
+  applicationWindowMethods,
+  "AdwApplicationWindow",
+);
+
 // AdwHeaderBar extends GtkWidget
 export class HeaderBar extends Widget {
   constructor() {
@@ -118,6 +185,10 @@ export class HeaderBar extends Widget {
     adw.symbols.adw_header_bar_set_title_widget(this.ptr, widget.ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface HeaderBar extends HeaderBarMethods {}
+applyGenerated(HeaderBar, headerBarMethods, "AdwHeaderBar");
 
 // AdwAboutDialog extends AdwDialog extends GtkWidget
 export class AboutDialog extends Widget {
@@ -193,6 +264,10 @@ export class AboutDialog extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface AboutDialog extends AboutDialogMethods {}
+applyGenerated(AboutDialog, aboutDialogMethods, "AdwAboutDialog");
+
 // AdwAboutWindow - older API but still commonly used
 export class AboutWindow extends Window {
   constructor() {
@@ -262,6 +337,10 @@ export class AboutWindow extends Window {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface AboutWindow extends AboutWindowMethods {}
+applyGenerated(AboutWindow, aboutWindowMethods, "AdwAboutWindow");
+
 export class StatusPage extends Widget {
   constructor() {
     const ptr = adw.symbols.adw_status_page_new();
@@ -286,6 +365,10 @@ export class StatusPage extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface StatusPage extends StatusPageMethods {}
+applyGenerated(StatusPage, statusPageMethods, "AdwStatusPage");
+
 // AdwWindowTitle: a title and subtitle for a header bar
 export class WindowTitle extends Widget {
   constructor(title = "", subtitle = "") {
@@ -301,6 +384,10 @@ export class WindowTitle extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface WindowTitle extends WindowTitleMethods {}
+applyGenerated(WindowTitle, windowTitleMethods, "AdwWindowTitle");
+
 // AdwButtonContent: an icon and a label, for use as a button's child
 export class ButtonContent extends Widget {
   constructor() {
@@ -315,6 +402,10 @@ export class ButtonContent extends Widget {
     adw.symbols.adw_button_content_set_label(this.ptr, cstr(label));
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface ButtonContent extends ButtonContentMethods {}
+applyGenerated(ButtonContent, buttonContentMethods, "AdwButtonContent");
 
 // AdwToast: a short message shown by a ToastOverlay
 export class Toast extends GObject {
@@ -359,7 +450,7 @@ export class Toast extends GObject {
 
 // Methods generated from GIR; the ones above take precedence.
 export interface Toast extends ToastMethods {}
-applyGenerated(Toast, toastMethods);
+applyGenerated(Toast, toastMethods, "AdwToast");
 
 // AdwToastOverlay: shows toasts above its child
 export class ToastOverlay extends Widget {
@@ -376,6 +467,10 @@ export class ToastOverlay extends Widget {
     adw.symbols.adw_toast_overlay_add_toast(this.ptr, toast.ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface ToastOverlay extends ToastOverlayMethods {}
+applyGenerated(ToastOverlay, toastOverlayMethods, "AdwToastOverlay");
 
 // AdwOverlaySplitView: a sidebar next to, or sliding over, the content
 export class OverlaySplitView extends Widget {
@@ -442,6 +537,14 @@ export class OverlaySplitView extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface OverlaySplitView extends OverlaySplitViewMethods {}
+applyGenerated(
+  OverlaySplitView,
+  overlaySplitViewMethods,
+  "AdwOverlaySplitView",
+);
+
 // AdwToolbarView extends GtkWidget
 export class ToolbarView extends Widget {
   constructor() {
@@ -461,6 +564,10 @@ export class ToolbarView extends Widget {
     adw.symbols.adw_toolbar_view_add_bottom_bar(this.ptr, bottomBar.ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface ToolbarView extends ToolbarViewMethods {}
+applyGenerated(ToolbarView, toolbarViewMethods, "AdwToolbarView");
 
 // AdwPreferencesGroup extends GtkWidget
 export class PreferencesGroup extends Widget {
@@ -493,6 +600,14 @@ export class PreferencesGroup extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface PreferencesGroup extends PreferencesGroupMethods {}
+applyGenerated(
+  PreferencesGroup,
+  preferencesGroupMethods,
+  "AdwPreferencesGroup",
+);
+
 // AdwPreferencesPage extends GtkWidget
 export class PreferencesPage extends Widget {
   constructor() {
@@ -504,6 +619,10 @@ export class PreferencesPage extends Widget {
     adw.symbols.adw_preferences_page_add(this.ptr, group.ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface PreferencesPage extends PreferencesPageMethods {}
+applyGenerated(PreferencesPage, preferencesPageMethods, "AdwPreferencesPage");
 
 // AdwPreferencesWindow extends AdwWindow extends GtkWindow
 // Since we don't have AdwWindow class, extend Window directly
@@ -517,6 +636,14 @@ export class PreferencesWindow extends Window {
     adw.symbols.adw_preferences_window_add(this.ptr, page.ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface PreferencesWindow extends PreferencesWindowMethods {}
+applyGenerated(
+  PreferencesWindow,
+  preferencesWindowMethods,
+  "AdwPreferencesWindow",
+);
 
 function requireAdwaita<T>(
   binding: T | null | undefined,
@@ -545,6 +672,10 @@ export abstract class Dialog extends Widget {
     return this.connect("closed", callback);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface Dialog extends DialogMethods {}
+applyGenerated(Dialog, dialogMethods, "AdwDialog");
 
 /** Preferences pages and subpage navigation, available with libadwaita 1.5 or later. */
 export class PreferencesDialog extends Dialog {
@@ -587,6 +718,14 @@ export class PreferencesDialog extends Dialog {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface PreferencesDialog extends PreferencesDialogMethods {}
+applyGenerated(
+  PreferencesDialog,
+  preferencesDialogMethods,
+  "AdwPreferencesDialog",
+);
+
 /** A titled page that can be pushed onto an Adwaita navigation stack. */
 export class NavigationPage extends Widget {
   constructor(child: Widget, title: string) {
@@ -616,6 +755,10 @@ export class NavigationPage extends Widget {
     return tag ? readCStr(tag) : null;
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface NavigationPage extends NavigationPageMethods {}
+applyGenerated(NavigationPage, navigationPageMethods, "AdwNavigationPage");
 
 /** A stack of navigation pages, available with libadwaita 1.4 or later. */
 export class NavigationView extends Widget {
@@ -675,6 +818,10 @@ export class NavigationView extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface NavigationView extends NavigationViewMethods {}
+applyGenerated(NavigationView, navigationViewMethods, "AdwNavigationView");
+
 // AdwActionRow extends AdwPreferencesRow extends GtkListBoxRow extends GtkWidget
 export class ActionRow extends ListBoxRow {
   constructor(ptr?: Deno.PointerValue) {
@@ -721,6 +868,10 @@ export class ActionRow extends ListBoxRow {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface ActionRow extends ActionRowMethods {}
+applyGenerated(ActionRow, actionRowMethods, "AdwActionRow");
+
 // AdwComboRow extends AdwActionRow extends AdwPreferencesRow extends GtkListBoxRow extends GtkWidget
 export class ComboRow extends ActionRow {
   constructor(ptr?: Deno.PointerValue) {
@@ -752,6 +903,10 @@ export class ComboRow extends ActionRow {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface ComboRow extends ComboRowMethods {}
+applyGenerated(ComboRow, comboRowMethods, "AdwComboRow");
+
 // AdwSwitchRow extends AdwActionRow
 export class SwitchRow extends ActionRow {
   constructor(ptr?: Deno.PointerValue) {
@@ -774,6 +929,10 @@ export class SwitchRow extends ActionRow {
     );
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface SwitchRow extends SwitchRowMethods {}
+applyGenerated(SwitchRow, switchRowMethods, "AdwSwitchRow");
 
 // AdwSpinRow: an action row with a number entry and +/- buttons
 export class SpinRow extends ActionRow {
@@ -804,6 +963,10 @@ export class SpinRow extends ActionRow {
     );
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface SpinRow extends SpinRowMethods {}
+applyGenerated(SpinRow, spinRowMethods, "AdwSpinRow");
 
 // AdwMessageDialog extends GtkWindow extends GtkWidget
 // Adwaita MessageDialog
@@ -874,6 +1037,10 @@ export class MessageDialog extends Window {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface MessageDialog extends MessageDialogMethods {}
+applyGenerated(MessageDialog, messageDialogMethods, "AdwMessageDialog");
+
 // StyleManager wrapper for Adwaita theme control
 export class StyleManager extends GObject {
   private constructor(ptr: Deno.PointerValue) {
@@ -908,6 +1075,10 @@ export class StyleManager extends GObject {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface StyleManager extends StyleManagerMethods {}
+applyGenerated(StyleManager, styleManagerMethods, "AdwStyleManager");
+
 export class Clamp extends Widget {
   constructor() {
     const ptr = adw.symbols.adw_clamp_new();
@@ -921,6 +1092,10 @@ export class Clamp extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface Clamp extends ClampMethods {}
+applyGenerated(Clamp, clampMethods, "AdwClamp");
+
 export class Spinner extends Widget {
   constructor() {
     if (!adw.symbols.adw_spinner_new) {
@@ -932,6 +1107,10 @@ export class Spinner extends Widget {
     super(ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface Spinner extends SpinnerMethods {}
+applyGenerated(Spinner, spinnerMethods, "AdwSpinner");
 
 export class Carousel extends Widget {
   constructor() {
@@ -1018,6 +1197,10 @@ export class Carousel extends Widget {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface Carousel extends CarouselMethods {}
+applyGenerated(Carousel, carouselMethods, "AdwCarousel");
+
 export class CarouselIndicatorDots extends Widget {
   constructor() {
     const ptr = adw.symbols.adw_carousel_indicator_dots_new();
@@ -1039,6 +1222,14 @@ export class CarouselIndicatorDots extends Widget {
     );
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface CarouselIndicatorDots extends CarouselIndicatorDotsMethods {}
+applyGenerated(
+  CarouselIndicatorDots,
+  carouselIndicatorDotsMethods,
+  "AdwCarouselIndicatorDots",
+);
 
 export class CarouselIndicatorLines extends Widget {
   constructor() {
@@ -1062,14 +1253,10 @@ export class CarouselIndicatorLines extends Widget {
   }
 }
 
-// Wrap objects libadwaita hands back in the most specific class available.
-registerWrappers({
-  AdwActionRow: ActionRow,
-  AdwComboRow: ComboRow,
-  AdwSwitchRow: SwitchRow,
-  AdwSpinRow: SpinRow,
-  AdwToast: Toast,
-  AdwWindow: AdwWindow,
-  AdwStatusPage: StatusPage,
-  AdwNavigationPage: NavigationPage,
-});
+// Methods generated from GIR; the ones above take precedence.
+export interface CarouselIndicatorLines extends CarouselIndicatorLinesMethods {}
+applyGenerated(
+  CarouselIndicatorLines,
+  carouselIndicatorLinesMethods,
+  "AdwCarouselIndicatorLines",
+);

@@ -4,6 +4,7 @@
   <!-- Upstream SHA-256 8366e5e18e81b0d8660bc5c9d7036b9d00608597e22f20c922e5d8dddfc08cc4 -->
   <namespace name="Pango" version="1.0">
     <record name="AttrList" c:type="PangoAttrList" opaque="1" glib:type-name="PangoAttrList" glib:get-type="pango_attr_list_get_type" c:symbol-prefix="attr_list"/>
+    <class name="Context" c:symbol-prefix="context" c:type="PangoContext" parent="GObject.Object" glib:type-name="PangoContext" glib:get-type="pango_context_get_type" glib:type-struct="ContextClass"/>
     <enumeration name="EllipsizeMode" glib:type-name="PangoEllipsizeMode" glib:get-type="pango_ellipsize_mode_get_type" c:type="PangoEllipsizeMode">
       <doc xml:space="preserve" filename="pango/pango-layout.h" line="97">
         `PangoEllipsizeMode` describes what sort of ellipsization
@@ -18,6 +19,7 @@ with an ellipsis.
       <member name="middle" value="2" c:identifier="PANGO_ELLIPSIZE_MIDDLE" glib:nick="middle" glib:name="PANGO_ELLIPSIZE_MIDDLE"/>
       <member name="end" value="3" c:identifier="PANGO_ELLIPSIZE_END" glib:nick="end" glib:name="PANGO_ELLIPSIZE_END"/>
     </enumeration>
+    <class name="FontMap" c:symbol-prefix="font_map" c:type="PangoFontMap" parent="GObject.Object" abstract="1" glib:type-name="PangoFontMap" glib:get-type="pango_font_map_get_type" glib:type-struct="FontMapClass"/>
     <class name="Layout" c:symbol-prefix="layout" c:type="PangoLayout" parent="GObject.Object" glib:type-name="PangoLayout" glib:get-type="pango_layout_get_type" glib:type-struct="LayoutClass"/>
     <record name="TabArray" c:type="PangoTabArray" opaque="1" glib:type-name="PangoTabArray" glib:get-type="pango_tab_array_get_type" c:symbol-prefix="tab_array"/>
     <enumeration name="WrapMode" glib:type-name="PangoWrapMode" glib:get-type="pango_wrap_mode_get_type" c:type="PangoWrapMode">

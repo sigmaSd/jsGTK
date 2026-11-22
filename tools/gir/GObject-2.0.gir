@@ -476,6 +476,9 @@
         </parameter>
       </parameters>
     </function>
+    <record name="Closure" c:type="GClosure" glib:type-name="GClosure" glib:get-type="g_closure_get_type" c:symbol-prefix="closure"/>
+    <class name="InitiallyUnowned" c:symbol-prefix="initially_unowned" c:type="GInitiallyUnowned" parent="Object" glib:type-name="GInitiallyUnowned" glib:get-type="g_initially_unowned_get_type" glib:type-struct="InitiallyUnownedClass"/>
+    <class name="ParamSpec" c:symbol-prefix="param_spec" c:type="GParamSpec" abstract="1" glib:type-name="GParam" glib:get-type="intern" glib:type-struct="ParamSpecClass" glib:fundamental="1" glib:ref-func="g_param_spec_ref_sink" glib:unref-func="g_param_spec_unref" glib:set-value-func="g_value_set_param" glib:get-value-func="g_value_get_param"/>
     <callback name="Callback" c:type="GCallback">
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>

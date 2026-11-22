@@ -703,6 +703,53 @@
         </parameter>
       </parameters>
     </function>
+    <callback name="EqualFunc" c:type="GEqualFunc">
+      <return-value transfer-ownership="none">
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="a" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="gpointer" c:type="gconstpointer"/>
+        </parameter>
+        <parameter name="b" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="gpointer" c:type="gconstpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="EqualFuncFull" c:type="GEqualFuncFull" version="2.74">
+      <return-value transfer-ownership="none">
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="a" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="gpointer" c:type="gconstpointer"/>
+        </parameter>
+        <parameter name="b" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="gpointer" c:type="gconstpointer"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <record name="PollFD" c:type="GPollFD" glib:type-name="GPollFD" glib:get-type="g_pollfd_get_type" c:symbol-prefix="pollfd"/>
+    <record name="SList" c:type="GSList"/>
+    <callback name="CompareDataFunc" c:type="GCompareDataFunc">
+      <return-value transfer-ownership="none">
+        <type name="gint" c:type="gint"/>
+      </return-value>
+      <parameters>
+        <parameter name="a" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="gpointer" c:type="gconstpointer"/>
+        </parameter>
+        <parameter name="b" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="gpointer" c:type="gconstpointer"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
     <callback name="DestroyNotify" c:type="GDestroyNotify">
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>

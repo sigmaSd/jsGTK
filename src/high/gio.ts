@@ -3,6 +3,29 @@ import { glib } from "../low/glib.ts";
 import { gobject } from "../low/gobject.ts";
 import { cstr, readCStr } from "../low/utils.ts";
 import { GObject } from "./gobject.ts";
+import {
+  type AppLaunchContextMethods,
+  appLaunchContextMethods,
+  type CancellableMethods,
+  cancellableMethods,
+  type DBusProxyMethods,
+  dBusProxyMethods,
+  type InputStreamMethods,
+  inputStreamMethods,
+  type ListStoreMethods,
+  listStoreMethods,
+  type MenuMethods,
+  menuMethods,
+  type NotificationMethods,
+  notificationMethods,
+  type OutputStreamMethods,
+  outputStreamMethods,
+  type SimpleActionMethods,
+  simpleActionMethods,
+  type SubprocessMethods,
+  subprocessMethods,
+} from "./generated/gio.ts";
+import { applyGenerated } from "./wrappers.ts";
 
 // ============================================================================
 // GIO Enums and Constants
@@ -56,6 +79,10 @@ export class Cancellable extends GObject {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface Cancellable extends CancellableMethods {}
+applyGenerated(Cancellable, cancellableMethods, "GCancellable");
+
 // ============================================================================
 // GIO Classes
 // ============================================================================
@@ -78,6 +105,10 @@ export class Menu extends GObject {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface Menu extends MenuMethods {}
+applyGenerated(Menu, menuMethods, "GMenu");
+
 // GSimpleAction extends GObject
 export class SimpleAction extends GObject {
   constructor(name: string) {
@@ -86,6 +117,10 @@ export class SimpleAction extends GObject {
     super(ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface SimpleAction extends SimpleActionMethods {}
+applyGenerated(SimpleAction, simpleActionMethods, "GSimpleAction");
 
 export class ListStore extends GObject {
   constructor(type: number | bigint) {
@@ -99,6 +134,10 @@ export class ListStore extends GObject {
     gio.symbols.g_list_store_remove_all(this.ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface ListStore extends ListStoreMethods {}
+applyGenerated(ListStore, listStoreMethods, "GListStore");
 
 function ownedString(ptr: Deno.PointerValue): string | null {
   if (!ptr) return null;
@@ -172,6 +211,10 @@ export class AppLaunchContext extends GObject {
     );
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface AppLaunchContext extends AppLaunchContextMethods {}
+applyGenerated(AppLaunchContext, appLaunchContextMethods, "GAppLaunchContext");
 
 /** Common desktop application icon representations. */
 export type AppIcon =
@@ -472,6 +515,10 @@ export class Notification extends GObject {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface Notification extends NotificationMethods {}
+applyGenerated(Notification, notificationMethods, "GNotification");
+
 // GOutputStream wrapper
 export class OutputStream extends GObject {
   constructor(ptr: Deno.PointerValue) {
@@ -541,6 +588,10 @@ export class OutputStream extends GObject {
     return gio.symbols.g_output_stream_close(this.ptr, null, null);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface OutputStream extends OutputStreamMethods {}
+applyGenerated(OutputStream, outputStreamMethods, "GOutputStream");
 
 // GInputStream wrapper
 export class InputStream extends GObject {
@@ -631,6 +682,10 @@ export class InputStream extends GObject {
   }
 }
 
+// Methods generated from GIR; the ones above take precedence.
+export interface InputStream extends InputStreamMethods {}
+applyGenerated(InputStream, inputStreamMethods, "GInputStream");
+
 // GSubprocess
 export class Subprocess extends GObject {
   constructor(argv: string[], flags: number) {
@@ -714,6 +769,10 @@ export class Subprocess extends GObject {
     gio.symbols.g_subprocess_force_exit(this.ptr);
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface Subprocess extends SubprocessMethods {}
+applyGenerated(Subprocess, subprocessMethods, "GSubprocess");
 
 // GDBusProxy
 export class DBusProxy extends GObject {
@@ -1026,6 +1085,10 @@ export class DBusProxy extends GObject {
     });
   }
 }
+
+// Methods generated from GIR; the ones above take precedence.
+export interface DBusProxy extends DBusProxyMethods {}
+applyGenerated(DBusProxy, dBusProxyMethods, "GDBusProxy");
 
 // Helper class for creating GVariant values
 export class Variant {
