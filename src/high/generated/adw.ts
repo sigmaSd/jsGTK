@@ -12,6 +12,7 @@ import {
   owned,
 } from "../wrappers.ts";
 import type {
+  Banner,
   Carousel,
   Dialog,
   NavigationPage,
@@ -36,6 +37,16 @@ export const AccentColor = {
   SLATE: 8,
 } as const;
 export type AccentColor = (typeof AccentColor)[keyof typeof AccentColor];
+
+/**
+ * Describes the available button styles for `Banner`.
+ */
+export const BannerButtonStyle = {
+  DEFAULT: 0,
+  SUGGESTED: 1,
+} as const;
+export type BannerButtonStyle =
+  (typeof BannerButtonStyle)[keyof typeof BannerButtonStyle];
 
 /**
  * Describes title centering behavior of a `HeaderBar` widget.
@@ -680,6 +691,113 @@ export const applicationWindowMethods:
         );
     },
   };
+
+/** Methods generated for `AdwBanner`. */
+export interface BannerMethods {
+  /**
+   * Gets the button label for `self`.
+   */
+  getButtonLabel(): string | null;
+  /**
+   * Gets the style class in use for the banner button.
+   */
+  getButtonStyle(): BannerButtonStyle;
+  /**
+   * Gets if a banner is revealed
+   */
+  getRevealed(): boolean;
+  /**
+   * Gets the title for `self`.
+   */
+  getTitle(): string;
+  /**
+   * Gets whether to use Pango markup for the banner title.
+   */
+  getUseMarkup(): boolean;
+  /**
+   * Sets the button label for `self`.
+   */
+  setButtonLabel(label: string | null): void;
+  /**
+   * Sets the style class to use for the banner button.
+   */
+  setButtonStyle(style: BannerButtonStyle): void;
+  /**
+   * Sets whether a banner should be revealed
+   */
+  setRevealed(revealed: boolean): void;
+  /**
+   * Sets the title for this banner.
+   */
+  setTitle(title: string): void;
+  /**
+   * Sets whether to use Pango markup for the banner title.
+   */
+  setUseMarkup(useMarkup: boolean): void;
+  /**
+   * This signal is emitted after the action button has been clicked.
+   */
+  onButtonClicked(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode BannerMethods}. */
+export const bannerMethods: BannerMethods & ThisType<GObject> = {
+  getButtonLabel(this: GObject): string | null {
+    return ((p) => p ? readCStr(p) : null)(
+      (adw.symbols.adw_banner_get_button_label ??
+        missing("adw_banner_get_button_label", "1.3"))(this.ptr),
+    );
+  },
+  getButtonStyle(this: GObject): BannerButtonStyle {
+    return (adw.symbols.adw_banner_get_button_style ??
+      missing("adw_banner_get_button_style", "1.7"))(
+        this.ptr,
+      ) as BannerButtonStyle;
+  },
+  getRevealed(this: GObject): boolean {
+    return (adw.symbols.adw_banner_get_revealed ??
+      missing("adw_banner_get_revealed", "1.3"))(this.ptr);
+  },
+  getTitle(this: GObject): string {
+    return readCStr(
+      (adw.symbols.adw_banner_get_title ??
+        missing("adw_banner_get_title", "1.3"))(this.ptr),
+    );
+  },
+  getUseMarkup(this: GObject): boolean {
+    return (adw.symbols.adw_banner_get_use_markup ??
+      missing("adw_banner_get_use_markup", "1.3"))(this.ptr);
+  },
+  setButtonLabel(this: GObject, label: string | null): void {
+    (adw.symbols.adw_banner_set_button_label ??
+      missing("adw_banner_set_button_label", "1.3"))(
+        this.ptr,
+        cstrOrNull(label),
+      );
+  },
+  setButtonStyle(this: GObject, style: BannerButtonStyle): void {
+    (adw.symbols.adw_banner_set_button_style ??
+      missing("adw_banner_set_button_style", "1.7"))(this.ptr, style);
+  },
+  setRevealed(this: GObject, revealed: boolean): void {
+    (adw.symbols.adw_banner_set_revealed ??
+      missing("adw_banner_set_revealed", "1.3"))(this.ptr, revealed);
+  },
+  setTitle(this: GObject, title: string): void {
+    (adw.symbols.adw_banner_set_title ??
+      missing("adw_banner_set_title", "1.3"))(this.ptr, cstr(title));
+  },
+  setUseMarkup(this: GObject, useMarkup: boolean): void {
+    (adw.symbols.adw_banner_set_use_markup ??
+      missing("adw_banner_set_use_markup", "1.3"))(this.ptr, useMarkup);
+  },
+  onButtonClicked(this: GObject, callback: () => void): number {
+    return connectSignal(this, "button-clicked", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
 
 /** Methods generated for `AdwButtonContent`. */
 export interface ButtonContentMethods {
@@ -2164,7 +2282,7 @@ export interface PreferencesPageMethods {
   /**
    * Gets the banner displayed at the top of the page.
    */
-  getBanner(): Widget | null;
+  getBanner(): Banner | null;
   /**
    * Gets the description of `self`.
    */
@@ -2204,7 +2322,7 @@ export interface PreferencesPageMethods {
   /**
    * Sets the banner displayed at the top of the page.
    */
-  setBanner(banner: Widget | null): void;
+  setBanner(banner: Banner | null): void;
   /**
    * Sets the description of `self`.
    */
@@ -2231,8 +2349,8 @@ export interface PreferencesPageMethods {
 export const preferencesPageMethods:
   & PreferencesPageMethods
   & ThisType<GObject> = {
-    getBanner(this: GObject): Widget | null {
-      return borrowed<Widget>(
+    getBanner(this: GObject): Banner | null {
+      return borrowed<Banner>(
         (adw.symbols.adw_preferences_page_get_banner ??
           missing("adw_preferences_page_get_banner", "1.7"))(this.ptr),
       );
@@ -2287,7 +2405,7 @@ export const preferencesPageMethods:
       (adw.symbols.adw_preferences_page_scroll_to_top ??
         missing("adw_preferences_page_scroll_to_top", "1.3"))(this.ptr);
     },
-    setBanner(this: GObject, banner: Widget | null): void {
+    setBanner(this: GObject, banner: Banner | null): void {
       (adw.symbols.adw_preferences_page_set_banner ??
         missing("adw_preferences_page_set_banner", "1.7"))(
           this.ptr,

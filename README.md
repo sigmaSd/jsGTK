@@ -208,6 +208,7 @@ const editor = new GtkEditor({
 - `SpinRow` - Number input row
 - `StatusPage` - Empty, loading or error page
 - `Toast` - Short notification with an optional action button
+- `Banner` - Message under the header bar with an optional button
 - `ComboRow` - Combo box row for preferences
 - `PreferencesPage` - Page for preferences window
 - `PreferencesGroup` - Group within preferences page

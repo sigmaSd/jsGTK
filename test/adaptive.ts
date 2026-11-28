@@ -17,6 +17,8 @@ import {
 } from "../src/high/gtk4.ts";
 import {
   ActionRow,
+  Banner,
+  BannerButtonStyle,
   ButtonContent,
   OverlaySplitView,
   SpinRow,
@@ -185,6 +187,31 @@ Deno.test("Toasts report their button and dismissal", testOptions, () => {
     toast.dismiss();
     assertEquals(dismissed, 1, "Dismissal handler runs");
     toast.unref();
+  });
+});
+
+Deno.test("Banners show a title and report their button", testOptions, () => {
+  owned(new Banner("Version 2 is available"), (banner) => {
+    assertEquals(banner.getTitle(), "Version 2 is available", "Title");
+    banner.setTitle("Version 3 is available");
+    assertEquals(banner.getTitle(), "Version 3 is available", "New title");
+    banner.setButtonLabel("Download");
+    assertEquals(banner.getButtonLabel(), "Download", "Button label");
+    assertEquals(banner.getRevealed(), false, "Hidden until revealed");
+    banner.setRevealed(true);
+    assertEquals(banner.getRevealed(), true, "Revealed");
+    let clicked = 0;
+    banner.onButtonClicked(() => clicked++);
+    banner.emit("button-clicked");
+    assertEquals(clicked, 1, "Button handler runs");
+    banner.setButtonLabel(null);
+    // libadwaita keeps an unset label as an empty string.
+    assertEquals(banner.getButtonLabel() ?? "", "", "No button");
+    assertEquals(
+      typeof BannerButtonStyle.SUGGESTED,
+      "number",
+      "Button styles are exported",
+    );
   });
 });
 

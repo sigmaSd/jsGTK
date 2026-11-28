@@ -1553,6 +1553,195 @@ This method should always be used instead of [method@Gtk.Window.set_child].
       <implements name="Gtk.Root"/>
       <implements name="Gtk.ShortcutManager"/>
     </class>
+    <class name="Banner" c:symbol-prefix="banner" c:type="AdwBanner" version="1.3" parent="Gtk.Widget" final="1" glib:type-name="AdwBanner" glib:get-type="adw_banner_get_type" glib:type-struct="BannerClass">
+      <constructor name="new" c:identifier="adw_banner_new" version="1.3">
+        <return-value transfer-ownership="none">
+          <type name="Gtk.Widget" c:type="GtkWidget*"/>
+        </return-value>
+        <parameters>
+          <parameter name="title" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_button_label" c:identifier="adw_banner_get_button_label" glib:get-property="button-label" version="1.3">
+        <doc xml:space="preserve" filename="src/adw-banner.c" line="622">
+          Gets the button label for @self.
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Banner" c:type="AdwBanner*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_button_style" c:identifier="adw_banner_get_button_style" glib:get-property="button-style" version="1.7">
+        <doc xml:space="preserve" filename="src/adw-banner.c" line="715">
+          Gets the style class in use for the banner button.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="BannerButtonStyle" c:type="AdwBannerButtonStyle"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Banner" c:type="AdwBanner*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_revealed" c:identifier="adw_banner_get_revealed" glib:get-property="revealed" version="1.3">
+        <doc xml:space="preserve" filename="src/adw-banner.c" line="779">
+          Gets if a banner is revealed
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Banner" c:type="AdwBanner*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_title" c:identifier="adw_banner_get_title" glib:get-property="title" version="1.3">
+        <doc xml:space="preserve" filename="src/adw-banner.c" line="578">
+          Gets the title for @self.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Banner" c:type="AdwBanner*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_use_markup" c:identifier="adw_banner_get_use_markup" glib:get-property="use-markup" version="1.3">
+        <doc xml:space="preserve" filename="src/adw-banner.c" line="670">
+          Gets whether to use Pango markup for the banner title.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Banner" c:type="AdwBanner*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_button_label" c:identifier="adw_banner_set_button_label" glib:set-property="button-label" version="1.3">
+        <doc xml:space="preserve" filename="src/adw-banner.c" line="640">
+          Sets the button label for @self.
+
+If set to `""` or `NULL`, the button won't be shown.
+
+The button can be used with a `GAction`, or with the
+[signal@Banner::button-clicked] signal.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Banner" c:type="AdwBanner*"/>
+          </instance-parameter>
+          <parameter name="label" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_button_style" c:identifier="adw_banner_set_button_style" glib:set-property="button-style" version="1.7">
+        <doc xml:space="preserve" filename="src/adw-banner.c" line="733">
+          Sets the style class to use for the banner button.
+
+When set to [enum@Adw.BannerButtonStyle.default], the button is grey.
+When set to [enum@Adw.BannerButtonStyle.suggested], the button uses the
+[`.suggested-action`](style-classes.html#suggested-action) appearance.
+
+&lt;picture&gt;
+  &lt;source srcset="banner-suggested-dark.png" media="(prefers-color-scheme: dark)"&gt;
+  &lt;img src="banner-suggested.png" alt="banner with suggested button style"&gt;
+&lt;/picture&gt;
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Banner" c:type="AdwBanner*"/>
+          </instance-parameter>
+          <parameter name="style" transfer-ownership="none">
+            <type name="BannerButtonStyle" c:type="AdwBannerButtonStyle"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_revealed" c:identifier="adw_banner_set_revealed" glib:set-property="revealed" version="1.3">
+        <doc xml:space="preserve" filename="src/adw-banner.c" line="797">
+          Sets whether a banner should be revealed
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Banner" c:type="AdwBanner*"/>
+          </instance-parameter>
+          <parameter name="revealed" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_title" c:identifier="adw_banner_set_title" glib:set-property="title" version="1.3">
+        <doc xml:space="preserve" filename="src/adw-banner.c" line="596">
+          Sets the title for this banner.
+
+See also: [property@Banner:use-markup].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Banner" c:type="AdwBanner*"/>
+          </instance-parameter>
+          <parameter name="title" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_use_markup" c:identifier="adw_banner_set_use_markup" glib:set-property="use-markup" version="1.3">
+        <doc xml:space="preserve" filename="src/adw-banner.c" line="688">
+          Sets whether to use Pango markup for the banner title.
+
+See also [func@Pango.parse_markup].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Banner" c:type="AdwBanner*"/>
+          </instance-parameter>
+          <parameter name="use_markup" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <glib:signal name="button-clicked" when="last" version="1.3">
+        <doc xml:space="preserve" filename="src/adw-banner.c" line="461">
+          This signal is emitted after the action button has been clicked.
+
+It can be used as an alternative to setting an action.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
+      <implements name="Gtk.Accessible"/>
+      <implements name="Gtk.Actionable"/>
+      <implements name="Gtk.Buildable"/>
+      <implements name="Gtk.ConstraintTarget"/>
+    </class>
     <class name="ButtonContent" c:symbol-prefix="button_content" c:type="AdwButtonContent" parent="Gtk.Widget" final="1" glib:type-name="AdwButtonContent" glib:get-type="adw_button_content_get_type" glib:type-struct="ButtonContentClass">
       <constructor name="new" c:identifier="adw_button_content_new">
         <return-value transfer-ownership="none">
@@ -7127,7 +7316,17 @@ generally does not use the application name.
       <member name="purple" value="7" c:identifier="ADW_ACCENT_COLOR_PURPLE" glib:nick="purple" glib:name="ADW_ACCENT_COLOR_PURPLE"/>
       <member name="slate" value="8" c:identifier="ADW_ACCENT_COLOR_SLATE" glib:nick="slate" glib:name="ADW_ACCENT_COLOR_SLATE"/>
     </enumeration>
-    <class name="Banner" c:symbol-prefix="banner" c:type="AdwBanner" version="1.3" parent="Gtk.Widget" final="1" glib:type-name="AdwBanner" glib:get-type="adw_banner_get_type" glib:type-struct="BannerClass"/>
+    <enumeration name="BannerButtonStyle" version="1.7" glib:type-name="AdwBannerButtonStyle" glib:get-type="adw_banner_button_style_get_type" c:type="AdwBannerButtonStyle">
+      <doc xml:space="preserve" filename="src/adw-banner.c" line="23">
+        Describes the available button styles for [class@Banner].
+
+New values may be added to this enumeration over time.
+
+See [property@Banner:button-style].
+      </doc>
+      <member name="default" value="0" c:identifier="ADW_BANNER_BUTTON_DEFAULT" glib:nick="default" glib:name="ADW_BANNER_BUTTON_DEFAULT"/>
+      <member name="suggested" value="1" c:identifier="ADW_BANNER_BUTTON_SUGGESTED" glib:nick="suggested" glib:name="ADW_BANNER_BUTTON_SUGGESTED"/>
+    </enumeration>
     <class name="Breakpoint" c:symbol-prefix="breakpoint" c:type="AdwBreakpoint" version="1.4" parent="GObject.Object" final="1" glib:type-name="AdwBreakpoint" glib:get-type="adw_breakpoint_get_type" glib:type-struct="BreakpointClass"/>
     <enumeration name="CenteringPolicy" glib:type-name="AdwCenteringPolicy" glib:get-type="adw_centering_policy_get_type" c:type="AdwCenteringPolicy">
       <doc xml:space="preserve" filename="src/adw-header-bar.c" line="145">

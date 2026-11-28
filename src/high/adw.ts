@@ -17,6 +17,8 @@ import {
   actionRowMethods,
   type ApplicationWindowMethods,
   applicationWindowMethods,
+  type BannerMethods,
+  bannerMethods,
   type ButtonContentMethods,
   buttonContentMethods,
   type CarouselIndicatorDotsMethods,
@@ -471,6 +473,18 @@ export class ToastOverlay extends Widget {
 // Methods generated from GIR; the ones above take precedence.
 export interface ToastOverlay extends ToastOverlayMethods {}
 applyGenerated(ToastOverlay, toastOverlayMethods, "AdwToastOverlay");
+
+// AdwBanner: a message under the header bar, with an optional button
+export class Banner extends Widget {
+  constructor(title: string) {
+    super(adw.symbols.adw_banner_new(cstr(title)));
+  }
+}
+
+// Methods generated from GIR, such as setRevealed and onButtonClicked.
+export interface Banner extends BannerMethods {}
+applyGenerated(Banner, bannerMethods, "AdwBanner");
+export { BannerButtonStyle } from "./generated/adw.ts";
 
 // AdwOverlaySplitView: a sidebar next to, or sliding over, the content
 export class OverlaySplitView extends Widget {

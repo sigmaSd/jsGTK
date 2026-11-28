@@ -516,6 +516,8 @@ export const adwSymbols = {
     parameters: ["pointer", "buffer"],
     result: "void",
   },
+  // Since 1.3.
+  adw_banner_new: { parameters: ["buffer"], result: "pointer" },
   adw_toast_overlay_new: { parameters: [], result: "pointer" },
   adw_toast_overlay_set_child: {
     parameters: ["pointer", "pointer"],
@@ -874,6 +876,66 @@ export const adwSymbols = {
   },
   // Since 1.7.
   adw_application_window_set_adaptive_preview: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+    optional: true,
+  },
+  // Since 1.3.
+  adw_banner_get_button_label: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 1.7.
+  adw_banner_get_button_style: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  // Since 1.3.
+  adw_banner_get_revealed: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 1.3.
+  adw_banner_get_title: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 1.3.
+  adw_banner_get_use_markup: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 1.3.
+  adw_banner_set_button_label: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 1.7.
+  adw_banner_set_button_style: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  // Since 1.3.
+  adw_banner_set_revealed: {
+    parameters: ["pointer", "gboolean"],
+    result: "void",
+    optional: true,
+  },
+  // Since 1.3.
+  adw_banner_set_title: {
+    parameters: ["pointer", "buffer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 1.3.
+  adw_banner_set_use_markup: {
     parameters: ["pointer", "gboolean"],
     result: "void",
     optional: true,
