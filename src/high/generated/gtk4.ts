@@ -7,12 +7,14 @@ import { cstr, readCStr } from "../../low/utils.ts";
 import {
   asyncCall,
   borrowed,
+  borrowedCounted,
   connectSignal,
   cstrOrNull,
   ErrorSlot,
   missing,
   notifiedCallback,
   owned,
+  takeCounted,
   takeString,
 } from "../wrappers.ts";
 import type { Cancellable, File, Menu } from "../gio.ts";
@@ -34,8 +36,13 @@ import type {
   ListBoxRow,
   MenuButton,
   Popover,
+  Renderer,
+  RenderNode,
+  Snapshot,
   TextBuffer,
   ToggleButton,
+  Transform,
+  TransformNode,
   Widget,
   Window,
 } from "../gtk4.ts";
@@ -333,6 +340,223 @@ export const DirectionType = {
   RIGHT: 5,
 } as const;
 export type DirectionType = (typeof DirectionType)[keyof typeof DirectionType];
+
+/**
+ * Describes formats that image data can have in memory.
+ */
+export const GdkMemoryFormat = {
+  B8G8R8A8_PREMULTIPLIED: 0,
+  A8R8G8B8_PREMULTIPLIED: 1,
+  R8G8B8A8_PREMULTIPLIED: 2,
+  B8G8R8A8: 3,
+  A8R8G8B8: 4,
+  R8G8B8A8: 5,
+  A8B8G8R8: 6,
+  R8G8B8: 7,
+  B8G8R8: 8,
+  R16G16B16: 9,
+  R16G16B16A16_PREMULTIPLIED: 10,
+  R16G16B16A16: 11,
+  R16G16B16_FLOAT: 12,
+  R16G16B16A16_FLOAT_PREMULTIPLIED: 13,
+  R16G16B16A16_FLOAT: 14,
+  R32G32B32_FLOAT: 15,
+  R32G32B32A32_FLOAT_PREMULTIPLIED: 16,
+  R32G32B32A32_FLOAT: 17,
+  G8A8_PREMULTIPLIED: 18,
+  G8A8: 19,
+  G8: 20,
+  G16A16_PREMULTIPLIED: 21,
+  G16A16: 22,
+  G16: 23,
+  A8: 24,
+  A16: 25,
+  A16_FLOAT: 26,
+  A32_FLOAT: 27,
+  A8B8G8R8_PREMULTIPLIED: 28,
+  B8G8R8X8: 29,
+  X8R8G8B8: 30,
+  R8G8B8X8: 31,
+  X8B8G8R8: 32,
+  G8_B8R8_420: 33,
+  G8_R8B8_420: 34,
+  G8_B8R8_422: 35,
+  G8_R8B8_422: 36,
+  G8_B8R8_444: 37,
+  G8_R8B8_444: 38,
+  G10X6_B10X6R10X6_420: 39,
+  G12X4_B12X4R12X4_420: 40,
+  G16_B16R16_420: 41,
+  G8_B8_R8_410: 42,
+  G8_R8_B8_410: 43,
+  G8_B8_R8_411: 44,
+  G8_R8_B8_411: 45,
+  G8_B8_R8_420: 46,
+  G8_R8_B8_420: 47,
+  G8_B8_R8_422: 48,
+  G8_R8_B8_422: 49,
+  G8_B8_R8_444: 50,
+  G8_R8_B8_444: 51,
+  G8B8G8R8_422: 52,
+  G8R8G8B8_422: 53,
+  R8G8B8G8_422: 54,
+  B8G8R8G8_422: 55,
+  X6G10_X6B10_X6R10_420: 56,
+  X6G10_X6B10_X6R10_422: 57,
+  X6G10_X6B10_X6R10_444: 58,
+  X4G12_X4B12_X4R12_420: 59,
+  X4G12_X4B12_X4R12_422: 60,
+  X4G12_X4B12_X4R12_444: 61,
+  G16_B16_R16_420: 62,
+  G16_B16_R16_422: 63,
+  G16_B16_R16_444: 64,
+  ARGB2101010_PREMULTIPLIED: 65,
+  ARGB2101010: 66,
+  XRGB2101010: 67,
+  ABGR2101010_PREMULTIPLIED: 68,
+  ABGR2101010: 69,
+  XBGR2101010: 70,
+  N_FORMATS: 71,
+} as const;
+export type GdkMemoryFormat =
+  (typeof GdkMemoryFormat)[keyof typeof GdkMemoryFormat];
+
+/**
+ * The blend modes available for render nodes.
+ */
+export const GskBlendMode = {
+  DEFAULT: 0,
+  MULTIPLY: 1,
+  SCREEN: 2,
+  OVERLAY: 3,
+  DARKEN: 4,
+  LIGHTEN: 5,
+  COLOR_DODGE: 6,
+  COLOR_BURN: 7,
+  HARD_LIGHT: 8,
+  SOFT_LIGHT: 9,
+  DIFFERENCE: 10,
+  EXCLUSION: 11,
+  COLOR: 12,
+  HUE: 13,
+  SATURATION: 14,
+  LUMINOSITY: 15,
+} as const;
+export type GskBlendMode = (typeof GskBlendMode)[keyof typeof GskBlendMode];
+
+/**
+ * Specifies how paths are filled.
+ */
+export const GskFillRule = {
+  WINDING: 0,
+  EVEN_ODD: 1,
+} as const;
+export type GskFillRule = (typeof GskFillRule)[keyof typeof GskFillRule];
+
+/**
+ * The mask modes available for mask nodes.
+ */
+export const GskMaskMode = {
+  ALPHA: 0,
+  INVERTED_ALPHA: 1,
+  LUMINANCE: 2,
+  INVERTED_LUMINANCE: 3,
+} as const;
+export type GskMaskMode = (typeof GskMaskMode)[keyof typeof GskMaskMode];
+
+/**
+ * GSK_PORTER_DUFF_SOURCE:
+ * GSK_PORTER_DUFF_DEST:
+ * GSK_PORTER_DUFF_SOURCE_OVER_DEST:
+ * GSK_PORTER_DUFF_DEST_OVER_SOURCE:
+ * GSK_PORTER_DUFF_SOURCE_IN_DEST:
+ * GSK_PORTER_DUFF_DEST_IN_SOURCE:
+ * GSK_PORTER_DUFF_SOURCE_OUT_DEST:
+ * GSK_PORTER_DUFF_DEST_OUT_SOURCE:
+ * GSK_PORTER_DUFF_SOURCE_ATOP_DEST:
+ * GSK_PORTER_DUFF_DEST_ATOP_SOURCE:
+ * GSK_PORTER_DUFF_XOR:
+ * GSK_PORTER_DUFF_CLEAR:
+ * The 12 compositing modes defined by the seminal paper
+ * by Thomas Porter and Tom Duff.
+ */
+export const GskPorterDuff = {
+  SOURCE: 0,
+  DEST: 1,
+  SOURCE_OVER_DEST: 2,
+  DEST_OVER_SOURCE: 3,
+  SOURCE_IN_DEST: 4,
+  DEST_IN_SOURCE: 5,
+  SOURCE_OUT_DEST: 6,
+  DEST_OUT_SOURCE: 7,
+  SOURCE_ATOP_DEST: 8,
+  DEST_ATOP_SOURCE: 9,
+  XOR: 10,
+  CLEAR: 11,
+} as const;
+export type GskPorterDuff = (typeof GskPorterDuff)[keyof typeof GskPorterDuff];
+
+/**
+ * The type of a node determines what the node is rendering.
+ */
+export const GskRenderNodeType = {
+  NOT_A_RENDER_NODE: 0,
+  CONTAINER_NODE: 1,
+  CAIRO_NODE: 2,
+  COLOR_NODE: 3,
+  LINEAR_GRADIENT_NODE: 4,
+  REPEATING_LINEAR_GRADIENT_NODE: 5,
+  RADIAL_GRADIENT_NODE: 6,
+  REPEATING_RADIAL_GRADIENT_NODE: 7,
+  CONIC_GRADIENT_NODE: 8,
+  BORDER_NODE: 9,
+  TEXTURE_NODE: 10,
+  INSET_SHADOW_NODE: 11,
+  OUTSET_SHADOW_NODE: 12,
+  TRANSFORM_NODE: 13,
+  OPACITY_NODE: 14,
+  COLOR_MATRIX_NODE: 15,
+  REPEAT_NODE: 16,
+  CLIP_NODE: 17,
+  ROUNDED_CLIP_NODE: 18,
+  SHADOW_NODE: 19,
+  BLEND_NODE: 20,
+  CROSS_FADE_NODE: 21,
+  TEXT_NODE: 22,
+  BLUR_NODE: 23,
+  DEBUG_NODE: 24,
+  GL_SHADER_NODE: 25,
+  TEXTURE_SCALE_NODE: 26,
+  MASK_NODE: 27,
+  FILL_NODE: 28,
+  STROKE_NODE: 29,
+  SUBSURFACE_NODE: 30,
+  COMPONENT_TRANSFER_NODE: 31,
+  COPY_NODE: 32,
+  PASTE_NODE: 33,
+  COMPOSITE_NODE: 34,
+  ISOLATION_NODE: 35,
+  DISPLACEMENT_NODE: 36,
+  ARITHMETIC_NODE: 37,
+  TURBULENCE_NODE: 38,
+} as const;
+export type GskRenderNodeType =
+  (typeof GskRenderNodeType)[keyof typeof GskRenderNodeType];
+
+/**
+ * The categories of matrices relevant for GSK and GTK.
+ */
+export const GskTransformCategory = {
+  UNKNOWN: 0,
+  ANY: 1,
+  "3D": 2,
+  "2D": 3,
+  "2D_AFFINE": 4,
+  "2D_TRANSLATE": 5,
+  IDENTITY: 6,
+} as const;
+export type GskTransformCategory =
+  (typeof GskTransformCategory)[keyof typeof GskTransformCategory];
 
 /**
  * Built-in icon sizes.
@@ -5242,6 +5466,10 @@ export interface PopoverMethods {
    */
   onClosed(callback: () => void): number;
   /**
+   * Returns the renderer that is used for this `GtkNative`.
+   */
+  getRenderer(): Renderer | null;
+  /**
    * Returns the surface of this `GtkNative`.
    */
   getSurface(): GObject | null;
@@ -5327,6 +5555,12 @@ export const popoverMethods: PopoverMethods & ThisType<GObject> = {
       parameters: ["pointer", "pointer"],
       result: "void",
     }, () => callback());
+  },
+  getRenderer(this: GObject): Renderer | null {
+    return borrowed<Renderer>(
+      (gtk4.symbols.gtk_native_get_renderer ??
+        missing("gtk_native_get_renderer"))(this.ptr),
+    );
   },
   getSurface(this: GObject): GObject | null {
     return borrowed<GObject>(
@@ -8573,6 +8807,16 @@ export interface WidgetMethods {
     callback: (widget: Widget, frameClock: GObject) => boolean,
   ): number;
   /**
+   * Assigns size, position, (optionally) a baseline and transform
+   * to a child widget.
+   */
+  allocate(
+    width: number,
+    height: number,
+    baseline: number,
+    transform: Transform | null,
+  ): void;
+  /**
    * Called by widgets as the user moves around the window using
    * keyboard shortcuts.
    */
@@ -8987,7 +9231,7 @@ export interface WidgetMethods {
   /**
    * Snapshots a child of the widget.
    */
-  snapshotChild(child: Widget, snapshot: GObject): void;
+  snapshotChild(child: Widget, snapshot: Snapshot): void;
   /**
    * Triggers a tooltip query on the display of the widget.
    */
@@ -9184,6 +9428,21 @@ export const widgetMethods: WidgetMethods & ThisType<GObject> = {
     }
     return (gtk4.symbols.gtk_widget_add_tick_callback ??
       missing("gtk_widget_add_tick_callback"))(this.ptr, __0, __1, __2);
+  },
+  allocate(
+    this: GObject,
+    width: number,
+    height: number,
+    baseline: number,
+    transform: Transform | null,
+  ): void {
+    (gtk4.symbols.gtk_widget_allocate ?? missing("gtk_widget_allocate"))(
+      this.ptr,
+      width,
+      height,
+      baseline,
+      transform?.newRef() ?? null,
+    );
   },
   childFocus(this: GObject, direction: DirectionType): boolean {
     return (gtk4.symbols.gtk_widget_child_focus ??
@@ -9661,7 +9920,7 @@ export const widgetMethods: WidgetMethods & ThisType<GObject> = {
     return (gtk4.symbols.gtk_widget_should_layout ??
       missing("gtk_widget_should_layout"))(this.ptr);
   },
-  snapshotChild(this: GObject, child: Widget, snapshot: GObject): void {
+  snapshotChild(this: GObject, child: Widget, snapshot: Snapshot): void {
     (gtk4.symbols.gtk_widget_snapshot_child ??
       missing("gtk_widget_snapshot_child"))(this.ptr, child.ptr, snapshot.ptr);
   },
@@ -10061,6 +10320,10 @@ export interface WindowMethods {
    */
   onForceClose(callback: () => void): number;
   /**
+   * Returns the renderer that is used for this `GtkNative`.
+   */
+  getRenderer(): Renderer | null;
+  /**
    * Returns the surface of this `GtkNative`.
    */
   getSurface(): GObject | null;
@@ -10279,6 +10542,12 @@ export const windowMethods: WindowMethods & ThisType<GObject> = {
       parameters: ["pointer", "pointer"],
       result: "void",
     }, () => callback());
+  },
+  getRenderer(this: GObject): Renderer | null {
+    return borrowed<Renderer>(
+      (gtk4.symbols.gtk_native_get_renderer ??
+        missing("gtk_native_get_renderer"))(this.ptr),
+    );
   },
   getSurface(this: GObject): GObject | null {
     return borrowed<GObject>(
@@ -10532,6 +10801,950 @@ export const entryMethods: EntryMethods & ThisType<GObject> = {
       parameters: ["pointer", "pointer", "i32", "i32", "pointer"],
       result: "void",
     }, (a0: never, a1: never, a2: never) => callback(readCStr(a0), a1, a2));
+  },
+};
+
+/** Methods generated for `GtkSnapshot`. */
+export interface SnapshotMethods {
+  /**
+   * A convenience method to fill a path with a color.
+   */
+  appendFill(
+    path: Deno.PointerValue,
+    fillRule: GskFillRule,
+    color: Deno.PointerValue,
+  ): void;
+  /**
+   * Appends an inset shadow into the box given by `outline`.
+   */
+  appendInsetShadow(
+    outline: Deno.PointerValue,
+    color: Deno.PointerValue,
+    dx: number,
+    dy: number,
+    spread: number,
+    blurRadius: number,
+  ): void;
+  /**
+   * Creates render nodes for rendering `layout` in the given foregound `color`
+   * and appends them to the current node of `snapshot` without changing the
+   * current node. The current theme's foreground color for a widget can be
+   * obtained with `getColor()`.
+   */
+  appendLayout(layout: GObject, color: Deno.PointerValue): void;
+  /**
+   * Appends `node` to the current render node of `snapshot`,
+   * without changing the current node.
+   */
+  appendNode(node: RenderNode): void;
+  /**
+   * Appends an outset shadow node around the box given by `outline`.
+   */
+  appendOutsetShadow(
+    outline: Deno.PointerValue,
+    color: Deno.PointerValue,
+    dx: number,
+    dy: number,
+    spread: number,
+    blurRadius: number,
+  ): void;
+  /**
+   * A convenience method to stroke a path with a color.
+   */
+  appendStroke(
+    path: Deno.PointerValue,
+    stroke: Deno.PointerValue,
+    color: Deno.PointerValue,
+  ): void;
+  /**
+   * Applies a perspective projection transform.
+   */
+  perspective(depth: number): void;
+  /**
+   * Removes the top element from the stack of render nodes,
+   * and appends it to the node underneath it.
+   */
+  pop(): void;
+  /**
+   * Blends together two images with the given blend mode.
+   */
+  pushBlend(blendMode: GskBlendMode): void;
+  /**
+   * Blurs an image.
+   */
+  pushBlur(radius: number): void;
+  /**
+   * Modifies the colors of an image by applying a transfer
+   * function for each component.
+   */
+  pushComponentTransfer(
+    red: Deno.PointerValue,
+    green: Deno.PointerValue,
+    blue: Deno.PointerValue,
+    alpha: Deno.PointerValue,
+  ): void;
+  /**
+   * Until the first call to `pop()`, the
+   * mask image for the mask operation will be recorded.
+   */
+  pushComposite(op: GskPorterDuff): void;
+  /**
+   * Stores the current rendering state for later pasting via
+   * `appendPaste()`.
+   */
+  pushCopy(): void;
+  /**
+   * Snapshots a cross-fade operation between two images with the
+   * given `progress`.
+   */
+  pushCrossFade(progress: number): void;
+  /**
+   * Fills the area given by `path` and `fillRule` with an image and discards everything
+   * outside of it.
+   */
+  pushFill(path: Deno.PointerValue, fillRule: GskFillRule): void;
+  /**
+   * Isolates the following drawing operations from previous ones.
+   */
+  pushIsolation(features: number): void;
+  /**
+   * Until the first call to `pop()`, the
+   * mask image for the mask operation will be recorded.
+   */
+  pushMask(maskMode: GskMaskMode): void;
+  /**
+   * Modifies the opacity of an image.
+   */
+  pushOpacity(opacity: number): void;
+  /**
+   * Clips an image to a rounded rectangle.
+   */
+  pushRoundedClip(bounds: Deno.PointerValue): void;
+  /**
+   * Strokes the given `path` with the attributes given by `stroke` and
+   * an image.
+   */
+  pushStroke(path: Deno.PointerValue, stroke: Deno.PointerValue): void;
+  /**
+   * Restores `snapshot` to the state saved by a preceding call to
+   * `save()` and removes that state from the stack of
+   * saved states.
+   */
+  restore(): void;
+  /**
+   * Rotates @`snapshot`'s coordinate system by `angle` degrees in 2D space -
+   * or in 3D speak, rotates around the Z axis. The rotation happens around
+   * the origin point of (0, 0) in the `snapshot`'s current coordinate system.
+   */
+  rotate(angle: number): void;
+  /**
+   * Makes a copy of the current state of `snapshot` and saves it
+   * on an internal stack.
+   */
+  save(): void;
+  /**
+   * Scales `snapshot`'s coordinate system in 2-dimensional space by
+   * the given factors.
+   */
+  scale(factorX: number, factorY: number): void;
+  /**
+   * Scales `snapshot`'s coordinate system by the given factors.
+   */
+  scale3d(factorX: number, factorY: number, factorZ: number): void;
+  /**
+   * Returns the render node that was constructed
+   * by `snapshot`.
+   */
+  toNode(): RenderNode | null;
+  /**
+   * Transforms `snapshot`'s coordinate system with the given `transform`.
+   */
+  transform(transform: Transform | null): void;
+}
+
+/** Implementations of {@linkcode SnapshotMethods}. */
+export const snapshotMethods: SnapshotMethods & ThisType<GObject> = {
+  appendFill(
+    this: GObject,
+    path: Deno.PointerValue,
+    fillRule: GskFillRule,
+    color: Deno.PointerValue,
+  ): void {
+    (gtk4.symbols.gtk_snapshot_append_fill ??
+      missing("gtk_snapshot_append_fill", "4.14"))(
+        this.ptr,
+        path,
+        fillRule,
+        color,
+      );
+  },
+  appendInsetShadow(
+    this: GObject,
+    outline: Deno.PointerValue,
+    color: Deno.PointerValue,
+    dx: number,
+    dy: number,
+    spread: number,
+    blurRadius: number,
+  ): void {
+    (gtk4.symbols.gtk_snapshot_append_inset_shadow ??
+      missing("gtk_snapshot_append_inset_shadow"))(
+        this.ptr,
+        outline,
+        color,
+        dx,
+        dy,
+        spread,
+        blurRadius,
+      );
+  },
+  appendLayout(this: GObject, layout: GObject, color: Deno.PointerValue): void {
+    (gtk4.symbols.gtk_snapshot_append_layout ??
+      missing("gtk_snapshot_append_layout"))(this.ptr, layout.ptr, color);
+  },
+  appendNode(this: GObject, node: RenderNode): void {
+    (gtk4.symbols.gtk_snapshot_append_node ??
+      missing("gtk_snapshot_append_node"))(this.ptr, node.ptr);
+  },
+  appendOutsetShadow(
+    this: GObject,
+    outline: Deno.PointerValue,
+    color: Deno.PointerValue,
+    dx: number,
+    dy: number,
+    spread: number,
+    blurRadius: number,
+  ): void {
+    (gtk4.symbols.gtk_snapshot_append_outset_shadow ??
+      missing("gtk_snapshot_append_outset_shadow"))(
+        this.ptr,
+        outline,
+        color,
+        dx,
+        dy,
+        spread,
+        blurRadius,
+      );
+  },
+  appendStroke(
+    this: GObject,
+    path: Deno.PointerValue,
+    stroke: Deno.PointerValue,
+    color: Deno.PointerValue,
+  ): void {
+    (gtk4.symbols.gtk_snapshot_append_stroke ??
+      missing("gtk_snapshot_append_stroke", "4.14"))(
+        this.ptr,
+        path,
+        stroke,
+        color,
+      );
+  },
+  perspective(this: GObject, depth: number): void {
+    (gtk4.symbols.gtk_snapshot_perspective ??
+      missing("gtk_snapshot_perspective"))(this.ptr, depth);
+  },
+  pop(this: GObject): void {
+    (gtk4.symbols.gtk_snapshot_pop ?? missing("gtk_snapshot_pop"))(this.ptr);
+  },
+  pushBlend(this: GObject, blendMode: GskBlendMode): void {
+    (gtk4.symbols.gtk_snapshot_push_blend ??
+      missing("gtk_snapshot_push_blend"))(this.ptr, blendMode);
+  },
+  pushBlur(this: GObject, radius: number): void {
+    (gtk4.symbols.gtk_snapshot_push_blur ?? missing("gtk_snapshot_push_blur"))(
+      this.ptr,
+      radius,
+    );
+  },
+  pushComponentTransfer(
+    this: GObject,
+    red: Deno.PointerValue,
+    green: Deno.PointerValue,
+    blue: Deno.PointerValue,
+    alpha: Deno.PointerValue,
+  ): void {
+    (gtk4.symbols.gtk_snapshot_push_component_transfer ??
+      missing("gtk_snapshot_push_component_transfer", "4.20"))(
+        this.ptr,
+        red,
+        green,
+        blue,
+        alpha,
+      );
+  },
+  pushComposite(this: GObject, op: GskPorterDuff): void {
+    (gtk4.symbols.gtk_snapshot_push_composite ??
+      missing("gtk_snapshot_push_composite", "4.22"))(this.ptr, op);
+  },
+  pushCopy(this: GObject): void {
+    (gtk4.symbols.gtk_snapshot_push_copy ??
+      missing("gtk_snapshot_push_copy", "4.22"))(this.ptr);
+  },
+  pushCrossFade(this: GObject, progress: number): void {
+    (gtk4.symbols.gtk_snapshot_push_cross_fade ??
+      missing("gtk_snapshot_push_cross_fade"))(this.ptr, progress);
+  },
+  pushFill(
+    this: GObject,
+    path: Deno.PointerValue,
+    fillRule: GskFillRule,
+  ): void {
+    (gtk4.symbols.gtk_snapshot_push_fill ??
+      missing("gtk_snapshot_push_fill", "4.14"))(this.ptr, path, fillRule);
+  },
+  pushIsolation(this: GObject, features: number): void {
+    (gtk4.symbols.gtk_snapshot_push_isolation ??
+      missing("gtk_snapshot_push_isolation", "4.22"))(this.ptr, features);
+  },
+  pushMask(this: GObject, maskMode: GskMaskMode): void {
+    (gtk4.symbols.gtk_snapshot_push_mask ??
+      missing("gtk_snapshot_push_mask", "4.10"))(this.ptr, maskMode);
+  },
+  pushOpacity(this: GObject, opacity: number): void {
+    (gtk4.symbols.gtk_snapshot_push_opacity ??
+      missing("gtk_snapshot_push_opacity"))(this.ptr, opacity);
+  },
+  pushRoundedClip(this: GObject, bounds: Deno.PointerValue): void {
+    (gtk4.symbols.gtk_snapshot_push_rounded_clip ??
+      missing("gtk_snapshot_push_rounded_clip"))(this.ptr, bounds);
+  },
+  pushStroke(
+    this: GObject,
+    path: Deno.PointerValue,
+    stroke: Deno.PointerValue,
+  ): void {
+    (gtk4.symbols.gtk_snapshot_push_stroke ??
+      missing("gtk_snapshot_push_stroke", "4.14"))(this.ptr, path, stroke);
+  },
+  restore(this: GObject): void {
+    (gtk4.symbols.gtk_snapshot_restore ?? missing("gtk_snapshot_restore"))(
+      this.ptr,
+    );
+  },
+  rotate(this: GObject, angle: number): void {
+    (gtk4.symbols.gtk_snapshot_rotate ?? missing("gtk_snapshot_rotate"))(
+      this.ptr,
+      angle,
+    );
+  },
+  save(this: GObject): void {
+    (gtk4.symbols.gtk_snapshot_save ?? missing("gtk_snapshot_save"))(this.ptr);
+  },
+  scale(this: GObject, factorX: number, factorY: number): void {
+    (gtk4.symbols.gtk_snapshot_scale ?? missing("gtk_snapshot_scale"))(
+      this.ptr,
+      factorX,
+      factorY,
+    );
+  },
+  scale3d(
+    this: GObject,
+    factorX: number,
+    factorY: number,
+    factorZ: number,
+  ): void {
+    (gtk4.symbols.gtk_snapshot_scale_3d ?? missing("gtk_snapshot_scale_3d"))(
+      this.ptr,
+      factorX,
+      factorY,
+      factorZ,
+    );
+  },
+  toNode(this: GObject): RenderNode | null {
+    return takeCounted<RenderNode>(
+      "GskRenderNode",
+      (gtk4.symbols.gtk_snapshot_to_node ?? missing("gtk_snapshot_to_node"))(
+        this.ptr,
+      ),
+    );
+  },
+  transform(this: GObject, transform: Transform | null): void {
+    (gtk4.symbols.gtk_snapshot_transform ?? missing("gtk_snapshot_transform"))(
+      this.ptr,
+      transform?.ptr ?? null,
+    );
+  },
+};
+
+/** Methods generated for `GtkWidgetPaintable`. */
+export interface WidgetPaintableMethods {
+  /**
+   * Returns the widget that is observed or `null` if none.
+   */
+  getWidget(): Widget | null;
+  /**
+   * Sets the widget that should be observed.
+   */
+  setWidget(widget: Widget | null): void;
+  /**
+   * Gets an immutable paintable for the current contents displayed by `paintable`.
+   */
+  getCurrentImage(): GObject;
+  /**
+   * Get flags for the paintable.
+   */
+  getFlags(): number;
+  /**
+   * Gets the preferred aspect ratio the `paintable` would like to be displayed at.
+   */
+  getIntrinsicAspectRatio(): number;
+  /**
+   * Gets the preferred height the `paintable` would like to be displayed at.
+   */
+  getIntrinsicHeight(): number;
+  /**
+   * Gets the preferred width the `paintable` would like to be displayed at.
+   */
+  getIntrinsicWidth(): number;
+  /**
+   * Called by implementations of `GdkPaintable` to invalidate their contents.
+   */
+  invalidateContents(): void;
+  /**
+   * Called by implementations of `GdkPaintable` to invalidate their size.
+   */
+  invalidateSize(): void;
+  /**
+   * Snapshots the given paintable with the given `width` and `height`.
+   */
+  snapshot(snapshot: GObject, width: number, height: number): void;
+  /**
+   * Emitted when the contents of the `paintable` change.
+   */
+  onInvalidateContents(callback: () => void): number;
+  /**
+   * Emitted when the intrinsic size of the `paintable` changes.
+   */
+  onInvalidateSize(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode WidgetPaintableMethods}. */
+export const widgetPaintableMethods:
+  & WidgetPaintableMethods
+  & ThisType<GObject> = {
+    getWidget(this: GObject): Widget | null {
+      return borrowed<Widget>(
+        (gtk4.symbols.gtk_widget_paintable_get_widget ??
+          missing("gtk_widget_paintable_get_widget"))(this.ptr),
+      );
+    },
+    setWidget(this: GObject, widget: Widget | null): void {
+      (gtk4.symbols.gtk_widget_paintable_set_widget ??
+        missing("gtk_widget_paintable_set_widget"))(
+          this.ptr,
+          widget?.ptr ?? null,
+        );
+    },
+    getCurrentImage(this: GObject): GObject {
+      return owned<GObject>(
+        (gtk4.symbols.gdk_paintable_get_current_image ??
+          missing("gdk_paintable_get_current_image"))(this.ptr),
+      )!;
+    },
+    getFlags(this: GObject): number {
+      return (gtk4.symbols.gdk_paintable_get_flags ??
+        missing("gdk_paintable_get_flags"))(this.ptr);
+    },
+    getIntrinsicAspectRatio(this: GObject): number {
+      return (gtk4.symbols.gdk_paintable_get_intrinsic_aspect_ratio ??
+        missing("gdk_paintable_get_intrinsic_aspect_ratio"))(this.ptr);
+    },
+    getIntrinsicHeight(this: GObject): number {
+      return (gtk4.symbols.gdk_paintable_get_intrinsic_height ??
+        missing("gdk_paintable_get_intrinsic_height"))(this.ptr);
+    },
+    getIntrinsicWidth(this: GObject): number {
+      return (gtk4.symbols.gdk_paintable_get_intrinsic_width ??
+        missing("gdk_paintable_get_intrinsic_width"))(this.ptr);
+    },
+    invalidateContents(this: GObject): void {
+      (gtk4.symbols.gdk_paintable_invalidate_contents ??
+        missing("gdk_paintable_invalidate_contents"))(this.ptr);
+    },
+    invalidateSize(this: GObject): void {
+      (gtk4.symbols.gdk_paintable_invalidate_size ??
+        missing("gdk_paintable_invalidate_size"))(this.ptr);
+    },
+    snapshot(
+      this: GObject,
+      snapshot: GObject,
+      width: number,
+      height: number,
+    ): void {
+      (gtk4.symbols.gdk_paintable_snapshot ??
+        missing("gdk_paintable_snapshot"))(
+          this.ptr,
+          snapshot.ptr,
+          width,
+          height,
+        );
+    },
+    onInvalidateContents(this: GObject, callback: () => void): number {
+      return connectSignal(this, "invalidate-contents", {
+        parameters: ["pointer", "pointer"],
+        result: "void",
+      }, () => callback());
+    },
+    onInvalidateSize(this: GObject, callback: () => void): number {
+      return connectSignal(this, "invalidate-size", {
+        parameters: ["pointer", "pointer"],
+        result: "void",
+      }, () => callback());
+    },
+  };
+
+/** Methods generated for `GdkTexture`. */
+export interface TextureMethods {
+  /**
+   * Returns the color state associated with the texture.
+   */
+  getColorState(): Deno.PointerValue;
+  /**
+   * Gets the memory format most closely associated with the data of
+   * the texture.
+   */
+  getFormat(): GdkMemoryFormat;
+  /**
+   * Returns the height of the `texture`, in pixels.
+   */
+  getHeight(): number;
+  /**
+   * Returns the width of `texture`, in pixels.
+   */
+  getWidth(): number;
+  /**
+   * Store the given `texture` to the `filename` as a PNG file.
+   */
+  saveToPng(filename: string): boolean;
+  /**
+   * Store the given `texture` to the `filename` as a TIFF file.
+   */
+  saveToTiff(filename: string): boolean;
+  /**
+   * Gets an immutable paintable for the current contents displayed by `paintable`.
+   */
+  getCurrentImage(): GObject;
+  /**
+   * Get flags for the paintable.
+   */
+  getFlags(): number;
+  /**
+   * Gets the preferred aspect ratio the `paintable` would like to be displayed at.
+   */
+  getIntrinsicAspectRatio(): number;
+  /**
+   * Gets the preferred height the `paintable` would like to be displayed at.
+   */
+  getIntrinsicHeight(): number;
+  /**
+   * Gets the preferred width the `paintable` would like to be displayed at.
+   */
+  getIntrinsicWidth(): number;
+  /**
+   * Called by implementations of `GdkPaintable` to invalidate their contents.
+   */
+  invalidateContents(): void;
+  /**
+   * Called by implementations of `GdkPaintable` to invalidate their size.
+   */
+  invalidateSize(): void;
+  /**
+   * Snapshots the given paintable with the given `width` and `height`.
+   */
+  snapshot(snapshot: GObject, width: number, height: number): void;
+  /**
+   * Emitted when the contents of the `paintable` change.
+   */
+  onInvalidateContents(callback: () => void): number;
+  /**
+   * Emitted when the intrinsic size of the `paintable` changes.
+   */
+  onInvalidateSize(callback: () => void): number;
+}
+
+/** Implementations of {@linkcode TextureMethods}. */
+export const textureMethods: TextureMethods & ThisType<GObject> = {
+  getColorState(this: GObject): Deno.PointerValue {
+    return (gtk4.symbols.gdk_texture_get_color_state ??
+      missing("gdk_texture_get_color_state", "4.16"))(this.ptr);
+  },
+  getFormat(this: GObject): GdkMemoryFormat {
+    return (gtk4.symbols.gdk_texture_get_format ??
+      missing("gdk_texture_get_format", "4.10"))(this.ptr) as GdkMemoryFormat;
+  },
+  getHeight(this: GObject): number {
+    return (gtk4.symbols.gdk_texture_get_height ??
+      missing("gdk_texture_get_height"))(this.ptr);
+  },
+  getWidth(this: GObject): number {
+    return (gtk4.symbols.gdk_texture_get_width ??
+      missing("gdk_texture_get_width"))(this.ptr);
+  },
+  saveToPng(this: GObject, filename: string): boolean {
+    return gtk4.symbols.gdk_texture_save_to_png(this.ptr, cstr(filename));
+  },
+  saveToTiff(this: GObject, filename: string): boolean {
+    return (gtk4.symbols.gdk_texture_save_to_tiff ??
+      missing("gdk_texture_save_to_tiff", "4.6"))(this.ptr, cstr(filename));
+  },
+  getCurrentImage(this: GObject): GObject {
+    return owned<GObject>(
+      (gtk4.symbols.gdk_paintable_get_current_image ??
+        missing("gdk_paintable_get_current_image"))(this.ptr),
+    )!;
+  },
+  getFlags(this: GObject): number {
+    return (gtk4.symbols.gdk_paintable_get_flags ??
+      missing("gdk_paintable_get_flags"))(this.ptr);
+  },
+  getIntrinsicAspectRatio(this: GObject): number {
+    return (gtk4.symbols.gdk_paintable_get_intrinsic_aspect_ratio ??
+      missing("gdk_paintable_get_intrinsic_aspect_ratio"))(this.ptr);
+  },
+  getIntrinsicHeight(this: GObject): number {
+    return (gtk4.symbols.gdk_paintable_get_intrinsic_height ??
+      missing("gdk_paintable_get_intrinsic_height"))(this.ptr);
+  },
+  getIntrinsicWidth(this: GObject): number {
+    return (gtk4.symbols.gdk_paintable_get_intrinsic_width ??
+      missing("gdk_paintable_get_intrinsic_width"))(this.ptr);
+  },
+  invalidateContents(this: GObject): void {
+    (gtk4.symbols.gdk_paintable_invalidate_contents ??
+      missing("gdk_paintable_invalidate_contents"))(this.ptr);
+  },
+  invalidateSize(this: GObject): void {
+    (gtk4.symbols.gdk_paintable_invalidate_size ??
+      missing("gdk_paintable_invalidate_size"))(this.ptr);
+  },
+  snapshot(
+    this: GObject,
+    snapshot: GObject,
+    width: number,
+    height: number,
+  ): void {
+    (gtk4.symbols.gdk_paintable_snapshot ?? missing("gdk_paintable_snapshot"))(
+      this.ptr,
+      snapshot.ptr,
+      width,
+      height,
+    );
+  },
+  onInvalidateContents(this: GObject, callback: () => void): number {
+    return connectSignal(this, "invalidate-contents", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+  onInvalidateSize(this: GObject, callback: () => void): number {
+    return connectSignal(this, "invalidate-size", {
+      parameters: ["pointer", "pointer"],
+      result: "void",
+    }, () => callback());
+  },
+};
+
+/** Methods generated for `GskRenderer`. */
+export interface RendererMethods {
+  /**
+   * Retrieves the surface that the renderer is associated with.
+   */
+  getSurface(): GObject | null;
+  /**
+   * Checks whether the renderer is realized or not.
+   */
+  isRealized(): boolean;
+  /**
+   * Creates the resources needed by the renderer.
+   */
+  realize(surface: GObject | null): boolean;
+  /**
+   * Creates the resources needed by the renderer.
+   */
+  realizeForDisplay(display: Display): boolean;
+  /**
+   * Releases all the resources created by `realize()`.
+   */
+  unrealize(): void;
+}
+
+/** Implementations of {@linkcode RendererMethods}. */
+export const rendererMethods: RendererMethods & ThisType<GObject> = {
+  getSurface(this: GObject): GObject | null {
+    return borrowed<GObject>(
+      (gtk4.symbols.gsk_renderer_get_surface ??
+        missing("gsk_renderer_get_surface"))(this.ptr),
+    );
+  },
+  isRealized(this: GObject): boolean {
+    return (gtk4.symbols.gsk_renderer_is_realized ??
+      missing("gsk_renderer_is_realized"))(this.ptr);
+  },
+  realize(this: GObject, surface: GObject | null): boolean {
+    const __error = new ErrorSlot();
+    const __value =
+      (gtk4.symbols.gsk_renderer_realize ?? missing("gsk_renderer_realize"))(
+        this.ptr,
+        surface?.ptr ?? null,
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  realizeForDisplay(this: GObject, display: Display): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gtk4.symbols.gsk_renderer_realize_for_display ??
+      missing("gsk_renderer_realize_for_display", "4.14"))(
+        this.ptr,
+        display.ptr,
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+  unrealize(this: GObject): void {
+    (gtk4.symbols.gsk_renderer_unrealize ?? missing("gsk_renderer_unrealize"))(
+      this.ptr,
+    );
+  },
+};
+
+/** Methods generated for `GskCairoRenderer`. */
+export interface CairoRendererMethods {
+}
+
+/** Implementations of {@linkcode CairoRendererMethods}. */
+export const cairoRendererMethods: CairoRendererMethods & ThisType<GObject> =
+  {};
+
+/** Methods generated for `GskRenderNode`. */
+export interface RenderNodeMethods {
+  /**
+   * Returns the type of the render node.
+   */
+  getNodeType(): GskRenderNodeType;
+  /**
+   * This function is equivalent to calling `serialize()`
+   * followed by `fileSetContents()`.
+   */
+  writeToFile(filename: string): boolean;
+}
+
+/** Implementations of {@linkcode RenderNodeMethods}. */
+export const renderNodeMethods: RenderNodeMethods & ThisType<RenderNode> = {
+  getNodeType(this: RenderNode): GskRenderNodeType {
+    return (gtk4.symbols.gsk_render_node_get_node_type ??
+      missing("gsk_render_node_get_node_type"))(this.ptr) as GskRenderNodeType;
+  },
+  writeToFile(this: RenderNode, filename: string): boolean {
+    const __error = new ErrorSlot();
+    const __value = (gtk4.symbols.gsk_render_node_write_to_file ??
+      missing("gsk_render_node_write_to_file"))(
+        this.ptr,
+        cstr(filename),
+        __error.pointer,
+      );
+    __error.check();
+    return __value;
+  },
+};
+
+/** Methods generated for `GskTransformNode`. */
+export interface TransformNodeMethods {
+  /**
+   * Gets the child node that is getting transformed by the given `node`.
+   */
+  getChild(): RenderNode;
+  /**
+   * Retrieves the `GskTransform` used by the `node`.
+   */
+  getTransform(): Transform;
+}
+
+/** Implementations of {@linkcode TransformNodeMethods}. */
+export const transformNodeMethods:
+  & TransformNodeMethods
+  & ThisType<TransformNode> = {
+    getChild(this: TransformNode): RenderNode {
+      return borrowedCounted<RenderNode>(
+        "GskRenderNode",
+        (gtk4.symbols.gsk_transform_node_get_child ??
+          missing("gsk_transform_node_get_child"))(this.ptr),
+      )!;
+    },
+    getTransform(this: TransformNode): Transform {
+      return borrowedCounted<Transform>(
+        "GskTransform",
+        (gtk4.symbols.gsk_transform_node_get_transform ??
+          missing("gsk_transform_node_get_transform"))(this.ptr),
+      )!;
+    },
+  };
+
+/** Methods generated for `GskTransform`. */
+export interface TransformMethods {
+  /**
+   * Checks two transforms for equality.
+   */
+  equal(second: Transform | null): boolean;
+  /**
+   * Returns the category this transform belongs to.
+   */
+  getCategory(): GskTransformCategory;
+  /**
+   * Inverts the given transform.
+   */
+  invert(): Transform | null;
+  /**
+   * Multiplies `next` with the matrix [ xx yx x0; xy yy y0; 0 0 1 ].
+   */
+  matrix2d(
+    xx: number,
+    yx: number,
+    xy: number,
+    yy: number,
+    dx: number,
+    dy: number,
+  ): Transform | null;
+  /**
+   * Applies a perspective projection transform.
+   */
+  perspective(depth: number): Transform;
+  /**
+   * Rotates `next` by an angle around the Z axis.
+   */
+  rotate(angle: number): Transform | null;
+  /**
+   * Scales `next` in 2-dimensional space by the given factors.
+   */
+  scale(factorX: number, factorY: number): Transform | null;
+  /**
+   * Scales `next` by the given factors.
+   */
+  scale3d(factorX: number, factorY: number, factorZ: number): Transform | null;
+  /**
+   * Applies a skew transform.
+   */
+  skew(skewX: number, skewY: number): Transform | null;
+  /**
+   * Converts the transform into a human-readable string.
+   */
+  toString(): string;
+  /**
+   * Applies all the operations from `other` to `next`.
+   */
+  transform(other: Transform | null): Transform | null;
+}
+
+/** Implementations of {@linkcode TransformMethods}. */
+export const transformMethods: TransformMethods & ThisType<Transform> = {
+  equal(this: Transform, second: Transform | null): boolean {
+    return (gtk4.symbols.gsk_transform_equal ?? missing("gsk_transform_equal"))(
+      this.ptr,
+      second?.ptr ?? null,
+    );
+  },
+  getCategory(this: Transform): GskTransformCategory {
+    return (gtk4.symbols.gsk_transform_get_category ??
+      missing("gsk_transform_get_category"))(this.ptr) as GskTransformCategory;
+  },
+  invert(this: Transform): Transform | null {
+    return takeCounted<Transform>(
+      "GskTransform",
+      (gtk4.symbols.gsk_transform_invert ?? missing("gsk_transform_invert"))(
+        this.newRef(),
+      ),
+    );
+  },
+  matrix2d(
+    this: Transform,
+    xx: number,
+    yx: number,
+    xy: number,
+    yy: number,
+    dx: number,
+    dy: number,
+  ): Transform | null {
+    return takeCounted<Transform>(
+      "GskTransform",
+      (gtk4.symbols.gsk_transform_matrix_2d ??
+        missing("gsk_transform_matrix_2d", "4.20"))(
+          this.newRef(),
+          xx,
+          yx,
+          xy,
+          yy,
+          dx,
+          dy,
+        ),
+    );
+  },
+  perspective(this: Transform, depth: number): Transform {
+    return takeCounted<Transform>(
+      "GskTransform",
+      (gtk4.symbols.gsk_transform_perspective ??
+        missing("gsk_transform_perspective"))(this.newRef(), depth),
+    )!;
+  },
+  rotate(this: Transform, angle: number): Transform | null {
+    return takeCounted<Transform>(
+      "GskTransform",
+      (gtk4.symbols.gsk_transform_rotate ?? missing("gsk_transform_rotate"))(
+        this.newRef(),
+        angle,
+      ),
+    );
+  },
+  scale(this: Transform, factorX: number, factorY: number): Transform | null {
+    return takeCounted<Transform>(
+      "GskTransform",
+      (gtk4.symbols.gsk_transform_scale ?? missing("gsk_transform_scale"))(
+        this.newRef(),
+        factorX,
+        factorY,
+      ),
+    );
+  },
+  scale3d(
+    this: Transform,
+    factorX: number,
+    factorY: number,
+    factorZ: number,
+  ): Transform | null {
+    return takeCounted<Transform>(
+      "GskTransform",
+      (gtk4.symbols.gsk_transform_scale_3d ??
+        missing("gsk_transform_scale_3d"))(
+          this.newRef(),
+          factorX,
+          factorY,
+          factorZ,
+        ),
+    );
+  },
+  skew(this: Transform, skewX: number, skewY: number): Transform | null {
+    return takeCounted<Transform>(
+      "GskTransform",
+      (gtk4.symbols.gsk_transform_skew ?? missing("gsk_transform_skew", "4.6"))(
+        this.newRef(),
+        skewX,
+        skewY,
+      ),
+    );
+  },
+  toString(this: Transform): string {
+    return takeString(
+      (gtk4.symbols.gsk_transform_to_string ??
+        missing("gsk_transform_to_string"))(this.ptr),
+    ) ?? "";
+  },
+  transform(this: Transform, other: Transform | null): Transform | null {
+    return takeCounted<Transform>(
+      "GskTransform",
+      (gtk4.symbols.gsk_transform_transform ??
+        missing("gsk_transform_transform"))(this.newRef(), other?.ptr ?? null),
+    );
   },
 };
 

@@ -9845,6 +9845,19 @@ emitting it causes the button to pop up its menu.
       <implements name="ConstraintTarget"/>
     </class>
     <interface name="Native" c:symbol-prefix="native" c:type="GtkNative" glib:type-name="GtkNative" glib:get-type="gtk_native_get_type" glib:type-struct="NativeInterface">
+      <method name="get_renderer" c:identifier="gtk_native_get_renderer">
+        <doc xml:space="preserve" filename="gtk/gtknative.c" line="322">
+          Returns the renderer that is used for this `GtkNative`.
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="Gsk.Renderer" c:type="GskRenderer*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="Native" c:type="GtkNative*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_surface" c:identifier="gtk_native_get_surface">
         <doc xml:space="preserve" filename="gtk/gtknative.c" line="306">
           Returns the surface of this `GtkNative`.
@@ -13306,6 +13319,617 @@ in both directions (%GTK_SIZE_GROUP_BOTH).
         </parameters>
       </method>
       <implements name="Buildable"/>
+    </class>
+    <class name="Snapshot" c:symbol-prefix="snapshot" parent="Gdk.Snapshot" glib:type-name="GtkSnapshot" glib:get-type="gtk_snapshot_get_type" glib:type-struct="SnapshotClass">
+      <constructor name="new" c:identifier="gtk_snapshot_new">
+        <return-value transfer-ownership="full">
+          <type name="Snapshot" c:type="GtkSnapshot*"/>
+        </return-value>
+      </constructor>
+      <method name="append_fill" c:identifier="gtk_snapshot_append_fill" version="4.14">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="1406">
+          A convenience method to fill a path with a color.
+
+See [method@Gtk.Snapshot.push_fill] if you need
+to fill a path with more complex content than
+a color.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="path" transfer-ownership="none">
+            <type name="Gsk.Path" c:type="GskPath*"/>
+          </parameter>
+          <parameter name="fill_rule" transfer-ownership="none">
+            <type name="Gsk.FillRule" c:type="GskFillRule"/>
+          </parameter>
+          <parameter name="color" transfer-ownership="none">
+            <type name="Gdk.RGBA" c:type="const GdkRGBA*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="append_inset_shadow" c:identifier="gtk_snapshot_append_inset_shadow">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="3555">
+          Appends an inset shadow into the box given by @outline.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="outline" transfer-ownership="none">
+            <type name="Gsk.RoundedRect" c:type="const GskRoundedRect*"/>
+          </parameter>
+          <parameter name="color" transfer-ownership="none">
+            <type name="Gdk.RGBA" c:type="const GdkRGBA*"/>
+          </parameter>
+          <parameter name="dx" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="dy" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="spread" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="blur_radius" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="append_layout" c:identifier="gtk_snapshot_append_layout">
+        <doc xml:space="preserve" filename="gtk/gskpango.c" line="576">
+          Creates render nodes for rendering @layout in the given foregound @color
+and appends them to the current node of @snapshot without changing the
+current node. The current theme's foreground color for a widget can be
+obtained with [method@Gtk.Widget.get_color].
+
+Note that if the layout does not produce any visible output, then nodes
+may not be added to the @snapshot.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="layout" transfer-ownership="none">
+            <type name="Pango.Layout" c:type="PangoLayout*"/>
+          </parameter>
+          <parameter name="color" transfer-ownership="none">
+            <type name="Gdk.RGBA" c:type="const GdkRGBA*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="append_node" c:identifier="gtk_snapshot_append_node">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="2859">
+          Appends @node to the current render node of @snapshot,
+without changing the current node.
+
+If @snapshot does not have a current node yet, @node
+will become the initial node.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="node" transfer-ownership="none">
+            <type name="Gsk.RenderNode" c:type="GskRenderNode*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="append_outset_shadow" c:identifier="gtk_snapshot_append_outset_shadow">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="3630">
+          Appends an outset shadow node around the box given by @outline.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="outline" transfer-ownership="none">
+            <type name="Gsk.RoundedRect" c:type="const GskRoundedRect*"/>
+          </parameter>
+          <parameter name="color" transfer-ownership="none">
+            <type name="Gdk.RGBA" c:type="const GdkRGBA*"/>
+          </parameter>
+          <parameter name="dx" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="dy" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="spread" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="blur_radius" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="append_stroke" c:identifier="gtk_snapshot_append_stroke" version="4.14">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="1535">
+          A convenience method to stroke a path with a color.
+
+See [method@Gtk.Snapshot.push_stroke] if you need
+to stroke a path with more complex content than
+a color.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="path" transfer-ownership="none">
+            <type name="Gsk.Path" c:type="GskPath*"/>
+          </parameter>
+          <parameter name="stroke" transfer-ownership="none">
+            <type name="Gsk.Stroke" c:type="const GskStroke*"/>
+          </parameter>
+          <parameter name="color" transfer-ownership="none">
+            <type name="Gdk.RGBA" c:type="const GdkRGBA*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="perspective" c:identifier="gtk_snapshot_perspective">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="2838">
+          Applies a perspective projection transform.
+
+See [method@Gsk.Transform.perspective] for a discussion on the details.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="depth" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="pop" c:identifier="gtk_snapshot_pop">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="2532">
+          Removes the top element from the stack of render nodes,
+and appends it to the node underneath it.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="push_blend" c:identifier="gtk_snapshot_push_blend">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="1720">
+          Blends together two images with the given blend mode.
+
+Until the first call to [method@Gtk.Snapshot.pop], the
+bottom image for the blend operation will be recorded.
+After that call, the top image to be blended will be
+recorded until the second call to [method@Gtk.Snapshot.pop].
+
+Calling this function requires two subsequent calls
+to [method@Gtk.Snapshot.pop].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="blend_mode" transfer-ownership="none">
+            <type name="Gsk.BlendMode" c:type="GskBlendMode"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="push_blur" c:identifier="gtk_snapshot_push_blur">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="935">
+          Blurs an image.
+
+The image is recorded until the next call to [method@Gtk.Snapshot.pop].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="radius" transfer-ownership="none">
+            <type name="gdouble" c:type="double"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="push_component_transfer" c:identifier="gtk_snapshot_push_component_transfer" version="4.20">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="741">
+          Modifies the colors of an image by applying a transfer
+function for each component.
+
+The transfer functions operate on unpremultiplied colors.
+
+The image is recorded until the next call to [method@Gtk.Snapshot.pop].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="red" transfer-ownership="none">
+            <type name="Gsk.ComponentTransfer" c:type="const GskComponentTransfer*"/>
+          </parameter>
+          <parameter name="green" transfer-ownership="none">
+            <type name="Gsk.ComponentTransfer" c:type="const GskComponentTransfer*"/>
+          </parameter>
+          <parameter name="blue" transfer-ownership="none">
+            <type name="Gsk.ComponentTransfer" c:type="const GskComponentTransfer*"/>
+          </parameter>
+          <parameter name="alpha" transfer-ownership="none">
+            <type name="Gsk.ComponentTransfer" c:type="const GskComponentTransfer*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="push_composite" c:identifier="gtk_snapshot_push_composite" version="4.22">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="1928">
+          Until the first call to [method@Gtk.Snapshot.pop], the
+mask image for the mask operation will be recorded.
+
+After that call, the child image will be recorded until
+the second call to [method@Gtk.Snapshot.pop].
+
+Calling this function requires 2 subsequent calls to gtk_snapshot_pop().
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="op" transfer-ownership="none">
+            <type name="Gsk.PorterDuff" c:type="GskPorterDuff"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="push_copy" c:identifier="gtk_snapshot_push_copy" version="4.22">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="1853">
+          Stores the current rendering state for later pasting via
+[method@Gtk.Snapshot.append_paste].
+
+Pasting is possible until the matching call to [method@Gtk.Snapshot.pop].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="push_cross_fade" c:identifier="gtk_snapshot_push_cross_fade">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="2037">
+          Snapshots a cross-fade operation between two images with the
+given @progress.
+
+Until the first call to [method@Gtk.Snapshot.pop], the start image
+will be snapshot. After that call, the end image will be recorded
+until the second call to [method@Gtk.Snapshot.pop].
+
+Calling this function requires two subsequent calls
+to [method@Gtk.Snapshot.pop].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="progress" transfer-ownership="none">
+            <type name="gdouble" c:type="double"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="push_fill" c:identifier="gtk_snapshot_push_fill" version="4.14">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="1370">
+          Fills the area given by @path and @fill_rule with an image and discards everything
+outside of it.
+
+The image is recorded until the next call to [method@Gtk.Snapshot.pop].
+
+If you want to fill the path with a color, [method@Gtk.Snapshot.append_fill]
+than rendering new ones, use [method@Gtk.Snapshot.append_fill]
+may be more convenient.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="path" transfer-ownership="none">
+            <type name="Gsk.Path" c:type="GskPath*"/>
+          </parameter>
+          <parameter name="fill_rule" transfer-ownership="none">
+            <type name="Gsk.FillRule" c:type="GskFillRule"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="push_isolation" c:identifier="gtk_snapshot_push_isolation" version="4.22">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="619">
+          Isolates the following drawing operations from previous ones.
+
+You can express "everything but these flags" in a forward compatible
+way by using bit math:
+`GSK_ISOLATION_ALL &amp; ~(GSK_ISOLATION_BACKGROUND | GSK_ISOLATION_COPY_PASTE)`
+will isolate everything but background and copy/paste.
+
+For what isolation features exist, see [flags@Gsk.Isolation].
+
+Content is isolated until the next call to [method@Gtk.Snapshot.pop].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="features" transfer-ownership="none">
+            <type name="Gsk.Isolation" c:type="GskIsolation"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="push_mask" c:identifier="gtk_snapshot_push_mask" version="4.10">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="1800">
+          Until the first call to [method@Gtk.Snapshot.pop], the
+mask image for the mask operation will be recorded.
+
+After that call, the source image will be recorded until
+the second call to [method@Gtk.Snapshot.pop].
+
+Calling this function requires 2 subsequent calls to gtk_snapshot_pop().
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="mask_mode" transfer-ownership="none">
+            <type name="Gsk.MaskMode" c:type="GskMaskMode"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="push_opacity" c:identifier="gtk_snapshot_push_opacity">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="573">
+          Modifies the opacity of an image.
+
+The image is recorded until the next call to [method@Gtk.Snapshot.pop].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="opacity" transfer-ownership="none">
+            <type name="gdouble" c:type="double"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="push_rounded_clip" c:identifier="gtk_snapshot_push_rounded_clip">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="1307">
+          Clips an image to a rounded rectangle.
+
+The image is recorded until the next call to [method@Gtk.Snapshot.pop].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="bounds" transfer-ownership="none">
+            <type name="Gsk.RoundedRect" c:type="const GskRoundedRect*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="push_stroke" c:identifier="gtk_snapshot_push_stroke" version="4.14">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="1473">
+          Strokes the given @path with the attributes given by @stroke and
+an image.
+
+The image is recorded until the next call to [method@Gtk.Snapshot.pop].
+
+Note that the strokes are subject to the same transformation as
+everything else, so uneven scaling will cause horizontal and vertical
+strokes to have different widths.
+
+If you want to stroke the path with a color, [method@Gtk.Snapshot.append_stroke]
+may be more convenient.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="path" transfer-ownership="none">
+            <type name="Gsk.Path" c:type="GskPath*"/>
+          </parameter>
+          <parameter name="stroke" transfer-ownership="none">
+            <type name="Gsk.Stroke" c:type="const GskStroke*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="restore" c:identifier="gtk_snapshot_restore">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="2607">
+          Restores @snapshot to the state saved by a preceding call to
+[method@Snapshot.save] and removes that state from the stack of
+saved states.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="rotate" c:identifier="gtk_snapshot_rotate">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="2744">
+          Rotates @@snapshot's coordinate system by @angle degrees in 2D space -
+or in 3D speak, rotates around the Z axis. The rotation happens around
+the origin point of (0, 0) in the @snapshot's current coordinate system.
+
+To rotate around axes other than the Z axis, use [method@Gsk.Transform.rotate_3d].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="angle" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="save" c:identifier="gtk_snapshot_save">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="2575">
+          Makes a copy of the current state of @snapshot and saves it
+on an internal stack.
+
+When [method@Gtk.Snapshot.restore] is called, @snapshot will
+be restored to the saved state.
+
+Multiple calls to [method@Gtk.Snapshot.save] and [method@Gtk.Snapshot.restore]
+can be nested; each call to `gtk_snapshot_restore()` restores the state from
+the matching paired `gtk_snapshot_save()`.
+
+It is necessary to clear all saved states with corresponding
+calls to `gtk_snapshot_restore()`.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="scale" c:identifier="gtk_snapshot_scale">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="2791">
+          Scales @snapshot's coordinate system in 2-dimensional space by
+the given factors.
+
+Use [method@Gtk.Snapshot.scale_3d] to scale in all 3 dimensions.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="factor_x" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="factor_y" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="scale_3d" c:identifier="gtk_snapshot_scale_3d">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="2815">
+          Scales @snapshot's coordinate system by the given factors.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="factor_x" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="factor_y" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="factor_z" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="to_node" c:identifier="gtk_snapshot_to_node">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="2446">
+          Returns the render node that was constructed
+by @snapshot.
+
+Note that this function may return %NULL if nothing has been
+added to the snapshot or if its content does not produce pixels
+to be rendered.
+
+After calling this function, it is no longer possible to
+add more nodes to @snapshot. The only function that should
+be called after this is [method@GObject.Object.unref].
+        </doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="Gsk.RenderNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="transform" c:identifier="gtk_snapshot_transform">
+        <doc xml:space="preserve" filename="gtk/gtksnapshot.c" line="2665">
+          Transforms @snapshot's coordinate system with the given @transform.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="snapshot" transfer-ownership="none">
+            <type name="Snapshot" c:type="GtkSnapshot*"/>
+          </instance-parameter>
+          <parameter name="transform" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Gsk.Transform" c:type="GskTransform*"/>
+          </parameter>
+        </parameters>
+      </method>
     </class>
     <class name="Spinner" c:symbol-prefix="spinner" c:type="GtkSpinner" parent="Widget" glib:type-name="GtkSpinner" glib:get-type="gtk_spinner_get_type">
       <constructor name="new" c:identifier="gtk_spinner_new">
@@ -17191,6 +17815,42 @@ to remove it yourself.
           </parameter>
         </parameters>
       </method>
+      <method name="allocate" c:identifier="gtk_widget_allocate">
+        <doc xml:space="preserve" filename="gtk/gtkwidget.c" line="4158">
+          Assigns size, position, (optionally) a baseline and transform
+to a child widget.
+
+The given allocation must be large enough for the widget's minimum
+size, as well as at least 0×0 in size. See [method@Gtk.Widget.measure]
+for querying a minimum size.
+
+This function is only used by widget implementations to allocate a size
+for their direct children.
+
+For a version that does not take a transform, see
+[method@Gtk.Widget.size_allocate].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="widget" transfer-ownership="none">
+            <type name="Widget" c:type="GtkWidget*"/>
+          </instance-parameter>
+          <parameter name="width" transfer-ownership="none">
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="height" transfer-ownership="none">
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="baseline" transfer-ownership="none">
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="transform" transfer-ownership="full" nullable="1" allow-none="1">
+            <type name="Gsk.Transform" c:type="GskTransform*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="child_focus" c:identifier="gtk_widget_child_focus">
         <doc xml:space="preserve" filename="gtk/gtkwidget.c" line="7210">
           Called by widgets as the user moves around the window using
@@ -20122,6 +20782,48 @@ or the widget has been unmapped (that is, it is going to be hidden).
         <type name="utf8" c:type="gchar*"/>
       </property>
     </class>
+    <class name="WidgetPaintable" c:symbol-prefix="widget_paintable" c:type="GtkWidgetPaintable" parent="GObject.Object" glib:type-name="GtkWidgetPaintable" glib:get-type="gtk_widget_paintable_get_type" glib:type-struct="WidgetPaintableClass">
+      <constructor name="new" c:identifier="gtk_widget_paintable_new">
+        <return-value transfer-ownership="full">
+          <type name="WidgetPaintable" c:type="GdkPaintable*"/>
+        </return-value>
+        <parameters>
+          <parameter name="widget" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Widget" c:type="GtkWidget*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_widget" c:identifier="gtk_widget_paintable_get_widget" glib:get-property="widget">
+        <doc xml:space="preserve" filename="gtk/gtkwidgetpaintable.c" line="289">
+          Returns the widget that is observed or %NULL if none.
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="Widget" c:type="GtkWidget*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="WidgetPaintable" c:type="GtkWidgetPaintable*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_widget" c:identifier="gtk_widget_paintable_set_widget" glib:set-property="widget">
+        <doc xml:space="preserve" filename="gtk/gtkwidgetpaintable.c" line="305">
+          Sets the widget that should be observed.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="WidgetPaintable" c:type="GtkWidgetPaintable*"/>
+          </instance-parameter>
+          <parameter name="widget" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Widget" c:type="GtkWidget*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <implements name="Gdk.Paintable"/>
+    </class>
     <class name="Window" c:symbol-prefix="window" c:type="GtkWindow" parent="Widget" glib:type-name="GtkWindow" glib:get-type="gtk_window_get_type" glib:type-struct="WindowClass">
       <method name="close" c:identifier="gtk_window_close">
         <doc xml:space="preserve" filename="gtk/gtkwindow.c" line="1453">
@@ -22032,7 +22734,6 @@ width-for-height geometry management.
       <member name="width_for_height" value="1" c:identifier="GTK_SIZE_REQUEST_WIDTH_FOR_HEIGHT" glib:nick="width-for-height" glib:name="GTK_SIZE_REQUEST_WIDTH_FOR_HEIGHT"/>
       <member name="constant_size" value="2" c:identifier="GTK_SIZE_REQUEST_CONSTANT_SIZE" glib:nick="constant-size" glib:name="GTK_SIZE_REQUEST_CONSTANT_SIZE"/>
     </enumeration>
-    <class name="Snapshot" c:symbol-prefix="snapshot" parent="Gdk.Snapshot" glib:type-name="GtkSnapshot" glib:get-type="gtk_snapshot_get_type" glib:type-struct="SnapshotClass"/>
     <enumeration name="SortType" glib:type-name="GtkSortType" glib:get-type="gtk_sort_type_get_type" c:type="GtkSortType">
       <doc xml:space="preserve" filename="gtk/gtkenums.h" line="585">
         Determines the direction of a sort.

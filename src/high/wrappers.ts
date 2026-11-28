@@ -74,6 +74,95 @@ export function owned<T extends GObject>(ptr: Deno.PointerValue): T | null {
   return Reflect.construct(GObject, [ptr], wrapperFor(ptr)) as T;
 }
 
+/** How a ref-counted type that isn't a GObject takes and drops references. */
+export type Counting = {
+  ref(ptr: Deno.PointerValue): unknown;
+  unref(ptr: Deno.PointerValue): void;
+};
+
+/** Drops a wrapper's reference once the wrapper is collected. */
+const countedFinalizer = new FinalizationRegistry<
+  { ptr: Deno.PointerValue; unref: (ptr: Deno.PointerValue) => void }
+>(({ ptr, unref }) => unref(ptr));
+
+/**
+ * A ref-counted native value that isn't a GObject: a fundamental type such
+ * as `GskRenderNode`, or a boxed one such as `GskTransform`. The wrapper owns
+ * one reference, dropped by `unref()` or when the wrapper is collected.
+ */
+export class Refcounted {
+  /**
+   * Internal pointer to the native value; null for a type whose NULL means
+   * something, such as the identity `GskTransform`.
+   * @internal
+   */
+  ptr: Deno.PointerValue;
+  readonly #counting: Counting;
+
+  /** Wrap `ptr`, taking over one reference to it. */
+  protected constructor(ptr: Deno.PointerValue, counting: Counting) {
+    this.ptr = ptr;
+    this.#counting = counting;
+    if (ptr) {
+      countedFinalizer.register(this, { ptr, unref: counting.unref }, this);
+    }
+  }
+
+  /**
+   * Add a reference and return the pointer, for a native call that takes
+   * one over. The wrapper keeps its own.
+   * @internal
+   */
+  newRef(): Deno.PointerValue {
+    if (this.ptr) this.#counting.ref(this.ptr);
+    return this.ptr;
+  }
+
+  /** Drop the wrapper's reference now; the wrapper is unusable afterwards. */
+  unref(): void {
+    if (!this.ptr) return;
+    countedFinalizer.unregister(this);
+    this.#counting.unref(this.ptr);
+    this.ptr = null;
+  }
+}
+
+/** A `Refcounted` subclass, with how its type counts references. */
+// deno-lint-ignore ban-types
+type CountedClass = { prototype: Refcounted; counting: Counting } & Function;
+
+/** `Refcounted` wrapper classes by GType name, e.g. `GskRenderNode`. */
+const countedClasses = new Map<string, CountedClass>();
+
+/**
+ * Wrap a ref-counted value GLib hands over with `transfer full`: the wrapper
+ * owns that reference. Null stays null.
+ */
+export function takeCounted<T extends Refcounted>(
+  typeName: string,
+  ptr: Deno.PointerValue,
+): T | null {
+  if (!ptr) return null;
+  const type = countedClasses.get(typeName);
+  if (!type) throw new Error(`No wrapper registered for ${typeName}`);
+  // The base constructor takes the reference; the class gives the methods,
+  // without running its own constructor.
+  return Reflect.construct(Refcounted, [ptr, type.counting], type) as T;
+}
+
+/**
+ * Wrap a ref-counted value GLib lends: the wrapper takes a reference of its
+ * own, so it stays valid after the lender drops it.
+ */
+export function borrowedCounted<T extends Refcounted>(
+  typeName: string,
+  ptr: Deno.PointerValue,
+): T | null {
+  const wrapper = takeCounted<T>(typeName, ptr);
+  wrapper?.newRef();
+  return wrapper;
+}
+
 /** Read a string GLib returns with `transfer full`, then free it. */
 export function takeString(ptr: Deno.PointerValue): string | null {
   if (!ptr) return null;
@@ -233,11 +322,15 @@ export function connectSignal(
  * class's TypeScript interface omits them too.
  */
 export function applyGenerated(
-  target: WrapperClass,
+  target: WrapperClass | CountedClass,
   methods: object,
   typeName: string,
 ): void {
-  wrappers.set(typeName, target);
+  if (target.prototype instanceof Refcounted) {
+    countedClasses.set(typeName, target as CountedClass);
+  } else {
+    wrappers.set(typeName, target as WrapperClass);
+  }
   const prototype: object = target.prototype;
   for (const [name, method] of Object.entries(methods)) {
     if (Object.hasOwn(prototype, name)) continue;

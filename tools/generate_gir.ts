@@ -10,6 +10,7 @@ import {
   checkHierarchy,
   classMembers,
   type ClassProfile,
+  classRef,
   classSymbols,
   generateClasses,
   girAncestors,
@@ -119,8 +120,18 @@ function namespacesFor(
   return namespaces;
 }
 
+/** A `classes` key qualified with its namespace: `Gtk.Label`, `Gsk.Renderer`. */
+function qualify(profile: ClassProfile, key: string): string {
+  const { ns, name } = classRef(profile, key);
+  return `${ns}.${name}`;
+}
+
 /** Every symbol a profile binds: its list, then its generated methods. */
-function profileSymbols(profile: Profile, inputs: Map<string, Input>) {
+function profileSymbols(
+  profile: Profile,
+  inputs: Map<string, Input>,
+  handWritten: HandWritten,
+) {
   const symbols = [...profile.symbols];
   if (profile.highLevel) {
     const listed = new Set(symbols);
@@ -128,6 +139,7 @@ function profileSymbols(profile: Profile, inputs: Map<string, Input>) {
       const symbol of classSymbols(
         namespacesFor(profile, inputs),
         profile.highLevel,
+        handWritten,
       )
     ) {
       if (!listed.has(symbol)) {
@@ -324,11 +336,16 @@ function annotations({ node, since }: Declaration): string[] {
   return notes;
 }
 
-export function build(profile: Profile, inputs: Map<string, Input>) {
+export function build(
+  profile: Profile,
+  inputs: Map<string, Input>,
+  /** Hand-written classes, which decide how ref-counted types are wrapped. */
+  handWritten: HandWritten = new Map(),
+) {
   if (new Set(profile.symbols).size !== profile.symbols.length) {
     throw new Error("Duplicate symbol in the allowlist");
   }
-  const symbols = profileSymbols(profile, inputs);
+  const symbols = profileSymbols(profile, inputs, handWritten);
   const listed = new Set(profile.symbols);
   const requested = new Set(symbols);
   const declarations = new Map<
@@ -525,7 +542,9 @@ async function snapshots(
   for (const profile of profiles) {
     for (const file of profile.inputs) {
       const symbols = selected.get(file) ?? new Set<string>();
-      for (const name of profileSymbols(profile, inputs)) symbols.add(name);
+      for (const name of profileSymbols(profile, inputs, handWritten)) {
+        symbols.add(name);
+      }
       selected.set(file, symbols);
     }
   }
@@ -872,7 +891,7 @@ async function main(args: string[]) {
       ),
     );
   const generated = await Promise.all(profiles.map(async ([name, profile]) => {
-    const entries = build(profile, inputs);
+    const entries = build(profile, inputs, handWritten);
     const gtk4 = "Gtk-4.0.gir";
     const widgets = name === "gtk4" ? widgetTypes(inputs.get(gtk4)!) : [];
     if (
@@ -883,7 +902,7 @@ async function main(args: string[]) {
       throw new Error("GTK4 snapshot changed the generated widget metadata");
     }
     if (pinnedInputs) {
-      const projected = build(profile, pinnedInputs);
+      const projected = build(profile, pinnedInputs, handWritten);
       if (JSON.stringify(entries) !== JSON.stringify(projected)) {
         throw new Error(
           `${name}: snapshot changed the generated binding metadata`,
@@ -904,7 +923,7 @@ async function main(args: string[]) {
       withClasses.flatMap(([, profile]) =>
         Object.entries(profile.highLevel!.classes)
           .filter(([, config]) => !config.interfacesOnly)
-          .map(([name]) => `${profile.highLevel!.namespace}.${name}`)
+          .map(([name]) => qualify(profile.highLevel!, name))
       ),
     );
     const interfaceOnly = new Map(
@@ -913,9 +932,9 @@ async function main(args: string[]) {
           .filter(([, config]) => config.interfacesOnly)
           .map(([name, config]) =>
             [
-              `${profile.highLevel!.namespace}.${name}`,
+              qualify(profile.highLevel!, name),
               config.interfacesOnly!.map((i) =>
-                `${profile.highLevel!.namespace}.${i}`
+                `${classRef(profile.highLevel!, name).ns}.${i}`
               ),
             ] as const
           )

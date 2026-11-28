@@ -213,6 +213,25 @@ const editor = new GtkEditor({
 - `PreferencesPage` - Page for preferences window
 - `PreferencesGroup` - Group within preferences page
 
+### Rendering
+
+- `Widget.renderToPng(path, { scale })` - Save what a widget shows as a PNG
+- `Snapshot` - Records drawing as render nodes
+- `WidgetPaintable` - A paintable that draws what a widget shows
+- `RenderNode`, `TransformNode` - Nodes of a scene graph
+- `Transform` - Immutable 2D/3D transform (`new Transform().scale(2, 2)`)
+- `CairoRenderer` - Renders nodes into a `Texture` on the CPU
+- `Texture` - Pixel data: `saveToPng`, `getWidth`, `Texture.newFromFilename`
+
+```typescript
+window.present();
+// Once GTK has laid the window out:
+window.renderToPng("window.png", { scale: 2 });
+```
+
+`renderToPng` draws with GSK's Cairo renderer, so it works on any display
+backend, Broadway and Xvfb included, and never reads the screen.
+
 ### Other
 
 - `Builder` - Load UI from XML files
@@ -547,7 +566,11 @@ GIR describes once it has a hand-written wrapper and is listed under
 1. Write the wrapper in `src/high/gtk4.ts` (or the module for its library): the
    class, its constructor, and any method you want to shape by hand. List the
    constructor's C symbol in `bindings.json`'s `symbols`.
-2. Add the class name to `highLevel.classes` for its library.
+2. Add the class name to `highLevel.classes` for its library. A class from
+   another namespace the same library provides is listed qualified
+   (`Gdk.Texture`, `Gsk.Renderer` under `gtk4`). Interfaces from other
+   namespaces are opt-in:
+   `"WidgetPaintable": { "interfaces": ["Gdk.Paintable"] }`.
 3. Run `deno task gir:refresh <GIR dir>` to update the pinned GIR snapshots, or
    `deno task gir` if they already contain the class.
 4. Merge the generated methods into the class, after it:
@@ -580,6 +603,13 @@ Generated code lives in `src/high/generated/`:
   `Orientable`), and wrappers of interfaces (`File`, `AppInfo`) can be generated
   too;
 - structs pass through as opaque pointers;
+- ref-counted types that aren't GObjects, such as GSK's render nodes (a
+  fundamental type) and transforms (a boxed record), get wrappers extending
+  `Refcounted`: values GTK hands over are owned, lent ones take a reference of
+  their own, and a method that consumes its instance (`Transform.scale`) is
+  given a new reference, so the wrapper stays valid;
+- a method that would consume a GObject wrapper's instance
+  (`gtk_snapshot_free_to_node`) isn't generated;
 - callbacks GTK keeps are freed when GTK releases them.
 
 Methods a class or its hand-written ancestors define are left out, so
@@ -589,10 +619,10 @@ hand-written code always wins. The few methods the generator can't express yet
 ### Regenerating the native bindings
 
 The TypeScript GIR generator produces the low-level FFI tables for GLib,
-GObject, GIO, GTK 3, GTK 4 with GDK, libadwaita, and Ayatana AppIndicator. The
-checked-in tables in `src/low/generated` load directly at runtime. The wrappers
-in `src/high` implement the TypeScript API and handle native ownership and
-callback lifetimes.
+GObject, GIO, GTK 3, GTK 4 with GDK and GSK, libadwaita, and Ayatana
+AppIndicator. The checked-in tables in `src/low/generated` load directly at
+runtime. The wrappers in `src/high` implement the TypeScript API and handle
+native ownership and callback lifetimes.
 
 `tools/gir/bindings.json` lists the symbols, library version baselines, and
 exceptions such as the fixed calling signatures used for variadic functions. The
@@ -638,7 +668,7 @@ commit any changes to `package-lock.json`.
 ## Known Limitations
 
 - **Not every class is wrapped:** a GTK class gets generated methods once it has
-  a hand-written wrapper listed in `tools/gir/bindings.json` (95 classes so
+  a hand-written wrapper listed in `tools/gir/bindings.json` (104 classes so
   far). See [Adding New Widgets](#adding-new-widgets).
 - **Some methods aren't generated yet:** methods with out parameters, arrays or
   varargs, and a few signals that return a result. Each file in

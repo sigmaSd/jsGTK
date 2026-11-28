@@ -24,10 +24,19 @@ export type ClassConfig = {
    * interfaces (Entry and SearchEntry both implement Editable).
    */
   interfacesOnly?: string[];
+  /**
+   * Interfaces from other namespaces whose methods the class gets, qualified
+   * (`Gdk.Paintable` for `Gtk.WidgetPaintable`). Same-namespace interfaces
+   * are always included.
+   */
+  interfaces?: string[];
 };
 
 export type ClassProfile = {
-  /** GIR namespace of the classes, e.g. `Gtk`. */
+  /**
+   * GIR namespace of the classes, e.g. `Gtk`. A class from another namespace
+   * the same library provides is listed qualified, e.g. `Gsk.Renderer`.
+   */
   namespace: string;
   /** Name of the low-level library export, e.g. `gtk4`. */
   library: string;
@@ -48,6 +57,7 @@ export type HandWritten = Map<
 const WRAPPER_MODULES: Record<string, string[]> = {
   Gtk: ["gtk4.ts"],
   Gdk: ["gtk4.ts"],
+  Gsk: ["gtk4.ts"],
   Adw: ["adw.ts", "gtk4.ts"],
   Gio: ["gio.ts"],
   GObject: ["gobject.ts"],
@@ -78,7 +88,7 @@ export function girClasses(
       if (!modules.includes(module) || result.has(key)) continue;
       const node = namespaces.get(ns) &&
         children(namespaces.get(ns)!.node).find((entry) =>
-          isType(entry) && entry.getAttribute("name") === name
+          isWrappable(entry) && entry.getAttribute("name") === name
         );
       if (node) result.set(key, `${ns}.${name}`);
     }
@@ -159,6 +169,18 @@ function parentKey(handWritten: HandWritten, key: string): string | null {
     null;
 }
 
+/** Whether a hand-written class derives from `Refcounted`. */
+function extendsRefcounted(handWritten: HandWritten, key: string): boolean {
+  for (
+    let current: string | null = key;
+    current;
+    current = parentKey(handWritten, current)
+  ) {
+    if (handWritten.get(current)?.parent === "Refcounted") return true;
+  }
+  return false;
+}
+
 /**
  * Generated methods are added to a hand-written class and inherited by its
  * hand-written subclasses, so each of those must really derive from it in
@@ -210,6 +232,22 @@ export function checkHierarchy(
 /** GIR classes and interfaces: the types wrappers can stand for. */
 function isType(node: Element): boolean {
   return node.localName === "class" || node.localName === "interface";
+}
+
+/** Types a hand-written class can wrap: also boxed records (`Gsk.Transform`). */
+function isWrappable(node: Element): boolean {
+  return isType(node) || node.localName === "record";
+}
+
+/** The namespace and local name of a `classes` key: `Gsk.Renderer` or `Label`. */
+export function classRef(
+  profile: ClassProfile,
+  key: string,
+): { ns: string; name: string } {
+  const [ns, name] = key.includes(".")
+    ? key.split(".", 2)
+    : [profile.namespace, key];
+  return { ns, name };
 }
 
 function children(node: Element): Element[] {
@@ -271,11 +309,18 @@ class Generator {
   /** Hand-written class key by the GIR class it wraps. */
   readonly byGir = new Map<string, string>();
 
+  /**
+   * Namespace that unqualified type names resolve in: the namespace of the
+   * class or interface whose member is being generated.
+   */
+  context: string;
+
   constructor(
     readonly namespaces: Map<string, Namespace>,
     readonly profile: ClassProfile,
     readonly handWritten: HandWritten,
   ) {
+    this.context = profile.namespace;
     for (const [key, gir] of girClasses(namespaces, handWritten)) {
       if (!this.byGir.has(gir)) this.byGir.set(gir, key);
     }
@@ -310,6 +355,50 @@ class Generator {
     }
     this.import("../gobject.ts", "GObject");
     return "GObject";
+  }
+
+  /**
+   * The hand-written `Refcounted` wrapper of a ref-counted type that isn't a
+   * GObject (a fundamental class or a boxed record), with the GType name its
+   * generated methods register it under; null when it has none.
+   */
+  countedWrapper(
+    resolved: Resolved,
+  ): { name: string; typeName: string } | null {
+    for (
+      const gir of girAncestors(
+        this.namespaces,
+        `${resolved.namespace}.${resolved.name}`,
+      )
+    ) {
+      const key = this.byGir.get(gir);
+      if (!key) continue;
+      if (!extendsRefcounted(this.handWritten, key)) return null;
+      const [ns, local] = gir.split(".", 2);
+      const node = children(this.namespaces.get(ns)!.node).find((e) =>
+        isWrappable(e) && e.getAttribute("name") === local
+      )!;
+      const [module, name] = key.split(":");
+      this.import(`../${module}`, name);
+      return { name, typeName: node.getAttributeNS(GLIB, "type-name")! };
+    }
+    return null;
+  }
+
+  /** The `Refcounted` wrapper of a listed class, or null for a GObject one. */
+  countedClass(qualified: string): string | null {
+    const [ns, name] = qualified.split(".", 2);
+    const node = children(this.namespaces.get(ns)!.node).find((e) =>
+      isWrappable(e) && e.getAttribute("name") === name
+    );
+    if (!node) return null;
+    return this.countedWrapper({
+      kind: node.localName!,
+      namespace: ns,
+      name,
+      node,
+    })
+      ?.name ?? null;
   }
 
   import(module: string, name: string) {
@@ -401,6 +490,40 @@ class Generator {
         toNative: (v: string) => v,
         fromNative: (v: string) => v,
         fromSignal: (v: string) => v,
+      };
+    }
+    const counted = (resolved.kind === "class" || resolved.kind === "record") &&
+      this.countedWrapper(resolved);
+    if (counted) {
+      // Ref-counted non-GObjects: the wrapper owns one reference.
+      if (transfer === "container") {
+        throw new Unsupported("container ownership");
+      }
+      this.runtime.add("takeCounted");
+      this.runtime.add("borrowedCounted");
+      const { name: wrapper, typeName } = counted;
+      const wrap = (fn: string, v: string) =>
+        nullable
+          ? `${fn}<${wrapper}>("${typeName}", ${v})`
+          : `${fn}<${wrapper}>("${typeName}", ${v})!`;
+      return {
+        ts: nullable ? `${wrapper} | null` : wrapper,
+        abi: "pointer",
+        // A callee taking ownership gets a reference of its own.
+        toNative: (v: string) =>
+          transfer === "full"
+            ? nullable ? `${v}?.newRef() ?? null` : `${v}.newRef()`
+            : nullable
+            ? `${v}?.ptr ?? null`
+            : `${v}.ptr`,
+        fromNative: (v: string) =>
+          wrap(
+            direction === "out" && transfer === "full"
+              ? "takeCounted"
+              : "borrowedCounted",
+            v,
+          ),
+        fromSignal: (v: string) => wrap("borrowedCounted", v),
       };
     }
     if (resolved.kind === "class" || resolved.kind === "interface") {
@@ -498,7 +621,26 @@ class Generator {
     const nulls = new Set<number>();
     const tsParams: string[] = [];
     const prelude: string[] = [];
-    const nativeArgs: string[] = ["this.ptr"];
+    // A ref-counted wrapper's own references are managed by `Refcounted`.
+    const counted = this.countedType !== null;
+    const methodName = node.getAttribute("name")!;
+    if (counted && ["ref", "unref", "free", "copy"].includes(methodName)) {
+      return null;
+    }
+    const instance = child(
+      child(node, "parameters") ?? node,
+      "instance-parameter",
+    );
+    const takesInstance =
+      instance?.getAttribute("transfer-ownership") === "full";
+    if (takesInstance && !counted) {
+      // e.g. gtk_snapshot_free_to_node: the wrapper would be left dangling.
+      throw new Unsupported("consumes its instance");
+    }
+    // A method that consumes a ref-counted instance gets a reference of its
+    // own, so the wrapper stays valid (GskTransform's methods return a new
+    // transform and take the old one).
+    const nativeArgs: string[] = [takesInstance ? "this.newRef()" : "this.ptr"];
     for (const [index, arg] of args.entries()) {
       if (nulls.has(index)) {
         nativeArgs.push("null");
@@ -515,9 +657,7 @@ class Generator {
       }
       const name = camel(arg.getAttribute("name")!);
       const typeName = child(arg, "type")?.getAttribute("name") ?? "";
-      const resolved = typeName
-        ? this.resolve(typeName, this.profile.namespace)
-        : null;
+      const resolved = typeName ? this.resolve(typeName, this.context) : null;
       if (
         resolved?.kind === "callback" && finish &&
         arg.getAttribute("scope") === "async"
@@ -536,7 +676,7 @@ class Generator {
         continue;
       }
       if (typeName === "gpointer") throw new Unsupported("raw pointer");
-      const value = this.value(arg, this.profile.namespace, "in");
+      const value = this.value(arg, this.context, "in");
       if (!("toNative" in value)) throw new Unsupported("void parameter");
       tsParams.push(`${name}: ${value.ts}`);
       nativeArgs.push(value.toNative!(name));
@@ -566,7 +706,7 @@ class Generator {
       }
       const result = this.value(
         child(finish, "return-value")!,
-        this.profile.namespace,
+        this.context,
         "out",
       );
       const finishFn = this.symbol(finish);
@@ -597,7 +737,7 @@ class Generator {
 
     const returned = this.value(
       child(node, "return-value")!,
-      this.profile.namespace,
+      this.context,
       "out",
     );
     let body: string[];
@@ -627,6 +767,12 @@ class Generator {
 
   /** Symbols of finish functions generated async methods call. */
   used = new Set<string>();
+
+  /**
+   * The `Refcounted` wrapper of the class being generated, or null for a
+   * GObject class. Its methods take `this` as that wrapper.
+   */
+  countedType: string | null = null;
 
   /** A symbol reference, guarded when it may be missing. */
   symbol(node: Element): string {
@@ -768,7 +914,7 @@ class Generator {
     const abi = ["pointer"];
     const conversions: string[] = [];
     for (const [i, arg] of params(node).entries()) {
-      const value = this.value(arg, this.profile.namespace, "out");
+      const value = this.value(arg, this.context, "out");
       if (!("fromSignal" in value)) throw new Unsupported("signal argument");
       const name = camel(arg.getAttribute("name")!);
       tsArgs.push(`${name}: ${value.ts}`);
@@ -799,12 +945,12 @@ class Generator {
   }
 
   /** Every method name a hand-written class and its ancestors define. */
-  handWrittenNames(className: string): Set<string> {
+  handWrittenNames(qualified: string): Set<string> {
     const names = new Set<string>();
-    let key = this.byGir.get(`${this.profile.namespace}.${className}`) ?? null;
+    let key = this.byGir.get(qualified) ?? null;
     if (!key) {
       throw new Error(
-        `${this.profile.namespace}.${className}: no hand-written class to add generated methods to`,
+        `${qualified}: no hand-written class to add generated methods to`,
       );
     }
     const seen = new Set<string>();
@@ -829,14 +975,20 @@ function finishedBy(owner: Element, name: string): boolean {
 /**
  * The members generated for a class: its own methods and signals (unless
  * `interfacesOnly`), then those of the same-namespace interfaces it
- * implements that no GIR ancestor already implements.
+ * implements that no GIR ancestor already implements, and of the
+ * other-namespace interfaces its config lists. `ownerNs` is the namespace
+ * the member's types resolve in.
  */
 function membersOf(
   namespaces: Map<string, Namespace>,
-  namespace: Namespace,
+  ns: string,
   name: string,
   config: ClassConfig,
-): { member: Element; owner: string }[] {
+): { member: Element; owner: string; ownerNs: string }[] {
+  const namespace = namespaces.get(ns);
+  if (!namespace) {
+    throw new Error(`${ns}.${name}: namespace ${ns} isn't an input`);
+  }
   const node = classNode(namespace, name);
   const isMember = (m: Element) =>
     m.localName === "method" ||
@@ -845,45 +997,61 @@ function membersOf(
   const result = only ? [] : children(node).filter(isMember).map((member) => ({
     member,
     owner: name,
+    ownerNs: ns,
   }));
   const inherited = new Set<string>();
   for (
     const ancestor of girAncestors(namespaces, `${namespace.name}.${name}`)
       .slice(1)
   ) {
-    const [ns, local] = ancestor.split(".", 2);
-    const owner = namespaces.get(ns);
+    const [ancestorNs, local] = ancestor.split(".", 2);
+    const owner = namespaces.get(ancestorNs);
     const ancestorNode = owner &&
       children(owner.node).find((e) =>
         isType(e) && e.getAttribute("name") === local
       );
     for (const entry of ancestorNode ? children(ancestorNode) : []) {
       if (entry.localName === "implements") {
-        inherited.add(entry.getAttribute("name")!);
+        const iface = entry.getAttribute("name")!;
+        inherited.add(iface.includes(".") ? iface : `${ancestorNs}.${iface}`);
       }
     }
   }
   for (const entry of children(node)) {
-    const iface = entry.getAttribute("name");
+    const listed = entry.getAttribute("name");
+    if (entry.localName !== "implements" || !listed) continue;
+    const qualified = listed.includes(".") ? listed : `${ns}.${listed}`;
+    const [ifaceNs, iface] = qualified.split(".", 2);
+    const wanted = ifaceNs === ns || config.interfaces?.includes(qualified);
     if (
-      entry.localName !== "implements" || !iface || iface.includes(".") ||
-      inherited.has(iface) || only && !only.includes(iface)
+      !wanted || inherited.has(qualified) ||
+      only && !only.includes(iface)
     ) continue;
-    const ifaceNode = children(namespace.node).find((e) =>
-      e.localName === "interface" && e.getAttribute("name") === iface
-    );
+    const ifaceNode = namespaces.get(ifaceNs) &&
+      children(namespaces.get(ifaceNs)!.node).find((e) =>
+        e.localName === "interface" && e.getAttribute("name") === iface
+      );
     if (!ifaceNode) continue;
     for (const member of children(ifaceNode).filter(isMember)) {
-      result.push({ member, owner: iface });
+      result.push({
+        member,
+        owner: ifaceNs === ns ? iface : qualified,
+        ownerNs: ifaceNs,
+      });
+    }
+  }
+  for (const wanted of config.interfaces ?? []) {
+    if (!result.some((m) => m.owner === wanted)) {
+      throw new Error(`${ns}.${name} doesn't implement ${wanted}`);
     }
   }
   return result;
 }
 
-/** Find a class or interface in a namespace. */
+/** Find a class, interface or boxed record in a namespace. */
 function classNode(namespace: Namespace, name: string): Element {
   const node = children(namespace.node).find((entry) =>
-    isType(entry) && entry.getAttribute("name") === name
+    isWrappable(entry) && entry.getAttribute("name") === name
   );
   if (!node) throw new Error(`${namespace.name}.${name}: no such class in GIR`);
   return node;
@@ -893,16 +1061,24 @@ function classNode(namespace: Namespace, name: string): Element {
 export function classSymbols(
   namespaces: Map<string, Namespace>,
   profile: ClassProfile,
+  handWritten: HandWritten = new Map(),
 ): string[] {
-  const namespace = namespaces.get(profile.namespace)!;
   const symbols: string[] = [];
-  for (const [name, config] of Object.entries(profile.classes)) {
+  for (const [key, config] of Object.entries(profile.classes)) {
+    const { ns, name } = classRef(profile, key);
     for (
-      const { member, owner } of membersOf(namespaces, namespace, name, config)
+      const { member, owner, ownerNs } of membersOf(
+        namespaces,
+        ns,
+        name,
+        config,
+      )
     ) {
       if (member.localName !== "method") continue;
       if (config.skip?.[member.getAttribute("name")!]) continue;
-      const generator = new Generator(namespaces, profile, new Map());
+      const generator = new Generator(namespaces, profile, handWritten);
+      generator.countedType = generator.countedClass(`${ns}.${name}`);
+      generator.context = ownerNs;
       try {
         if (generator.method(member, owner)) {
           symbols.push(member.getAttributeNS(C, "identifier")!);
@@ -921,7 +1097,6 @@ export function classMembers(
   namespaces: Map<string, Namespace>,
   profile: ClassProfile,
 ): { members: Element[]; types: Set<string> } {
-  const namespace = namespaces.get(profile.namespace)!;
   const members: Element[] = [];
   const types = new Set<string>();
   const addType = (name: string | null, context: string) => {
@@ -941,28 +1116,29 @@ export function classMembers(
       }
     }
   };
-  for (const [name, config] of Object.entries(profile.classes)) {
-    types.add(`${profile.namespace}.${name}`);
+  for (const [key, config] of Object.entries(profile.classes)) {
+    const { ns, name } = classRef(profile, key);
+    types.add(`${ns}.${name}`);
     for (
-      const { member, owner } of membersOf(namespaces, namespace, name, config)
+      const { member, owner, ownerNs } of membersOf(
+        namespaces,
+        ns,
+        name,
+        config,
+      )
     ) {
       members.push(member);
-      types.add(`${profile.namespace}.${owner}`);
+      types.add(owner.includes(".") ? owner : `${ownerNs}.${owner}`);
       for (const arg of [...params(member), child(member, "return-value")]) {
         if (arg) {
-          addType(
-            child(arg, "type")?.getAttribute("name") ?? null,
-            profile.namespace,
-          );
+          addType(child(arg, "type")?.getAttribute("name") ?? null, ownerNs);
         }
       }
     }
     // Which interfaces the class and its ancestors implement.
-    for (
-      const ancestor of girAncestors(namespaces, `${profile.namespace}.${name}`)
-    ) {
-      const [ns, local] = ancestor.split(".", 2);
-      const owner = namespaces.get(ns);
+    for (const ancestor of girAncestors(namespaces, `${ns}.${name}`)) {
+      const [ancestorNs, local] = ancestor.split(".", 2);
+      const owner = namespaces.get(ancestorNs);
       const ancestorNode = owner &&
         children(owner.node).find((e) =>
           isType(e) && e.getAttribute("name") === local
@@ -982,22 +1158,27 @@ export function generateClasses(
   handWritten: HandWritten,
 ): string {
   const generator = new Generator(namespaces, profile, handWritten);
-  const namespace = namespaces.get(profile.namespace)!;
   const blocks: string[] = [];
-  for (const [className, config] of Object.entries(profile.classes)) {
-    const node = classNode(namespace, className);
-    const taken = generator.handWrittenNames(className);
+  const exported = new Map<string, string>();
+  for (const [key, config] of Object.entries(profile.classes)) {
+    const { ns, name: className } = classRef(profile, key);
+    const qualified = `${ns}.${className}`;
+    const clash = exported.get(className);
+    if (clash) {
+      throw new Error(
+        `${qualified} and ${clash} would both generate ${className}Methods`,
+      );
+    }
+    exported.set(className, qualified);
+    const node = classNode(namespaces.get(ns)!, className);
+    const taken = generator.handWrittenNames(qualified);
+    generator.countedType = generator.countedClass(qualified);
     // Names GIR ancestors already use: a subclass method with the same name
     // and another signature can't be typed, so it is left out.
     const inherited = new Map<string, string>();
-    for (
-      const ancestor of girAncestors(
-        namespaces,
-        `${profile.namespace}.${className}`,
-      ).slice(1)
-    ) {
-      const [ns, name] = ancestor.split(".", 2);
-      const owner = namespaces.get(ns);
+    for (const ancestor of girAncestors(namespaces, qualified).slice(1)) {
+      const [ancestorNs, name] = ancestor.split(".", 2);
+      const owner = namespaces.get(ancestorNs);
       const ancestorNode = owner &&
         children(owner.node).find((entry) =>
           isType(entry) && entry.getAttribute("name") === name
@@ -1018,9 +1199,9 @@ export function generateClasses(
     const members = [];
     const names = new Set<string>();
     for (
-      const { member, owner } of membersOf(
+      const { member, owner, ownerNs } of membersOf(
         namespaces,
-        namespace,
+        ns,
         className,
         config,
       )
@@ -1028,6 +1209,7 @@ export function generateClasses(
       const isSignal = member.localName === "signal";
       const girName = member.getAttribute("name")!;
       if (config.skip?.[girName]) continue;
+      generator.context = ownerNs;
       try {
         const generated = isSignal
           ? generator.signal(member, owner)
@@ -1060,6 +1242,8 @@ export function generateClasses(
     }
     const typeName = node.getAttributeNS(GLIB, "type-name");
     const lower = className[0].toLowerCase() + className.slice(1);
+    // Methods of a ref-counted wrapper run on that wrapper, not a GObject.
+    const self = generator.countedType ?? "GObject";
     const lines = [
       "",
       `/** Methods generated for \`${typeName}\`. */`,
@@ -1079,11 +1263,11 @@ export function generateClasses(
       "}",
       "",
       `/** Implementations of {@linkcode ${className}Methods}. */`,
-      `export const ${lower}Methods: ${className}Methods & ThisType<GObject> = {`,
+      `export const ${lower}Methods: ${className}Methods & ThisType<${self}> = {`,
     );
     for (const member of members) {
       lines.push(`  ${
-        member.signature.replace(/^(\w+)\(/, "$1(this: GObject, ")
+        member.signature.replace(/^(\w+)\(/, `$1(this: ${self}, `)
           .replace(", )", ")")
       } {`);
       lines.push(...member.body.map((l) => `    ${l}`), "  },");

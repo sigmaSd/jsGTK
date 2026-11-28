@@ -17,3 +17,4 @@ import "./dbus.ts";
 import "./launch.ts";
 import "./generated.ts";
 import "./symbols.ts";
+import "./render.ts";

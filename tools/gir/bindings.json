@@ -34,6 +34,10 @@
       "namespace": "Gdk",
       "package": "GTK 4.24.1"
     },
+    "Gsk-4.0.gir": {
+      "namespace": "Gsk",
+      "package": "GTK 4.24.1"
+    },
     "Pango-1.0.gir": {
       "namespace": "Pango",
       "package": "Pango 1.58.2"
@@ -433,7 +437,8 @@
       "minimumVersion": "4.12",
       "inputs": [
         "Gtk-4.0.gir",
-        "Gdk-4.0.gir"
+        "Gdk-4.0.gir",
+        "Gsk-4.0.gir"
       ],
       "symbols": [
         "gtk_init",
@@ -735,7 +740,18 @@
         "gtk_widget_set_focusable",
         "gtk_event_controller_motion_new",
         "gtk_event_controller_motion_contains_pointer",
-        "gtk_button_set_child"
+        "gtk_button_set_child",
+        "gtk_widget_paintable_new",
+        "gtk_snapshot_new",
+        "gsk_cairo_renderer_new",
+        "gsk_renderer_render_texture",
+        "gsk_render_node_ref",
+        "gsk_render_node_unref",
+        "gsk_transform_new",
+        "gsk_transform_ref",
+        "gsk_transform_unref",
+        "gsk_transform_node_new",
+        "gdk_texture_new_from_filename"
       ],
       "overrides": {
         "gtk_builder_add_from_string": {
@@ -876,7 +892,23 @@
             "interfacesOnly": [
               "Editable"
             ]
-          }
+          },
+          "Snapshot": {},
+          "WidgetPaintable": {
+            "interfaces": [
+              "Gdk.Paintable"
+            ]
+          },
+          "Gdk.Texture": {},
+          "Gsk.Renderer": {
+            "skip": {
+              "render_texture": "Hand-written: its viewport is a Graphene.Rect, which isn't pinned"
+            }
+          },
+          "Gsk.CairoRenderer": {},
+          "Gsk.RenderNode": {},
+          "Gsk.TransformNode": {},
+          "Gsk.Transform": {}
         }
       }
     },

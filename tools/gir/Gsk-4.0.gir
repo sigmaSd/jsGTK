@@ -1,0 +1,690 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repository version="1.2" xmlns:c="http://www.gtk.org/introspection/c/1.0" xmlns:glib="http://www.gtk.org/introspection/glib/1.0" xmlns="http://www.gtk.org/introspection/core/1.0">
+  <!-- Signature-only snapshot of Gsk-4.0.gir from GTK 4.24.1. -->
+  <!-- Upstream SHA-256 ff24fbec2a8d656f3a03204f87a4ec271904097fae26c6eaba35cb0fdd7b0f48 -->
+  <namespace name="Gsk" version="4.0">
+    <class name="CairoRenderer" c:symbol-prefix="cairo_renderer" c:type="GskCairoRenderer" parent="Renderer" glib:type-name="GskCairoRenderer" glib:get-type="gsk_cairo_renderer_get_type" glib:type-struct="CairoRendererClass">
+      <constructor name="new" c:identifier="gsk_cairo_renderer_new">
+        <return-value transfer-ownership="full">
+          <type name="Renderer" c:type="GskRenderer*"/>
+        </return-value>
+      </constructor>
+    </class>
+    <class name="RenderNode" c:symbol-prefix="render_node" c:type="GskRenderNode" abstract="1" glib:type-name="GskRenderNode" glib:get-type="gsk_render_node_get_type" glib:fundamental="1" glib:ref-func="gsk_render_node_ref" glib:unref-func="gsk_render_node_unref" glib:set-value-func="gsk_value_set_render_node" glib:get-value-func="gsk_value_get_render_node">
+      <method name="get_node_type" c:identifier="gsk_render_node_get_node_type">
+        <doc xml:space="preserve" filename="gsk/gskrendernode.c" line="353">
+          Returns the type of the render node.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="RenderNodeType" c:type="GskRenderNodeType"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <type name="RenderNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="ref" c:identifier="gsk_render_node_ref">
+        <doc xml:space="preserve" filename="gsk/gskrendernode.c" line="311">
+          Acquires a reference on the given `GskRenderNode`.
+        </doc>
+        <return-value transfer-ownership="full">
+          <type name="RenderNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="unref" c:identifier="gsk_render_node_unref">
+        <doc xml:space="preserve" filename="gsk/gskrendernode.c" line="335">
+          Releases a reference on the given `GskRenderNode`.
+
+If the reference was the last, the resources associated to the @node are
+freed.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="full">
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="write_to_file" c:identifier="gsk_render_node_write_to_file" throws="1">
+        <doc xml:space="preserve" filename="gsk/gskrendernode.c" line="756">
+          This function is equivalent to calling [method@Gsk.RenderNode.serialize]
+followed by [func@GLib.file_set_contents].
+
+See those two functions for details on the arguments.
+
+It is mostly intended for use inside a debugger to quickly dump a render
+node to a file for later inspection.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+          <parameter name="filename" transfer-ownership="none">
+            <type name="filename" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="Renderer" c:symbol-prefix="renderer" c:type="GskRenderer" parent="GObject.Object" abstract="1" glib:type-name="GskRenderer" glib:get-type="gsk_renderer_get_type" glib:type-struct="RendererClass">
+      <method name="get_surface" c:identifier="gsk_renderer_get_surface" glib:get-property="surface">
+        <doc xml:space="preserve" filename="gsk/gskrenderer.c" line="201">
+          Retrieves the surface that the renderer is associated with.
+
+If the renderer has not been realized yet, `NULL` will be returned.
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="Gdk.Surface" c:type="GdkSurface*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="renderer" transfer-ownership="none">
+            <type name="Renderer" c:type="GskRenderer*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="is_realized" c:identifier="gsk_renderer_is_realized" glib:get-property="realized">
+        <doc xml:space="preserve" filename="gsk/gskrenderer.c" line="221">
+          Checks whether the renderer is realized or not.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="renderer" transfer-ownership="none">
+            <type name="Renderer" c:type="GskRenderer*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="realize" c:identifier="gsk_renderer_realize" throws="1">
+        <doc xml:space="preserve" filename="gsk/gskrenderer.c" line="268">
+          Creates the resources needed by the renderer.
+
+Since GTK 4.6, the surface may be `NULL`, which allows using
+renderers without having to create a surface. Since GTK 4.14,
+it is recommended to use [method@Gsk.Renderer.realize_for_display]
+for this case.
+
+Note that it is mandatory to call [method@Gsk.Renderer.unrealize]
+before destroying the renderer.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="renderer" transfer-ownership="none">
+            <type name="Renderer" c:type="GskRenderer*"/>
+          </instance-parameter>
+          <parameter name="surface" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Gdk.Surface" c:type="GdkSurface*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="realize_for_display" c:identifier="gsk_renderer_realize_for_display" version="4.14" throws="1">
+        <doc xml:space="preserve" filename="gsk/gskrenderer.c" line="314">
+          Creates the resources needed by the renderer.
+
+Note that it is mandatory to call [method@Gsk.Renderer.unrealize]
+before destroying the renderer.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="renderer" transfer-ownership="none">
+            <type name="Renderer" c:type="GskRenderer*"/>
+          </instance-parameter>
+          <parameter name="display" transfer-ownership="none">
+            <type name="Gdk.Display" c:type="GdkDisplay*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="render_texture" c:identifier="gsk_renderer_render_texture">
+        <doc xml:space="preserve" filename="gsk/gskrenderer.c" line="373">
+          Renders a scene graph, described by a tree of `GskRenderNode` instances,
+to a texture.
+
+The renderer will acquire a reference on the `GskRenderNode` tree while
+the rendering is in progress.
+
+If you want to apply any transformations to @root, you should put it into a
+transform node and pass that node instead.
+        </doc>
+        <return-value transfer-ownership="full">
+          <type name="Gdk.Texture" c:type="GdkTexture*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="renderer" transfer-ownership="none">
+            <type name="Renderer" c:type="GskRenderer*"/>
+          </instance-parameter>
+          <parameter name="root" transfer-ownership="none">
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </parameter>
+          <parameter name="viewport" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Graphene.Rect" c:type="const graphene_rect_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="unrealize" c:identifier="gsk_renderer_unrealize">
+        <doc xml:space="preserve" filename="gsk/gskrenderer.c" line="342">
+          Releases all the resources created by [method@Gsk.Renderer.realize].
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="renderer" transfer-ownership="none">
+            <type name="Renderer" c:type="GskRenderer*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
+    <record name="Transform" c:type="GskTransform" opaque="1" glib:type-name="GskTransform" glib:get-type="gsk_transform_get_type" c:symbol-prefix="transform">
+      <constructor name="new" c:identifier="gsk_transform_new">
+        <return-value transfer-ownership="full">
+          <type name="Transform" c:type="GskTransform*"/>
+        </return-value>
+      </constructor>
+      <method name="equal" c:identifier="gsk_transform_equal">
+        <doc xml:space="preserve" filename="gsk/gsktransform.c" line="2336">
+          Checks two transforms for equality.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="first" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Transform" c:type="GskTransform*"/>
+          </instance-parameter>
+          <parameter name="second" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Transform" c:type="GskTransform*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_category" c:identifier="gsk_transform_get_category">
+        <doc xml:space="preserve" filename="gsk/gsktransform.c" line="2367">
+          Returns the category this transform belongs to.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="TransformCategory" c:type="GskTransformCategory"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Transform" c:type="GskTransform*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="invert" c:identifier="gsk_transform_invert">
+        <doc xml:space="preserve" filename="gsk/gsktransform.c" line="2301">
+          Inverts the given transform.
+
+If @self is not invertible, `NULL` is returned.
+Note that inverting `NULL` also returns `NULL`, which is
+the correct inverse of `NULL`. If you need to differentiate
+between those cases, you should check @self is not `NULL`
+before calling this function.
+
+This function consumes @self. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.
+        </doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="Transform" c:type="GskTransform*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="full" nullable="1" allow-none="1">
+            <type name="Transform" c:type="GskTransform*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="matrix_2d" c:identifier="gsk_transform_matrix_2d" version="4.20">
+        <doc xml:space="preserve" filename="gsk/gsktransform.c" line="569">
+          Multiplies @next with the matrix [ xx yx x0; xy yy y0; 0 0 1 ].
+
+The result of calling [method@Gsk.Transform.to_2d] on the returned
+[struct@Gsk.Transform] should match the input passed to this
+function.
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.
+        </doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="Transform" c:type="GskTransform*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="next" transfer-ownership="full" nullable="1" allow-none="1">
+            <type name="Transform" c:type="GskTransform*"/>
+          </instance-parameter>
+          <parameter name="xx" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="yx" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="xy" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="yy" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="dx" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="dy" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="perspective" c:identifier="gsk_transform_perspective">
+        <doc xml:space="preserve" filename="gsk/gsktransform.c" line="1750">
+          Applies a perspective projection transform.
+
+This transform scales points in X and Y based on their Z value,
+scaling points with positive Z values away from the origin, and
+those with negative Z values towards the origin. Points
+on the z=0 plane are unchanged.
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.
+        </doc>
+        <return-value transfer-ownership="full">
+          <type name="Transform" c:type="GskTransform*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="next" transfer-ownership="full" nullable="1" allow-none="1">
+            <type name="Transform" c:type="GskTransform*"/>
+          </instance-parameter>
+          <parameter name="depth" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="ref" c:identifier="gsk_transform_ref">
+        <doc xml:space="preserve" filename="gsk/gsktransform.c" line="1795">
+          Acquires a reference on the given transform.
+        </doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <type name="Transform" c:type="GskTransform*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Transform" c:type="GskTransform*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="rotate" c:identifier="gsk_transform_rotate">
+        <doc xml:space="preserve" filename="gsk/gsktransform.c" line="1030">
+          Rotates @next by an angle around the Z axis.
+
+The rotation happens around the origin point of (0, 0).
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.
+        </doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="Transform" c:type="GskTransform*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="next" transfer-ownership="full" nullable="1" allow-none="1">
+            <type name="Transform" c:type="GskTransform*"/>
+          </instance-parameter>
+          <parameter name="angle" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="scale" c:identifier="gsk_transform_scale">
+        <doc xml:space="preserve" filename="gsk/gsktransform.c" line="1586">
+          Scales @next in 2-dimensional space by the given factors.
+
+Use [method@Gsk.Transform.scale_3d] to scale in all 3 dimensions.
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.
+        </doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="Transform" c:type="GskTransform*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="next" transfer-ownership="full" nullable="1" allow-none="1">
+            <type name="Transform" c:type="GskTransform*"/>
+          </instance-parameter>
+          <parameter name="factor_x" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="factor_y" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="scale_3d" c:identifier="gsk_transform_scale_3d">
+        <doc xml:space="preserve" filename="gsk/gsktransform.c" line="1609">
+          Scales @next by the given factors.
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.
+        </doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="Transform" c:type="GskTransform*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="next" transfer-ownership="full" nullable="1" allow-none="1">
+            <type name="Transform" c:type="GskTransform*"/>
+          </instance-parameter>
+          <parameter name="factor_x" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="factor_y" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="factor_z" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="skew" c:identifier="gsk_transform_skew" version="4.6">
+        <doc xml:space="preserve" filename="gsk/gsktransform.c" line="1365">
+          Applies a skew transform.
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.
+        </doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="Transform" c:type="GskTransform*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="next" transfer-ownership="full" nullable="1" allow-none="1">
+            <type name="Transform" c:type="GskTransform*"/>
+          </instance-parameter>
+          <parameter name="skew_x" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="skew_y" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="to_string" c:identifier="gsk_transform_to_string">
+        <doc xml:space="preserve" filename="gsk/gsktransform.c" line="1861">
+          Converts the transform into a human-readable string.
+
+The resulting string can be parsed with [func@Gsk.Transform.parse].
+
+This is a wrapper around [method@Gsk.Transform.print].
+        </doc>
+        <return-value transfer-ownership="full">
+          <type name="utf8" c:type="char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Transform" c:type="GskTransform*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="transform" c:identifier="gsk_transform_transform">
+        <doc xml:space="preserve" filename="gsk/gsktransform.c" line="2267">
+          Applies all the operations from @other to @next.
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.
+        </doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <type name="Transform" c:type="GskTransform*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="next" transfer-ownership="full" nullable="1" allow-none="1">
+            <type name="Transform" c:type="GskTransform*"/>
+          </instance-parameter>
+          <parameter name="other" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Transform" c:type="GskTransform*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="unref" c:identifier="gsk_transform_unref">
+        <doc xml:space="preserve" filename="gsk/gsktransform.c" line="1812">
+          Releases a reference on the given transform.
+
+If the reference was the last, the resources associated to the @self are
+freed.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Transform" c:type="GskTransform*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </record>
+    <class name="TransformNode" c:symbol-prefix="transform_node" c:type="GskTransformNode" parent="RenderNode" glib:type-name="GskTransformNode" glib:get-type="gsk_transform_node_get_type" glib:fundamental="1">
+      <constructor name="new" c:identifier="gsk_transform_node_new">
+        <return-value transfer-ownership="full">
+          <type name="TransformNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <parameter name="child" transfer-ownership="none">
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </parameter>
+          <parameter name="transform" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="Transform" c:type="GskTransform*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_child" c:identifier="gsk_transform_node_get_child">
+        <doc xml:space="preserve" filename="gsk/gsktransformnode.c" line="344">
+          Gets the child node that is getting transformed by the given @node.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="RenderNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <type name="TransformNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_transform" c:identifier="gsk_transform_node_get_transform">
+        <doc xml:space="preserve" filename="gsk/gsktransformnode.c" line="360">
+          Retrieves the `GskTransform` used by the @node.
+        </doc>
+        <return-value transfer-ownership="none">
+          <type name="Transform" c:type="GskTransform*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <type name="TransformNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
+    <alias name="RectSnap" c:type="GskRectSnap"/>
+    <enumeration name="BlendMode" glib:type-name="GskBlendMode" glib:get-type="gsk_blend_mode_get_type" c:type="GskBlendMode">
+      <doc xml:space="preserve" filename="gsk/gskenums.h" line="227">
+        The blend modes available for render nodes.
+
+The implementation of each blend mode is deferred to the
+rendering pipeline.
+
+See &lt;https://www.w3.org/TR/compositing-1/#blending&gt; for more information
+on blending and blend modes.
+      </doc>
+      <member name="default" value="0" c:identifier="GSK_BLEND_MODE_DEFAULT" glib:nick="default" glib:name="GSK_BLEND_MODE_DEFAULT"/>
+      <member name="multiply" value="1" c:identifier="GSK_BLEND_MODE_MULTIPLY" glib:nick="multiply" glib:name="GSK_BLEND_MODE_MULTIPLY"/>
+      <member name="screen" value="2" c:identifier="GSK_BLEND_MODE_SCREEN" glib:nick="screen" glib:name="GSK_BLEND_MODE_SCREEN"/>
+      <member name="overlay" value="3" c:identifier="GSK_BLEND_MODE_OVERLAY" glib:nick="overlay" glib:name="GSK_BLEND_MODE_OVERLAY"/>
+      <member name="darken" value="4" c:identifier="GSK_BLEND_MODE_DARKEN" glib:nick="darken" glib:name="GSK_BLEND_MODE_DARKEN"/>
+      <member name="lighten" value="5" c:identifier="GSK_BLEND_MODE_LIGHTEN" glib:nick="lighten" glib:name="GSK_BLEND_MODE_LIGHTEN"/>
+      <member name="color_dodge" value="6" c:identifier="GSK_BLEND_MODE_COLOR_DODGE" glib:nick="color-dodge" glib:name="GSK_BLEND_MODE_COLOR_DODGE"/>
+      <member name="color_burn" value="7" c:identifier="GSK_BLEND_MODE_COLOR_BURN" glib:nick="color-burn" glib:name="GSK_BLEND_MODE_COLOR_BURN"/>
+      <member name="hard_light" value="8" c:identifier="GSK_BLEND_MODE_HARD_LIGHT" glib:nick="hard-light" glib:name="GSK_BLEND_MODE_HARD_LIGHT"/>
+      <member name="soft_light" value="9" c:identifier="GSK_BLEND_MODE_SOFT_LIGHT" glib:nick="soft-light" glib:name="GSK_BLEND_MODE_SOFT_LIGHT"/>
+      <member name="difference" value="10" c:identifier="GSK_BLEND_MODE_DIFFERENCE" glib:nick="difference" glib:name="GSK_BLEND_MODE_DIFFERENCE"/>
+      <member name="exclusion" value="11" c:identifier="GSK_BLEND_MODE_EXCLUSION" glib:nick="exclusion" glib:name="GSK_BLEND_MODE_EXCLUSION"/>
+      <member name="color" value="12" c:identifier="GSK_BLEND_MODE_COLOR" glib:nick="color" glib:name="GSK_BLEND_MODE_COLOR"/>
+      <member name="hue" value="13" c:identifier="GSK_BLEND_MODE_HUE" glib:nick="hue" glib:name="GSK_BLEND_MODE_HUE"/>
+      <member name="saturation" value="14" c:identifier="GSK_BLEND_MODE_SATURATION" glib:nick="saturation" glib:name="GSK_BLEND_MODE_SATURATION"/>
+      <member name="luminosity" value="15" c:identifier="GSK_BLEND_MODE_LUMINOSITY" glib:nick="luminosity" glib:name="GSK_BLEND_MODE_LUMINOSITY"/>
+    </enumeration>
+    <record name="ComponentTransfer" c:type="GskComponentTransfer" opaque="1" version="4.20" glib:type-name="GskComponentTransfer" glib:get-type="gsk_component_transfer_get_type" c:symbol-prefix="component_transfer"/>
+    <enumeration name="FillRule" version="4.14" glib:type-name="GskFillRule" glib:get-type="gsk_fill_rule_get_type" c:type="GskFillRule">
+      <doc xml:space="preserve" filename="gsk/gskenums.h" line="351">
+        Specifies how paths are filled.
+
+Whether or not a point is included in the fill is determined by taking
+a ray from that point to infinity and looking at intersections with the
+path. The ray can be in any direction, as long as it doesn't pass through
+the end point of a segment or have a tricky intersection such as
+intersecting tangent to the path.
+
+(Note that filling is not actually implemented in this way. This
+is just a description of the rule that is applied.)
+
+New entries may be added in future versions.
+      </doc>
+      <member name="winding" value="0" c:identifier="GSK_FILL_RULE_WINDING" glib:nick="winding" glib:name="GSK_FILL_RULE_WINDING"/>
+      <member name="even_odd" value="1" c:identifier="GSK_FILL_RULE_EVEN_ODD" glib:nick="even-odd" glib:name="GSK_FILL_RULE_EVEN_ODD"/>
+    </enumeration>
+    <class name="GLShader" c:symbol-prefix="gl_shader" c:type="GskGLShader" deprecated="1" deprecated-version="4.16" parent="GObject.Object" glib:type-name="GskGLShader" glib:get-type="gsk_gl_shader_get_type" glib:type-struct="GLShaderClass"/>
+    <bitfield name="Isolation" version="4.22" glib:type-name="GskIsolation" glib:get-type="gsk_isolation_get_type" c:type="GskIsolation">
+      <doc xml:space="preserve" filename="gsk/gskenums.h" line="383">
+        These flags describe the types of isolations possible with a
+[class@Gsk.IsolationNode].
+
+More isolation options may be added in the future.
+      </doc>
+      <member name="none" value="0" c:identifier="GSK_ISOLATION_NONE" glib:nick="none" glib:name="GSK_ISOLATION_NONE"/>
+      <member name="background" value="1" c:identifier="GSK_ISOLATION_BACKGROUND" glib:nick="background" glib:name="GSK_ISOLATION_BACKGROUND"/>
+      <member name="copy_paste" value="2" c:identifier="GSK_ISOLATION_COPY_PASTE" glib:nick="copy-paste" glib:name="GSK_ISOLATION_COPY_PASTE"/>
+      <member name="all" value="-1" c:identifier="GSK_ISOLATION_ALL" glib:nick="all" glib:name="GSK_ISOLATION_ALL"/>
+    </bitfield>
+    <enumeration name="MaskMode" version="4.10" glib:type-name="GskMaskMode" glib:get-type="gsk_mask_mode_get_type" c:type="GskMaskMode">
+      <doc xml:space="preserve" filename="gsk/gskenums.h" line="619">
+        The mask modes available for mask nodes.
+      </doc>
+      <member name="alpha" value="0" c:identifier="GSK_MASK_MODE_ALPHA" glib:nick="alpha" glib:name="GSK_MASK_MODE_ALPHA"/>
+      <member name="inverted_alpha" value="1" c:identifier="GSK_MASK_MODE_INVERTED_ALPHA" glib:nick="inverted-alpha" glib:name="GSK_MASK_MODE_INVERTED_ALPHA"/>
+      <member name="luminance" value="2" c:identifier="GSK_MASK_MODE_LUMINANCE" glib:nick="luminance" glib:name="GSK_MASK_MODE_LUMINANCE"/>
+      <member name="inverted_luminance" value="3" c:identifier="GSK_MASK_MODE_INVERTED_LUMINANCE" glib:nick="inverted-luminance" glib:name="GSK_MASK_MODE_INVERTED_LUMINANCE"/>
+    </enumeration>
+    <record name="Path" c:type="GskPath" opaque="1" version="4.14" glib:type-name="GskPath" glib:get-type="gsk_path_get_type" c:symbol-prefix="path"/>
+    <enumeration name="PorterDuff" version="4.22" glib:type-name="GskPorterDuff" glib:get-type="gsk_porter_duff_get_type" c:type="GskPorterDuff">
+      <doc xml:space="preserve" filename="gsk/gskenums.h" line="277">
+        GSK_PORTER_DUFF_SOURCE:
+GSK_PORTER_DUFF_DEST:
+GSK_PORTER_DUFF_SOURCE_OVER_DEST:
+GSK_PORTER_DUFF_DEST_OVER_SOURCE:
+GSK_PORTER_DUFF_SOURCE_IN_DEST:
+GSK_PORTER_DUFF_DEST_IN_SOURCE:
+GSK_PORTER_DUFF_SOURCE_OUT_DEST:
+GSK_PORTER_DUFF_DEST_OUT_SOURCE:
+GSK_PORTER_DUFF_SOURCE_ATOP_DEST:
+GSK_PORTER_DUFF_DEST_ATOP_SOURCE:
+GSK_PORTER_DUFF_XOR:
+GSK_PORTER_DUFF_CLEAR:
+The 12 compositing modes defined by the seminal paper
+by Thomas Porter and Tom Duff.
+
+They are used in SVG, PDF and in Cairo with `cairo_operator_t`.
+      </doc>
+      <member name="source" value="0" c:identifier="GSK_PORTER_DUFF_SOURCE" glib:nick="source" glib:name="GSK_PORTER_DUFF_SOURCE"/>
+      <member name="dest" value="1" c:identifier="GSK_PORTER_DUFF_DEST" glib:nick="dest" glib:name="GSK_PORTER_DUFF_DEST"/>
+      <member name="source_over_dest" value="2" c:identifier="GSK_PORTER_DUFF_SOURCE_OVER_DEST" glib:nick="source-over-dest" glib:name="GSK_PORTER_DUFF_SOURCE_OVER_DEST"/>
+      <member name="dest_over_source" value="3" c:identifier="GSK_PORTER_DUFF_DEST_OVER_SOURCE" glib:nick="dest-over-source" glib:name="GSK_PORTER_DUFF_DEST_OVER_SOURCE"/>
+      <member name="source_in_dest" value="4" c:identifier="GSK_PORTER_DUFF_SOURCE_IN_DEST" glib:nick="source-in-dest" glib:name="GSK_PORTER_DUFF_SOURCE_IN_DEST"/>
+      <member name="dest_in_source" value="5" c:identifier="GSK_PORTER_DUFF_DEST_IN_SOURCE" glib:nick="dest-in-source" glib:name="GSK_PORTER_DUFF_DEST_IN_SOURCE"/>
+      <member name="source_out_dest" value="6" c:identifier="GSK_PORTER_DUFF_SOURCE_OUT_DEST" glib:nick="source-out-dest" glib:name="GSK_PORTER_DUFF_SOURCE_OUT_DEST"/>
+      <member name="dest_out_source" value="7" c:identifier="GSK_PORTER_DUFF_DEST_OUT_SOURCE" glib:nick="dest-out-source" glib:name="GSK_PORTER_DUFF_DEST_OUT_SOURCE"/>
+      <member name="source_atop_dest" value="8" c:identifier="GSK_PORTER_DUFF_SOURCE_ATOP_DEST" glib:nick="source-atop-dest" glib:name="GSK_PORTER_DUFF_SOURCE_ATOP_DEST"/>
+      <member name="dest_atop_source" value="9" c:identifier="GSK_PORTER_DUFF_DEST_ATOP_SOURCE" glib:nick="dest-atop-source" glib:name="GSK_PORTER_DUFF_DEST_ATOP_SOURCE"/>
+      <member name="xor" value="10" c:identifier="GSK_PORTER_DUFF_XOR" glib:nick="xor" glib:name="GSK_PORTER_DUFF_XOR"/>
+      <member name="clear" value="11" c:identifier="GSK_PORTER_DUFF_CLEAR" glib:nick="clear" glib:name="GSK_PORTER_DUFF_CLEAR"/>
+    </enumeration>
+    <enumeration name="RenderNodeType" glib:type-name="GskRenderNodeType" glib:get-type="gsk_render_node_type_get_type" c:type="GskRenderNodeType">
+      <doc xml:space="preserve" filename="gsk/gskenums.h" line="29">
+        The type of a node determines what the node is rendering.
+      </doc>
+      <member name="not_a_render_node" value="0" c:identifier="GSK_NOT_A_RENDER_NODE" glib:nick="not-a-render-node" glib:name="GSK_NOT_A_RENDER_NODE"/>
+      <member name="container_node" value="1" c:identifier="GSK_CONTAINER_NODE" glib:nick="container-node" glib:name="GSK_CONTAINER_NODE"/>
+      <member name="cairo_node" value="2" c:identifier="GSK_CAIRO_NODE" glib:nick="cairo-node" glib:name="GSK_CAIRO_NODE"/>
+      <member name="color_node" value="3" c:identifier="GSK_COLOR_NODE" glib:nick="color-node" glib:name="GSK_COLOR_NODE"/>
+      <member name="linear_gradient_node" value="4" c:identifier="GSK_LINEAR_GRADIENT_NODE" glib:nick="linear-gradient-node" glib:name="GSK_LINEAR_GRADIENT_NODE"/>
+      <member name="repeating_linear_gradient_node" value="5" c:identifier="GSK_REPEATING_LINEAR_GRADIENT_NODE" glib:nick="repeating-linear-gradient-node" glib:name="GSK_REPEATING_LINEAR_GRADIENT_NODE"/>
+      <member name="radial_gradient_node" value="6" c:identifier="GSK_RADIAL_GRADIENT_NODE" glib:nick="radial-gradient-node" glib:name="GSK_RADIAL_GRADIENT_NODE"/>
+      <member name="repeating_radial_gradient_node" value="7" c:identifier="GSK_REPEATING_RADIAL_GRADIENT_NODE" glib:nick="repeating-radial-gradient-node" glib:name="GSK_REPEATING_RADIAL_GRADIENT_NODE"/>
+      <member name="conic_gradient_node" value="8" c:identifier="GSK_CONIC_GRADIENT_NODE" glib:nick="conic-gradient-node" glib:name="GSK_CONIC_GRADIENT_NODE"/>
+      <member name="border_node" value="9" c:identifier="GSK_BORDER_NODE" glib:nick="border-node" glib:name="GSK_BORDER_NODE"/>
+      <member name="texture_node" value="10" c:identifier="GSK_TEXTURE_NODE" glib:nick="texture-node" glib:name="GSK_TEXTURE_NODE"/>
+      <member name="inset_shadow_node" value="11" c:identifier="GSK_INSET_SHADOW_NODE" glib:nick="inset-shadow-node" glib:name="GSK_INSET_SHADOW_NODE"/>
+      <member name="outset_shadow_node" value="12" c:identifier="GSK_OUTSET_SHADOW_NODE" glib:nick="outset-shadow-node" glib:name="GSK_OUTSET_SHADOW_NODE"/>
+      <member name="transform_node" value="13" c:identifier="GSK_TRANSFORM_NODE" glib:nick="transform-node" glib:name="GSK_TRANSFORM_NODE"/>
+      <member name="opacity_node" value="14" c:identifier="GSK_OPACITY_NODE" glib:nick="opacity-node" glib:name="GSK_OPACITY_NODE"/>
+      <member name="color_matrix_node" value="15" c:identifier="GSK_COLOR_MATRIX_NODE" glib:nick="color-matrix-node" glib:name="GSK_COLOR_MATRIX_NODE"/>
+      <member name="repeat_node" value="16" c:identifier="GSK_REPEAT_NODE" glib:nick="repeat-node" glib:name="GSK_REPEAT_NODE"/>
+      <member name="clip_node" value="17" c:identifier="GSK_CLIP_NODE" glib:nick="clip-node" glib:name="GSK_CLIP_NODE"/>
+      <member name="rounded_clip_node" value="18" c:identifier="GSK_ROUNDED_CLIP_NODE" glib:nick="rounded-clip-node" glib:name="GSK_ROUNDED_CLIP_NODE"/>
+      <member name="shadow_node" value="19" c:identifier="GSK_SHADOW_NODE" glib:nick="shadow-node" glib:name="GSK_SHADOW_NODE"/>
+      <member name="blend_node" value="20" c:identifier="GSK_BLEND_NODE" glib:nick="blend-node" glib:name="GSK_BLEND_NODE"/>
+      <member name="cross_fade_node" value="21" c:identifier="GSK_CROSS_FADE_NODE" glib:nick="cross-fade-node" glib:name="GSK_CROSS_FADE_NODE"/>
+      <member name="text_node" value="22" c:identifier="GSK_TEXT_NODE" glib:nick="text-node" glib:name="GSK_TEXT_NODE"/>
+      <member name="blur_node" value="23" c:identifier="GSK_BLUR_NODE" glib:nick="blur-node" glib:name="GSK_BLUR_NODE"/>
+      <member name="debug_node" value="24" c:identifier="GSK_DEBUG_NODE" glib:nick="debug-node" glib:name="GSK_DEBUG_NODE"/>
+      <member name="gl_shader_node" value="25" c:identifier="GSK_GL_SHADER_NODE" glib:nick="gl-shader-node" glib:name="GSK_GL_SHADER_NODE"/>
+      <member name="texture_scale_node" value="26" c:identifier="GSK_TEXTURE_SCALE_NODE" version="4.10" glib:nick="texture-scale-node" glib:name="GSK_TEXTURE_SCALE_NODE"/>
+      <member name="mask_node" value="27" c:identifier="GSK_MASK_NODE" version="4.10" glib:nick="mask-node" glib:name="GSK_MASK_NODE"/>
+      <member name="fill_node" value="28" c:identifier="GSK_FILL_NODE" version="4.14" glib:nick="fill-node" glib:name="GSK_FILL_NODE"/>
+      <member name="stroke_node" value="29" c:identifier="GSK_STROKE_NODE" version="4.14" glib:nick="stroke-node" glib:name="GSK_STROKE_NODE"/>
+      <member name="subsurface_node" value="30" c:identifier="GSK_SUBSURFACE_NODE" version="4.14" glib:nick="subsurface-node" glib:name="GSK_SUBSURFACE_NODE"/>
+      <member name="component_transfer_node" value="31" c:identifier="GSK_COMPONENT_TRANSFER_NODE" version="4.20" glib:nick="component-transfer-node" glib:name="GSK_COMPONENT_TRANSFER_NODE"/>
+      <member name="copy_node" value="32" c:identifier="GSK_COPY_NODE" version="4.22" glib:nick="copy-node" glib:name="GSK_COPY_NODE"/>
+      <member name="paste_node" value="33" c:identifier="GSK_PASTE_NODE" version="4.22" glib:nick="paste-node" glib:name="GSK_PASTE_NODE"/>
+      <member name="composite_node" value="34" c:identifier="GSK_COMPOSITE_NODE" version="4.22" glib:nick="composite-node" glib:name="GSK_COMPOSITE_NODE"/>
+      <member name="isolation_node" value="35" c:identifier="GSK_ISOLATION_NODE" version="4.22" glib:nick="isolation-node" glib:name="GSK_ISOLATION_NODE"/>
+      <member name="displacement_node" value="36" c:identifier="GSK_DISPLACEMENT_NODE" version="4.22" glib:nick="displacement-node" glib:name="GSK_DISPLACEMENT_NODE"/>
+      <member name="arithmetic_node" value="37" c:identifier="GSK_ARITHMETIC_NODE" version="4.22" glib:nick="arithmetic-node" glib:name="GSK_ARITHMETIC_NODE"/>
+      <member name="turbulence_node" value="38" c:identifier="GSK_TURBULENCE_NODE" version="4.24" glib:nick="turbulence-node" glib:name="GSK_TURBULENCE_NODE"/>
+    </enumeration>
+    <record name="RoundedRect" c:type="GskRoundedRect"/>
+    <enumeration name="ScalingFilter" glib:type-name="GskScalingFilter" glib:get-type="gsk_scaling_filter_get_type" c:type="GskScalingFilter">
+      <doc xml:space="preserve" filename="gsk/gskenums.h" line="208">
+        The filters used when scaling texture data.
+
+The actual implementation of each filter is deferred to the
+rendering pipeline.
+      </doc>
+      <member name="linear" value="0" c:identifier="GSK_SCALING_FILTER_LINEAR" glib:nick="linear" glib:name="GSK_SCALING_FILTER_LINEAR"/>
+      <member name="nearest" value="1" c:identifier="GSK_SCALING_FILTER_NEAREST" glib:nick="nearest" glib:name="GSK_SCALING_FILTER_NEAREST"/>
+      <member name="trilinear" value="2" c:identifier="GSK_SCALING_FILTER_TRILINEAR" glib:nick="trilinear" glib:name="GSK_SCALING_FILTER_TRILINEAR"/>
+    </enumeration>
+    <record name="Stroke" c:type="GskStroke" opaque="1" version="4.14" glib:type-name="GskStroke" glib:get-type="gsk_stroke_get_type" c:symbol-prefix="stroke"/>
+    <enumeration name="TransformCategory" glib:type-name="GskTransformCategory" glib:get-type="gsk_transform_category_get_type" c:type="GskTransformCategory">
+      <doc xml:space="preserve" filename="gsk/gskenums.h" line="550">
+        The categories of matrices relevant for GSK and GTK.
+
+Note that any category includes matrices of all later categories.
+So if you want to for example check if a matrix is a 2D matrix,
+`category &gt;= GSK_TRANSFORM_CATEGORY_2D` is the way to do this.
+
+Also keep in mind that rounding errors may cause matrices to not
+conform to their categories. Otherwise, matrix operations done via
+multiplication will not worsen categories. So for the matrix
+multiplication `C = A * B`, `category(C) = MIN (category(A), category(B))`.
+      </doc>
+      <member name="unknown" value="0" c:identifier="GSK_TRANSFORM_CATEGORY_UNKNOWN" glib:nick="unknown" glib:name="GSK_TRANSFORM_CATEGORY_UNKNOWN"/>
+      <member name="any" value="1" c:identifier="GSK_TRANSFORM_CATEGORY_ANY" glib:nick="any" glib:name="GSK_TRANSFORM_CATEGORY_ANY"/>
+      <member name="3d" value="2" c:identifier="GSK_TRANSFORM_CATEGORY_3D" glib:nick="3d" glib:name="GSK_TRANSFORM_CATEGORY_3D"/>
+      <member name="2d" value="3" c:identifier="GSK_TRANSFORM_CATEGORY_2D" glib:nick="2d" glib:name="GSK_TRANSFORM_CATEGORY_2D"/>
+      <member name="2d_affine" value="4" c:identifier="GSK_TRANSFORM_CATEGORY_2D_AFFINE" glib:nick="2d-affine" glib:name="GSK_TRANSFORM_CATEGORY_2D_AFFINE"/>
+      <member name="2d_translate" value="5" c:identifier="GSK_TRANSFORM_CATEGORY_2D_TRANSLATE" glib:nick="2d-translate" glib:name="GSK_TRANSFORM_CATEGORY_2D_TRANSLATE"/>
+      <member name="identity" value="6" c:identifier="GSK_TRANSFORM_CATEGORY_IDENTITY" glib:nick="identity" glib:name="GSK_TRANSFORM_CATEGORY_IDENTITY"/>
+    </enumeration>
+  </namespace>
+</repository>

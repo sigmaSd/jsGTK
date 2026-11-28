@@ -813,6 +813,34 @@ export const gtk4Symbols = {
     result: "gboolean",
   },
   gtk_button_set_child: { parameters: ["pointer", "pointer"], result: "void" },
+  // Return transfer full.
+  gtk_widget_paintable_new: { parameters: ["pointer"], result: "pointer" },
+  // Return transfer full.
+  gtk_snapshot_new: { parameters: [], result: "pointer" },
+  // Return transfer full.
+  gsk_cairo_renderer_new: { parameters: [], result: "pointer" },
+  // Return transfer full.
+  gsk_renderer_render_texture: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "pointer",
+  },
+  // Return transfer full.
+  gsk_render_node_ref: { parameters: ["pointer"], result: "pointer" },
+  gsk_render_node_unref: { parameters: ["pointer"], result: "void" },
+  // Return transfer full.
+  gsk_transform_new: { parameters: [], result: "pointer" },
+  gsk_transform_ref: { parameters: ["pointer"], result: "pointer" },
+  gsk_transform_unref: { parameters: ["pointer"], result: "void" },
+  // Return transfer full.
+  gsk_transform_node_new: {
+    parameters: ["pointer", "pointer"],
+    result: "pointer",
+  },
+  // Since 4.6. Trailing GError**. Return transfer full.
+  gdk_texture_new_from_filename: {
+    parameters: ["buffer", "pointer"],
+    result: "pointer",
+  },
   gtk_adjustment_clamp_page: {
     parameters: ["pointer", "f64", "f64"],
     result: "void",
@@ -2792,6 +2820,11 @@ export const gtk4Symbols = {
     result: "void",
     optional: true,
   },
+  gtk_native_get_renderer: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
   gtk_native_get_surface: {
     parameters: ["pointer"],
     result: "pointer",
@@ -3951,6 +3984,11 @@ export const gtk4Symbols = {
     result: "u32",
     optional: true,
   },
+  gtk_widget_allocate: {
+    parameters: ["pointer", "i32", "i32", "i32", "pointer"],
+    result: "void",
+    optional: true,
+  },
   gtk_widget_child_focus: {
     parameters: ["pointer", "i32"],
     result: "gboolean",
@@ -4747,6 +4785,338 @@ export const gtk4Symbols = {
   gtk_root_set_focus: {
     parameters: ["pointer", "pointer"],
     result: "void",
+    optional: true,
+  },
+  // Since 4.14.
+  gtk_snapshot_append_fill: {
+    parameters: ["pointer", "pointer", "i32", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_snapshot_append_inset_shadow: {
+    parameters: ["pointer", "pointer", "pointer", "f32", "f32", "f32", "f32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_snapshot_append_layout: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_snapshot_append_node: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_snapshot_append_outset_shadow: {
+    parameters: ["pointer", "pointer", "pointer", "f32", "f32", "f32", "f32"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.14.
+  gtk_snapshot_append_stroke: {
+    parameters: ["pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_snapshot_perspective: {
+    parameters: ["pointer", "f32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_snapshot_pop: { parameters: ["pointer"], result: "void", optional: true },
+  gtk_snapshot_push_blend: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_snapshot_push_blur: {
+    parameters: ["pointer", "f64"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.20.
+  gtk_snapshot_push_component_transfer: {
+    parameters: ["pointer", "pointer", "pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.22.
+  gtk_snapshot_push_composite: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.22.
+  gtk_snapshot_push_copy: {
+    parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_snapshot_push_cross_fade: {
+    parameters: ["pointer", "f64"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.14.
+  gtk_snapshot_push_fill: {
+    parameters: ["pointer", "pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.22.
+  gtk_snapshot_push_isolation: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.10.
+  gtk_snapshot_push_mask: {
+    parameters: ["pointer", "i32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_snapshot_push_opacity: {
+    parameters: ["pointer", "f64"],
+    result: "void",
+    optional: true,
+  },
+  gtk_snapshot_push_rounded_clip: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.14.
+  gtk_snapshot_push_stroke: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_snapshot_restore: {
+    parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_snapshot_rotate: {
+    parameters: ["pointer", "f32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_snapshot_save: {
+    parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_snapshot_scale: {
+    parameters: ["pointer", "f32", "f32"],
+    result: "void",
+    optional: true,
+  },
+  gtk_snapshot_scale_3d: {
+    parameters: ["pointer", "f32", "f32", "f32"],
+    result: "void",
+    optional: true,
+  },
+  // Return transfer full.
+  gtk_snapshot_to_node: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gtk_snapshot_transform: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  gtk_widget_paintable_get_widget: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gtk_widget_paintable_set_widget: {
+    parameters: ["pointer", "pointer"],
+    result: "void",
+    optional: true,
+  },
+  // Return transfer full.
+  gdk_paintable_get_current_image: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gdk_paintable_get_flags: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  gdk_paintable_get_intrinsic_aspect_ratio: {
+    parameters: ["pointer"],
+    result: "f64",
+    optional: true,
+  },
+  gdk_paintable_get_intrinsic_height: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  gdk_paintable_get_intrinsic_width: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  gdk_paintable_invalidate_contents: {
+    parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
+  gdk_paintable_invalidate_size: {
+    parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
+  gdk_paintable_snapshot: {
+    parameters: ["pointer", "pointer", "f64", "f64"],
+    result: "void",
+    optional: true,
+  },
+  // Since 4.16.
+  gdk_texture_get_color_state: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 4.10.
+  gdk_texture_get_format: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  gdk_texture_get_height: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  gdk_texture_get_width: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  // Since 4.6.
+  gdk_texture_save_to_tiff: {
+    parameters: ["pointer", "buffer"],
+    result: "gboolean",
+    optional: true,
+  },
+  gsk_renderer_get_surface: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gsk_renderer_is_realized: {
+    parameters: ["pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Trailing GError**.
+  gsk_renderer_realize: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  // Since 4.14. Trailing GError**.
+  gsk_renderer_realize_for_display: {
+    parameters: ["pointer", "pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  gsk_renderer_unrealize: {
+    parameters: ["pointer"],
+    result: "void",
+    optional: true,
+  },
+  gsk_render_node_get_node_type: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  // Trailing GError**.
+  gsk_render_node_write_to_file: {
+    parameters: ["pointer", "buffer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  gsk_transform_node_get_child: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gsk_transform_node_get_transform: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  gsk_transform_equal: {
+    parameters: ["pointer", "pointer"],
+    result: "gboolean",
+    optional: true,
+  },
+  gsk_transform_get_category: {
+    parameters: ["pointer"],
+    result: "i32",
+    optional: true,
+  },
+  // Return transfer full.
+  gsk_transform_invert: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 4.20. Return transfer full.
+  gsk_transform_matrix_2d: {
+    parameters: ["pointer", "f32", "f32", "f32", "f32", "f32", "f32"],
+    result: "pointer",
+    optional: true,
+  },
+  // Return transfer full.
+  gsk_transform_perspective: {
+    parameters: ["pointer", "f32"],
+    result: "pointer",
+    optional: true,
+  },
+  // Return transfer full.
+  gsk_transform_rotate: {
+    parameters: ["pointer", "f32"],
+    result: "pointer",
+    optional: true,
+  },
+  // Return transfer full.
+  gsk_transform_scale: {
+    parameters: ["pointer", "f32", "f32"],
+    result: "pointer",
+    optional: true,
+  },
+  // Return transfer full.
+  gsk_transform_scale_3d: {
+    parameters: ["pointer", "f32", "f32", "f32"],
+    result: "pointer",
+    optional: true,
+  },
+  // Since 4.6. Return transfer full.
+  gsk_transform_skew: {
+    parameters: ["pointer", "f32", "f32"],
+    result: "pointer",
+    optional: true,
+  },
+  // Return transfer full.
+  gsk_transform_to_string: {
+    parameters: ["pointer"],
+    result: "pointer",
+    optional: true,
+  },
+  // Return transfer full.
+  gsk_transform_transform: {
+    parameters: ["pointer", "pointer"],
+    result: "pointer",
     optional: true,
   },
 } as const;

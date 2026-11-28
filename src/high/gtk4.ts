@@ -37,6 +37,8 @@ import {
   builderMethods,
   type ButtonMethods,
   buttonMethods,
+  type CairoRendererMethods,
+  cairoRendererMethods,
   type CheckButtonMethods,
   checkButtonMethods,
   type ColumnViewColumnMethods,
@@ -97,6 +99,10 @@ import {
   popoverMethods,
   type ProgressBarMethods,
   progressBarMethods,
+  type RendererMethods,
+  rendererMethods,
+  type RenderNodeMethods,
+  renderNodeMethods,
   type RevealerMethods,
   revealerMethods,
   type ScaleMethods,
@@ -115,6 +121,8 @@ import {
   singleSelectionMethods,
   type SizeGroupMethods,
   sizeGroupMethods,
+  type SnapshotMethods,
+  snapshotMethods,
   type SpinnerMethods,
   spinnerMethods,
   type StringListMethods,
@@ -123,16 +131,30 @@ import {
   switchMethods,
   type TextBufferMethods,
   textBufferMethods,
+  type TextureMethods,
+  textureMethods,
   type TextViewMethods,
   textViewMethods,
   type ToggleButtonMethods,
   toggleButtonMethods,
+  type TransformMethods,
+  transformMethods,
+  type TransformNodeMethods,
+  transformNodeMethods,
   type WidgetMethods,
   widgetMethods,
+  type WidgetPaintableMethods,
+  widgetPaintableMethods,
   type WindowMethods,
   windowMethods,
 } from "./generated/gtk4.ts";
-import { applyGenerated } from "./wrappers.ts";
+import {
+  applyGenerated,
+  type Counting,
+  ErrorSlot,
+  owned,
+  Refcounted,
+} from "./wrappers.ts";
 export { G_TYPE_BOOLEAN, G_TYPE_STRING } from "./gobject.ts";
 
 type WidgetMember<Members> =
@@ -481,6 +503,65 @@ export class Widget extends GObject {
   /** Whether the widget can receive keyboard focus. */
   setFocusable(focusable: boolean): void {
     gtk4.symbols.gtk_widget_set_focusable(this.ptr, focusable);
+  }
+
+  /**
+   * Save what the widget shows now as a PNG at `path`, `scale` times its size
+   * in pixels (`{ scale: 2 }` for a HiDPI-sized image). The widget must be
+   * shown and laid out. A window includes its title bar and rounded corners
+   * but not its shadow.
+   *
+   * Renders on the CPU with GSK's Cairo renderer, so it works on any display
+   * backend, Broadway and Xvfb included, and never reads the screen.
+   */
+  renderToPng(path: string, options: { scale?: number } = {}): void {
+    const scale = options.scale ?? 1;
+    if (!(scale > 0) || !Number.isFinite(scale)) {
+      throw new RangeError(
+        `renderToPng: scale must be a positive number, not ${scale}`,
+      );
+    }
+    const width = this.getWidth();
+    const height = this.getHeight();
+    if (width <= 0 || height <= 0) {
+      throw new Error(
+        "renderToPng: the widget has no size yet; show it and let GTK lay it out first",
+      );
+    }
+    const paintable = new WidgetPaintable(this);
+    const snapshot = new Snapshot();
+    const renderer = new CairoRenderer();
+    let node: RenderNode | null = null;
+    try {
+      snapshot.scale(scale, scale);
+      paintable.snapshot(snapshot, width, height);
+      node = snapshot.toNode();
+      if (!node) throw new Error("renderToPng: the widget drew nothing");
+      try {
+        renderer.realizeForDisplay(this.getDisplay());
+      } catch (error) {
+        // GTK before 4.14: the Cairo renderer needs no surface.
+        if (!String(error).includes("needs version")) throw error;
+        renderer.realize(null);
+      }
+      try {
+        const texture = renderer.renderTexture(node);
+        try {
+          if (!texture.saveToPng(path)) {
+            throw new Error(`renderToPng: couldn't write ${path}`);
+          }
+        } finally {
+          texture.unref();
+        }
+      } finally {
+        renderer.unrealize();
+      }
+    } finally {
+      node?.unref();
+      renderer.unref();
+      snapshot.unref();
+      paintable.unref();
+    }
   }
 }
 
@@ -2271,14 +2352,147 @@ export class Clipboard extends GObject {
   }
 }
 
+// GdkTexture: pixel data, e.g. what a renderer drew (`saveToPng`, sizes)
 export class Texture extends GObject {
   constructor(ptr: Deno.PointerValue) {
     super(ptr);
   }
-  saveToPng(filename: string): boolean {
-    return gtk4.symbols.gdk_texture_save_to_png(this.ptr, cstr(filename));
+
+  /**
+   * Load an image file (PNG, JPEG, TIFF and what gdk-pixbuf reads). Throws a
+   * `GError` when the file can't be read or decoded.
+   */
+  static newFromFilename(path: string): Texture {
+    const error = new ErrorSlot();
+    const ptr = gtk4.symbols.gdk_texture_new_from_filename(
+      cstr(path),
+      error.pointer,
+    );
+    error.check();
+    return owned<Texture>(ptr)!;
   }
 }
+
+// Methods generated from GIR, such as saveToPng and getWidth.
+export interface Texture extends TextureMethods {}
+applyGenerated(Texture, textureMethods, "GdkTexture");
+
+// ============================================================================
+// Drawing widgets into images: snapshots, render nodes and renderers
+// ============================================================================
+
+/**
+ * GtkSnapshot: records drawing operations as render nodes. Paint into it,
+ * e.g. with a `WidgetPaintable`, then take the result with `toNode()`.
+ */
+export class Snapshot extends GObject {
+  constructor() {
+    super(gtk4.symbols.gtk_snapshot_new());
+  }
+}
+
+// Methods generated from GIR, such as scale, save, restore and toNode.
+export interface Snapshot extends SnapshotMethods {}
+applyGenerated(Snapshot, snapshotMethods, "GtkSnapshot");
+
+/** GtkWidgetPaintable: a paintable that draws what a widget shows. */
+export class WidgetPaintable extends GObject {
+  constructor(widget: Widget | null = null) {
+    super(gtk4.symbols.gtk_widget_paintable_new(widget?.ptr ?? null));
+  }
+}
+
+// Methods generated from GIR, with GdkPaintable's (snapshot, sizes).
+export interface WidgetPaintable extends WidgetPaintableMethods {}
+applyGenerated(WidgetPaintable, widgetPaintableMethods, "GtkWidgetPaintable");
+
+/**
+ * GskRenderNode: one node of a scene graph, such as the one a `Snapshot`
+ * records. Not a GObject: the wrapper holds a reference, dropped by
+ * `unref()` or when the wrapper is collected.
+ */
+export class RenderNode extends Refcounted {
+  /** @internal */
+  static readonly counting: Counting = {
+    ref: (ptr) => gtk4.symbols.gsk_render_node_ref(ptr),
+    unref: (ptr) => gtk4.symbols.gsk_render_node_unref(ptr),
+  };
+
+  /** @internal Wraps `ptr`, taking over one reference. */
+  protected constructor(ptr: Deno.PointerValue) {
+    super(ptr, RenderNode.counting);
+  }
+}
+
+// Methods generated from GIR, such as getNodeType and writeToFile.
+export interface RenderNode extends RenderNodeMethods {}
+applyGenerated(RenderNode, renderNodeMethods, "GskRenderNode");
+
+/** GskTransformNode: draws its child with a transform applied. */
+export class TransformNode extends RenderNode {
+  constructor(child: RenderNode, transform: Transform | null) {
+    super(
+      gtk4.symbols.gsk_transform_node_new(child.ptr, transform?.ptr ?? null),
+    );
+  }
+}
+
+// Methods generated from GIR: getChild and getTransform.
+export interface TransformNode extends TransformNodeMethods {}
+applyGenerated(TransformNode, transformNodeMethods, "GskTransformNode");
+
+/**
+ * GskTransform: an immutable 2D or 3D transform. Each step returns a new
+ * transform and leaves this one as it was:
+ * `new Transform().scale(2, 2).rotate(90)`.
+ */
+export class Transform extends Refcounted {
+  /** @internal */
+  static readonly counting: Counting = {
+    ref: (ptr) => gtk4.symbols.gsk_transform_ref(ptr),
+    unref: (ptr) => gtk4.symbols.gsk_transform_unref(ptr),
+  };
+
+  /** The identity transform. */
+  constructor() {
+    super(gtk4.symbols.gsk_transform_new(), Transform.counting);
+  }
+}
+
+// Methods generated from GIR, such as scale, rotate and toString.
+export interface Transform extends TransformMethods {}
+applyGenerated(Transform, transformMethods, "GskTransform");
+
+/** GskRenderer: draws render nodes, e.g. into a `Texture`. */
+export class Renderer extends GObject {
+  /**
+   * Draw `root` into a new texture covering the node's bounds. The renderer
+   * must be realized (`realizeForDisplay`).
+   */
+  renderTexture(root: RenderNode): Texture {
+    const ptr = gtk4.symbols.gsk_renderer_render_texture(
+      this.ptr,
+      root.ptr,
+      null,
+    );
+    return owned<Texture>(ptr)!;
+  }
+}
+
+// Methods generated from GIR, such as realizeForDisplay and unrealize.
+export interface Renderer extends RendererMethods {}
+applyGenerated(Renderer, rendererMethods, "GskRenderer");
+
+/** GskCairoRenderer: renders on the CPU with Cairo, on any backend. */
+export class CairoRenderer extends Renderer {
+  constructor() {
+    super(gtk4.symbols.gsk_cairo_renderer_new());
+  }
+}
+
+// Methods generated from GIR (none of its own beyond Renderer's).
+export interface CairoRenderer extends CairoRendererMethods {}
+applyGenerated(CairoRenderer, cairoRendererMethods, "GskCairoRenderer");
 
 export class ContentProvider extends GObject {
   constructor(ptr: Deno.PointerValue) {
@@ -3171,6 +3385,13 @@ export class ViewSwitcher extends Widget {
 }
 
 export {
+  GdkMemoryFormat,
+  GskBlendMode,
+  GskFillRule,
+  GskMaskMode,
+  GskPorterDuff,
+  GskRenderNodeType,
+  GskTransformCategory,
   Justification,
   ListTabBehavior,
   MovementStep,
