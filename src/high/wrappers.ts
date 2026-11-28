@@ -163,6 +163,14 @@ export function borrowedCounted<T extends Refcounted>(
   return wrapper;
 }
 
+/**
+ * Add a reference to a GObject and return it, for a native call that takes
+ * one over (a method that consumes its instance); the wrapper keeps its own.
+ */
+export function newObjectRef(ptr: Deno.PointerValue): Deno.PointerValue {
+  return gobject.symbols.g_object_ref(ptr);
+}
+
 /** Read a string GLib returns with `transfer full`, then free it. */
 export function takeString(ptr: Deno.PointerValue): string | null {
   if (!ptr) return null;

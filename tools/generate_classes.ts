@@ -633,14 +633,17 @@ class Generator {
     );
     const takesInstance =
       instance?.getAttribute("transfer-ownership") === "full";
-    if (takesInstance && !counted) {
-      // e.g. gtk_snapshot_free_to_node: the wrapper would be left dangling.
-      throw new Unsupported("consumes its instance");
-    }
-    // A method that consumes a ref-counted instance gets a reference of its
-    // own, so the wrapper stays valid (GskTransform's methods return a new
-    // transform and take the old one).
-    const nativeArgs: string[] = [takesInstance ? "this.newRef()" : "this.ptr"];
+    // A method that consumes its instance is given a reference of its own,
+    // so the wrapper, which keeps its reference, stays valid (GskTransform's
+    // methods return a new transform and take the old one).
+    if (takesInstance && !counted) this.runtime.add("newObjectRef");
+    const nativeArgs: string[] = [
+      !takesInstance
+        ? "this.ptr"
+        : counted
+        ? "this.newRef()"
+        : "newObjectRef(this.ptr)",
+    ];
     for (const [index, arg] of args.entries()) {
       if (nulls.has(index)) {
         nativeArgs.push("null");

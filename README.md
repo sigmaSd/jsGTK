@@ -605,11 +605,10 @@ Generated code lives in `src/high/generated/`:
 - structs pass through as opaque pointers;
 - ref-counted types that aren't GObjects, such as GSK's render nodes (a
   fundamental type) and transforms (a boxed record), get wrappers extending
-  `Refcounted`: values GTK hands over are owned, lent ones take a reference of
-  their own, and a method that consumes its instance (`Transform.scale`) is
-  given a new reference, so the wrapper stays valid;
-- a method that would consume a GObject wrapper's instance
-  (`gtk_snapshot_free_to_node`) isn't generated;
+  `Refcounted`: values GTK hands over are owned, and lent ones take a reference
+  of their own;
+- a method that consumes its instance (`Transform.scale`) is given a new
+  reference, so the wrapper, GObject or not, stays valid;
 - callbacks GTK keeps are freed when GTK releases them.
 
 Methods a class or its hand-written ancestors define are left out, so
